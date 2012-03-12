@@ -1,0 +1,5 @@
+{
+  "project_id" : "jcommon",
+  "conduit_uri" : "https://phabricator.fb.com/api/",
+  "remote_hooks_installed" : true
+}
