@@ -1,0 +1,109 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.facebook</groupId>
+    <artifactId>jcommon</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <groupId>com.facebook</groupId>
+  <artifactId>logging</artifactId>
+  <packaging>jar</packaging>
+  <version>0.1.0-SNAPSHOT</version>
+  <name>jcommon logging</name>
+
+
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.facebook</groupId>
+      <artifactId>thrift</artifactId>
+      <version>2011-10-21T16.59.23-8d2b37</version>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook</groupId>
+      <artifactId>scribe-if</artifactId>
+      <version>2011-11-15T14.01.14-9479e7</version>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook</groupId>
+      <artifactId>smc-if</artifactId>
+      <version>20101020-41077</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-core</artifactId>
+      <version>titan-rH18780-10032011_jupiter-20249</version>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook</groupId>
+      <artifactId>maestro-if</artifactId>
+      <version>2011-07-01T15.38.42-8dc382d</version>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook</groupId>
+      <artifactId>maestro-ods_router-if</artifactId>
+      <version>2011-07-01T15.38.42-8dc382d</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-lzo</artifactId>
+      <version>${lzoVersion}</version>
+    </dependency>
+
+    <!--3rd party-->
+    <dependency>
+      <groupId>org.apache.zookeeper</groupId>
+      <artifactId>zookeeper</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <groups>${testGroups}</groups>
+          <argLine>-Djava.library.path=target/lib</argLine>
+          <environmentVariables>
+            <LD_LIBRARY_PATH>target/lib</LD_LIBRARY_PATH>
+          </environmentVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>default</id>
+      <properties>
+        <testGroups>fast</testGroups>
+        <lzoVersion>0.4.1-titan-9045</lzoVersion>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+  </profiles>
+</project>

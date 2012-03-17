@@ -1,0 +1,141 @@
+package com.facebook.concurrency.linearization;
+
+import org.apache.log4j.Logger;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class TestLinearizer {
+  private static final Logger LOG = Logger.getLogger(TestLinearizer.class);
+  
+  private Linearizer linearizer;
+  private AtomicInteger nextTaskId;
+  private List<SerialStartTask> taskList;
+  private List<Integer> results;
+
+  @BeforeMethod(alwaysRun = true)
+  public void setUp() throws Exception {
+    linearizer = new Linearizer();
+    nextTaskId = new AtomicInteger(0);
+    taskList = new ArrayList<SerialStartTask>();
+    results = new ArrayList<Integer>();
+  }
+  
+  @Test(groups = "fast")
+  public void testSanity1() throws Exception {
+    // equivalent partial ordering: 1,1,2
+    nextConcurrentTask();
+    nextConcurrentTask();
+    nextLinearizationTask();
+    executeTasks();
+    verifyResults();
+  }
+  
+  @Test(groups = "fast")
+  public void testSanity2() throws Exception {
+    // equivalent partial ordering: 1,1,2,3,4,5,5,6    
+    nextConcurrentTask();
+    nextConcurrentTask();
+    nextLinearizationTask();
+    nextConcurrentTask();
+    nextLinearizationTask();
+    nextConcurrentTask();
+    nextConcurrentTask();
+    nextLinearizationTask();
+    executeTasks();
+    verifyResults();
+  }
+  
+  private void executeTasks() throws InterruptedException {
+    ExecutorService executor = Executors.newCachedThreadPool();
+    
+    Collections.shuffle(taskList);
+
+    for (SerialStartTask task : taskList) {
+      executor.execute(task);
+      task.waitForStart();
+    }
+    
+    executor.shutdown();
+    
+    while (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+      LOG.info("waited 10 seconds for executor shutdown, will wait some more");
+    }
+  }
+  
+  private void verifyResults() {
+    for (int i = 1; i < results.size(); i++) {
+      Assert.assertTrue(results.get(i-1) <= results.get(i));
+    }
+  }
+  
+  private void nextConcurrentTask() {
+    final ConcurrentPoint concurrentPoint = linearizer.createConurrentPoint();
+    final int taskId = nextTaskId.get();
+    SerialStartTask task = new SerialStartTask(new Runnable() {
+      @Override
+      public void run() {
+        concurrentPoint.start();
+        
+        try {
+          results.add(taskId);
+        } finally {
+          concurrentPoint.complete();
+        }
+      }
+    });
+    
+    taskList.add(task);
+  }
+
+  private void nextLinearizationTask() {
+    final LinearizationPoint linearizationPoint = 
+      linearizer.createLinearizationPoint();
+    final int taskId = nextTaskId.incrementAndGet();
+    
+    nextTaskId.incrementAndGet();
+
+    SerialStartTask task = new SerialStartTask(new Runnable() {
+      @Override
+      public void run() {
+        linearizationPoint.start();
+
+        try {
+          results.add(taskId);
+        } finally {
+          linearizationPoint.complete();
+        }
+      }
+    });
+    
+    taskList.add(task);
+  }
+  
+  private static class SerialStartTask implements Runnable {
+    private final CountDownLatch latch = new CountDownLatch(1);
+    private final Runnable task;
+
+    private SerialStartTask(Runnable task) {
+      this.task = task;
+    }
+
+    @Override
+    public void run() {
+      latch.countDown();
+      task.run();
+    }
+    
+    public void waitForStart() throws InterruptedException {
+      latch.await();
+    }
+  }
+}
