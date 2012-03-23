@@ -54,6 +54,16 @@
       </dependency>
       <dependency>
         <groupId>com.facebook</groupId>
+        <artifactId>logging</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook</groupId>
+        <artifactId>memory</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook</groupId>
         <artifactId>stats</artifactId>
         <version>0.1.0-SNAPSHOT</version>
       </dependency>
@@ -370,6 +380,7 @@
     <module>jcommon-safe</module>
     <module>lifecycle</module>
     <module>logging</module>
+    <module>memory</module>
     <module>stats</module>
     <module>testing</module>
     <module>util</module>
