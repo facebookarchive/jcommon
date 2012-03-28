@@ -10,18 +10,18 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>com.facebook</groupId>
+  <groupId>com.facebook.jcommon</groupId>
   <artifactId>stats</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <dependencies>
     <dependency>
-      <groupId>com.facebook</groupId>
+      <groupId>com.facebook.jcommon</groupId>
       <artifactId>collections</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.facebook</groupId>
+      <groupId>com.facebook.jcommon</groupId>
       <artifactId>logging</artifactId>
     </dependency>
     <dependency>
