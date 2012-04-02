@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * decorates a FacebookLogger with  the ability to sample logging at a specified window size 
+ * decorates a FacebookLogger with  the ability to sample logging at a specified window size
  * (1 per time specified)
  **/
 public class TimeSamplingFacebookLogger implements Logger {
