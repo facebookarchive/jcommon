@@ -44,6 +44,10 @@
     </dependency>
     <dependency>
       <groupId>com.facebook.jcommon</groupId>
+      <artifactId>testing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook.jcommon</groupId>
       <artifactId>util</artifactId>
     </dependency>
     <dependency>
