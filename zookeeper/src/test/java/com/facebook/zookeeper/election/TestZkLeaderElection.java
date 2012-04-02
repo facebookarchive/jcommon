@@ -31,9 +31,9 @@ public class TestZkLeaderElection {
   private ZkLeaderElection zkLeaderElection1;
   private ZkLeaderElection zkLeaderElection2;
   private ZkLeaderElection zkLeaderElection3;
-  private com.facebook.zookeeper.election.MockLeaderElectionCallback mockLeaderElectionCallback1;
-  private com.facebook.zookeeper.election.MockLeaderElectionCallback mockLeaderElectionCallback2;
-  private com.facebook.zookeeper.election.MockLeaderElectionCallback mockLeaderElectionCallback3;
+  private MockLeaderElectionCallback mockLeaderElectionCallback1;
+  private MockLeaderElectionCallback mockLeaderElectionCallback2;
+  private MockLeaderElectionCallback mockLeaderElectionCallback3;
   private VariablePayload variablePayload1;
   private VariablePayload variablePayload2;
   private VariablePayload variablePayload3;

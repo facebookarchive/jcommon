@@ -1,11 +1,10 @@
-package com.facebook.stats.mx;
+package com.facebook.datafreeway.stats;
 
-
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
-import com.facebook.stats.MultiWindowRate;
-import com.facebook.stats.MultiWindowSpread;
-import com.facebook.stats.StatsUtil;
+import com.facebook.datafreeway.logging.FacebookLogger;
+import com.facebook.datafreeway.logging.FacebookLoggerImpl;
+import com.facebook.fb303.stats.MultiWindowRate;
+import com.facebook.fb303.stats.MultiWindowSpread;
+import com.facebook.fb303.stats.StatsUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Stats implements StatsReader, StatsCollector {
-  private static final Logger LOG = LoggerImpl.getLogger(Stats.class);
+  private static final FacebookLogger LOG = FacebookLoggerImpl.getLogger(Stats.class);
   private static final String ERROR_FLAG = "--ERROR--";
 
   private final String prefix;

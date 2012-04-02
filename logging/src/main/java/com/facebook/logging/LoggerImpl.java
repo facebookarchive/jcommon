@@ -1,29 +1,28 @@
 package com.facebook.logging;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Logger with efficient var-args support.  Underlying logger is Log4j, but may be swapped to
  * any logger.
  */
-public class FacebookLoggerImpl implements FacebookLogger {
-  private final Logger logger;
+public class LoggerImpl implements Logger {
+  private final org.slf4j.Logger logger;
 
-  public FacebookLoggerImpl(Logger logger) {
+  public LoggerImpl(org.slf4j.Logger logger) {
     this.logger = logger;
   }
 
-  public static FacebookLogger getLogger(Class<?> clazz) {
-    Logger logger = LoggerFactory.getLogger(clazz);
+  public static Logger getLogger(Class<?> clazz) {
+    org.slf4j.Logger logger = LoggerFactory.getLogger(clazz);
 
-    return new FacebookLoggerImpl(logger);
+    return new LoggerImpl(logger);
   }
 
-  public static FacebookLogger getLogger(String name) {
-    Logger logger = LoggerFactory.getLogger(name);
+  public static Logger getLogger(String name) {
+    org.slf4j.Logger logger = LoggerFactory.getLogger(name);
 
-    return new FacebookLoggerImpl(logger);
+    return new LoggerImpl(logger);
 
   }
 

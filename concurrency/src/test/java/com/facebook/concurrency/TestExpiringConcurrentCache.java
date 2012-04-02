@@ -19,7 +19,7 @@ public class TestExpiringConcurrentCache {
   private ReapableString reapableValue1;
   private String value1;
   private BlockingValueProducer<ReapableString, RuntimeException> producer;
-  private com.facebook.concurrency.ConcurrentCacheTestHelper<String, ReapableString> testHelper;
+  private ConcurrentCacheTestHelper<String, ReapableString> testHelper;
   private MockExecutor mockExecutor;
   private ExpiringConcurrentCache<String, String, RuntimeException> cache;
   private List<Pair<String,String>> evicted;

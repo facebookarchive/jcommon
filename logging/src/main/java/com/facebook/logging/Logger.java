@@ -3,7 +3,7 @@ package com.facebook.logging;
 /**
  * Facebook logging interface that is similar to log4j, but adds delayed format processing
  */
-public interface FacebookLogger {
+public interface Logger {
   public boolean isDebugEnabled();
 
   public boolean isInfoEnabled();

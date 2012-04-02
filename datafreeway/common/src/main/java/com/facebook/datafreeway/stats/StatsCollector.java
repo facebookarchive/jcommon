@@ -1,4 +1,4 @@
-package com.facebook.stats.mx;
+package com.facebook.datafreeway.stats;
 
 import java.util.concurrent.Callable;
 

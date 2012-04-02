@@ -1,8 +1,7 @@
-package com.facebook.stats.mx;
+package com.facebook.datafreeway.stats;
 
-
-import com.facebook.stats.MultiWindowRate;
-import com.facebook.stats.MultiWindowSpread;
+import com.facebook.fb303.stats.MultiWindowRate;
+import com.facebook.fb303.stats.MultiWindowSpread;
 
 import java.util.Map;
 

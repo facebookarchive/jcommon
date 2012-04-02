@@ -9,14 +9,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * decorates a FacebookLogger with  the ability to sample logging at a specified window size 
  * (1 per time specified)
  **/
-public class TimeSamplingFacebookLogger implements FacebookLogger {
-  private final FacebookLogger logger;
+public class TimeSamplingFacebookLogger implements Logger {
+  private final Logger logger;
   private final long windowSizeMillis;
   private final AtomicBoolean logToggle = new AtomicBoolean(false);
 
   private volatile long lastLoggedMillis = 0;
 
-  public TimeSamplingFacebookLogger(FacebookLogger logger, long time, TimeUnit timeUnit) {
+  public TimeSamplingFacebookLogger(Logger logger, long time, TimeUnit timeUnit) {
     this.logger = logger;
     windowSizeMillis = timeUnit.toMillis(time);
   }

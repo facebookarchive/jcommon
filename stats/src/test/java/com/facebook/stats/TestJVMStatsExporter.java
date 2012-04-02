@@ -1,7 +1,7 @@
 package com.facebook.stats;
 
-import com.facebook.logging.FacebookLogger;
-import com.facebook.logging.FacebookLoggerImpl;
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 import com.facebook.stats.mx.JVMStatsExporter;
 import com.facebook.stats.mx.Stats;
 import org.testng.Assert;
@@ -15,7 +15,7 @@ import java.util.TreeMap;
  * Test {@link JVMStatsExporter}
  */
 public class TestJVMStatsExporter {
-  private static final FacebookLogger LOG = FacebookLoggerImpl.getLogger(TestJVMStatsExporter.class);
+  private static final Logger LOG = LoggerImpl.getLogger(TestJVMStatsExporter.class);
   
   @Test(groups = "fast")
   public void testAllStats() throws Exception {

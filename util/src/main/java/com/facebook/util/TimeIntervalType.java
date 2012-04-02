@@ -110,11 +110,7 @@ public enum TimeIntervalType {
    * @param intervalLength the interval length
    */
   public void validateValue(DateTimeZone timeZone, long intervalLength) {
-    final DateTimeField field = fieldType.getField(
-      ISOChronology.getInstance(
-        timeZone
-      )
-    );
+    final DateTimeField field = fieldType.getField(TimeUtil.getChronology(timeZone.getID()));
     if (intervalLength < 1
       || intervalLength > field.getMaximumValue()) {
       throw new IllegalArgumentException(
@@ -123,6 +119,7 @@ public enum TimeIntervalType {
       );
     }
   }
+
 
   /**
    * Gets the start instant given the event instant, interval length 
