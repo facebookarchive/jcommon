@@ -81,7 +81,6 @@
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>testing</artifactId>
         <version>0.1.0-SNAPSHOT</version>
-        <scope>test</scope>
       </dependency>
       <!--third party-->
       <dependency>
