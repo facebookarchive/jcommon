@@ -1,16 +1,15 @@
 package com.facebook.logging;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTimeUtils;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Logger wrapper to down-sample frequent logs to one log per specified time
- */
-public class TimeSamplingLogger {
+ * decorates a FacebookLogger with  the ability to sample logging at a specified window size
+ * (1 per time specified)
+ **/
+public class TimeSamplingLogger implements Logger {
   private final Logger logger;
   private final long windowSizeMillis;
   private final AtomicBoolean logToggle = new AtomicBoolean(false);
@@ -34,71 +33,83 @@ public class TimeSamplingLogger {
         logToggle.set(false);
       }
     }
-   
+
     return false;
   }
 
-  public void debug(String format, Object ... args) {
-    if (shouldLog() && logger.isDebugEnabled()) {
-      String message = String.format(format, args);
+  @Override
+  public boolean isDebugEnabled() {
+    return logger.isDebugEnabled();
+  }
 
-      logger.debug(message);
+  @Override
+  public boolean isInfoEnabled() {
+    return logger.isInfoEnabled();
+  }
+
+  @Override
+  public boolean isWarnEnabled() {
+    return logger.isWarnEnabled();
+  }
+
+  @Override
+  public boolean isErrorEnabled() {
+    return logger.isErrorEnabled();
+  }
+
+  @Override
+  public void debug(String format, Object... args) {
+    if (shouldLog()) {
+      logger.debug(format, args);
     }
   }
 
-  public void debug(Throwable t, String format, Object ... args) {
-    if (shouldLog() && logger.isDebugEnabled()) {    
-      String message = String.format(format, args);
-
-      logger.debug(message, t);
+  @Override
+  public void debug(Throwable t, String format, Object... args) {
+    if (shouldLog()) {
+      logger.debug(t, format, args);
     }
   }
 
-  public void info(String format, Object ... args) {
-    if (shouldLog() && logger.isInfoEnabled()) {
-      String message = String.format(format, args);
-
-      logger.info(message);
+  @Override
+  public void info(String format, Object... args) {
+    if (shouldLog()) {
+      logger.info(format, args);
     }
   }
 
-  public void info(Throwable t, String format, Object ... args) {
-    if (shouldLog() && logger.isInfoEnabled()) {    
-      String message = String.format(format, args);
-
-      logger.info(message, t);
+  @Override
+  public void info(Throwable t, String format, Object... args) {
+    if (shouldLog()) {
+      logger.info(t, format, args);
     }
   }
 
-  public void warn(String format, Object ... args) {
-    if (shouldLog() && logger.isEnabledFor(Level.WARN)) {
-      String message = String.format(format, args);
-
-      logger.warn(message);
+  @Override
+  public void warn(String format, Object... args) {
+    if (shouldLog()) {
+      logger.warn(format, args);
     }
   }
 
-  public void warn(Throwable t, String format, Object ... args) {
-    if (shouldLog() && logger.isEnabledFor(Level.WARN)) {
-      String message = String.format(format, args);
-
-      logger.warn(message, t);
-    }
-  }
-  
-  public void error(String format, Object ... args) {
-    if (shouldLog() && logger.isEnabledFor(Level.ERROR)) {
-      String message = String.format(format, args);
-
-      logger.error(message);
+  @Override
+  public void warn(Throwable t, String format, Object... args) {
+    if (shouldLog()) {
+      logger.warn(t, format, args);
     }
   }
 
-  public void error(Throwable t, String format, Object ... args) {
-    if (shouldLog() && logger.isEnabledFor(Level.ERROR)) {
-      String message = String.format(format, args);
+  @Override
+  public void error(String format, Object... args) {
+    if (shouldLog()) {
+      logger.error(format, args);
+    }
+  }
 
-      logger.error(message, t);
+  @Override
+  public void error(Throwable t, String format, Object... args) {
+    if (shouldLog()) {
+      logger.error(t, format, args);
     }
   }
 }
