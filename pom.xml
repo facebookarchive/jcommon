@@ -13,6 +13,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.nexus.hostPort>nexus.vip.facebook.com:80</project.nexus.hostPort>
   </properties>
 
   <scm>
@@ -333,10 +334,10 @@
       <properties>
         <testGroups>fast,slow</testGroups>
         <project.libs-releases-local-url>
-          http://dev2974.snc6.facebook.com:8181/nexus/content/repositories/libs-releases-local
+          http://${project.nexus.hostPort}/nexus/content/repositories/libs-releases-local
         </project.libs-releases-local-url>
         <project.libs-snapshots-local-url>
-          http://dev2974.snc6.facebook.com:8181/nexus/content/repositories/libs-snapshots-local
+          http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
         </project.libs-snapshots-local-url>
       </properties>
       <activation>
