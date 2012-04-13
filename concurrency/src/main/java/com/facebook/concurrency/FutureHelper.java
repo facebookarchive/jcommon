@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FutureHelper<T, E extends Exception> extends FutureTask<T> {
   private final AtomicBoolean hasRun = new AtomicBoolean(false);
   private final ExceptionHandler<E> exceptionHandler;
+  private volatile boolean generated = false;
   private volatile boolean error = false;
 
   public FutureHelper(
@@ -39,11 +40,17 @@ public class FutureHelper<T, E extends Exception> extends FutureTask<T> {
     try {
       // Future.get() will block until there is a result ready, or until
       // at least one instance of run() above has completed
-      return get();
+      T t = get();
+      generated = true;
+      return t;
     } catch (Exception e) {
       error = true;
       throw exceptionHandler.handle(e);
     }
+  }
+
+  public boolean isGenerated() {
+    return generated;
   }
 
   public boolean isError() {
