@@ -11,21 +11,19 @@
  * environment instead of command line options. Specifically,
  * the BUILD_TYPE and GIT_BRANCH are expected to be set.
  *
- * This program can be run in two modes:
+ * This program is meant to be run after coverting the Cobertura
+ * coverage files into a json format that has the coverage info in
+ * a format that is compatible with phabricator.
  *
- *  * As a pipe to read the test output.
- *    Use this mode when running the tests so that unit failures
- *    are posted as they are found. From the jenkins job, do something
- *    like:
- *    new-mysqldev.sh 56test --skip-test-list=test.skip | update_build_info.php
+ * For now, this program assumes there is a single 'coverage.json' file
+ * in the diretory where the program is run.
  *
- *  * As a single invocation to set the build status.
- *    Use this mode when the build portion fails. Use the
- *    --status= and --message= options to update the diff page.
- *
- *    From the jenkins job, do:
- *    new-mysqldev.sh clean && \
- *         update_build_info.php --status=pass --message="Good build"
+ * TODO:
+ * - Find coverage.json files as there might be more than one
+ * - alternatively, take the json file(s) as command line arguments
+ * - Work with emma code coverage tool
+ * - aggregate the unit test info and update the diff with the coverage
+ *   based on the tests that ran.
  */
 
 require_once '/home/engshare/devtools/arcanist/scripts/__init_script__.php';
@@ -80,6 +78,48 @@ function get_diffid() {
   return $diff_id;
 }
 
+/*
+ * For the files that were changed, get the coverage info for each
+ * file. The structure that gets passed back to phabricator will
+ * look like:
+ *
+ * {"name":"TaskTestCase","result":"pass",
+ * "coverage":{"lib/foo.php":"NNNNNNNNU", "lib.bar.php":"CNCNCNCU"}}
+ *
+ */
+function get_coverage_info() {
+  $gitcmd = 'git show --pretty="format:" --name-only HEAD';
+  $git_future = new ExecFuture($gitcmd);
+  list($files) = $git_future->resolvex();
+
+  // TODO: need to find all of the coverage.json files
+  $coverage_file = 'coverage.json';
+  if (! file_exists($coverage_file) || ! is_readable($coverage_file)) {
+    return array();
+  }
+
+  $json_string = file_get_contents($coverage_file);
+  $json = json_decode($json_string);
+
+  foreach (explode("\n", $files) as $file) {
+    if (!preg_match('/\.java$/', $file)) {
+      continue;
+    }
+    $results[$file] = isset($json->{$file}) ? $json->{$file} : '';
+  }
+  return $results;
+}
+
+function get_test_results($test) {
+  $result = array(
+    'name'     => $test,
+    'status'   => 'pass',
+    'message'  => '',
+    'coverage' => get_coverage_info($test)
+  );
+  return array($result);
+}
+
 // When the build fails to compile, just send a 'build failed' message
 function update_buildstatus($conduit, $diff_id, $status, $message) {
 
@@ -91,59 +131,29 @@ function update_buildstatus($conduit, $diff_id, $status, $message) {
           'name'    => 'jcommon_build',
           'result'  => $status,
           'message' => $message,
-        ));
+        )
+  );
 }
 
 /**
  * Send results to phabricator.
  */
-function update_unitresults($conduit, $diff_id, $results) {
+function update_unitresults($conduit, $diff_id) {
+
+  $tests = get_test_results('jcommon');
 
   // possible results: 'pass', 'fail', 'skip', 'broken', 'skip', 'unsound'
-  foreach ($results as $result) {
-    print("{$diff_id}\n");
-    print_r($result);
+  foreach ($tests as $test) {
     $conduit->callMethodSynchronous(
           'differential.updateunitresults',
           array(
             'diff_id'  => $diff_id,
-            'file'     => $result['file'],
-            'name'     => $result['name'],
-            'result'   => $result['status'],
-            'message'  => $result['msg'],
-            'coverage' => $result['coverage'],
+            'name'     => $test['name'],
+            'result'   => $test['status'],
+            'message'  => $test['message'],
+            'coverage' => $test['coverage'],
           ));
-  }
-}
-
-function test($conduit, $diff_id) {
-  $results = mock_test_results();
-  update_unitresults($conduit, $diff_id, $results);
-}
-
-/* For the files that were changed, get the coverage info for each
- * file and pass back to phabricator
-*/
-function get_coverage_info() {
-  $results = array();
-  $gitcmd = 'git show --pretty="format:" --name-only HEAD';
-  $git_future = new ExecFuture($gitcmd);
-  list($files) = $git_future->resolvex();
-
-  foreach (explode("\n", $files) as $file) {
-    if (!preg_match('/\.java$/', $file)) {
-      continue;
-    }
-    array_push($results,
-                  array('file'     => $file,
-                        'name'     => $file,
-                        'status'   => "pass",
-                        'msg'      => "",
-                        'coverage' => "",
-                  )
-    );
-  }
-  return $results;
+  };
 }
 
 // Command line option specification
@@ -171,6 +181,4 @@ if ($status = $args->getArg('status')) {
   exit(0);
 }
 
-$results = get_coverage_info();
-
-update_unitresults($conduit, $diff_id, $results);
+update_unitresults($conduit, $diff_id);
