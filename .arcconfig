@@ -1,5 +1,9 @@
 {
   "project_id" : "jcommon",
   "conduit_uri" : "https://phabricator.fb.com/api/",
-  "remote_hooks_installed" : true
+  "phutil_libraries" : {
+    "fbcode-arcanist" : "arcanist/"
+   },
+  "unit_engine" : "FacebookFbcodeUnitTestEngine",
+  "git.default-relative-commit" : "origin/master"
 }
