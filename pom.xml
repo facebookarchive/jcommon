@@ -11,6 +11,67 @@
   <description>common java libs</description>
   <url>https://phabricator.fb.com/diffusion/</url>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.nexus.hostPort>nexus.vip.facebook.com:80</project.nexus.hostPort>
+  </properties>
+
+  <distributionManagement>
+    <repository>
+      <id>libs-releases-local</id>
+      <url>${project.libs-releases-local-url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>libs-snapshots-local</id>
+      <url>${project.libs-snapshots-local-url}
+      </url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <profiles>
+    <profile>
+      <id>default</id>
+      <properties>
+        <testGroups>fast,slow</testGroups>
+        <project.libs-releases-local-url>
+          http://${project.nexus.hostPort}/nexus/content/repositories/libs-releases-local
+        </project.libs-releases-local-url>
+        <project.libs-snapshots-local-url>
+          http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
+        </project.libs-snapshots-local-url>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
+      <id>jenkins</id>
+      <properties>
+        <testGroups>fast,slow</testGroups>
+        <project.libs-releases-local-url>
+          http://${project.nexus.hostPort}/nexus/content/repositories/libs-releases-local
+        </project.libs-releases-local-url>
+        <project.libs-snapshots-local-url>
+          http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
+        </project.libs-snapshots-local-url>
+      </properties>
+      <activation>
+        <property>
+          <name>env.BUILD_NUMBER</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <!--aggregator only project; includes upload info -->
   <modules>
     <module>collections</module>
     <module>concurrency</module>
@@ -24,4 +85,5 @@
     <module>util</module>
     <module>zookeeper</module>
   </modules>
+
 </project>
