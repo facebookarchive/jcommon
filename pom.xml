@@ -84,6 +84,7 @@
     <module>testing</module>
     <module>util</module>
     <module>zookeeper</module>
+    <module>json</module>
   </modules>
 
 </project>

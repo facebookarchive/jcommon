@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.facebook</groupId>
+    <artifactId>jcommon</artifactId>
+    <version>0.2.0-SNAPSHOT</version>
+    <relativePath>../origin/pom.xml</relativePath>
+  </parent>
+
+  <groupId>org.json</groupId>
+  <artifactId>json</artifactId>
+  <packaging>jar</packaging>
+  <version>20120422</version>
+  <name>json</name>
+  <!--<url>fill-in-later to use mvn release</url>-->
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+
+    <!--3rd party-->
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+    <!--test-->
+
+  <build>
+  </build>
+  <profiles>
+    <profile>
+      <id>default</id>
+      <properties>
+        <testGroups>fast,slow</testGroups>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
+      <id>fast</id>
+      <properties>
+        <testGroups>fast</testGroups>
+      </properties>
+    </profile>
+  </profiles>
+</project>
