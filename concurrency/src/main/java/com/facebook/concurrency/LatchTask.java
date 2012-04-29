@@ -5,17 +5,27 @@ import java.util.concurrent.CountDownLatch;
 public class LatchTask implements Runnable {
   private final CountDownLatch hasRunLatch = new CountDownLatch(1);
   private final CountDownLatch canRunLatch;
+  private final Runnable task;
 
-  private LatchTask(int value) {
+  private LatchTask(int value, Runnable task) {
     canRunLatch = new CountDownLatch(value);
+    this.task = task;
   }
   
+  public LatchTask(Runnable work) {
+    this(0, work);
+  }
+
   public LatchTask() {
-    this(0);
+    this(0, NoOp.INSTANCE);
   }
-  
+
   public static LatchTask createPaused() {
-    return new LatchTask(1);
+    return new LatchTask(1, NoOp.INSTANCE);
+  }
+
+  public static LatchTask createPaused(Runnable task) {
+    return new LatchTask(1, task);
   }
 
   @Override
@@ -26,6 +36,7 @@ public class LatchTask implements Runnable {
       throw new RuntimeException(e);
     }
 
+    task.run();
     hasRunLatch.countDown();
   }
 
