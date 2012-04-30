@@ -76,7 +76,7 @@
     <module>collections</module>
     <module>concurrency</module>
     <module>config</module>
-    <module>jcommon-safe</module>
+    <module>jcommon-all</module>
     <module>lifecycle</module>
     <module>logging</module>
     <module>memory</module>
