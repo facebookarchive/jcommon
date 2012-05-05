@@ -13,7 +13,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.nexus.hostPort>nexus.vip.facebook.com:80</project.nexus.hostPort>
+    <project.nexus.hostPort>nexus.vip.facebook.com:8181</project.nexus.hostPort>
   </properties>
 
   <distributionManagement>
