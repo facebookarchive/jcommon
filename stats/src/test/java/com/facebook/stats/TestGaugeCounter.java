@@ -1,4 +1,4 @@
-package com.facebook.fb303.stats;
+package com.facebook.stats;
 
 import com.facebook.stats.CompositeGaugeCounter;
 import org.joda.time.Duration;
