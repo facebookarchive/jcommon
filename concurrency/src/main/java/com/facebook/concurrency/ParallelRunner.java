@@ -56,7 +56,7 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterable<ExtRunnable<E>> tasks,
+    Iterable<? extends ExtRunnable<E>> tasks,
     int numThreads,
     final ExceptionHandler<E> exceptionHandler
   ) throws E {
@@ -73,7 +73,7 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterator<ExtRunnable<E>> tasksIter,
+    Iterator<? extends ExtRunnable<E>> tasksIter,
     int numThreads,
     final ExceptionHandler<E> exceptionHandler
   ) throws E {
@@ -96,7 +96,7 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterable<ExtRunnable<E>> tasks,
+    Iterable<? extends ExtRunnable<E>> tasks,
     int numThreads,
     final ExceptionHandler<E> exceptionHandler,
     String baseName
@@ -120,7 +120,7 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterator<ExtRunnable<E>> tasksIter,
+    Iterator<? extends ExtRunnable<E>> tasksIter,
     int numThreads,
     final ExceptionHandler<E> exceptionHandler,
     String baseName
@@ -159,7 +159,7 @@ public class ParallelRunner {
    * @param tasks
    * @param numThreads
    */
-  public void parallelRun(Iterable<Runnable> tasks, int numThreads) {
+  public void parallelRun(Iterable<? extends Runnable> tasks, int numThreads) {
     parallelRun(tasks.iterator(), numThreads);
   }
 
@@ -168,7 +168,7 @@ public class ParallelRunner {
    * @param tasksIter
    * @param numThreads
    */
-  public void parallelRun(Iterator<Runnable> tasksIter, int numThreads) {
+  public void parallelRun(Iterator<? extends Runnable> tasksIter, int numThreads) {
     parallelRun(
       tasksIter,
       numThreads,
@@ -184,7 +184,7 @@ public class ParallelRunner {
    * @param baseName
    */
   public void parallelRun(
-    Iterable<Runnable> tasks, int numThreads, String baseName
+    Iterable<? extends Runnable> tasks, int numThreads, String baseName
   ) {
     parallelRun(tasks.iterator(), numThreads, baseName);
   }
@@ -208,7 +208,7 @@ public class ParallelRunner {
    * @param baseName
    */
   public void parallelRun(
-    Iterator<Runnable> tasksIter, int numThreads, String baseName
+    Iterator<? extends Runnable> tasksIter, int numThreads, String baseName
   ) {
     ExecutorService executorForInvocation;
     
