@@ -15,6 +15,12 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.nexus.hostPort>nexus.vip.facebook.com:8181</project.nexus.hostPort>
     <project.java.version>1.6</project.java.version>
+    <project.libs-releases-local-url>
+      http://${project.nexus.hostPort}/nexus/content/repositories/libs-releases-local
+    </project.libs-releases-local-url>
+    <project.libs-snapshots-local-url>
+      http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
+    </project.libs-snapshots-local-url>
   </properties>
 
   <scm>
@@ -150,7 +156,7 @@
   </dependencyManagement>
 
   <dependencies>
-      <dependency>
+    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
     </dependency>
@@ -331,16 +337,18 @@
       <id>default</id>
       <properties>
         <testGroups>fast,slow</testGroups>
-        <project.libs-releases-local-url>
-          http://${project.nexus.hostPort}/nexus/content/repositories/libs-releases-local
-        </project.libs-releases-local-url>
-        <project.libs-snapshots-local-url>
-          http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
-        </project.libs-snapshots-local-url>
       </properties>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
+    </profile>
+
+    <profile>
+      <id>java7</id>
+      <properties>
+        <testGroups>fast,slow</testGroups>
+        <project.java.version>1.7</project.java.version>
+      </properties>
     </profile>
 
     <profile>
@@ -354,12 +362,6 @@
       <id>jenkins</id>
       <properties>
         <testGroups>fast,slow</testGroups>
-        <project.libs-releases-local-url>
-          http://${project.nexus.hostPort}/nexus/content/repositories/libs-releases-local
-        </project.libs-releases-local-url>
-        <project.libs-snapshots-local-url>
-          http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
-        </project.libs-snapshots-local-url>
       </properties>
       <activation>
         <property>
