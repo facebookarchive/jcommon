@@ -42,7 +42,7 @@ public class QuantileDigest {
   private static final double MAX_SIZE_FACTOR = 1.5;
 
   // needs to be such that Math.exp(alpha * seconds) does not grow too big
-  private static final long RESCALE_THRESHOLD_SECONDS = 50;
+  static final long RESCALE_THRESHOLD_SECONDS = 50;
   private static final double ZERO_WEIGHT_THRESHOLD = 1e-5;
 
   private final double maxError;
@@ -294,9 +294,9 @@ public class QuantileDigest {
             return true;
           }
       });
-    }
 
-    landmarkInSeconds = nowInSeconds;
+      landmarkInSeconds = nowInSeconds;
+    }
   }
 
   private int calculateCompressionFactor() {

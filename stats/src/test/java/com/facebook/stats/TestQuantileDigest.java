@@ -271,6 +271,23 @@ public class TestQuantileDigest {
     assertEquals(digest.getCount(), 15.0);
   }
 
+  @Test(groups = "fast")
+  public void testDecayedCountsWithClockIncrementSmallerThanRescaleThreshold() throws Exception {
+    int targetAgeInSeconds = (int) (QuantileDigest.RESCALE_THRESHOLD_SECONDS - 1);
+
+    TestingClock clock = new TestingClock();
+    QuantileDigest digest = new QuantileDigest(1,
+      ExponentialDecay.computeAlpha(0.5, targetAgeInSeconds), clock, false);
+
+    addAll(digest, asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
+    clock.increment(targetAgeInSeconds, TimeUnit.SECONDS);
+    addAll(digest, asList(10, 11, 12, 13, 14, 15, 16, 17, 18, 19));
+
+    // The first 10 values only contribute 5 to the counts per the alpha factor
+    assertEquals(digest.getHistogram(asList(10L, 20L)), asList(5.0, 10.0));
+    assertEquals(digest.getCount(), 15.0);
+  }
+
   @Test(groups = "slow")
   public void testTiming() {
     QuantileDigest digest = new QuantileDigest(0.01, 0, new TestingClock(), true);
