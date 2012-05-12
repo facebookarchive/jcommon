@@ -1,4 +1,4 @@
-package com.facebook.util.util;
+package com.facebook.util;
 
 import com.facebook.util.TimeUtil;
 import org.joda.time.DateTimeZone;
