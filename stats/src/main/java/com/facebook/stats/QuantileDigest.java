@@ -108,7 +108,7 @@ public class QuantileDigest {
     weightedCount += weight;
 
     max = Math.max(max, value);
-    root = insertAt(root, value, weight);
+    insert(value, weight);
 
     // The size (number of non-zero nodes) of the digest is at most 3 * compression factor
     // If we're over MAX_SIZE_FACTOR of the expected size, compress
@@ -303,64 +303,82 @@ public class QuantileDigest {
     return Math.max((int) ((root.level + 1) / maxError), 1);
   }
 
-  private Node insertAt(Node node, long value, double weight) {
-    if (node == null) {
-      ++totalNodeCount;
-      maxTotalNodeCount = Math.max(maxTotalNodeCount, totalNodeCount);
-      ++nonZeroNodeCount;
-      return new Node(value, 0, weight);
-    }
+  private void insert(long value, double weight) {
+    long lastBranch = 0;
+    Node parent = null;
+    Node current = root;
 
-    if (node.level == 0 && node.value == value) {
-      checkState(node.weightedCount > ZERO_WEIGHT_THRESHOLD,
-        "Expected node count of leaf node to be > %d", ZERO_WEIGHT_THRESHOLD);
-
-      node.weightedCount += weight;
-      return node;
-    }
-
-    // the mask for the prefix of a node at a given level
-    long pathPrefixMask = (0x7FFFFFFFFFFFFFFFL << node.level) & 0x7FFFFFFFFFFFFFFFL;
-
-    if ((value & pathPrefixMask) != (node.value & pathPrefixMask)) {
-      // if value and node.value are not in the same branch given node's level,
-      // insert a parent above them at the point at which branches diverge
-      int parentLevel = MAX_BITS - Long.numberOfLeadingZeros(node.value ^ value);
-
-      // the mask for the prefix of the node at the level at which "value" and the current
-      // node branch out
-      long commonPrefixMask = (0x7FFFFFFFFFFFFFFFL << parentLevel) & 0x7FFFFFFFFFFFFFFFL;
-      Node newParent = new Node(value & commonPrefixMask, parentLevel, 0);
-      Node newNode = new Node(value, 0, weight);
-
-      // the branch is given by the bit at the level one below parent
-      long newNodeBranch = value & (1L << (parentLevel - 1));
-      if (newNodeBranch == 0) {
-        newParent.left = newNode;
-        newParent.right = node;
-      } else {
-        newParent.left = node;
-        newParent.right = newNode;
+    while (true) {
+      if (current == null) {
+        setChild(parent, lastBranch, createLeaf(value, weight));
+        return;
+      }
+      else if ((value >>> current.level) != (current.value >>> current.level)) {
+        // if value and node.value are not in the same branch given node's level,
+        // insert a parent above them at the point at which branches diverge
+        setChild(parent, lastBranch, makeSiblings(current, createLeaf(value, weight)));
+        return;
+      }
+      else if (current.level == 0 && current.value == value) {
+        // found the node
+        current.weightedCount += weight;
+        return;
       }
 
-      totalNodeCount += 2;
-      maxTotalNodeCount = Math.max(maxTotalNodeCount, totalNodeCount);
+      // we're on the correct branch of the tree and we haven't reached a leaf, so keep going down
+      long branch = value & current.getBranchMask();
 
-      ++nonZeroNodeCount;
-      return newParent;
+      parent = current;
+      lastBranch = branch;
+
+      if (branch == 0) {
+        current = current.left;
+      }
+      else {
+        current = current.right;
+      }
     }
+  }
 
-    // we're on the right branch of the tree and we haven't reached a leaf,
-    // so keep going down
-    long branch = value & (1L << (node.level - 1));
+  private void setChild(Node parent, long branch, Node child) {
+    if (parent == null) {
+      root = child;
+    }
+    else if (branch == 0) {
+      parent.left = child;
+    }
+    else {
+      parent.right = child;
+    }
+  }
 
+  private Node makeSiblings(Node node, Node sibling) {
+    int parentLevel = MAX_BITS - Long.numberOfLeadingZeros(node.value ^ sibling.value);
+
+    Node parent = new Node(node.value, parentLevel, 0);
+
+    // the branch is given by the bit at the level one below parent
+    long branch = sibling.value & parent.getBranchMask();
     if (branch == 0) {
-      node.left = insertAt(node.left, value, weight);
-    } else {
-      node.right = insertAt(node.right, value, weight);
+      parent.left = sibling;
+      parent.right = node;
+    }
+    else {
+      parent.left = node;
+      parent.right = sibling;
     }
 
-    return node;
+    ++totalNodeCount;
+    maxTotalNodeCount = Math.max(maxTotalNodeCount, totalNodeCount);
+
+    return parent;
+  }
+
+  private Node createLeaf(long value, double weight) {
+    ++totalNodeCount;
+    maxTotalNodeCount = Math.max(maxTotalNodeCount, totalNodeCount);
+    ++nonZeroNodeCount;
+    return new Node(value, 0, weight);
   }
 
   /**
@@ -524,6 +542,10 @@ public class QuantileDigest {
       // by this node)
       long mask = (1L << level) - 1;
       return value | mask;
+    }
+
+    public long getBranchMask() {
+      return (1L << (level - 1));
     }
 
     public String toString() {
