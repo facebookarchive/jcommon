@@ -288,6 +288,27 @@ public class TestQuantileDigest {
     assertEquals(digest.getCount(), 15.0);
   }
 
+
+  @Test(groups = "fast")
+  public void testRescaleWithDecayKeepsCompactTree() throws Exception {
+    TestingClock clock = new TestingClock();
+    int targetAgeInSeconds = (int) (QuantileDigest.RESCALE_THRESHOLD_SECONDS);
+
+    QuantileDigest digest = new QuantileDigest(0.01,
+      ExponentialDecay.computeAlpha(QuantileDigest.ZERO_WEIGHT_THRESHOLD / 2, targetAgeInSeconds),
+      clock, true);
+
+    for (int i = 0; i < 10; ++i) {
+      digest.add(i);
+      digest.validate();
+
+      // bump the clock to make all previous values decay to ~0
+      clock.increment(targetAgeInSeconds, TimeUnit.SECONDS);
+    }
+
+    assertEquals(digest.getTotalNodeCount(), 1);
+  }
+
   @Test(groups = "slow")
   public void testTiming() {
     QuantileDigest digest = new QuantileDigest(0.01, 0, new TestingClock(), true);

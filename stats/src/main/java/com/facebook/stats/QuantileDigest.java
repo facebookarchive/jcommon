@@ -43,7 +43,7 @@ public class QuantileDigest {
 
   // needs to be such that Math.exp(alpha * seconds) does not grow too big
   static final long RESCALE_THRESHOLD_SECONDS = 50;
-  private static final double ZERO_WEIGHT_THRESHOLD = 1e-5;
+  static final double ZERO_WEIGHT_THRESHOLD = 1e-5;
 
   private final double maxError;
   private final Clock clock;
@@ -102,22 +102,26 @@ public class QuantileDigest {
   public synchronized void add(long value) {
     checkArgument(value >= 0, "value must be >= 0");
 
-    rescaleIfNeeded();
+    long nowInSeconds = TimeUnit.MILLISECONDS.toSeconds(clock.getMillis());
+
+    int maxExpectedNodeCount = 3 * calculateCompressionFactor();
+    if (nowInSeconds - landmarkInSeconds >= RESCALE_THRESHOLD_SECONDS) {
+      rescale(nowInSeconds);
+      compress(); // need to compress to get rid of nodes that may have decayed to ~ 0
+    }
+    else if (nonZeroNodeCount > MAX_SIZE_FACTOR * maxExpectedNodeCount && compressAutomatically) {
+      // The size (number of non-zero nodes) of the digest is at most 3 * compression factor
+      // If we're over MAX_SIZE_FACTOR of the expected size, compress
+      // Note: we don't compress as soon as we go over expectedNodeCount to avoid unnecessarily
+      // running a compression for every new added element when we're close to boundary
+      compress();
+    }
 
     double weight = weight(TimeUnit.MILLISECONDS.toSeconds(clock.getMillis()));
     weightedCount += weight;
 
     max = Math.max(max, value);
     insert(value, weight);
-
-    // The size (number of non-zero nodes) of the digest is at most 3 * compression factor
-    // If we're over MAX_SIZE_FACTOR of the expected size, compress
-    // Note: we don't compress as soon as we go over expectedNodeCount to avoid unnecessarily
-    // running a compression for every new added element when we're close to boundary
-    int maxExpectedNodeCount = 3 * calculateCompressionFactor();
-    if (nonZeroNodeCount > MAX_SIZE_FACTOR * maxExpectedNodeCount && compressAutomatically) {
-      compress();
-    }
   }
 
   /**
@@ -248,28 +252,47 @@ public class QuantileDigest {
           return true;
         }
 
-        double sum = node.weightedCount;
+        // if children's weights are ~0 remove them and shift the weight to their parent
+
+        double leftWeight = 0;
         if (node.left != null) {
-          sum += node.left.weightedCount;
-        }
-        if (node.right != null) {
-          sum += node.right.weightedCount;
+          leftWeight = node.left.weightedCount;
         }
 
-        if (sum < weightedCount / compressionFactor) {
+        double rightWeight = 0;
+        if (node.right != null) {
+          rightWeight = node.right.weightedCount;
+        }
+
+        boolean shouldCompress = node.weightedCount + leftWeight + rightWeight <
+          weightedCount / compressionFactor;
+
+        double oldNodeWeight = node.weightedCount;
+        if (shouldCompress || leftWeight < ZERO_WEIGHT_THRESHOLD) {
           node.left = tryRemove(node.left);
+
+          weightedCount += leftWeight;
+          node.weightedCount += leftWeight;
+        }
+
+        if (shouldCompress || rightWeight < ZERO_WEIGHT_THRESHOLD) {
           node.right = tryRemove(node.right);
 
-          if (node.weightedCount < ZERO_WEIGHT_THRESHOLD && sum > ZERO_WEIGHT_THRESHOLD) {
-            ++nonZeroNodeCount;
-          }
+          weightedCount += rightWeight;
+          node.weightedCount += rightWeight;
+        }
 
-          node.weightedCount = sum;
+        if (oldNodeWeight < ZERO_WEIGHT_THRESHOLD && node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
+           ++nonZeroNodeCount;
         }
 
         return true;
       }
     });
+
+    if (root != null && root.weightedCount < ZERO_WEIGHT_THRESHOLD) {
+      root = tryRemove(root);
+    }
 
     maxTotalNodesAfterCompress = Math.max(maxTotalNodesAfterCompress, totalNodeCount);
   }
@@ -278,28 +301,35 @@ public class QuantileDigest {
     return Math.exp(alpha * (timestamp - landmarkInSeconds));
   }
 
-  private void rescaleIfNeeded() {
+  private void rescale(long newLandmarkInSeconds) {
     // rescale the weights based on a new landmark to avoid numerical overflow issues
 
-    long nowInSeconds = TimeUnit.MILLISECONDS.toSeconds(clock.getMillis());
-
-    if (nowInSeconds - landmarkInSeconds > RESCALE_THRESHOLD_SECONDS) {
-      final double factor = Math.exp(-alpha * (nowInSeconds - landmarkInSeconds));
+      final double factor = Math.exp(-alpha * (newLandmarkInSeconds - landmarkInSeconds));
 
       weightedCount *= factor;
 
       postOrderTraversal(root, new Callback() {
           public boolean process(Node node) {
+            double oldWeight = node.weightedCount;
+
             node.weightedCount *= factor;
+
+            if (oldWeight >= ZERO_WEIGHT_THRESHOLD && node.weightedCount < ZERO_WEIGHT_THRESHOLD) {
+              --nonZeroNodeCount;
+            }
+
             return true;
           }
       });
 
-      landmarkInSeconds = nowInSeconds;
-    }
+      landmarkInSeconds = newLandmarkInSeconds;
   }
 
   private int calculateCompressionFactor() {
+    if (root == null) {
+      return 1;
+    }
+
     return Math.max((int) ((root.level + 1) / maxError), 1);
   }
 
@@ -321,7 +351,15 @@ public class QuantileDigest {
       }
       else if (current.level == 0 && current.value == value) {
         // found the node
+
+        double oldWeight = current.weightedCount;
+
         current.weightedCount += weight;
+
+        if (current.weightedCount >= ZERO_WEIGHT_THRESHOLD && oldWeight < ZERO_WEIGHT_THRESHOLD) {
+          ++nonZeroNodeCount;
+        }
+
         return;
       }
 
@@ -390,9 +428,11 @@ public class QuantileDigest {
       return null;
     }
 
-    if (node.weightedCount > ZERO_WEIGHT_THRESHOLD) {
+    if (node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
       --nonZeroNodeCount;
     }
+
+    weightedCount -= node.weightedCount;
 
     Node result = null;
     if (node.isLeaf()) {
@@ -469,7 +509,7 @@ public class QuantileDigest {
       });
     }
 
-    checkState(sumOfWeights.get() == weightedCount,
+    checkState(Math.abs(sumOfWeights.get() - weightedCount) < ZERO_WEIGHT_THRESHOLD,
                "Computed weight (%s) doesn't match summary (%s)", sumOfWeights.get(),
                weightedCount);
 
