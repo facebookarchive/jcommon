@@ -1,4 +1,25 @@
-/*/target
-/*/*.iml
-/*.iml
+target/
 .arc
+
+# idea project files
+.idea/
+*.iml
+
+# ctags db
+/tags
+
+# etags db
+/TAGS
+
+# gtags db
+/GTAGS
+/GRTAGS
+/GPATH
+
+# idutils db
+/ID
+
+# eclipse project files
+.project
+.classpath
+.settings/
