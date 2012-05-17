@@ -223,7 +223,7 @@ public class Stats implements StatsReader, StatsCollector {
     try {
       attributes.put(key, valueProducer);
     } catch (Exception e) {
-      LOG.error("error in producer for key " + key, e);
+      LOG.error(e, "error in producer for key %s", key);
     }
   }
 
@@ -238,7 +238,7 @@ public class Stats implements StatsReader, StatsCollector {
 
       return callable == null ? null : callable.call();
     } catch (Exception e) {
-      LOG.error("error producing value for key " + key, e);
+      LOG.error(e, "error producing value for key %s", key);
       return ERROR_FLAG;
     }
   }
@@ -256,7 +256,7 @@ public class Stats implements StatsReader, StatsCollector {
         materializedAttributes.put(entry.getKey(), entry.getValue().call());
       } catch (Exception e) {
         materializedAttributes.put(entry.getKey(), ERROR_FLAG);
-        LOG.error("error producing value for key " + entry.getKey(), e);
+        LOG.error(e, "error producing value for key %s", entry.getKey());
       }
     }
 
