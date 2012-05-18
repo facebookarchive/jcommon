@@ -77,7 +77,6 @@
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>testing</artifactId>
         <version>0.1.0-SNAPSHOT</version>
-        <scope>test</scope>
       </dependency>
 
       <!--third party-->
@@ -136,19 +135,16 @@
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
         <version>6.1.1</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-all</artifactId>
         <version>1.9.0</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.10</version>
-        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -157,7 +153,6 @@
       <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
