@@ -65,6 +65,15 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
+  @Deprecated
+  public void debug(String message, Throwable throwable) {
+    if (logger.isDebugEnabled()) {
+      logger.debug(message, throwable);
+    }
+
+  }
+
+  @Override
   public void info(String format, Object... args) {
     if (logger.isInfoEnabled()) {
       String message = String.format(format, args);
@@ -79,6 +88,14 @@ public class LoggerImpl implements Logger {
       String message = String.format(format, args);
 
       logger.info(message, t);
+    }
+  }
+
+  @Override
+  @Deprecated
+  public void info(String message, Throwable throwable) {
+    if (logger.isInfoEnabled()) {
+      logger.warn(message, throwable);
     }
   }
 
@@ -101,6 +118,14 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
+  @Deprecated
+  public void warn(String message, Throwable throwable) {
+    if (logger.isWarnEnabled()) {
+      logger.warn(message, throwable);
+    }
+  }
+
+  @Override
   public void error(String format, Object... args) {
     if (logger.isErrorEnabled()) {
       String message = String.format(format, args);
@@ -115,6 +140,14 @@ public class LoggerImpl implements Logger {
       String message = String.format(format, args);
 
       logger.error(message, t);
+    }
+  }
+
+  @Override
+  @Deprecated
+  public void error(String message, Throwable throwable) {
+    if (logger.isErrorEnabled()) {
+      logger.error(message, throwable);
     }
   }
 }

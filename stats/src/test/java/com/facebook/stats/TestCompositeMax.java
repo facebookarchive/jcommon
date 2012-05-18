@@ -5,14 +5,6 @@ import org.joda.time.Duration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-// import org.testng.Assert;
-// import org.testng.annotations.BeforeMethod;
-// import org.testng.annotations.Test;
-
-/**
- * Use "fbmake --verbose runtests" to find out where the
- * output dir will be.
- */
 public class TestCompositeMax {
 
   // @Test(groups = "fast")

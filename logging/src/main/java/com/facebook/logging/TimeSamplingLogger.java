@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * decorates a FacebookLogger with  the ability to sample logging at a specified window size
  * (1 per time specified)
- **/
+ */
 public class TimeSamplingLogger implements Logger {
   private final Logger logger;
   private final long windowSizeMillis;
@@ -72,6 +72,14 @@ public class TimeSamplingLogger implements Logger {
   }
 
   @Override
+  @Deprecated
+  public void debug(String message, Throwable throwable) {
+    if (shouldLog()) {
+      logger.debug(message, throwable);
+    }
+  }
+
+  @Override
   public void info(String format, Object... args) {
     if (shouldLog()) {
       logger.info(format, args);
@@ -82,6 +90,14 @@ public class TimeSamplingLogger implements Logger {
   public void info(Throwable t, String format, Object... args) {
     if (shouldLog()) {
       logger.info(t, format, args);
+    }
+  }
+
+  @Override
+  @Deprecated
+  public void info(String message, Throwable throwable) {
+    if (shouldLog()) {
+      logger.info(message, throwable);
     }
   }
 
@@ -100,6 +116,14 @@ public class TimeSamplingLogger implements Logger {
   }
 
   @Override
+  @Deprecated
+  public void warn(String message, Throwable throwable) {
+    if (shouldLog()) {
+      logger.warn(message, throwable);
+    }
+  }
+
+  @Override
   public void error(String format, Object... args) {
     if (shouldLog()) {
       logger.error(format, args);
@@ -110,6 +134,14 @@ public class TimeSamplingLogger implements Logger {
   public void error(Throwable t, String format, Object... args) {
     if (shouldLog()) {
       logger.error(t, format, args);
+    }
+  }
+
+  @Override
+  @Deprecated
+  public void error(String message, Throwable throwable) {
+    if (shouldLog()) {
+      logger.error(message, throwable);
     }
   }
 }

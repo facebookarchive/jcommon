@@ -3,14 +3,7 @@ package com.facebook.stats;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-// import org.testng.Assert;
-// import org.testng.annotations.BeforeMethod;
-// import org.testng.annotations.Test;
 
-/**
- * use "fbmake --verbose runtests" to find out where the
- * output dir will be.
- */
 public class TestMultiWindowGauge {
 
   // @Test(groups = "fast")
