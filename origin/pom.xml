@@ -42,7 +42,7 @@
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>config</artifactId>
         <version>0.1.0-SNAPSHOT</version>
-      </dependency>asf
+      </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>lifecycle</artifactId>
