@@ -1,4 +1,5 @@
 target/
+.DS_Store
 .arc
 
 # idea project files

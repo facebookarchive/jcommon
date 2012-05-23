@@ -1,6 +1,5 @@
 package com.facebook.stats;
 
-import com.facebook.stats.CompositeGaugeCounter;
 import org.joda.time.Duration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -8,8 +7,7 @@ import org.testng.annotations.Test;
 
 public class TestGaugeCounter {
 
-  // @Test(groups = "fast")
-  @Test
+  @Test(groups = "fast")
   public void testBasic() throws Exception {
     CompositeGaugeCounter cgc =
       new CompositeGaugeCounter(Duration.standardMinutes(1));
@@ -23,8 +21,7 @@ public class TestGaugeCounter {
     Assert.assertEquals(cgc.getAverage(), incr);
   }
 
-  // @Test(groups = "fast")
-  @Test
+  @Test(groups = "fast")
   public void testSpeed() throws Exception {
     CompositeGaugeCounter cgc =
       new CompositeGaugeCounter(Duration.standardMinutes(1));

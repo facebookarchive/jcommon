@@ -16,7 +16,7 @@ public class TestStatsManager {
     return result.toString();
   }
 
-  @Test
+  @Test(groups="fast")
   public void TestBasic() throws Exception {
     System.out.println("Basic Test");
     StatsManager stats = new StatsManager();

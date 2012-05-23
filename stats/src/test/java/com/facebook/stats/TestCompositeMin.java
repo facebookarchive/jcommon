@@ -5,18 +5,9 @@ import org.joda.time.Duration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-// import org.testng.Assert;
-// import org.testng.annotations.BeforeMethod;
-// import org.testng.annotations.Test;
-
-/**
- * Use "fbmake --verbose runtests" to find out where the
- * output dir will be.
- */
 public class TestCompositeMin {
 
-  // @Test(groups = "fast")
-  @Test
+  @Test(groups = "fast")
   public void testSanity() throws Exception {
     DateTimeUtils.setCurrentMillisFixed(0);
     CompositeMin compositeMax =

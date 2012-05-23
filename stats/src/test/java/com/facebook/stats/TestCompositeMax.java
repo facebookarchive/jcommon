@@ -7,8 +7,7 @@ import org.testng.annotations.Test;
 
 public class TestCompositeMax {
 
-  // @Test(groups = "fast")
-  @Test
+  @Test(groups = "fast")
   public void testSanity() throws Exception {
     DateTimeUtils.setCurrentMillisFixed(0);
     CompositeMax compositeMax =

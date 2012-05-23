@@ -6,8 +6,7 @@ import org.testng.annotations.Test;
 
 public class TestMultiWindowGauge {
 
-  // @Test(groups = "fast")
-  @Test
+  @Test(groups = "fast")
   public void testBasic() throws Exception {
     MultiWindowGauge mwg = new MultiWindowGauge();
     int num = 100000;
@@ -29,8 +28,7 @@ public class TestMultiWindowGauge {
     Assert.assertEquals(incr, merged.getMinuteAvg());
   }
 
-  // @Test(groups = "fast")
-  @Test
+  @Test(groups = "fast")
   public void testSpeed() throws Exception {
     MultiWindowGauge mwg = new MultiWindowGauge();
     int num = 10000;                // check time after num iterations
