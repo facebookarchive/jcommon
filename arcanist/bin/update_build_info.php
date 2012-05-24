@@ -140,7 +140,7 @@ function update_buildstatus($conduit, $diff_id, $status, $message) {
  */
 function update_unitresults($conduit, $diff_id) {
 
-  $tests = get_test_results('jcommon');
+  $tests = get_test_results('jcommon_build');
 
   // possible results: 'pass', 'fail', 'skip', 'broken', 'skip', 'unsound'
   foreach ($tests as $test) {
