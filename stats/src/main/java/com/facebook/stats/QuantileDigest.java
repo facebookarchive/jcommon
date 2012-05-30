@@ -13,6 +13,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -54,6 +55,7 @@ public class QuantileDigest {
 
   private double weightedCount;
   private long max;
+  private long min = Long.MAX_VALUE;
 
   private long landmarkInSeconds;
 
@@ -62,6 +64,10 @@ public class QuantileDigest {
   private int compressions = 0;
   private int maxTotalNodeCount = 0;
   private int maxTotalNodesAfterCompress = 0;
+
+  private enum TraversalOrder {
+    FORWARD, REVERSE
+  }
 
   /**
    * <p>Create a QuantileDigest with a maximum error guarantee of "maxError" and no decay.
@@ -121,6 +127,7 @@ public class QuantileDigest {
     weightedCount += weight;
 
     max = Math.max(max, value);
+    min = Math.min(min, value);
     insert(value, weight);
   }
 
@@ -190,39 +197,85 @@ public class QuantileDigest {
    * The approximate count in each bucket is guaranteed to be within 2 * totalCount * maxError of
    * the real count.
    */
-  public synchronized List<Double> getHistogram(List<Long> bucketUpperBounds) {
+  public synchronized List<Bucket> getHistogram(List<Long> bucketUpperBounds) {
     checkArgument(
       Ordering.natural().isOrdered(bucketUpperBounds),
       "buckets must be sorted in increasing order"
     );
 
-    final ImmutableList.Builder<Double> builder = ImmutableList.builder();
+    final ImmutableList.Builder<Bucket> builder = ImmutableList.builder();
     final PeekingIterator<Long> iterator = Iterators.peekingIterator(bucketUpperBounds.iterator());
 
     final AtomicDouble sum = new AtomicDouble();
     final AtomicDouble lastSum = new AtomicDouble();
+
+    // for computing weighed average of values in bucket
+    final AtomicDouble bucketWeightedSum = new AtomicDouble();
+
     final double normalizationFactor = weight(TimeUnit.MILLISECONDS.toSeconds(clock.getMillis()));
 
     postOrderTraversal(root, new Callback() {
       public boolean process(Node node) {
 
         while (iterator.hasNext() && iterator.peek() <= node.getUpperBound()) {
-          builder.add((sum.get() - lastSum.get()) / normalizationFactor);
+          double bucketCount = sum.get() - lastSum.get();
+
+          Bucket bucket = new Bucket(
+              bucketCount / normalizationFactor, bucketWeightedSum.get() / bucketCount);
+
+          builder.add(bucket);
           lastSum.set(sum.get());
+          bucketWeightedSum.set(0);
           iterator.next();
         }
 
+        bucketWeightedSum.addAndGet(node.getMiddle() * node.weightedCount);
         sum.addAndGet(node.weightedCount);
         return iterator.hasNext();
       }
     });
 
     while (iterator.hasNext()) {
-      builder.add((sum.get() - lastSum.get()) / normalizationFactor);
+      double bucketCount = sum.get() - lastSum.get();
+      Bucket bucket = new Bucket(
+          bucketCount / normalizationFactor, bucketWeightedSum.get() / bucketCount);
+
+      builder.add(bucket);
+
       iterator.next();
     }
 
     return builder.build();
+  }
+
+  public long getMin() {
+    final AtomicLong chosen = new AtomicLong(min);
+    postOrderTraversal(root, new Callback() {
+      public boolean process(Node node) {
+        if (node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
+          chosen.set(node.getLowerBound());
+          return false;
+        }
+        return true;
+      }
+    }, TraversalOrder.FORWARD);
+
+    return Math.max(min, chosen.get());
+  }
+
+  public long getMax() {
+    final AtomicLong chosen = new AtomicLong(max);
+    postOrderTraversal(root, new Callback() {
+      public boolean process(Node node) {
+        if (node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
+          chosen.set(node.getUpperBound());
+          return false;
+        }
+        return true;
+      }
+    }, TraversalOrder.REVERSE);
+
+    return Math.min(max, chosen.get());
   }
 
   @VisibleForTesting
@@ -450,13 +503,33 @@ public class QuantileDigest {
     return result;
   }
 
-  // returns true if traversal should continue
   private boolean postOrderTraversal(Node node, Callback callback) {
-    if (node.left != null && !postOrderTraversal(node.left, callback)) {
+    return postOrderTraversal(node, callback, TraversalOrder.FORWARD);
+  }
+
+    // returns true if traversal should continue
+  private boolean postOrderTraversal(Node node, Callback callback, TraversalOrder order) {
+    if (node == null) {
       return false;
     }
 
-    if (node.right != null && !postOrderTraversal(node.right, callback)) {
+    Node first;
+    Node second;
+
+    if (order == TraversalOrder.FORWARD) {
+      first = node.left;
+      second = node.right;
+    }
+    else {
+      first = node.right;
+      second = node.left;
+    }
+
+    if (first != null && !postOrderTraversal(first, callback, order)) {
+      return false;
+    }
+
+    if (second != null && !postOrderTraversal(second, callback, order)) {
       return false;
     }
 
@@ -550,6 +623,59 @@ public class QuantileDigest {
                              "Found a linear chain of zero-weight nodes");
   }
 
+  public static class Bucket {
+    private double count;
+    private double mean;
+
+    public Bucket(double count, double mean) {
+      this.count = count;
+      this.mean = mean;
+    }
+
+    public double getCount() {
+      return count;
+    }
+
+    public double getMean() {
+      return mean;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+
+      final Bucket bucket = (Bucket) o;
+
+      if (Double.compare(bucket.count, count) != 0) {
+        return false;
+      }
+      if (Double.compare(bucket.mean, mean) != 0) {
+        return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      int result;
+      long temp;
+      temp = count != +0.0d ? Double.doubleToLongBits(count) : 0L;
+      result = (int) (temp ^ (temp >>> 32));
+      temp = mean != +0.0d ? Double.doubleToLongBits(mean) : 0L;
+      result = 31 * result + (int) (temp ^ (temp >>> 32));
+      return result;
+    }
+
+    public String toString() {
+      return String.format("[count: %f, mean: %f]", count, mean);
+    }
+  }
 
   private static class Node {
     private double weightedCount;
@@ -586,6 +712,17 @@ public class QuantileDigest {
 
     public long getBranchMask() {
       return (1L << (level - 1));
+    }
+
+    public long getLowerBound() {
+      // set all lsb below level to 0 (we're looking for the lowes value of the range covered
+      // by this node)
+      long mask = (0x7FFFFFFFFFFFFFFFL << level);
+      return value & mask;
+    }
+
+    public long getMiddle() {
+      return getLowerBound() + (getUpperBound() - getLowerBound()) / 2;
     }
 
     public String toString() {

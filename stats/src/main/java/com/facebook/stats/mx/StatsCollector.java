@@ -9,6 +9,8 @@ public interface StatsCollector {
   public void incrementCounter(String key, long delta);
   public void incrementSpread(StatType type, long value);
   public void incrementSpread(String key, long value);
+  public void updateDistribution(StatType type, long value);
+  public void updateDistribution(String key, long value);
   public void setAttribute(StatType key, String value);
   public void setAttribute(String key, String value);
   public void setAttribute(StatType key, Callable<String> valueProducer);

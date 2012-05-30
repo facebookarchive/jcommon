@@ -173,15 +173,29 @@ public class TestQuantileDigest {
     assertEquals(digest.getCompressions(), 0);
     assertEquals(digest.getConfidenceFactor(), 0.0);
 
-    assertEquals(digest.getHistogram(asList(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L)),
-                 asList(0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0));
-    assertEquals(digest.getHistogram(asList(7L, 10L)), asList(7.0, 3.0));
+    assertEquals(digest.getHistogram(asList(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L)),
+                 asList(new QuantileDigest.Bucket(0, Double.NaN),
+                        new QuantileDigest.Bucket(1, 0),
+                        new QuantileDigest.Bucket(1, 1),
+                        new QuantileDigest.Bucket(1, 2),
+                        new QuantileDigest.Bucket(1, 3),
+                        new QuantileDigest.Bucket(1, 4),
+                        new QuantileDigest.Bucket(1, 5),
+                        new QuantileDigest.Bucket(1, 6),
+                        new QuantileDigest.Bucket(1, 7),
+                        new QuantileDigest.Bucket(1, 8),
+                        new QuantileDigest.Bucket(1, 9)));
+
+    assertEquals(digest.getHistogram(asList(7L, 10L)),
+                 asList(new QuantileDigest.Bucket(7, 3),
+                        new QuantileDigest.Bucket(3, 8)));
 
     // test some edge conditions
-    assertEquals(digest.getHistogram(asList(0L)), asList(0.0));
-    assertEquals(digest.getHistogram(asList(9L)), asList(9.0));
-    assertEquals(digest.getHistogram(asList(10L)), asList(10.0));
-    assertEquals(digest.getHistogram(asList(Long.MAX_VALUE)), asList(10.0));
+    assertEquals(digest.getHistogram(asList(0L)), asList(new QuantileDigest.Bucket(0, Double.NaN)));
+    assertEquals(digest.getHistogram(asList(9L)), asList(new QuantileDigest.Bucket(9, 4)));
+    assertEquals(digest.getHistogram(asList(10L)), asList(new QuantileDigest.Bucket(10, 4.5)));
+    assertEquals(digest.getHistogram(asList(Long.MAX_VALUE)),
+                 asList(new QuantileDigest.Bucket(10, 4.5)));
   }
 
   @Test(groups = "fast")
@@ -197,10 +211,10 @@ public class TestQuantileDigest {
     double actualMaxError = digest.getConfidenceFactor();
 
     for (long value = 0; value < total; ++value) {
-      double count = digest.getHistogram(asList(value)).get(0);
+      QuantileDigest.Bucket bucket = digest.getHistogram(asList(value)).get(0);
 
       // estimated count should have an absolute error smaller than 2 * maxError * N
-      assertTrue(Math.abs(count - value) < 2 * actualMaxError * total);
+      assertTrue(Math.abs(bucket.getCount() - value) < 2 * actualMaxError * total);
     }
   }
 
@@ -267,7 +281,10 @@ public class TestQuantileDigest {
     addAll(digest, asList(10, 11, 12, 13, 14, 15, 16, 17, 18, 19));
 
     // The first 10 values only contribute 5 to the counts per the alpha factor
-    assertEquals(digest.getHistogram(asList(10L, 20L)), asList(5.0, 10.0));
+    assertEquals(
+        digest.getHistogram(asList(10L, 20L)),
+        asList(new QuantileDigest.Bucket(5.0, 4.5), new QuantileDigest.Bucket(10.0, 14.5)));
+
     assertEquals(digest.getCount(), 15.0);
   }
 
@@ -284,10 +301,45 @@ public class TestQuantileDigest {
     addAll(digest, asList(10, 11, 12, 13, 14, 15, 16, 17, 18, 19));
 
     // The first 10 values only contribute 5 to the counts per the alpha factor
-    assertEquals(digest.getHistogram(asList(10L, 20L)), asList(5.0, 10.0));
+    assertEquals(
+        digest.getHistogram(asList(10L, 20L)),
+        asList(new QuantileDigest.Bucket(5.0, 4.5), new QuantileDigest.Bucket(10.0, 14.5)));
+
     assertEquals(digest.getCount(), 15.0);
   }
 
+  @Test(groups = "fast")
+  public void testMinMax() throws Exception {
+    QuantileDigest digest = new QuantileDigest(0.01, 0, new TestingClock(), false);
+
+    int from = 500;
+    int to = 700;
+    addRange(digest, from, to + 1);
+
+    assertEquals(digest.getMin(), from);
+    assertEquals(digest.getMax(), to);
+  }
+
+  @Test(groups = "fast")
+  public void testMinMaxWithDecay() throws Exception {
+    TestingClock clock = new TestingClock();
+
+    QuantileDigest digest = new QuantileDigest(0.01,
+      ExponentialDecay.computeAlpha(QuantileDigest.ZERO_WEIGHT_THRESHOLD, 60), clock, false);
+
+    addRange(digest, 1, 10);
+
+    clock.increment(1000, TimeUnit.SECONDS); // TODO: tighter bounds?
+
+    int from = 4;
+    int to = 7;
+    addRange(digest, from, to + 1);
+
+    digest.validate();
+
+    assertEquals(digest.getMin(), from);
+    assertEquals(digest.getMax(), to);
+  }
 
   @Test(groups = "fast")
   public void testRescaleWithDecayKeepsCompactTree() throws Exception {

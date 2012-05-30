@@ -3,6 +3,7 @@ package com.facebook.stats.mx;
 
 import com.facebook.logging.Logger;
 import com.facebook.logging.LoggerImpl;
+import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
 import com.facebook.stats.StatsUtil;
@@ -30,6 +31,8 @@ public class Stats implements StatsReader, StatsCollector {
     new ConcurrentHashMap<String, Callable<Long>>();
   private final ConcurrentMap<String, MultiWindowSpread> spreads =
     new ConcurrentHashMap<String, MultiWindowSpread>();
+  private final ConcurrentMap<String, MultiWindowDistribution> distributions =
+    new ConcurrentHashMap<String, MultiWindowDistribution>();
 
   public Stats(String prefix) {
     this.prefix = prefix;
@@ -66,6 +69,12 @@ public class Stats implements StatsReader, StatsCollector {
 
     for (Map.Entry<String, MultiWindowSpread> entry : spreads.entrySet()) {
       StatsUtil.addSpreadToCounters(
+        prefix + entry.getKey(), entry.getValue(), counterMap
+      );
+    }
+
+    for (Map.Entry<String, MultiWindowDistribution> entry : distributions.entrySet()) {
+      StatsUtil.addQuantileToCounters(
         prefix + entry.getKey(), entry.getValue(), counterMap
       );
     }
@@ -130,6 +139,16 @@ public class Stats implements StatsReader, StatsCollector {
     getMultiWindowSpread(key).add(value);
   }
 
+  @Override
+  public void updateDistribution(StatType type, long value) {
+    getMultiWindowDistribution(type.getKey()).add(value);
+  }
+
+  @Override
+  public void updateDistribution(String key, long value) {
+    getMultiWindowDistribution(key).add(value);
+  }
+
   private void internalIncrementCounter(String key, long delta) {
     AtomicLong value = counters.get(key);
 
@@ -163,6 +182,16 @@ public class Stats implements StatsReader, StatsCollector {
   @Override
   public MultiWindowSpread getSpread(String key) {
     return getMultiWindowSpread(key);
+  }
+
+  @Override
+  public MultiWindowDistribution getDistribution(StatType key) {
+    return getMultiWindowDistribution(key.getKey());
+  }
+
+  @Override
+  public MultiWindowDistribution getDistribution(String key) {
+    return getMultiWindowDistribution(key);
   }
 
   /**
@@ -260,6 +289,12 @@ public class Stats implements StatsReader, StatsCollector {
       }
     }
 
+    for (Map.Entry<String, MultiWindowDistribution> entry : distributions.entrySet()) {
+      StatsUtil.addHistogramToExportedValues(
+        entry.getKey(), entry.getValue(), materializedAttributes
+      );
+    }
+
     return materializedAttributes;
   }
 
@@ -277,7 +312,23 @@ public class Stats implements StatsReader, StatsCollector {
 
     return spread;
   }
-  
+
+  private MultiWindowDistribution getMultiWindowDistribution(String key) {
+    MultiWindowDistribution distribution = distributions.get(key);
+
+    if (distribution == null) {
+      distribution = new MultiWindowDistribution();
+      MultiWindowDistribution existing = distributions.putIfAbsent(key, distribution);
+
+      if (existing != null) {
+        distribution = existing;
+      }
+    }
+
+    return distribution;
+  }
+
+
 
   private static class StringProducer implements Callable<String> {
     private final String value;

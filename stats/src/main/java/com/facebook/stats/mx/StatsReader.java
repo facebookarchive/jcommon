@@ -1,6 +1,7 @@
 package com.facebook.stats.mx;
 
 
+import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
 
@@ -14,6 +15,8 @@ public interface StatsReader {
   public long getCounter(String key);
   public MultiWindowSpread getSpread(StatType key);
   public MultiWindowSpread getSpread(String key);
+  public MultiWindowDistribution getDistribution(StatType key);
+  public MultiWindowDistribution getDistribution(String key);
   public String getAttribute(StatType key);
   public String getAttribute(String key);
 

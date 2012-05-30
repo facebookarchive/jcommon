@@ -1,8 +1,10 @@
 package com.facebook.stats;
 
+import com.google.common.collect.ImmutableList;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
+import java.util.List;
 import java.util.Map;
 
 public class StatsUtil {
@@ -56,6 +58,76 @@ public class StatsUtil {
     addKeyToCounters(baseKey, "max", spread.getMax(), counters);
     addGaugeAvgToCounters(baseKey, spread.getGauge(), counters);
     addGaugeSamplesToCounters(baseKey, spread.getGauge(), counters);
+  }
+
+  public static void addQuantileToCounters(
+    String baseKey, MultiWindowDistribution quantiles, Map<String, Long> counters
+  ) {
+    addQuantilesToCounters(baseKey, ".60", counters, quantiles.getOneMinuteQuantiles());
+    addQuantilesToCounters(baseKey, ".600", counters, quantiles.getTenMinuteQuantiles());
+    addQuantilesToCounters(baseKey, ".3600", counters, quantiles.getOneHourQuantiles());
+    addQuantilesToCounters(baseKey, "", counters, quantiles.getAllTimeQuantiles());
+  }
+
+  public static void addHistogramToExportedValues(
+    String baseKey, MultiWindowDistribution quantiles, Map<String, String> values
+  ) {
+    addHistogramToExportedValues(baseKey, ".60", values, quantiles.getOneMinute());
+    addHistogramToExportedValues(baseKey, ".600", values, quantiles.getTenMinutes());
+    addHistogramToExportedValues(baseKey, ".3600", values, quantiles.getOneHour());
+    addHistogramToExportedValues(baseKey, "", values, quantiles.getAllTime());
+  }
+
+  private static void addHistogramToExportedValues(
+    String baseKey, String windowKey, Map<String, String> values, QuantileDigest digest
+  ) {
+    values.put(baseKey + ".hist" + windowKey, serializeHistogram(digest));
+  }
+
+  private static String serializeHistogram(QuantileDigest digest) {
+    int buckets = 100;
+
+    long min = digest.getMin();
+    long max = digest.getMax();
+    long bucketSize = (max - min) / buckets;
+
+    ImmutableList.Builder<Long> boundaryBuilder = ImmutableList.builder();
+    for (int i = 1; i < buckets + 1; ++i) {
+      boundaryBuilder.add(min + bucketSize * i);
+    }
+
+    ImmutableList<Long> boundaries = boundaryBuilder.build();
+    List<QuantileDigest.Bucket> counts = digest.getHistogram(boundaries);
+
+    StringBuilder builder = new StringBuilder();
+
+    // add bogus bucket (fb303 ui ignores the first one, for whatever reason)
+    builder.append("0:0:0,");
+    for (int i = 1; i < boundaries.size(); ++i) {
+      builder.append(boundaries.get(i - 1))
+        .append(':')
+        .append((long) counts.get(i).getCount())
+        .append(':')
+        .append((long) counts.get(i).getMean())
+        .append(',');
+    }
+
+    // add a final bucket so that fb303 ui shows the max value
+    builder.append(max);
+    builder.append(":0:0");
+
+    return builder.toString();
+  }
+
+  private static void addQuantilesToCounters(
+    String baseKey,
+    String windowKey,
+    Map<String, Long> counters,
+    Map<MultiWindowDistribution.Quantile, Long> oneMinuteQuantiles
+  ) {
+    for (Map.Entry<MultiWindowDistribution.Quantile, Long> entry : oneMinuteQuantiles.entrySet()) {
+      counters.put(baseKey + "." + entry.getKey().getKey() + windowKey, entry.getValue());
+    }
   }
 
   public static void setAllTimeSum(MultiWindowRate rate, long value) {
