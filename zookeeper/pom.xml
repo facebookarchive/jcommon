@@ -6,7 +6,7 @@
 
   <parent>
     <groupId>com.facebook</groupId>
-    <artifactId>jcommon</artifactId>
+    <artifactId>jcommon-parent</artifactId>
     <version>0.2.0-SNAPSHOT</version>
     <relativePath>../origin/pom.xml</relativePath>
   </parent>
