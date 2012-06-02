@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.facebook</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0</version>
     <relativePath>../origin/pom.xml</relativePath>
   </parent>
 
@@ -15,7 +15,7 @@
   <artifactId>jcommon-all</artifactId>
   <packaging>pom</packaging>
   <version>0.1.0-SNAPSHOT</version>
-  <name>jcommon all</name>
+  <name>jcommon-all</name>
 
   <dependencies>
     <dependency>
