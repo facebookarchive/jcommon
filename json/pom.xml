@@ -14,7 +14,7 @@
   <groupId>org.json</groupId>
   <artifactId>json</artifactId>
   <packaging>jar</packaging>
-  <version>20120422</version>
+  <version>20120422-SNAPSHOT</version>
   <name>json</name>
   <!--<url>fill-in-later to use mvn release</url>-->
 
