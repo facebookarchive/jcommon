@@ -16,6 +16,14 @@
     <project.nexus.hostPort>nexus.vip.facebook.com:8181</project.nexus.hostPort>
   </properties>
 
+  <scm>
+    <connection>scm:git:ssh://projects.git.vip.facebook.com/data/gitrepos/jcommon.git</connection>
+    <developerConnection>
+      scm:git:ssh://projects.git.vip.facebook.com/data/gitrepos/jcommon.git
+    </developerConnection>
+    <url>https://phabricator.fb.com/diffusion/</url>
+  </scm>
+
   <distributionManagement>
     <repository>
       <id>libs-releases-local</id>
