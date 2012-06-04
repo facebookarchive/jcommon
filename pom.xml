@@ -81,17 +81,17 @@
 
   <!--aggregator only project; includes upload info -->
   <modules>
-    <module>collections</module>
-    <module>concurrency</module>
-    <module>config</module>
-    <module>lifecycle</module>
-    <module>logging</module>
-    <module>memory</module>
-    <module>stats</module>
-    <module>testing</module>
     <module>util</module>
+    <module>collections</module>
+    <module>config</module>
+    <module>logging</module>
+    <module>lifecycle</module>
+    <module>testing</module>
+    <module>concurrency</module>
+    <module>stats</module>
     <module>zookeeper</module>
-    <module>json</module>
+    <module>memory</module>
+    <module>json</module>  
     <module>jcommon-all</module>
   </modules>
 
