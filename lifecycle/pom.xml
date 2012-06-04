@@ -11,6 +11,6 @@
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>lifecycle</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.1</version>
+  <version>0.1.1-SNAPSHOT</version>
   <name>jcommon lifecycle</name>
 </project>
