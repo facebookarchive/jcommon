@@ -11,7 +11,7 @@
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>testing</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.1-SNAPSHOT</version>
+  <version>0.1.1</version>
   <name>shared testing utilities</name>
 
   <dependencies>
