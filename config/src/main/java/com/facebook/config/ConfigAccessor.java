@@ -180,10 +180,10 @@ public class ConfigAccessor {
     for (String item : getStringList(key)) {
       result.add(converter.map(item));
     }
-    
+
     return result;
   }
-  
+
   public List<String> getStringList(String key) throws ConfigException {
     JSONArray items;
     List<String> result = new ArrayList<String>();
@@ -231,6 +231,20 @@ public class ConfigAccessor {
       } else {
         throw new ConfigException("missing property: " + key);
       }
+    } catch (JSONException e) {
+      throw new ConfigException(e);
+    }
+  }
+
+  @Override
+  public String toString() {
+    return jsonObject.toString();
+  }
+
+  public String toString(int indentFactor)
+    throws ConfigException {
+    try {
+      return jsonObject.toString(indentFactor);
     } catch (JSONException e) {
       throw new ConfigException(e);
     }
