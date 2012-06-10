@@ -1,6 +1,7 @@
 package com.facebook.concurrency;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class LatchTask implements Runnable {
   private final CountDownLatch hasRunLatch = new CountDownLatch(1);
@@ -49,5 +50,12 @@ public class LatchTask implements Runnable {
   
   public void await() throws InterruptedException {
     hasRunLatch.await();
+  }
+
+  /**
+   * @see CountDownLatch
+   */
+  public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+    return hasRunLatch.await(timeout, unit);
   }
 }
