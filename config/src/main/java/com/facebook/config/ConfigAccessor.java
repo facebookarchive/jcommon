@@ -31,6 +31,10 @@ public class ConfigAccessor {
     this.jsonObject = jsonObject;
   }
 
+  public static ConfigAccessor emptyConfig() {
+    return new ConfigAccessor(new JSONObject());
+  }
+
   public <T> T getBean(
     String key,
     Class<? extends ExtractableBeanBuilder<T>> beanBuilderClass

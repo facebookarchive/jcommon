@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.facebook</groupId>
   <artifactId>jcommon-parent</artifactId>
@@ -18,6 +20,7 @@
     <project.libs-snapshots-local-url>
       http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
     </project.libs-snapshots-local-url>
+    <project.default.version>0.1.1-SNAPSHOT</project.default.version>
   </properties>
 
   <scm>
@@ -35,52 +38,52 @@
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>collections</artifactId>
-        <version>0.1.0</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>concurrency</artifactId>
-        <version>0.1.0</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>config</artifactId>
-        <version>0.1.0</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>lifecycle</artifactId>
-        <version>0.1.0</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>logging</artifactId>
-        <version>0.1.0</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>memory</artifactId>
-        <version>0.1.0</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>stats</artifactId>
-        <version>0.1.0</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>util</artifactId>
-        <version>0.1.0</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>zookeeper</artifactId>
-        <version>0.1.0</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>testing</artifactId>
-        <version>0.1.0</version>
+        <version>${project.default.version}</version>
       </dependency>
 
       <!--third party-->
