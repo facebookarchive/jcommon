@@ -62,7 +62,7 @@ public class Stats implements StatsReader, StatsCollector {
   @Override
   public void exportCounters(Map<String, Long> counterMap) {
     for (Map.Entry<String, MultiWindowRate> entry : rates.entrySet()) {
-      StatsUtil.addKeyToCounters(
+      StatsUtil.addRateAndSumToCounters(
         prefix + entry.getKey(), entry.getValue(), counterMap
       );
     }

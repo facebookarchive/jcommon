@@ -7,66 +7,97 @@ import org.joda.time.ReadableDateTime;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Helper methods for converting stat objects into key/value pairs that conform to standing
+ * naming conventions around <type>.<time_window>
+ */
 public class StatsUtil {
-  public static void addKeyToCounters(
-    String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counters
+  /**
+   * @deprecated replaced by addRateAndSumToCounters
+   */
+  @Deprecated
+  public static void adddKeyToCounters(
+    String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap
   ) {
-    counters.put(baseKey + ".rate", rate.getAllTimeRate());
-    counters.put(baseKey + ".rate.3600", rate.getHourRate());
-    counters.put(baseKey + ".rate.600", rate.getTenMinuteRate());
-    counters.put(baseKey + ".rate.60", rate.getMinuteRate());
-    counters.put(baseKey + ".sum", rate.getAllTimeSum());
-    counters.put(baseKey + ".sum.3600", rate.getHourSum());
-    counters.put(baseKey + ".sum.600", rate.getTenMinuteSum());
-    counters.put(baseKey + ".sum.60", rate.getMinuteSum());
+    addRateToCounters(baseKey,  rate, counterMap);
+    addSumToCounters(baseKey,  rate, counterMap);
+  }
+
+  public static void addRateAndSumToCounters(
+    String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap
+  ) {
+    addRateToCounters(baseKey,  rate, counterMap);
+    addSumToCounters(baseKey,  rate, counterMap);
+  }
+
+  public static void addRateToCounters(
+    String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap
+  ) {
+    counterMap.put(baseKey + ".rate", rate.getAllTimeRate());
+    counterMap.put(baseKey + ".rate.3600", rate.getHourRate());
+    counterMap.put(baseKey + ".rate.600", rate.getTenMinuteRate());
+    counterMap.put(baseKey + ".rate.60", rate.getMinuteRate());
+  }
+
+  public static void addSumToCounters(
+    String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap
+  ) {
+    counterMap.put(baseKey + ".rate", rate.getAllTimeRate());
+    counterMap.put(baseKey + ".rate.3600", rate.getHourRate());
+    counterMap.put(baseKey + ".rate.600", rate.getTenMinuteRate());
+    counterMap.put(baseKey + ".rate.60", rate.getMinuteRate());
   }
 
   public static void addGaugeAvgToCounters(
-    String baseKey, ReadableMultiWindowGauge gauge, Map<String, Long> counters
+    String baseKey, ReadableMultiWindowGauge gauge, Map<String, Long> counterMap
   ) {
-    counters.put(baseKey + ".avg", gauge.getAllTimeAvg());
-    counters.put(baseKey + ".avg.3600", gauge.getHourAvg());
-    counters.put(baseKey + ".avg.600", gauge.getTenMinuteAvg());
-    counters.put(baseKey + ".avg.60", gauge.getMinuteAvg());
+    counterMap.put(baseKey + ".avg", gauge.getAllTimeAvg());
+    counterMap.put(baseKey + ".avg.3600", gauge.getHourAvg());
+    counterMap.put(baseKey + ".avg.600", gauge.getTenMinuteAvg());
+    counterMap.put(baseKey + ".avg.60", gauge.getMinuteAvg());
   }
 
   public static void addGaugeSamplesToCounters(
-    String baseKey, ReadableMultiWindowGauge gauge, Map<String, Long> counters
+    String baseKey, ReadableMultiWindowGauge gauge, Map<String, Long> counterMap
   ) {
-    counters.put(baseKey + ".samples", gauge.getAllTimeSamples());
-    counters.put(baseKey + ".samples.3600", gauge.getHourSamples());
-    counters.put(baseKey + ".samples.600", gauge.getTenMinuteSamples());
-    counters.put(baseKey + ".samples.60", gauge.getMinuteSamples());
+    counterMap.put(baseKey + ".samples", gauge.getAllTimeSamples());
+    counterMap.put(baseKey + ".samples.3600", gauge.getHourSamples());
+    counterMap.put(baseKey + ".samples.600", gauge.getTenMinuteSamples());
+    counterMap.put(baseKey + ".samples.60", gauge.getMinuteSamples());
   }
 
-  public static void addKeyToCounters(
-    String baseKey,
-    String aggName,
-    ReadableMultiWindowCounter counter,
-    Map<String, Long> counters
+  /**
+   * internal helper method
+   *
+   * @param baseKey base baseKey name, adds standard time ranges ".60", ".3600", ...
+   * @param counter the counter to add
+   * @param counterMap map of counters
+   */
+  private static void addValueToCounters(
+    String baseKey, ReadableMultiWindowCounter counter, Map<String, Long> counterMap
   ) {
-    counters.put(baseKey + "." + aggName, counter.getAllTimeValue());
-    counters.put(baseKey + "." + aggName + ".3600", counter.getHourValue());
-    counters.put(baseKey + "." + aggName + ".600", counter.getTenMinuteValue());
-    counters.put(baseKey + "." + aggName + ".60", counter.getMinuteValue());
+    counterMap.put(baseKey, counter.getAllTimeValue());
+    counterMap.put(baseKey + ".3600", counter.getHourValue());
+    counterMap.put(baseKey + ".600", counter.getTenMinuteValue());
+    counterMap.put(baseKey + ".60", counter.getMinuteValue());
   }
 
   public static void addSpreadToCounters(
-    String baseKey, MultiWindowSpread spread, Map<String, Long> counters
+    String baseKey, MultiWindowSpread spread, Map<String, Long> counterMap
   ) {
-    addKeyToCounters(baseKey, "min", spread.getMin(), counters);
-    addKeyToCounters(baseKey, "max", spread.getMax(), counters);
-    addGaugeAvgToCounters(baseKey, spread.getGauge(), counters);
-    addGaugeSamplesToCounters(baseKey, spread.getGauge(), counters);
+    addValueToCounters(baseKey + "min", spread.getMin(), counterMap);
+    addValueToCounters(baseKey + "max", spread.getMax(), counterMap);
+    addGaugeAvgToCounters(baseKey, spread.getGauge(), counterMap);
+    addGaugeSamplesToCounters(baseKey, spread.getGauge(), counterMap);
   }
 
   public static void addQuantileToCounters(
-    String baseKey, MultiWindowDistribution quantiles, Map<String, Long> counters
+    String baseKey, MultiWindowDistribution quantiles, Map<String, Long> counterMap
   ) {
-    addQuantilesToCounters(baseKey, ".60", counters, quantiles.getOneMinuteQuantiles());
-    addQuantilesToCounters(baseKey, ".600", counters, quantiles.getTenMinuteQuantiles());
-    addQuantilesToCounters(baseKey, ".3600", counters, quantiles.getOneHourQuantiles());
-    addQuantilesToCounters(baseKey, "", counters, quantiles.getAllTimeQuantiles());
+    addQuantilesToCounters(baseKey, ".60", counterMap, quantiles.getOneMinuteQuantiles());
+    addQuantilesToCounters(baseKey, ".600", counterMap, quantiles.getTenMinuteQuantiles());
+    addQuantilesToCounters(baseKey, ".3600", counterMap, quantiles.getOneHourQuantiles());
+    addQuantilesToCounters(baseKey, "", counterMap, quantiles.getAllTimeQuantiles());
   }
 
   public static void addHistogramToExportedValues(
