@@ -90,7 +90,7 @@ class DenseEstimator
   }
 
   @Override
-  public void setIfGreater(int bucket, int highestBitPosition) {
+  public boolean setIfGreater(int bucket, int highestBitPosition) {
     int relativeHighestBitPosition = highestBitPosition - baseline;
     if (relativeHighestBitPosition > BUCKET_MAX_VALUE) {
       // we can't fit this in BITS_PER_BUCKET, so truncate (it shouldn't affect results
@@ -100,17 +100,21 @@ class DenseEstimator
 
     int oldValue = get(bucket);
 
-    if (relativeHighestBitPosition > oldValue) {
-      set(bucket, relativeHighestBitPosition);
-
-      currentSum -= 1.0 / (1L << (oldValue + baseline));
-      currentSum += 1.0 / (1L << (relativeHighestBitPosition + baseline));
-
-      if (oldValue == 0) {
-        --baselineCount;
-        rescaleAndRecomputeBaseCountIfNeeded();
-      }
+    if (relativeHighestBitPosition <= oldValue) {
+      return false;
     }
+
+    set(bucket, relativeHighestBitPosition);
+
+    currentSum -= 1.0 / (1L << (oldValue + baseline));
+    currentSum += 1.0 / (1L << (relativeHighestBitPosition + baseline));
+
+    if (oldValue == 0) {
+      --baselineCount;
+      rescaleAndRecomputeBaseCountIfNeeded();
+    }
+
+    return true;
   }
 
   private void set(int bucket, int value) {

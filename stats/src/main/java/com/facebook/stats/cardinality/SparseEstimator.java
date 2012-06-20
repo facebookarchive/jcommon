@@ -57,7 +57,7 @@ class SparseEstimator
     slots = new long[(initialCapacity + getBucketsPerSlot()) / getBucketsPerSlot()];
   }
 
-  public void setIfGreater(int bucket, int highestBitPosition) {
+  public boolean setIfGreater(int bucket, int highestBitPosition) {
     Preconditions.checkArgument(
       highestBitPosition < MAX_BUCKET_VALUE,
       "highestBitPosition %s is bigger than allowed by BITS_PER_BUCKET (%s)",
@@ -66,16 +66,20 @@ class SparseEstimator
     );
 
     if (highestBitPosition == 0) {
-      return; // no need to set anything -- 0 is implied if bucket is not present
+      return false; // no need to set anything -- 0 is implied if bucket is not present
     }
 
     int index = findBucket(bucket);
 
     if (index < 0) {
       insertAt(-(index + 1), bucket, highestBitPosition);
+      return true;
     } else if (getEntry(index).getValue() < highestBitPosition) {
       setEntry(index, bucket, highestBitPosition);
+      return true;
     }
+
+    return false;
   }
 
   public int[] buckets() {

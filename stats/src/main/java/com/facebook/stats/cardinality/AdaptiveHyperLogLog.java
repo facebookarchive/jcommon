@@ -6,6 +6,8 @@ import com.google.common.hash.Hashing;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 @NotThreadSafe
 public class AdaptiveHyperLogLog {
   private static final HashFunction HASH = Hashing.murmur3_128();
@@ -22,33 +24,17 @@ public class AdaptiveHyperLogLog {
     this.estimator = new SparseEstimator(numberOfBuckets);
   }
 
-  public AdaptiveHyperLogLog(int[] buckets) {
-    Preconditions.checkArgument(
-      Numbers.isPowerOf2(buckets.length),
-      "numberOfBuckets must be a power of 2"
-    );
+  public AdaptiveHyperLogLog(int[] buckets)
+  {
+    checkArgument(Numbers.isPowerOf2(buckets.length), "numberOfBuckets must be a power of 2");
 
-    int nonZeroBuckets = 0;
-    int maxValue = 0;
-    for (int value : buckets) {
-      maxValue = Math.max(maxValue, value);
-      if (value > 0) {
-        ++nonZeroBuckets;
-      }
-    }
-
-    if (maxValue < SparseEstimator.MAX_BUCKET_VALUE &&
-      SparseEstimator.estimateSizeInBytes(
-        nonZeroBuckets,
-        buckets.length
-      ) < DenseEstimator.estimateSizeInBytes(buckets.length)) {
-      estimator = new SparseEstimator(buckets);
-    } else {
-      estimator = new DenseEstimator(buckets);
-    }
+    estimator = makeEstimator(buckets);
   }
 
-  public void add(long value) {
+  /**
+   * @return true if the estimation was affected by this addition
+   */
+  public boolean add(long value) {
     long hash = HASH.hashLong(value).asLong();
 
     int bucketMask = estimator.getNumberOfBuckets() - 1;
@@ -64,7 +50,7 @@ public class AdaptiveHyperLogLog {
       estimator = new DenseEstimator(estimator.buckets());
     }
 
-    estimator.setIfGreater(bucket, highestBit);
+    return estimator.setIfGreater(bucket, highestBit);
   }
 
   public long estimate() {
@@ -75,7 +61,39 @@ public class AdaptiveHyperLogLog {
     return estimator.estimateSizeInBytes() + INSTANCE_SIZE;
   }
 
+  public int getNumberOfBuckets() {
+    return estimator.getNumberOfBuckets();
+  }
+
   public int[] buckets() {
     return estimator.buckets();
   }
+
+  public void merge(AdaptiveHyperLogLog other) {
+    estimator = makeEstimator(HyperLogLogUtil.mergeBuckets(this.buckets(), other.buckets()));
+  }
+
+  public static AdaptiveHyperLogLog merge(AdaptiveHyperLogLog first, AdaptiveHyperLogLog second) {
+    return new AdaptiveHyperLogLog(HyperLogLogUtil.mergeBuckets(first.buckets(), second.buckets()));
+  }
+
+  private static Estimator makeEstimator(int[] buckets) {
+    int nonZeroBuckets = 0;
+    int maxValue = 0;
+    for (int value : buckets) {
+      maxValue = Math.max(maxValue, value);
+      if (value > 0) {
+        ++nonZeroBuckets;
+      }
+    }
+
+    if (maxValue < SparseEstimator.MAX_BUCKET_VALUE &&
+      SparseEstimator.estimateSizeInBytes(nonZeroBuckets, buckets.length) < DenseEstimator.estimateSizeInBytes(buckets.length)) {
+      return new SparseEstimator(buckets);
+    }
+    else {
+      return new DenseEstimator(buckets);
+    }
+  }
+
 }

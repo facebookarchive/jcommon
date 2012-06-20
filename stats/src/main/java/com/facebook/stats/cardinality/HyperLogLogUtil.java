@@ -4,6 +4,9 @@ import com.google.common.base.Preconditions;
 
 import java.util.Random;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class HyperLogLogUtil {
   public static long estimateCardinality(int[] bucketValues) {
     Preconditions.checkArgument(
@@ -92,4 +95,23 @@ public class HyperLogLogUtil {
 
     return result;
   }
+
+  public static int[] mergeBuckets(int[] first, int[] second) {
+    checkNotNull(first, "first is null");
+    checkNotNull(second, "second is null");
+    checkArgument(
+      first.length == second.length,
+      "Array sizes must match, found %s vs %s",
+      first.length,
+      second.length
+    );
+
+    int[] result = new int[first.length];
+    for (int i = 0; i < first.length; i++) {
+      result[i] = Math.max(first[i], second[i]);
+    }
+
+    return result;
+  }
+
 }
