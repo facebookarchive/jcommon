@@ -28,6 +28,10 @@
       <artifactId>logging</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.facebook.jcommon</groupId>
+      <artifactId>util</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
     </dependency>

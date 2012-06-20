@@ -70,7 +70,7 @@ public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
 
     trimIfNeeded();
 
-    Iterator<GaugeCounter> counterIterator = eventCounterIterator();
+    Iterator<GaugeCounter> counterIterator = getEventCounters().iterator();
     boolean first = true;
     while (counterIterator.hasNext()) {
       GaugeCounter counter = counterIterator.next();
@@ -111,19 +111,13 @@ public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
     // special case to handle merging of 2 composite counters
     if (counter instanceof CompositeGaugeCounter) {
       return internalMerge(
-        getEventCountersCopy(),
-        ((CompositeGaugeCounter) counter).getEventCountersCopy(),
-        new CompositeGaugeCounter(
-          getMaxLength(), getMaxChunkLength(), gaugeCounterFactory
-        )
+        ((CompositeGaugeCounter) counter).getEventCounters(),
+        new CompositeGaugeCounter( getMaxLength(), getMaxChunkLength(), gaugeCounterFactory)
       );
     } else {
       return internalMerge(
-        getEventCountersCopy(),
         Arrays.asList(counter),
-        new CompositeGaugeCounter(
-          getMaxLength(), getMaxChunkLength(), gaugeCounterFactory
-        )
+        new CompositeGaugeCounter(getMaxLength(), getMaxChunkLength(), gaugeCounterFactory)
       );
     }
   }

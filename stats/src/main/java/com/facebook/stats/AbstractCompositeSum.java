@@ -1,8 +1,13 @@
 package com.facebook.stats;
 
+import com.google.common.base.Preconditions;
+import org.joda.time.Duration;
+import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableDuration;
 
 import java.util.Iterator;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 public abstract class AbstractCompositeSum<C extends EventCounterIf<C>>
   extends AbstractCompositeCounter<C> {
@@ -30,16 +35,16 @@ public abstract class AbstractCompositeSum<C extends EventCounterIf<C>>
     trimIfNeeded();
 
     long value = 0L;
-
-    Iterator<C> iter = eventCounterIterator();
+    Iterator<C> iter = getEventCounters().iterator();
     boolean first = true;
+
     while (iter.hasNext()) {
       C counter = iter.next();
       value += counter.getValue();
 
       if (first) {
         // if there is at least one counter that is partially expired
-        if (getWindowStart().isAfter(counter.getStart())) {
+        if (counter.getStart().isBefore(getWindowStart())) {
           // adjust for partial expiration
           value -= (long) (getExpiredFraction(counter) * counter.getValue());
         }
@@ -53,21 +58,44 @@ public abstract class AbstractCompositeSum<C extends EventCounterIf<C>>
   /**
    * Takes the oldest counter and returns the fraction [0, 1] of it that
    * has extended outside the current time window of the composite counter.
-   *
+   * <p/>
    * Assumes:
-   *   counter.getEnd() >= window.getStart()
-   *   counter.getStart() <= window.getStart()
+   * counter.getEnd() >= window.getStart()
+   * counter.getStart() < window.getStart()
    *
    * @param oldestCounter
    * @return fraction [0, 1]
    */
   protected float getExpiredFraction(EventCounterIf<C> oldestCounter) {
-    long expiredPortionMillis =
-      getWindowStart().getMillis() - oldestCounter.getStart().getMillis();
+    ReadableDateTime windowStart = getWindowStart();
 
-    long lengthMillis =
-      oldestCounter.getEnd().getMillis() - oldestCounter.getStart().getMillis();
+    //counter.getEnd() >= window.getStart()
+    checkArgument( !oldestCounter.getEnd().isBefore(windowStart),
+      "counter should have end %s >= window start %s", oldestCounter.getEnd(), windowStart
+    );
 
-    return (expiredPortionMillis / (float) lengthMillis);
+    ReadableDateTime counterStart = oldestCounter.getStart();
+
+    //counter.getstart() < window.getStart()
+    checkArgument(
+      counterStart.isBefore(windowStart),
+      String.format(
+        "counter should have start %s <= window start %s", counterStart, windowStart
+      )
+    );
+
+    //
+    long expiredPortionMillis = windowStart.getMillis() - counterStart.getMillis();
+    long lengthMillis = oldestCounter.getEnd().getMillis() - counterStart.getMillis();
+    float expiredFraction = expiredPortionMillis / (float) lengthMillis;
+
+    Preconditions.checkState(
+      expiredFraction >= 0 && expiredFraction <= 1.0,
+      String.format(
+        "%s not in [0, 1]", expiredFraction
+      )
+    );
+
+    return expiredFraction;
   }
 }

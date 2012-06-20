@@ -30,7 +30,7 @@ public class MultiWindowRate implements ReadableMultiWindowRate {
       newEventRate(tenMinuteCounter, Duration.standardMinutes(10), start);
     minuteRate =
       newEventRate(minuteCounter, Duration.standardMinutes(1), start);
-    currentCounter = nextCurrentCounter();
+    currentCounter = nextCurrentCounter(start.toDateTime());
   }
 
   MultiWindowRate(
@@ -51,7 +51,7 @@ public class MultiWindowRate implements ReadableMultiWindowRate {
       newEventRate(tenMinuteCounter, Duration.standardMinutes(10), start);
     minuteRate =
       newEventRate(minuteCounter, Duration.standardMinutes(1), start);
-    currentCounter = nextCurrentCounter();
+    currentCounter = nextCurrentCounter(start.toDateTime());
   }
 
   private CompositeSum newCompositeEventCounter(int minutes) {
@@ -73,11 +73,11 @@ public class MultiWindowRate implements ReadableMultiWindowRate {
     //do outside the synchronized block
     long now = DateTimeUtils.currentTimeMillis();
     // this is false for the majority of calls, so skip lock acquisition
-    if (currentCounter.getEnd().getMillis() < now) {
+    if (currentCounter.getEnd().getMillis() <= now) {
       synchronized (rollLock) {
         // lock and re-check
-        if (currentCounter.getEnd().getMillis() < now) {
-          currentCounter = nextCurrentCounter();
+        if (currentCounter.getEnd().getMillis() <= now) {
+          currentCounter = nextCurrentCounter(new DateTime(now));
         }
       }
     }
@@ -146,11 +146,9 @@ public class MultiWindowRate implements ReadableMultiWindowRate {
   }
 
   // current
-  private EventCounterIf<EventCounter> nextCurrentCounter() {
-    ReadableDateTime now = getNow();
+  private EventCounterIf<EventCounter> nextCurrentCounter(DateTime now) {
     SumEventCounter sumEventCounter = new SumEventCounter(
-      now,
-      now.toDateTime().plusSeconds(6)
+      now, now.plusSeconds(6)
     );
 
     allTimeCounter.addEventCounter(sumEventCounter);

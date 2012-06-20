@@ -56,7 +56,7 @@ public class TestCompositeSum {
     EventCounter lastCounter = nextEventWindow(1);
     counter.addEventCounter(lastCounter);
     setNow(lastCounter.getEnd().toDateTime().minusMillis(1));
-    DateTimeUtils.setCurrentMillisFixed(now.getMillis());    
+    DateTimeUtils.setCurrentMillisFixed(now.getMillis());
     Assert.assertEquals(counter.getValue(), 1001);
     // test updating last counter
     lastCounter.add(200);
@@ -233,8 +233,8 @@ public class TestCompositeSum {
   
   @Test(groups = "fast")
   public void testPartialExpiration() throws Exception {
-    CompositeSum counter =
-      newCompositeEventCounter(Duration.standardMinutes(10));
+    setNow(base);
+    CompositeSum counter = newCompositeEventCounter(Duration.standardMinutes(10));
 
     for (int i = 0; i < 10; i++) {
       counter.add(10);
@@ -242,9 +242,8 @@ public class TestCompositeSum {
     }
 
     Assert.assertEquals(counter.getValue(), 100);
-    advanceNowSeconds(6);
-    Assert.assertEquals(counter.getValue(), 99);
-    
+    advanceNowSeconds(30);
+    Assert.assertEquals(counter.getValue(), 95);
   }
   
   private void advanceNowSeconds(int seconds) {

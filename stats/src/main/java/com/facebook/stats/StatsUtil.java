@@ -1,6 +1,7 @@
 package com.facebook.stats;
 
 import com.google.common.collect.ImmutableList;
+import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
@@ -42,10 +43,10 @@ public class StatsUtil {
   public static void addSumToCounters(
     String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap
   ) {
-    counterMap.put(baseKey + ".rate", rate.getAllTimeRate());
-    counterMap.put(baseKey + ".rate.3600", rate.getHourRate());
-    counterMap.put(baseKey + ".rate.600", rate.getTenMinuteRate());
-    counterMap.put(baseKey + ".rate.60", rate.getMinuteRate());
+    counterMap.put(baseKey + ".sum", rate.getAllTimeSum());
+    counterMap.put(baseKey + ".sum.3600", rate.getHourSum());
+    counterMap.put(baseKey + ".sum.600", rate.getTenMinuteSum());
+    counterMap.put(baseKey + ".sum.60", rate.getMinuteSum());
   }
 
   public static void addGaugeAvgToCounters(
@@ -85,8 +86,8 @@ public class StatsUtil {
   public static void addSpreadToCounters(
     String baseKey, MultiWindowSpread spread, Map<String, Long> counterMap
   ) {
-    addValueToCounters(baseKey + "min", spread.getMin(), counterMap);
-    addValueToCounters(baseKey + "max", spread.getMax(), counterMap);
+    addValueToCounters(baseKey + ".min", spread.getMin(), counterMap);
+    addValueToCounters(baseKey + ".max", spread.getMax(), counterMap);
     addGaugeAvgToCounters(baseKey, spread.getGauge(), counterMap);
     addGaugeSamplesToCounters(baseKey, spread.getGauge(), counterMap);
   }
@@ -188,5 +189,12 @@ public class StatsUtil {
     }
 
     return new Duration(start, end);
+  }
+
+  public static void main(String[] args) {
+    DateTime start = new DateTime("2012-01-01T01:01:00.000Z");
+    DateTime end= new DateTime("2012-01-01T01:02:00.000Z");
+    Duration x = new Duration(start, end);
+    System.err.println(x.getMillis());
   }
 }

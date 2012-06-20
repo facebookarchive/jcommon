@@ -40,13 +40,11 @@ public class CompositeSum extends AbstractCompositeSum<EventCounter>
     // special case to handle merging of 2 composite counters
     if (counter instanceof CompositeSum) {
       return internalMerge(
-        getEventCountersCopy(),
-        ((CompositeSum) counter).getEventCountersCopy(),
+        ((CompositeSum) counter).getEventCounters(),
         new CompositeSum(getMaxLength(), getMaxChunkLength())
       );
     } else {
       return internalMerge(
-        getEventCountersCopy(),
         Arrays.asList(counter),
         new CompositeSum(getMaxLength(), getMaxChunkLength())
       );

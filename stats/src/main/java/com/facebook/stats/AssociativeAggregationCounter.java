@@ -1,5 +1,6 @@
 package com.facebook.stats;
 
+import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -33,7 +34,7 @@ public class AssociativeAggregationCounter implements EventCounter {
     long val = value.get();
     while (
       !value.compareAndSet(val, associativeAggregation.combine(val, delta))
-    ) {
+      ) {
       val = value.get();
     }
   }
@@ -51,6 +52,11 @@ public class AssociativeAggregationCounter implements EventCounter {
   }
 
   @Override
+  public Duration getLength() {
+    return new Duration(start, end);
+  }
+
+  @Override
   public EventCounter merge(EventCounter counter) {
     ReadableDateTime mergedStart = start;
     ReadableDateTime mergedEnd = end;
@@ -63,14 +69,11 @@ public class AssociativeAggregationCounter implements EventCounter {
       mergedEnd = counter.getEnd();
     }
 
-    AssociativeAggregationCounter mergedCounter =
-      new AssociativeAggregationCounter(
-        mergedStart, mergedEnd, associativeAggregation, initialValue
-      );
-
-    mergedCounter.add(
-      associativeAggregation.combine(value.get(), counter.getValue())
+    AssociativeAggregationCounter mergedCounter = new AssociativeAggregationCounter(
+      mergedStart, mergedEnd, associativeAggregation, initialValue
     );
+
+    mergedCounter.add(associativeAggregation.combine(value.get(), counter.getValue()));
 
     return mergedCounter;
   }

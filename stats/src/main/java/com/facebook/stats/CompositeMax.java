@@ -23,13 +23,11 @@ public class CompositeMax extends AbstractCompositeCounter<EventCounter>
   public EventCounter merge(EventCounter counter) {
     if (counter instanceof CompositeMax) {
       return internalMerge(
-        getEventCountersCopy(),
-        ((CompositeMax) counter).getEventCountersCopy(),
+        ((CompositeMax) counter).getEventCounters(),
         new CompositeMax(getMaxLength(), getMaxChunkLength())
       );
     } else {
       return internalMerge(
-        getEventCountersCopy(),
         Arrays.asList(counter),
         new CompositeMax(getMaxLength(), getMaxChunkLength())
       );
@@ -48,10 +46,11 @@ public class CompositeMax extends AbstractCompositeCounter<EventCounter>
     trimIfNeeded();
 
     long max = Long.MIN_VALUE;
-    Iterator<EventCounter> iter = eventCounterIterator();
-    while (iter.hasNext()) {
-      max = Math.max(max, iter.next().getValue());
+
+    for (EventCounter eventCounter : getEventCounters()) {
+      max = Math.max(max, eventCounter.getValue());
     }
+
     return max;
   }
 }

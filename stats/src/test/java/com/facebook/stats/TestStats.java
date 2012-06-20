@@ -41,6 +41,7 @@ public class TestStats {
     Map <String, String> statsAttributes = stats.getAttributes();
     Assert.assertEquals(attributeMap, statsAttributes);    
   }
+
   /**
    * Test the setAttribute(String, String) function
    */
@@ -75,7 +76,7 @@ public class TestStats {
   public void testGetEmptyCounter() throws Exception {
   	Assert.assertEquals(stats.getCounter("fuu"), 0);
   }
-  
+
   @Test(groups = "fast")
   public void testDynamicCounters() throws Exception {
     LongWrapper longValue = new LongWrapper(1);

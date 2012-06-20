@@ -1,5 +1,6 @@
 package com.facebook.stats;
 
+import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -63,6 +64,11 @@ public class FastGaugeCounter implements GaugeCounter {
   @Override
   public ReadableDateTime getEnd() {
     return end;
+  }
+
+  @Override
+  public Duration getLength() {
+    return new Duration(start, end);
   }
 
   public GaugeCounter merge(GaugeCounter counter) {

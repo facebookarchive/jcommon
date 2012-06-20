@@ -1,5 +1,6 @@
 package com.facebook.stats;
 
+import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
 /**
@@ -59,6 +60,11 @@ public class DefaultGaugeCounter implements GaugeCounter {
   @Override
   public ReadableDateTime getEnd() {
     return end;
+  }
+
+  @Override
+  public Duration getLength() {
+    return new Duration(start, end);
   }
 
   public GaugeCounter merge(GaugeCounter counter) {

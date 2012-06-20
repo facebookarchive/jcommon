@@ -23,13 +23,11 @@ public class CompositeMin extends AbstractCompositeCounter<EventCounter>
   public EventCounter merge(EventCounter counter) {
     if (counter instanceof CompositeMin) {
       return internalMerge(
-        getEventCountersCopy(),
-        ((CompositeMin) counter).getEventCountersCopy(),
+        ((CompositeMin) counter).getEventCounters(),
         new CompositeMin(getMaxLength(), getMaxChunkLength())
       );
     } else {
       return internalMerge(
-        getEventCountersCopy(),
         Arrays.asList(counter),
         new CompositeMin(getMaxLength(), getMaxChunkLength())
       );
@@ -48,10 +46,11 @@ public class CompositeMin extends AbstractCompositeCounter<EventCounter>
     trimIfNeeded();
 
     long min = Long.MAX_VALUE;
-    Iterator<EventCounter> iter = eventCounterIterator();
-    while (iter.hasNext()) {
-      min = Math.min(min, iter.next().getValue());
+
+    for (EventCounter eventCounter : getEventCounters()) {
+      min = Math.min(min, eventCounter.getValue());
     }
+
     return min;
   }
 }

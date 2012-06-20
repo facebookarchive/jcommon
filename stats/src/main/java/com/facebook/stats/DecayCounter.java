@@ -80,6 +80,11 @@ public class DecayCounter implements EventCounter {
     return end;
   }
 
+  @Override
+  public Duration getLength() {
+    return new Duration(start, end);
+  }
+
   /**
    * creates a merged counter with our decayed value + the other counter's
    * value.  This will be a DecayCounter with a decayStart of getNow()
