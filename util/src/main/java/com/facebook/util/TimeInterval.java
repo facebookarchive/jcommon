@@ -1,5 +1,7 @@
 package com.facebook.util;
 
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
 import org.joda.time.field.FieldUtils;
 
@@ -70,6 +72,25 @@ public class TimeInterval {
   public static TimeInterval withTypeAndLength(TimeIntervalType type, int length) {
     if (type == null) {
       throw new IllegalArgumentException("type cannot be null");
+    }
+    validateLength(length);
+    return new TimeInterval(type, length);
+  }
+
+  /**
+   * Used by jackson for serde
+   */
+  @JsonCreator
+  private static TimeInterval fromJson(
+    @JsonProperty("type") TimeIntervalType type,
+    @JsonProperty("length") int length
+  ) {
+    if (type == null) {
+      if (length == 0) {
+        return INFINITE;
+      } else if (length == -1) {
+        return ZERO;
+      }
     }
     validateLength(length);
     return new TimeInterval(type, length);
@@ -179,8 +200,14 @@ public class TimeInterval {
    *
    * @return the length value
    */
+  @JsonProperty("length")
   public long getLength() {
     return length;
+  }
+
+  @JsonProperty("type")
+  TimeIntervalType getType() {
+    return type;
   }
 
   /**
