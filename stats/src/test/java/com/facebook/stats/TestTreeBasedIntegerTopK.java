@@ -1,7 +1,8 @@
 package com.facebook.stats;
 
 public class TestTreeBasedIntegerTopK extends TestIntegerTopK {
-  protected TopK<Integer> getInstance() {
-    return new TreeBasedIntegerTopK(10, 3);
+  protected TopK<Integer> getInstance(int keySpaceSize, int k) {
+    return new TreeBasedIntegerTopK(keySpaceSize, k);
   }
+
 }
