@@ -1,14 +1,17 @@
 package com.facebook.concurrency;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
+import com.facebook.testing.Function;
 import com.facebook.testing.MockExecutor;
 import com.facebook.testing.TestUtil;
-import com.facebook.testing.Function;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class TestUnstoppableExecutorService {
+  private static final Logger LOG = LoggerImpl.getLogger(TestUnstoppableExecutorService.class);
   private static final Runnable NO_OP = new Runnable() {
     @Override
     public void run() {
@@ -23,7 +27,6 @@ public class TestUnstoppableExecutorService {
   };
 
   private ExecutorService executor;
-
   private MockExecutor mockExecutor;
 
   @BeforeMethod(alwaysRun = true)
@@ -87,13 +90,15 @@ public class TestUnstoppableExecutorService {
       "executor is terminated"
     );
 
-    AtomicInteger completed = TestUtil.countCompletedRunnables(10,
+    AtomicInteger completed = TestUtil.countCompletedRunnables(
+      10,
       new Function<Runnable>() {
         @Override
         public void execute(Runnable argument) {
           executor.execute(argument);
         }
-      });
+      }
+    );
 
     executor.shutdown();
     mockExecutor.drain();
@@ -118,13 +123,15 @@ public class TestUnstoppableExecutorService {
       "executor is terminated"
     );
 
-    AtomicInteger completed = TestUtil.countCompletedRunnables(10,
+    AtomicInteger completed = TestUtil.countCompletedRunnables(
+      10,
       new Function<Runnable>() {
         @Override
         public void execute(Runnable argument) {
           executor.submit(argument);
         }
-      });
+      }
+    );
 
     executor.shutdown();
     mockExecutor.drain();
@@ -149,13 +156,15 @@ public class TestUnstoppableExecutorService {
       "executor is terminated"
     );
 
-    AtomicInteger completed = TestUtil.countCompletedRunnables(10,
+    AtomicInteger completed = TestUtil.countCompletedRunnables(
+      10,
       new Function<Runnable>() {
         @Override
         public void execute(Runnable argument) {
           executor.submit(argument, new Object());
         }
-      });
+      }
+    );
 
     executor.shutdown();
     mockExecutor.drain();
@@ -172,7 +181,7 @@ public class TestUnstoppableExecutorService {
       "executor should be terminated"
     );
   }
-  
+
   @Test(groups = "fast")
   public void testAwaitTerminationForSubmitCallable() throws Exception {
     Assert.assertFalse(
@@ -180,13 +189,15 @@ public class TestUnstoppableExecutorService {
       "executor is terminated"
     );
 
-    AtomicInteger completed = TestUtil.<Void>countCompletedCallables(10,
+    AtomicInteger completed = TestUtil.<Void>countCompletedCallables(
+      10,
       new Function<Callable<Void>>() {
         @Override
         public void execute(Callable<Void> argument) {
           executor.submit(argument);
         }
-      });
+      }
+    );
 
     executor.shutdown();
     mockExecutor.drain();
@@ -203,7 +214,7 @@ public class TestUnstoppableExecutorService {
       "executor should be terminated"
     );
   }
-  
+
   @Test(groups = "fast")
   public void testTaskCompletesThenCancel() throws Exception {
     final AtomicReference<Future> future = new AtomicReference<Future>();
@@ -219,11 +230,11 @@ public class TestUnstoppableExecutorService {
 
     executor.shutdown();
     mockExecutor.drain();
-  	
+
     // this makes sure if we cancel an already completed task, it won't 
     // affect the awaitTermination check
     future.get().cancel(false);
-    
+
     Assert.assertEquals(completed.get(), 10);
     Assert.assertTrue(
       executor.awaitTermination(1, TimeUnit.NANOSECONDS),
@@ -255,5 +266,48 @@ public class TestUnstoppableExecutorService {
       Assert.assertEquals(executor.isShutdown(), true);
       Assert.assertEquals(mockExecutor.isShutdown(), false);
     }
+  }
+
+  @Test(groups = "fast")
+  public void testRate() throws Exception {
+    int numTasks = 1000000;
+    int numThreads = 12;
+    final AtomicInteger count = new AtomicInteger(0);
+    ExecutorService realExecutor = Executors.newFixedThreadPool(numThreads);
+    executor = new UnstoppableExecutorService(realExecutor);
+    LatchTask blockedNoOp = new LatchTask(
+      new Runnable() {
+        @Override
+        public void run() {
+          count.incrementAndGet();
+        }
+      }
+    );
+
+    LOG.info("generating %d tasks", numTasks);
+
+    for (int i = 0; i < numTasks; i++) {
+      executor.submit(blockedNoOp);
+    }
+
+    executor.shutdown();
+    LOG.info("starting tasks");
+    long start = System.nanoTime();
+
+    blockedNoOp.proceed();
+    boolean terminated = executor.awaitTermination(5, TimeUnit.MINUTES);
+    long end = System.nanoTime();
+
+    Assert.assertTrue(terminated);
+    Assert.assertEquals(count.get(), numTasks);
+
+    double timeTakenMillis = (end - start) / (double) 1000000;
+    Assert.assertTrue(timeTakenMillis < 500); // usually 200 or less
+
+    LOG.info(
+      "%d tasks with %d threads tooks %f ms", numTasks, numThreads, timeTakenMillis
+    );
+
+    realExecutor.shutdown();
   }
 }

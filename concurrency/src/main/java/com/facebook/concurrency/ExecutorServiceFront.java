@@ -79,8 +79,7 @@ public class ExecutorServiceFront extends AbstractExecutorService {
     String poolName,
     int maxDrainers
   ) {
-    this(
-      workQueue, executor, poolName, maxDrainers, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+    this(workQueue, executor, poolName, maxDrainers, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
   }
 
   public ExecutorServiceFront(
@@ -88,8 +87,7 @@ public class ExecutorServiceFront extends AbstractExecutorService {
     ExecutorService executor, 
     int maxDrainers
   ) {
-    this(
-      workQueue, executor, "Drainer", maxDrainers, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+    this(workQueue, executor, "Drainer", maxDrainers, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
   }
 
   public ExecutorServiceFront(

@@ -6,9 +6,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * combines the funtionality of an ExecutorServiceFront and 
+ * combines the functionality of an ExecutorServiceFront and
  * UnstoppableExecutorService.  The net effect is a virtual executor over 
- * annother. You bound the number of 'virtual threads' (Drainers) and 
+ * another. You bound the number of 'virtual threads' (Drainers) and
  * optionally a max time slice each Drainer may use. This is approximate
  * as a Drainer does not interrupt tasks running--it only checks between
  * tasks to see if the maxTimeSlice is reached and then gives up the
@@ -23,7 +23,7 @@ public class UnstoppableExecutorServiceFront extends UnstoppableExecutorService 
    * @param maxDrainers number of virtual threads
    * @param maxTimeSlice after every task, a drainer will check and see if 
    * the maxTimeSlice has passed and will terminate, but re-submit itself
-   * into the executor ('fair-share' the underlying executor
+   * into the executor ('fair-share' the underlying executor)
    * @param maxTimeSliceUnit units for above
    */
   public UnstoppableExecutorServiceFront(
@@ -65,8 +65,7 @@ public class UnstoppableExecutorServiceFront extends UnstoppableExecutorService 
     ExecutorService executor, 
     int maxDrainers
   ) {
-    this(
-      workQueue, executor, "Drainer", maxDrainers, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+    this(workQueue, executor, "Drainer", maxDrainers, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
   }
 
   public UnstoppableExecutorServiceFront(
@@ -75,12 +74,8 @@ public class UnstoppableExecutorServiceFront extends UnstoppableExecutorService 
     TimeUnit maxTimeSliceUnit
   ) {
     this(
-      new LinkedBlockingQueue<Runnable>(), 
-      executor, 
-      "Drainer",
-      1, 
-      maxTimeSlice,
-      maxTimeSliceUnit);
+      new LinkedBlockingQueue<Runnable>(), executor, "Drainer", 1, maxTimeSlice, maxTimeSliceUnit
+    );
   }
   
   public UnstoppableExecutorServiceFront(ExecutorService executor) {

@@ -35,9 +35,7 @@ public class UnstoppableExecutorService implements ExecutorService {
   public <T> Future<T> submit(Runnable task, T result) {
     TrackedRunnable trackedTask = executorCore.registerTask(task);
 
-    return executorCore.trackFuture(
-      executor.submit(trackedTask, result), trackedTask
-    );
+    return executorCore.trackFuture(executor.submit(trackedTask, result), trackedTask);
   }
 
   @Override
@@ -51,20 +49,15 @@ public class UnstoppableExecutorService implements ExecutorService {
   public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
     throws InterruptedException {
     
-    List<TrackedCallable<T>> trackedTaskList = 
-      executorCore.registerCallableList(tasks);
+    List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
-    return executorCore.trackFutureList(
-      executor.invokeAll(trackedTaskList),
-      trackedTaskList
-    );
+    return executorCore.trackFutureList(executor.invokeAll(trackedTaskList), trackedTaskList);
   }
 
   @Override
   public <T> List<Future<T>> invokeAll(
     Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit
-  )
-    throws InterruptedException {
+  ) throws InterruptedException {
     
     List<TrackedCallable<T>> trackedTaskList = 
       executorCore.registerCallableList(tasks);
@@ -78,8 +71,7 @@ public class UnstoppableExecutorService implements ExecutorService {
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
     throws InterruptedException, ExecutionException {
     
-    List<TrackedCallable<T>> trackedTaskList = 
-          executorCore.registerCallableList(tasks);
+    List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
     
 
     return executor.invokeAny(trackedTaskList);
@@ -89,8 +81,7 @@ public class UnstoppableExecutorService implements ExecutorService {
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
     throws InterruptedException, ExecutionException, TimeoutException {
     
-    List<TrackedCallable<T>> trackedTaskList = 
-      executorCore.registerCallableList(tasks);
+    List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
     return executor.invokeAny(trackedTaskList, timeout, unit);
   }
@@ -122,8 +113,7 @@ public class UnstoppableExecutorService implements ExecutorService {
   }
 
   @Override
-  public boolean awaitTermination(long timeout, TimeUnit unit)
-    throws InterruptedException {
+  public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
     return executorCore.awaitTermination(timeout, unit);
   }
 }
