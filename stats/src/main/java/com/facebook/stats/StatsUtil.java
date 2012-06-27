@@ -121,7 +121,7 @@ public class StatsUtil {
 
     long min = digest.getMin();
     long max = digest.getMax();
-    long bucketSize = (max - min) / buckets;
+    long bucketSize = (max - min + buckets) / buckets;
 
     ImmutableList.Builder<Long> boundaryBuilder = ImmutableList.builder();
     for (int i = 1; i < buckets + 1; ++i) {
@@ -134,13 +134,19 @@ public class StatsUtil {
     StringBuilder builder = new StringBuilder();
 
     // add bogus bucket (fb303 ui ignores the first one, for whatever reason)
-    builder.append("0:0:0,");
-    for (int i = 1; i < boundaries.size(); ++i) {
-      builder.append(boundaries.get(i - 1))
+    builder.append("-1:0:0,");
+
+    for (int i = 0; i < boundaries.size(); ++i) {
+      long lowBoundary = min;
+      if (i > 0) {
+        lowBoundary = boundaries.get(i - 1);
+      }
+
+      builder.append(lowBoundary)
         .append(':')
-        .append((long) counts.get(i).getCount())
+        .append(Math.round(counts.get(i).getCount()))
         .append(':')
-        .append((long) counts.get(i).getMean())
+        .append(Math.round(counts.get(i).getMean()))
         .append(',');
     }
 
