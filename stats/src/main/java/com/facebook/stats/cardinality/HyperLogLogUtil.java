@@ -1,6 +1,8 @@
 package com.facebook.stats.cardinality;
 
 import com.google.common.base.Preconditions;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 
 import java.util.Random;
 
@@ -8,27 +10,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class HyperLogLogUtil {
+  private static final HashFunction HASH = Hashing.murmur3_128();
+
   public static long estimateCardinality(int[] bucketValues) {
     Preconditions.checkArgument(
       Numbers.isPowerOf2(bucketValues.length),
       "number of buckets must be a power of 2"
     );
-    int bits = Integer.numberOfTrailingZeros(bucketValues.length); // log2(bucketValues.length)
-
-    double alpha;
-    switch (bits) {
-      case 4:
-        alpha = 0.673;
-        break;
-      case 5:
-        alpha = 0.697;
-        break;
-      case 6:
-        alpha = 0.709;
-        break;
-      default:
-        alpha = 0.7213 / (1 + 1.079 / bucketValues.length);
-    }
 
     int zeroBuckets = 0;
     double sum = 0;
@@ -39,6 +27,7 @@ public class HyperLogLogUtil {
       }
     }
 
+    double alpha = computeAlpha(bucketValues.length);
     double result = alpha * bucketValues.length * bucketValues.length / sum;
 
     if (result <= 2.5 * bucketValues.length) {
@@ -114,4 +103,33 @@ public class HyperLogLogUtil {
     return result;
   }
 
+  public static double computeAlpha(int numberOfBuckets) {
+    double alpha;
+    switch (numberOfBuckets) {
+      case (1 << 4):
+        alpha = 0.673;
+        break;
+      case (1 << 5):
+        alpha = 0.697;
+        break;
+      case (1 << 6):
+        alpha = 0.709;
+        break;
+      default:
+        alpha = (0.7213 / (1 + 1.079 / numberOfBuckets));
+    }
+    return alpha;
+  }
+
+  /**
+   * Computes a 64-bit hash suitable for adding to a hyperloglog instance.
+   *
+   * The hyperloglog implementation uses bits from least significant to most significant first, so
+   * If you need to keep shorter hashes around (e.g., for storage), make sure to drop bits from the
+   * most significant side, as the hyperloglog implementation uses bits from least significant
+   * to most significant.
+   */
+  public static long computeHash(long value) {
+    return HASH.hashLong(value).asLong();
+  }
 }

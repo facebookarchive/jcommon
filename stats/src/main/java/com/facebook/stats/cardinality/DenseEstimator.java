@@ -164,23 +164,7 @@ class DenseEstimator
 
   @Override
   public long estimate() {
-    int bits = Integer.numberOfTrailingZeros(numberOfBuckets); // log2(numberOfBuckets)
-
-    double alpha;
-    switch (bits) {
-      case 4:
-        alpha = 0.673;
-        break;
-      case 5:
-        alpha = 0.697;
-        break;
-      case 6:
-        alpha = 0.709;
-        break;
-      default:
-        alpha = 0.7213 / (1 + 1.079 / numberOfBuckets);
-    }
-
+    double alpha = HyperLogLogUtil.computeAlpha(numberOfBuckets);
     double result = alpha * numberOfBuckets * numberOfBuckets / currentSum;
 
     if (result <= 2.5 * numberOfBuckets) {

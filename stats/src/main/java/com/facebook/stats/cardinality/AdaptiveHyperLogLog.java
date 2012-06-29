@@ -1,16 +1,15 @@
 package com.facebook.stats.cardinality;
 
 import com.google.common.base.Preconditions;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
+import static com.facebook.stats.cardinality.BucketAndHash.fromHash;
+import static com.facebook.stats.cardinality.HyperLogLogUtil.computeHash;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @NotThreadSafe
 public class AdaptiveHyperLogLog {
-  private static final HashFunction HASH = Hashing.murmur3_128();
   private static final int INSTANCE_SIZE = UnsafeUtil.sizeOf(AdaptiveHyperLogLog.class);
 
   private Estimator estimator;
@@ -35,22 +34,16 @@ public class AdaptiveHyperLogLog {
    * @return true if the estimation was affected by this addition
    */
   public boolean add(long value) {
-    long hash = HASH.hashLong(value).asLong();
-
-    int bucketMask = estimator.getNumberOfBuckets() - 1;
-    int bucket = (int) (hash & bucketMask);
-
-    // set the lsb to 1 so that they don't introduce an error if the hash happens to be almost
-    // all 0 (very unlikely, but...)
-    int highestBit = Long.numberOfLeadingZeros(hash | bucketMask) + 1;
+    BucketAndHash bucketAndHash = fromHash(computeHash(value), estimator.getNumberOfBuckets());
+    int lowestBitPosition = Long.numberOfTrailingZeros(bucketAndHash.getHash()) + 1;
 
     if (estimator.getClass() == SparseEstimator.class &&
       (estimator.estimateSizeInBytes() >= DenseEstimator.estimateSizeInBytes(estimator.getNumberOfBuckets())
-         || highestBit >= SparseEstimator.MAX_BUCKET_VALUE)) {
+         || lowestBitPosition >= SparseEstimator.MAX_BUCKET_VALUE)) {
       estimator = new DenseEstimator(estimator.buckets());
     }
 
-    return estimator.setIfGreater(bucket, highestBit);
+    return estimator.setIfGreater(bucketAndHash.getBucket(), lowestBitPosition);
   }
 
   public long estimate() {

@@ -1,10 +1,10 @@
 package com.facebook.stats.cardinality;
 
 import com.google.common.base.Preconditions;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 
 import javax.annotation.concurrent.NotThreadSafe;
+
+import static com.facebook.stats.cardinality.HyperLogLogUtil.computeHash;
 
 /**
  * An implementation of the HyperLogLog algorithm:
@@ -13,7 +13,6 @@ import javax.annotation.concurrent.NotThreadSafe;
  */
 @NotThreadSafe
 public class HyperLogLog {
-  private static final HashFunction HASH = Hashing.murmur3_128();
   private final byte[] buckets;
 
   // The current sum of 1 / (1L << buckets[i]). Updated as new items are added and used for
@@ -50,14 +49,10 @@ public class HyperLogLog {
   }
 
   public void add(long value) {
-    long hash = HASH.hashLong(value).asLong();
+    BucketAndHash bucketAndHash = BucketAndHash.fromHash(computeHash(value), buckets.length);
+    int bucket = bucketAndHash.getBucket();
 
-    int bucketMask = buckets.length - 1;
-    int bucket = (int) (hash & bucketMask);
-
-    // set the bits used for the bucket index to 1 to avoid them affecting the count of leading
-    // zeros (very unlikely, but...)
-    int highestBit = Long.numberOfLeadingZeros(hash | bucketMask) + 1;
+    int lowestBitPosition = Long.numberOfTrailingZeros(bucketAndHash.getHash()) + 1;
 
     int previous = buckets[bucket];
 
@@ -65,30 +60,16 @@ public class HyperLogLog {
       nonZeroBuckets++;
     }
 
-    if (highestBit > previous) {
+    if (lowestBitPosition > previous) {
       currentSum -= 1.0 / (1L << previous);
-      currentSum += 1.0 / (1L << highestBit);
+      currentSum += 1.0 / (1L << lowestBitPosition);
 
-      buckets[bucket] = (byte) highestBit;
+      buckets[bucket] = (byte) lowestBitPosition;
     }
   }
 
   public long estimate() {
-    double alpha;
-    switch (buckets.length) {
-      case (1 << 4):
-        alpha = 0.673;
-        break;
-      case (1 << 5):
-        alpha = 0.697;
-        break;
-      case (1 << 6):
-        alpha = 0.709;
-        break;
-      default:
-        alpha = (0.7213 / (1 + 1.079 / buckets.length));
-    }
-
+    double alpha = HyperLogLogUtil.computeAlpha(buckets.length);
     double result = alpha * buckets.length * buckets.length / currentSum;
 
     if (result <= 2.5 * buckets.length) {
