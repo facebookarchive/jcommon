@@ -1,10 +1,19 @@
 package com.facebook.stats.cardinality;
 
+import com.google.common.base.Throwables;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.Random;
 
 import static java.lang.String.format;
 
 public class BenchmarkAdaptiveHyperLogLog {
+  private static final int COMPRESSION_LOOPS = 10000;
+  private static final int COMPRESSION_WARM_LOOPS = 1000;
+
   public static void main(String[] args) {
     System.out.println("Warming up...");
     System.out.println();
@@ -23,23 +32,25 @@ public class BenchmarkAdaptiveHyperLogLog {
   private static void benchmark(int buckets, long count, boolean report) {
     if (report) {
       System.out.println(
-        format(
-          "-- %s buckets (%.2f%% error)", buckets, 100 * 1.04 / Math.sqrt(
-          buckets
-        )
-        )
+          format(
+              "-- %s buckets (%.2f%% error)", buckets, 100 * 1.04 / Math.sqrt(
+              buckets
+          )
+          )
       );
       System.out.println();
       System.out.println(
-        "                   |        adaptive      |         fixed        | delta fixed vs adapt.|       size (bytes)       |                   "
+          "                   |        adaptive      |         fixed        | delta fixed vs adapt.|       size (bytes)       |                    |     serialization    "
       );
       System.out.println(
-        "            actual |    estimate  error % |    estimate  error % |       count  error % | actual  entropy     mean | ns/add       add/s"
+          "            actual |    estimate  error % |    estimate  error % |       count  error % | actual  entropy     mean | ns/add       add/s | bytes  enc ms  dec ms"
       );
     }
 
     HyperLogLog fixedEstimator = new HyperLogLog(buckets);
     AdaptiveHyperLogLog adaptiveEstimator = new AdaptiveHyperLogLog(buckets);
+
+    HyperLogLogCodec codec = new HyperLogLogCodec();
 
     Random random = new Random();
     long reportInterval = 1;
@@ -59,23 +70,30 @@ public class BenchmarkAdaptiveHyperLogLog {
         long fixedEstimate = fixedEstimator.estimate();
         double fixedError = (fixedEstimate - i) * 100.0 / i;
 
+        int encodeSize = encodeSize(codec, adaptiveEstimator);
+        double encodeMs = timeEncode(codec, adaptiveEstimator);
+        double decodeMs = timeDecode(codec, adaptiveEstimator);
+
         System.out.print(
-          format(
-            "\r(%3d%%) %11d | %11d  %7.2f | %11d  %7.2f | %11d  %7.2f | %6d  %7d  %7.2f | %6d  %10.2f",
-            i * 100 / count,
-            i,
-            adaptiveEstimate,
-            adaptiveError,
-            fixedEstimate,
-            fixedError,
-            adaptiveEstimate - fixedEstimate,
-            Math.abs(adaptiveError) - Math.abs(fixedError),
-            adaptiveEstimator.getSizeInBytes(),
-            Utils.entropy(Utils.histogram(adaptiveEstimator.buckets())) / 8,
-            adaptiveEstimator.getSizeInBytes() * 1.0 / i,
-            nanos / i,
-            i / (nanos / 1e9)
-          )
+            format(
+                "\r(%3d%%) %11d | %11d  %7.2f | %11d  %7.2f | %11d  %7.2f | %6d  %7d  %7.2f | %6d  %10.2f | %5d  %5.4f  %5.4f",
+                i * 100 / count,
+                i,
+                adaptiveEstimate,
+                adaptiveError,
+                fixedEstimate,
+                fixedError,
+                adaptiveEstimate - fixedEstimate,
+                Math.abs(adaptiveError) - Math.abs(fixedError),
+                adaptiveEstimator.getSizeInBytes(),
+                Utils.entropy(Utils.histogram(adaptiveEstimator.buckets())) / 8,
+                adaptiveEstimator.getSizeInBytes() * 1.0 / i,
+                nanos / i,
+                i / (nanos / 1.0e9),
+                encodeSize,
+                encodeMs,
+                decodeMs
+            )
         );
 
         if (report && i % reportInterval == 0) {
@@ -91,4 +109,59 @@ public class BenchmarkAdaptiveHyperLogLog {
     }
   }
 
+  private static int encodeSize(HyperLogLogCodec codec, AdaptiveHyperLogLog hyperLogLog) {
+    try {
+      ByteArrayOutputStream out = new ByteArrayOutputStream(hyperLogLog.buckets().length);
+      codec.encodeAdaptiveHyperLogLog(hyperLogLog, out);
+      byte[] buf = out.toByteArray();
+      return buf.length;
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
+
+  private static double timeEncode(HyperLogLogCodec codec, AdaptiveHyperLogLog hyperLogLog) {
+    try {
+      int buckets = hyperLogLog.buckets().length;
+
+      long encodeTime = 0;
+      for (int i = 0; i < COMPRESSION_LOOPS; i++) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(buckets);
+
+        long startTime = System.nanoTime();
+        codec.encodeAdaptiveHyperLogLog(hyperLogLog, out);
+        long delta = System.nanoTime() - startTime;
+
+        if (i > COMPRESSION_WARM_LOOPS) {
+          encodeTime += delta;
+        }
+      }
+      return encodeTime / 1.0e6 / (COMPRESSION_LOOPS - COMPRESSION_WARM_LOOPS);
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
+
+  private static double timeDecode(HyperLogLogCodec codec, AdaptiveHyperLogLog hyperLogLog) {
+    try {
+      ByteArrayOutputStream out = new ByteArrayOutputStream(hyperLogLog.buckets().length);
+      codec.encodeAdaptiveHyperLogLog(hyperLogLog, out);
+      byte[] buf = out.toByteArray();
+
+      long decodeTime = 0;
+      for (int i = 0; i < COMPRESSION_LOOPS; i++) {
+
+        long startTime = System.nanoTime();
+        codec.decodeAdaptiveHyperLogLog(new DataInputStream(new ByteArrayInputStream(buf)));
+        long delta = System.nanoTime() - startTime;
+
+        if (i > COMPRESSION_WARM_LOOPS) {
+          decodeTime += delta;
+        }
+      }
+      return decodeTime / 1.0e6 / (COMPRESSION_LOOPS - COMPRESSION_WARM_LOOPS);
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
 }
