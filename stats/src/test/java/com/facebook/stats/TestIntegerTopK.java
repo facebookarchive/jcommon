@@ -97,8 +97,8 @@ public abstract class TestIntegerTopK {
     long count = 0;
     long begin = System.nanoTime();
     while (System.nanoTime() - begin < TimeUnit.SECONDS.toNanos(5)) {
-      long start = System.nanoTime();
       topK.add(random.nextInt(keySpaceSize), random.nextInt(maxAdd));
+      long start = System.nanoTime();
       topK.getTopK();
 
       if (System.nanoTime() - begin > TimeUnit.SECONDS.toNanos(1)) {
