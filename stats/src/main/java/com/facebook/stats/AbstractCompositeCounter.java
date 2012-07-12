@@ -17,6 +17,9 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 /**
  * Tracks stats over a rolling time period (time window) of maxLength
  * broken into parts (eventCounters list) of size maxChunkLength.
@@ -60,6 +63,26 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   public AbstractCompositeCounter(ReadableDuration maxLength) {
     this(maxLength, new Duration(maxLength.getMillis() / 10));
   }
+
+  /**
+   * Create a new counter that is the result of merging this counter and the argument. No deep
+   * copy is performed, so the resulting copy could in theory be a counter that just lists
+   * this and counter in a list
+   *
+   * @param counter : other counter to use in merge
+   * @return
+   */
+  @Override
+  public abstract C merge(C counter);
+
+  /**
+   * calldd when a new counter is needed for the range [start, end)
+   *
+   * @param start
+   * @param end
+   * @return new counter for range [start, end) to second resolution
+   */
+  protected abstract C nextCounter(ReadableDateTime start, ReadableDateTime end);
 
   /**
    * Adds the value to the counter, and may create a new eventCounter
@@ -233,6 +256,51 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   }
 
   /**
+   * Takes the oldest counter and returns the fraction [0, 1] of it that
+   * has extended outside the current time window of the composite counter.
+   * <p/>
+   * Assumes:
+   * counter.getEnd() >= window.getStart()
+   * counter.getStart() < window.getStart()
+   *
+   * @param oldestCounter
+   * @return fraction [0, 1]
+   */
+  protected float getExpiredFraction(EventCounterIf<C> oldestCounter) {
+    ReadableDateTime windowStart = getWindowStart();
+
+    //counter.getEnd() >= window.getStart()
+    checkArgument(
+      !oldestCounter.getEnd().isBefore(windowStart),
+      "counter should have end %s >= window start %s", oldestCounter.getEnd(), windowStart
+    );
+
+    ReadableDateTime counterStart = oldestCounter.getStart();
+
+    //counter.getstart() < window.getStart()
+    checkArgument(
+      counterStart.isBefore(windowStart),
+      String.format(
+        "counter should have start %s <= window start %s", counterStart, windowStart
+      )
+    );
+
+    //
+    long expiredPortionMillis = windowStart.getMillis() - counterStart.getMillis();
+    long lengthMillis = oldestCounter.getEnd().getMillis() - counterStart.getMillis();
+    float expiredFraction = expiredPortionMillis / (float) lengthMillis;
+
+    checkState(
+      expiredFraction >= 0 && expiredFraction <= 1.0,
+      String.format(
+        "%s not in [0, 1]", expiredFraction
+      )
+    );
+
+    return expiredFraction;
+  }
+
+  /**
    * return a copy of current list of event counters; same properties as getEventCounters, but
    * a copy
    *
@@ -286,25 +354,4 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   protected ReadableDuration getMaxChunkLength() {
     return maxChunkLength;
   }
-
-  /**
-   * Create a new counter that is the result of merging this counter and the argument. No deep
-   * copy is performed, so the resulting copy could in theory be a counter that just lists
-   * this and counter in a list
-   *
-   * @param counter : other counter to use in merge
-   * @return
-   */
-  @Override
-  public abstract C merge(C counter);
-
-  /**
-   * callded when a new counter is needed for the range [start, end)
-   *
-   *
-   * @param start
-   * @param end
-   * @return new counter for range [start, end) to second resolution
-   */
-  protected abstract C nextCounter(ReadableDateTime start, ReadableDateTime end);
 }

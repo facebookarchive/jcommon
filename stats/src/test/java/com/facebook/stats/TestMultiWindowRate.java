@@ -30,17 +30,18 @@ public class TestMultiWindowRate {
   public void testPerformance() throws Exception {
     NumberFormat format = new DecimalFormat();
     long i = 0;
-    long start = System.currentTimeMillis();
+    long start = System.nanoTime();
     long end;
     
-    while (++i < 20000000) {
+    while (i < 20000000) {
       i++;
     }
-    end = System.currentTimeMillis();
 
-    LOG.info("ceiling rate/s : " + format.format(1000 * i/ (end - start)));
+    end = System.nanoTime();
+
+    LOG.info("ceiling rate/s : " + format.format(1000000000 * i/ (end - start)));
     
-    final MultiWindowRate rate = new MultiWindowRate();
+    final MultiWindowRate rate = new MultiWindowRate(500);
     final AtomicBoolean done = new AtomicBoolean(false);
     Thread t = new Thread(new Runnable() {
       @Override
@@ -51,20 +52,22 @@ public class TestMultiWindowRate {
       }
     });
     
-    start = System.currentTimeMillis();
+    start = System.nanoTime();
     end = start;
     t.start();
     try {
-      Thread.sleep(2500);
+      Thread.sleep(3250);
       done.set(true);
-      end = System.currentTimeMillis();
+      end = System.nanoTime();
       t.join();
     } catch (InterruptedException e) {
       LOG.error("interrupted");
     }
 
+    long elapsedNanos = end - start;
+
     LOG.info(
-      "rate/s : " + format.format(1000 * rate.getAllTimeSum() / (end - start))
+      "rate/s : " + format.format(1000000000 * rate.getAllTimeSum() / elapsedNanos)
     );
   }
   

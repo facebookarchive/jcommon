@@ -6,6 +6,7 @@ import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
 public class MultiWindowRate implements ReadableMultiWindowRate {
+  private static final int DEFAULT_TIME_BUCKET_SIZE_MILLIS = 6000; // 6 seconds
   // all-time counter is a windowed counter that is effectively unbounded
   protected final CompositeSum allTimeCounter;
   private final CompositeSum hourCounter;
@@ -17,20 +18,17 @@ public class MultiWindowRate implements ReadableMultiWindowRate {
   private final EventRate minuteRate;
   private final ReadableDateTime start;
   private final Object rollLock = new Object();
+  private final int timeBucketSizeMillis;
 
-  public MultiWindowRate() {
-    allTimeCounter = newCompositeEventCounter(Integer.MAX_VALUE);
-    hourCounter = newCompositeEventCounter(60);
-    tenMinuteCounter = newCompositeEventCounter(10);
-    minuteCounter = newCompositeEventCounter(1);
-    start = getNow();
-    hourRate =
-      newEventRate(hourCounter, Duration.standardMinutes(60), start);
-    tenMinuteRate =
-      newEventRate(tenMinuteCounter, Duration.standardMinutes(10), start);
-    minuteRate =
-      newEventRate(minuteCounter, Duration.standardMinutes(1), start);
-    currentCounter = nextCurrentCounter(start.toDateTime());
+  MultiWindowRate(int timeBucketSizeMillis) {
+    this(
+      newCompositeEventCounter(Integer.MAX_VALUE),
+      newCompositeEventCounter(60),
+      newCompositeEventCounter(10),
+      newCompositeEventCounter(1),
+      new DateTime(),
+      timeBucketSizeMillis
+    );
   }
 
   MultiWindowRate(
@@ -38,13 +36,15 @@ public class MultiWindowRate implements ReadableMultiWindowRate {
     CompositeSum hourCounter,
     CompositeSum tenMinuteCounter,
     CompositeSum minuteCounter,
-    ReadableDateTime start
+    ReadableDateTime start,
+    int timeBucketSizeMillis
   ) {
     this.allTimeCounter = allTimeCounter;
     this.hourCounter = hourCounter;
     this.tenMinuteCounter = tenMinuteCounter;
     this.minuteCounter = minuteCounter;
     this.start = start;
+    this.timeBucketSizeMillis = timeBucketSizeMillis;
     hourRate =
       newEventRate(hourCounter, Duration.standardMinutes(60), start);
     tenMinuteRate =
@@ -54,7 +54,11 @@ public class MultiWindowRate implements ReadableMultiWindowRate {
     currentCounter = nextCurrentCounter(start.toDateTime());
   }
 
-  private CompositeSum newCompositeEventCounter(int minutes) {
+  public MultiWindowRate() {
+    this(DEFAULT_TIME_BUCKET_SIZE_MILLIS);
+  }
+
+  private static CompositeSum newCompositeEventCounter(int minutes) {
     return new CompositeSum(Duration.standardMinutes(minutes));
   }
 
@@ -146,17 +150,16 @@ public class MultiWindowRate implements ReadableMultiWindowRate {
   }
 
   // current
-  private EventCounterIf<EventCounter> nextCurrentCounter(DateTime now) {
-    SumEventCounter sumEventCounter = new SumEventCounter(
-      now, now.plusSeconds(6)
-    );
+  private EventCounterIf<EventCounter> nextCurrentCounter(ReadableDateTime now) {
+    EventCounter eventCounter =
+      new EventCounterImpl(now, now.toDateTime().plusMillis(timeBucketSizeMillis));
 
-    allTimeCounter.addEventCounter(sumEventCounter);
-    hourCounter.addEventCounter(sumEventCounter);
-    tenMinuteCounter.addEventCounter(sumEventCounter);
-    minuteCounter.addEventCounter(sumEventCounter);
+    allTimeCounter.addEventCounter(eventCounter);
+    hourCounter.addEventCounter(eventCounter);
+    tenMinuteCounter.addEventCounter(eventCounter);
+    minuteCounter.addEventCounter(eventCounter);
 
-    return sumEventCounter;
+    return eventCounter;
   }
 
   public MultiWindowRate merge(MultiWindowRate rate) {
@@ -165,7 +168,8 @@ public class MultiWindowRate implements ReadableMultiWindowRate {
       (CompositeSum)hourCounter.merge(rate.hourCounter),
       (CompositeSum)tenMinuteCounter.merge(rate.tenMinuteCounter),
       (CompositeSum)minuteCounter.merge(rate.minuteCounter),
-      start.isBefore(rate.start) ? start : rate.start
+      start.isBefore(rate.start) ? start : rate.start,
+      timeBucketSizeMillis
     );
   }
 }

@@ -32,7 +32,7 @@ public class CompositeSum extends AbstractCompositeSum<EventCounter>
   protected EventCounter nextCounter(
     ReadableDateTime start, ReadableDateTime end
   ) {
-    return new SumEventCounter(start, end);
+    return new EventCounterImpl(start, end);
   }
 
   @Override

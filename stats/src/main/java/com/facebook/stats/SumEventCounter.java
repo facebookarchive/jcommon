@@ -6,8 +6,10 @@ import org.joda.time.ReadableDateTime;
  * A bit of a hack for performance, but we can improve override the add()
  * method call to get a bit more performance.
  *
- * TODO: see if we can get better performance without this hack!
+ * @deprecated see original simple implementation, {@link EventCounterImpl} which
+ * does the same thing, but avoids encapsulation violation
  */
+@Deprecated
 public class SumEventCounter extends AssociativeAggregationCounter {
   public static final AssociativeAggregation AGGREGATION =
     new AssociativeAggregation() {

@@ -255,7 +255,7 @@ public class TestCompositeSum {
   }
 
   private EventCounter windowMinutes(int minutes) {
-    return new SumEventCounter(
+    return new EventCounterImpl(
       now, now.plusMinutes(minutes)
     );
   }
@@ -267,7 +267,7 @@ public class TestCompositeSum {
   }
 
   private EventCounter nextEventWindow(int minutes) {
-    EventCounter counter = new SumEventCounter(base, base.plusMinutes(minutes));
+    EventCounter counter = new EventCounterImpl(base, base.plusMinutes(minutes));
     base = base.plusMinutes(minutes);
 
     return counter;
