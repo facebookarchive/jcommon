@@ -1,23 +1,38 @@
 package com.facebook.stats;
 
 import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import org.testng.annotations.Test;
-
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
 
 public abstract class TestIntegerTopK {
+  // few hundred millis each test to keep tests short
+  private static final long TEST_TIME_NANOS = TimeUnit.MILLISECONDS.toNanos(1250);
+  private static Logger LOG;
+  
+  @BeforeMethod(alwaysRun = true)
+  public void setUp() throws Exception {
+    LOG = getLogger();
+  }
+
   protected abstract TopK<Integer> getInstance(int keySpaceSize, int k);
+
+  /**
+   * defers logger creation so we log based on subclass name; may do efficient caching
+   *
+   * @return Logger
+   */
+  protected abstract Logger getLogger();
 
   @Test(groups = "fast")
   public void testTop3() {
     TopK<Integer> topK = getInstance(10, 3);
+
     assertTopK(topK);
     topK.add(1, 3);
     assertTopK(topK, 1);
@@ -51,20 +66,21 @@ public abstract class TestIntegerTopK {
 
   @Test(groups = "slow")
   public void testInsertionTiming() {
-    final int keySpaceSize = 10000;
-    final int k = 100;
-    final int maxAdd = 100;
+    int keySpaceSize = 10000;
+    int k = 100;
+    int maxAdd = 100;
     TopK<Integer> topK = getInstance(keySpaceSize, k);
 
-    log().info("Timing add() performance with keySpaceSize = %s, k = %s", keySpaceSize, k);
+    LOG.info("Timing add() performance with keySpaceSize = %s, k = %s", keySpaceSize, k);
 
-    Random random = new Random();
-
+    Random random = new Random(0);
     long totalTime = 0;
     long count = 0;
     long begin = System.nanoTime();
-    while (System.nanoTime() - begin < TimeUnit.SECONDS.toNanos(5)) {
+
+    while (System.nanoTime() - begin < TEST_TIME_NANOS) {
       long start = System.nanoTime();
+
       topK.add(random.nextInt(keySpaceSize), random.nextInt(maxAdd));
 
       if (System.nanoTime() - begin > TimeUnit.SECONDS.toNanos(1)) {
@@ -74,7 +90,7 @@ public abstract class TestIntegerTopK {
       }
     }
 
-    log().info(
+    LOG.info(
       "Processed %s entries in %s ms. Insertion rate = %s entries/s",
       count,
       TimeUnit.NANOSECONDS.toMillis(totalTime),
@@ -84,21 +100,24 @@ public abstract class TestIntegerTopK {
 
   @Test(groups = "slow")
   public void testRetrievalTiming() {
-    final int keySpaceSize = 10000;
-    final int k = 100;
-    final int maxAdd = 100;
+    int keySpaceSize = 10000;
+    int k = 100;
+    int maxAdd = 100;
     TopK<Integer> topK = getInstance(keySpaceSize, k);
 
-    log().info("Timing getTopK() performance with keySpaceSize = %s, k = %s", keySpaceSize, k);
+    LOG.info("Timing getTopK() performance with keySpaceSize = %s, k = %s", keySpaceSize, k);
 
-    Random random = new Random();
-
+    Random random = new Random(0);
     long totalTime = 0;
     long count = 0;
     long begin = System.nanoTime();
-    while (System.nanoTime() - begin < TimeUnit.SECONDS.toNanos(5)) {
+
+    while (System.nanoTime() - begin < TEST_TIME_NANOS) {
+
       topK.add(random.nextInt(keySpaceSize), random.nextInt(maxAdd));
+
       long start = System.nanoTime();
+
       topK.getTopK();
 
       if (System.nanoTime() - begin > TimeUnit.SECONDS.toNanos(1)) {
@@ -108,7 +127,7 @@ public abstract class TestIntegerTopK {
       }
     }
 
-    log().info(
+    LOG.info(
       "Processed %s entries in %s ms. Retrieval rate = %s retrievals/s",
       count,
       TimeUnit.NANOSECONDS.toMillis(totalTime),
@@ -118,9 +137,5 @@ public abstract class TestIntegerTopK {
 
   private static void assertTopK(TopK<Integer> topK, Integer... expected) {
     assertEquals(topK.getTopK(), Arrays.asList(expected));
-  }
-
-  private Logger log() {
-    return LoggerImpl.getLogger(getClass());
   }
 }

@@ -3,7 +3,6 @@ package com.facebook.stats;
 import com.facebook.collections.ComparablePair;
 import com.google.common.base.Preconditions;
 
-import java.lang.Math;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -45,6 +44,7 @@ public class TreeBasedIntegerTopK implements TopK<Integer> {
     }
 
     long currentCount = counts[key];
+
     counts[key] += count;
 
     if (isInTop[key]) {
@@ -56,6 +56,7 @@ public class TreeBasedIntegerTopK implements TopK<Integer> {
       smallestTopCount = Math.min(smallestTopCount, counts[key]);
     } else if (counts[key] > smallestTopCount) {
       ComparablePair<Long, Integer> smallestTopPair = topPairs.pollFirst();
+
       isInTop[smallestTopPair.getSecond()] = false;
       topPairs.add(new ComparablePair<Long, Integer>(counts[key], key));
       isInTop[key] = true;
@@ -64,11 +65,13 @@ public class TreeBasedIntegerTopK implements TopK<Integer> {
   }
 
   @Override
-  public List<Integer> getTopK() {
+  public synchronized List<Integer> getTopK() {
     LinkedList<Integer> topK = new LinkedList<Integer>();
+
     for (ComparablePair<Long, Integer> pair : topPairs) {
       topK.addFirst(pair.getSecond());
     }
+
     return topK;
   }
 }

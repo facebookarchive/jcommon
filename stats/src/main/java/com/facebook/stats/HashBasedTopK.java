@@ -1,6 +1,7 @@
 package com.facebook.stats;
 
 import com.google.common.base.Preconditions;
+import com.google.common.primitives.Longs;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,10 +20,12 @@ import java.util.PriorityQueue;
  */
 public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
   private final int k;
-  private final Map<T, Long> counts = new HashMap<T, Long>();
+  private final Map<T, Long> counts;
 
   public HashBasedTopK(int k) {
     this.k = k;
+    // k is a decent guess to start with
+    counts = new HashMap<T, Long>(k);
   }
 
   @Override
@@ -31,6 +34,7 @@ public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
     Preconditions.checkArgument(count >= 0, "count to add must be non-negative, got %s", count);
 
     Long currentCount = counts.get(key);
+
     if (currentCount == null) {
       currentCount = 0L;
     }
@@ -39,14 +43,13 @@ public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
   }
 
   @Override
-  public List<T> getTopK() {
-    PriorityQueue<T> topK = new PriorityQueue<T>(
-      k,
-      new Comparator<T>() {
-        public int compare(T key1, T key2) {
-          return Long.signum(counts.get(key1) - counts.get(key2));
-        }
-      });
+  public synchronized List<T> getTopK() {
+    Comparator<T> comparator = new Comparator<T>() {
+      public int compare(T key1, T key2) {
+        return Longs.compare(counts.get(key1), counts.get(key2));
+      }
+    };
+    PriorityQueue<T> topK = new PriorityQueue<T>(k, comparator);
 
     for (Map.Entry<T, Long> entry : counts.entrySet()) {
       if (topK.size() < k) {
@@ -58,9 +61,11 @@ public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
     }
 
     LinkedList<T> sortedTopK = new LinkedList<T>();
-    while (topK.size() > 0) {
+
+    while (!topK.isEmpty()) {
       sortedTopK.addFirst(topK.poll());
     }
+
     return sortedTopK;
   }
 }

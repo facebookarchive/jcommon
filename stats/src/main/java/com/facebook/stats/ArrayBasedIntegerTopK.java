@@ -1,6 +1,8 @@
 package com.facebook.stats;
 
 import com.google.common.base.Preconditions;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -17,6 +19,7 @@ import java.util.PriorityQueue;
  */
 public class ArrayBasedIntegerTopK implements TopK<Integer> {
   private final int k;
+  // Java Language SE 7 spec, section 4.12.5 guarantees initial values of 0 for each entry
   private final long[] counts;
 
   public ArrayBasedIntegerTopK(int keySpaceSize, int k) {
@@ -35,13 +38,12 @@ public class ArrayBasedIntegerTopK implements TopK<Integer> {
 
   @Override
   public List<Integer> getTopK() {
-    PriorityQueue<Integer> topK = new PriorityQueue<Integer>(
-      k,
-      new Comparator<Integer>() {
-        public int compare(Integer i, Integer j) {
-          return Long.signum(counts[i] - counts[j]);
-        }
-      });
+    Comparator<Integer> comparator = new Comparator<Integer>() {
+      public int compare(Integer i, Integer j) {
+        return Longs.compare(counts[i], counts[j]);
+      }
+    };
+    PriorityQueue<Integer> topK = new PriorityQueue<Integer>(k, comparator);
 
     for (int key = 0; key < counts.length; ++key) {
       if (topK.size() < k) {
@@ -55,9 +57,11 @@ public class ArrayBasedIntegerTopK implements TopK<Integer> {
     }
 
     LinkedList<Integer> sortedTopK = new LinkedList<Integer>();
-    while (topK.size() > 0) {
+
+    while (!topK.isEmpty()) {
       sortedTopK.addFirst(topK.poll());
     }
     return sortedTopK;
+
   }
 }
