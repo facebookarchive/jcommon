@@ -95,6 +95,7 @@
 
   <!--aggregator only project; includes upload info -->
   <modules>
+    <module>origin</module>
     <module>util</module>
     <module>collections</module>
     <module>config</module>
