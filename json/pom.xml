@@ -4,14 +4,14 @@
   <parent>
     <groupId>com.facebook</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.2.2</version>
+    <version>0.2.3-SNAPSHOT</version>
     <relativePath>../origin/pom.xml</relativePath>
   </parent>
 
   <groupId>org.json</groupId>
   <artifactId>json</artifactId>
   <packaging>jar</packaging>
-  <version>20120422</version>
+  <version>20120423-SNAPSHOT</version>
   <name>json</name>
   <!--<url>fill-in-later to use mvn release</url>-->
 
