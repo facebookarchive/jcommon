@@ -50,6 +50,21 @@
 
   <profiles>
     <profile>
+      <id>nexus</id>
+      <properties>
+        <testGroups>fast,slow</testGroups>
+        <project.libs-releases-local-url>
+          http://${project.nexus.hostPort}/nexus/content/repositories/libs-releases-local
+        </project.libs-releases-local-url>
+        <project.libs-snapshots-local-url>
+          http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
+        </project.libs-snapshots-local-url>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
       <id>default</id>
       <properties>
         <testGroups>fast,slow</testGroups>
