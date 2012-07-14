@@ -271,7 +271,8 @@ public class TestUnstoppableExecutorService {
   @Test(groups = "fast")
   public void testRate() throws Exception {
     int numTasks = 1000000;
-    int numThreads = 12;
+    // use enough threads to induce lock contention
+    int numThreads = 6;
     final AtomicInteger count = new AtomicInteger(0);
     ExecutorService realExecutor = Executors.newFixedThreadPool(numThreads);
     executor = new UnstoppableExecutorService(realExecutor);
@@ -302,10 +303,10 @@ public class TestUnstoppableExecutorService {
     Assert.assertEquals(count.get(), numTasks);
 
     double timeTakenMillis = (end - start) / (double) 1000000;
-    Assert.assertTrue(timeTakenMillis < 500); // usually 200 or less
-
+    // rate is primarily affected by rate that executor and get tasks to queues, ie pull from
+    // the queue
     LOG.info(
-      "%d tasks with %d threads tooks %f ms", numTasks, numThreads, timeTakenMillis
+      "%d tasks with %d threads took %f ms", numTasks, numThreads, timeTakenMillis
     );
 
     realExecutor.shutdown();
