@@ -4,14 +4,14 @@
   <parent>
     <groupId>com.facebook</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>0.2.2</version>
     <relativePath>../origin/pom.xml</relativePath>
   </parent>
 
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>concurrency</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.1-SNAPSHOT</version>
+  <version>0.1.1</version>
   <name>jcommon concurrency</name>
 
   <dependencies>
