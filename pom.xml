@@ -4,7 +4,7 @@
   <artifactId>jcommon-root</artifactId>
   <packaging>pom</packaging>
   <version>0.1.0</version>
-  <name>java common</name>
+  <name>java root</name>
   <description>common java libs</description>
   <url>https://phabricator.fb.com/diffusion/</url>
 
