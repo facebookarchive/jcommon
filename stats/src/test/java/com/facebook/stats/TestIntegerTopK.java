@@ -1,6 +1,7 @@
 package com.facebook.stats;
 
 import com.facebook.logging.Logger;
+import com.facebook.stats.topk.TopK;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

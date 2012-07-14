@@ -1,9 +1,7 @@
-package com.facebook.stats;
+package com.facebook.stats.mx;
 
 import com.facebook.logging.Logger;
 import com.facebook.logging.LoggerImpl;
-import com.facebook.stats.mx.JVMStatsExporter;
-import com.facebook.stats.mx.Stats;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -20,7 +18,7 @@ public class TestJVMStatsExporter {
   @Test(groups = "fast")
   public void testAllStats() throws Exception {
     Stats stats = new Stats();
-    new JVMStatsExporter(stats);
+    JVMStatsExporter exporter = new JVMStatsExporter(stats);
     Map<String, Long> exportedStats = getExportedStats(stats);
     Assert.assertTrue(exportedStats.size() > 10);
     // Sort the stats for printing.
@@ -39,9 +37,10 @@ public class TestJVMStatsExporter {
   public void testFilteredStats() throws Exception {
     Stats stats = new Stats();
     // Chose an MBean that has a good chance of being there across different jvm versions
-    new JVMStatsExporter(stats,
-                         ".*(UsageThresholdCount|PeakUsage.committed)",
-                         "java.lang:type=MemoryPool,name=Code Cache"
+    JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
+      stats,
+      ".*(UsageThresholdCount|PeakUsage.committed)",
+      "java.lang:type=MemoryPool,name=Code Cache"
     );
     Map<String, Long> exportedStats = getExportedStats(stats);
     Assert.assertEquals(2, exportedStats.size());

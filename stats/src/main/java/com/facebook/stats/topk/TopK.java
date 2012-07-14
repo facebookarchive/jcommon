@@ -1,4 +1,4 @@
-package com.facebook.stats;
+package com.facebook.stats.topk;
 
 import java.util.List;
 

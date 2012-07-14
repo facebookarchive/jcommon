@@ -18,7 +18,12 @@
     <project.libs-snapshots-local-url>
       http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
     </project.libs-snapshots-local-url>
-    <project.default.version>0.1.1-SNAPSHOT</project.default.version>
+    <!--this is the default version all modules will build, and hence the parent pom sets
+        as the default dependency version. The dependency here,and version built may be
+        overridden by the disuse of this property.  This helps for the common case that the
+        sub-modules are really evolving at the same rate and we consider this "one library"
+     -->
+    <project.default.version>0.1.2-SNAPSHOT</project.default.version>
   </properties>
 
   <scm>
@@ -36,52 +41,52 @@
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>collections</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>concurrency</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>config</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>lifecycle</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>logging</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>memory</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>stats</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>util</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>zookeeper</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>${project.default.version}</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>testing</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>${project.default.version}</version>
       </dependency>
 
       <!--third party-->

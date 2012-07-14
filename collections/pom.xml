@@ -10,7 +10,7 @@
 
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>collections</artifactId>
-  <version>0.1.2-SNAPSHOT</version>
+  <version>${project.default.version}</version>
   <packaging>jar</packaging>
 
   <dependencies>
