@@ -27,7 +27,7 @@
       scm:git:ssh://projects.git.vip.facebook.com/data/gitrepos/jcommon.git
     </developerConnection>
     <url>https://phabricator.fb.com/diffusion/</url>
-    <tag>jcommon-root-0.1.0</tag>
+    <tag>jcommon-root-0.1.1</tag>
   </scm>
 
   <dependencyManagement>
