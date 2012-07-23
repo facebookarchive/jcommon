@@ -11,7 +11,7 @@ phutil_register_library_map(array(
   'class' =>
   array(
     'FacebookArcanistConfiguration' => 'arcanist/FacebookArcanistConfiguration.php',
-    'FacebookFbcodeUnitTestEngine' => 'unit/FacebookFbcodeUnitTestEngine.php',
+    'FacebookJcommonUnitTestEngine' => 'unit/engine/FacebookJcommonUnitTestEngine.php',
   ),
   'function' =>
   array(
@@ -19,6 +19,6 @@ phutil_register_library_map(array(
   'xmap' =>
   array(
     'FacebookArcanistConfiguration' => 'ArcanistConfiguration',
-    'FacebookFbcodeUnitTestEngine' => 'ArcanistBaseUnitTestEngine',
+    'FacebookJcommonUnitTestEngine' => 'ArcanistBaseUnitTestEngine',
   ),
 ));

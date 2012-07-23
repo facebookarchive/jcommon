@@ -9,7 +9,7 @@
 // program reads the stdout and updates the phabricator diff page with
 // the test results.
 
-class FacebookFbcodeUnitTestEngine extends ArcanistBaseUnitTestEngine {
+class FacebookJcommonUnitTestEngine extends ArcanistBaseUnitTestEngine {
 
   private $projects;
 

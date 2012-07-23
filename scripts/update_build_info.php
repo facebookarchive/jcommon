@@ -9,7 +9,7 @@
  *
  * Some of the information this program needs is read from the
  * environment instead of command line options. Specifically,
- * the BUILD_TYPE and GIT_BRANCH are expected to be set.
+ * GIT_BRANCH is expected to be set.
  *
  * This program is meant to be run after coverting the Cobertura
  * coverage files into a json format that has the coverage info in
@@ -91,10 +91,12 @@ function get_coverage_info() {
   $gitcmd = 'git show --pretty="format:" --name-only HEAD';
   $git_future = new ExecFuture($gitcmd);
   list($files) = $git_future->resolvex();
+  $results = array();
 
   // TODO: need to find all of the coverage.json files
   $coverage_file = 'coverage.json';
   if (! file_exists($coverage_file) || ! is_readable($coverage_file)) {
+    echo "$coverage_file does not exist";
     return array();
   }
 
@@ -121,14 +123,14 @@ function get_test_results($test) {
 }
 
 // When the build fails to compile, just send a 'build failed' message
-function update_buildstatus($conduit, $diff_id, $status, $message) {
+function update_buildstatus($conduit, $diff_id, $name, $status, $message) {
 
   $conduit->callMethodSynchronous(
         'differential.updateunitresults',
         array(
           'diff_id' => $diff_id,
-          'file'    => 'jcommon_build',
-          'name'    => 'jcommon_build',
+          'file'    => $name,
+          'name'    => $name,
           'result'  => $status,
           'message' => $message,
         )
@@ -138,9 +140,9 @@ function update_buildstatus($conduit, $diff_id, $status, $message) {
 /**
  * Send results to phabricator.
  */
-function update_unitresults($conduit, $diff_id) {
+function update_unitresults($conduit, $diff_id, $name) {
 
-  $tests = get_test_results('jcommon_build');
+  $tests = get_test_results($name);
 
   // possible results: 'pass', 'fail', 'skip', 'broken', 'skip', 'unsound'
   foreach ($tests as $test) {
@@ -163,6 +165,11 @@ $specs = array(
     'param' => 'value',
   ),
   array(
+    'name' => 'name',
+    'param' => 'value',
+    'help'  => 'Name of the build',
+  ),
+  array(
     'name' => 'message',
     'param' => 'value',
   ),
@@ -173,12 +180,16 @@ $args->parseFull($specs);
 
 $diff_id = get_diffid();
 $conduit = get_conduit();
+if (! $name = $args->getArg('name')) {
+  echo "Error: Missing 'name' argument.";
+  exit(1);
+}
 
 // If we were given a status and message, update the diff and exit
 if ($status = $args->getArg('status')) {
   $message = $args->getArg('message') ?: "";
-  update_buildstatus($conduit, $diff_id, $status, $message);
+  update_buildstatus($conduit, $diff_id, $name, $status, $message);
   exit(0);
 }
 
-update_unitresults($conduit, $diff_id);
+update_unitresults($conduit, $diff_id, $name);
