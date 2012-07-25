@@ -6,7 +6,7 @@ import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableDuration;
 
-public class MultiWindowMax implements ReadableMultiWindowCounter{
+public class MultiWindowMax implements ReadableMultiWindowCounter, MultiWindowWriteIf {
   private static final ReadableDuration COUNTER_GRANULARITY =
     Duration.standardSeconds(6);
 

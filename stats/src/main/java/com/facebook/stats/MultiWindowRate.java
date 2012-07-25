@@ -5,7 +5,7 @@ import org.joda.time.DateTimeUtils;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
-public class MultiWindowRate implements ReadableMultiWindowRate {
+public class MultiWindowRate implements ReadableMultiWindowRate, MultiWindowWriteIf {
   private static final int DEFAULT_TIME_BUCKET_SIZE_MILLIS = 6000; // 6 seconds
   // all-time counter is a windowed counter that is effectively unbounded
   protected final CompositeSum allTimeCounter;

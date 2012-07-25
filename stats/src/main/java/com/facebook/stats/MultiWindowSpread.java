@@ -6,7 +6,7 @@ package com.facebook.stats;
  * 2) gauge - average, rate, sample count
  * 3) max
  */
-public class MultiWindowSpread {
+public class MultiWindowSpread implements MultiWindowWriteIf {
   private final MultiWindowMin min;
   private final MultiWindowGauge gauge;
   private final MultiWindowMax max;
