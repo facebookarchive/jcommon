@@ -144,4 +144,9 @@ public class TimeSamplingLogger implements Logger {
       logger.error(message, throwable);
     }
   }
+
+  @Override
+  public String getName() {
+    return logger.getName();
+  }
 }

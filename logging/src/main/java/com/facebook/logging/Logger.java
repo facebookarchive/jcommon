@@ -52,4 +52,9 @@ public interface Logger {
   @Deprecated
   public void error(String message, Throwable throwable);
 
+
+  /**
+   * @return the name of the logger instance
+   */
+  public String getName();
 }
