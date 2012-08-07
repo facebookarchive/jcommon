@@ -6,7 +6,7 @@ package com.facebook.stats;
  * 2) gauge - average, rate, sample count
  * 3) max
  */
-public class MultiWindowSpread implements MultiWindowWriteIf {
+public class MultiWindowSpread implements WritableMultiWindowStat {
   private final MultiWindowMin min;
   private final MultiWindowGauge gauge;
   private final MultiWindowMax max;
@@ -21,6 +21,7 @@ public class MultiWindowSpread implements MultiWindowWriteIf {
     max = new MultiWindowMax();
   }
 
+  @Override
   public void add(long value) {
     min.add(value);
     gauge.add(value);

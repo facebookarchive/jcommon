@@ -11,7 +11,7 @@ import java.util.Map;
 import static com.facebook.stats.MultiWindowDistribution.Quantile.*;
 import static com.google.common.collect.Lists.transform;
 
-public class MultiWindowDistribution implements MultiWindowWriteIf {
+public class MultiWindowDistribution implements WritableMultiWindowStat {
   private final QuantileDigest oneMinute;
   private final QuantileDigest tenMinutes;
   private final QuantileDigest oneHour;
@@ -24,6 +24,7 @@ public class MultiWindowDistribution implements MultiWindowWriteIf {
     allTime = new QuantileDigest(0.01);
   }
 
+  @Override
   public void add(long value) {
     oneMinute.add(value);
     tenMinutes.add(value);
