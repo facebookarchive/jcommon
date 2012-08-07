@@ -119,7 +119,6 @@
     <module>stats</module>
     <module>zookeeper</module>
     <module>memory</module>
-    <module>json</module>  
     <module>jcommon-all</module>
   </modules>
 
