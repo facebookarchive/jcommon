@@ -8,17 +8,18 @@ import org.joda.time.ReadableDateTime;
 public class MultiWindowRate implements ReadableMultiWindowRate, MultiWindowWriteIf {
   private static final int DEFAULT_TIME_BUCKET_SIZE_MILLIS = 6000; // 6 seconds
   // all-time counter is a windowed counter that is effectively unbounded
-  protected final CompositeSum allTimeCounter;
+  private final CompositeSum allTimeCounter;
   private final CompositeSum hourCounter;
   private final CompositeSum tenMinuteCounter;
   private final CompositeSum minuteCounter;
-  private volatile EventCounterIf<EventCounter> currentCounter;
   private final EventRate hourRate;
   private final EventRate tenMinuteRate;
   private final EventRate minuteRate;
   private final ReadableDateTime start;
   private final Object rollLock = new Object();
   private final int timeBucketSizeMillis;
+
+  private volatile EventCounterIf<EventCounter> currentCounter;
 
   MultiWindowRate(int timeBucketSizeMillis) {
     this(
