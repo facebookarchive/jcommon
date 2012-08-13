@@ -5,5 +5,8 @@
     "jcommon" : "arcanist/"
    },
   "unit_engine" : "FacebookJcommonUnitTestEngine",
+  "events.listeners" : [
+    "FacebookDiffCreatedListener"
+  ],
   "git.default-relative-commit" : "origin/master"
 }

@@ -1,6 +1,7 @@
 target/
 .DS_Store
 .arc
+.phutil_module_cache
 
 # idea project files
 .idea/
