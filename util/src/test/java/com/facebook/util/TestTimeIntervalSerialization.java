@@ -1,7 +1,9 @@
 package com.facebook.util;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -10,9 +12,11 @@ public class TestTimeIntervalSerialization {
   private static final ObjectMapper MAPPER = new ObjectMapper();
 
   static {
-    MAPPER.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
-    MAPPER.configure(SerializationConfig.Feature.AUTO_DETECT_GETTERS, false);
-    MAPPER.configure(SerializationConfig.Feature.AUTO_DETECT_IS_GETTERS, false);
+    MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+    MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+    MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    MAPPER.configure(MapperFeature.AUTO_DETECT_GETTERS, false);
+    MAPPER.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
   }
 
   @DataProvider(name = "timeintervals")
