@@ -6,7 +6,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class TestMixedTypeMap {
-
   private MixedTypeMap<String> stringMap;
   private String key1;
   private Pair<Long,Long> value2;
@@ -53,5 +52,21 @@ public class TestMixedTypeMap {
     Assert.assertEquals(value.get("a"), 1);
     Assert.assertEquals(value.get("b"), 2);
     Assert.assertEquals(value.get("c"), 3);
+  }
+
+  @Test(groups = "fast")
+  public void testSuperType() throws Exception {
+    Key<String, Object> objectKey = Key.get("x", Object.class);
+    Key<String, Number> numberKey = Key.get("x", Number.class);
+    Key<String, Float> floatKey = Key.get("x", Float.class);
+
+    stringMap.put(objectKey, 37);
+    stringMap.put(numberKey, 4.16);
+    // obvious
+   Assert.assertEquals(stringMap.get(objectKey), 37);
+   Assert.assertEquals(stringMap.get(numberKey), 4.16);
+   //should be obvious: readers/writers agree on what key for a given class to use if it implements
+    // several interfaces, not just the inheritance case
+   Assert.assertNull(stringMap.get(floatKey));
   }
 }
