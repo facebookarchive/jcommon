@@ -5,19 +5,22 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Lists {
+  private Lists() {
+    throw new AssertionError();
+  }
+
   public static <T extends Comparable<? super T>> int compareLists(
     List<? extends T> list1,
     List<? extends T> list2
   ) {
-
-    return compareLists(
-      list1, list2, new Comparator<T>() {
+    Comparator<T> comparator = new Comparator<T>() {
       @Override
       public int compare(T o1, T o2) {
         return o1.compareTo(o2);
       }
-    }
-    );
+    };
+
+    return compareLists(list1, list2, comparator);
   }
 
   /**
@@ -79,12 +82,14 @@ public class Lists {
   public static <T extends Comparable<? super T>> int compareArrays(
     T[] array1, T[] array2
   ) {
-    return compareArrays(array1, array2, new Comparator<T>() {
+    Comparator<T> comparator = new Comparator<T>() {
       @Override
       public int compare(T o1, T o2) {
         return o1.compareTo(o2);
       }
-    });
+    };
+
+    return compareArrays( array1, array2, comparator);
   }
 
   public static <T> int compareArrays(
@@ -106,4 +111,5 @@ public class Lists {
       return -1;
     }
   }
+
 }
