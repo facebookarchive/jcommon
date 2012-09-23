@@ -79,7 +79,7 @@ public class TestLinearizer {
   }
   
   private void nextConcurrentTask() {
-    final ConcurrentPoint concurrentPoint = linearizer.createConurrentPoint();
+    final ConcurrentPoint concurrentPoint = linearizer.createConcurrentPoint();
     final int taskId = nextTaskId.get();
     SerialStartTask task = new SerialStartTask(new Runnable() {
       @Override

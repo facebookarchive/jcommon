@@ -92,7 +92,7 @@ public class Linearizer {
    * 
    * @return
    */
-  public synchronized ConcurrentPoint createConurrentPoint() {
+  public synchronized ConcurrentPoint createConcurrentPoint() {
     return new ConcurrentPointImpl(
       pointCountRef.get(), lastLinearizationPointRef.get()
     );
