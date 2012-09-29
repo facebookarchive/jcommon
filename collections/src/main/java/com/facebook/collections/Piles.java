@@ -15,6 +15,10 @@ public class Piles {
       throw new AssertionError();
     }
 
+  public static <S, T extends Collection<S>> Class<T> compose(Class<T> classT, Class<S> clazzS) {
+    return classT;
+  }
+
   /**
    * works with guava's Function interface
    *
@@ -25,7 +29,7 @@ public class Piles {
    * @return
    */
   public static <X, Y> List<Y> transmogrify(Iterator<X> iterator, Function<X, Y> function) {
-    Mapper<X, Y> mapper = new FunctionToMapper<X, Y>(function);
+    Mapper<X, Y> mapper = new FunctionToMapper<>(function);
 
     return transmogrify(iterator, mapper);
   }
@@ -40,7 +44,7 @@ public class Piles {
    * @return
    */
   public static <X, Y> List<Y> transmogrify(Iterator<X> iterator, Mapper<X, Y> mapper) {
-    List<Y> result = new ArrayList<Y>();
+    List<Y> result = new ArrayList<>();
 
     transmogrify(iterator, result, mapper);
 
@@ -65,7 +69,7 @@ public class Piles {
   public static <X, Y> Collection<Y> transmogrify(
     Iterator<X> iterator, Collection<Y> target, Function<X, Y> function
   ) {
-    FunctionToMapper<X, Y> mapper = new FunctionToMapper<X, Y>(function);
+    FunctionToMapper<X, Y> mapper = new FunctionToMapper<>(function);
 
     transmogrify(iterator, target, mapper);
 
