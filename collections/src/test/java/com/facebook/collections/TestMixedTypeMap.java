@@ -1,7 +1,7 @@
 package com.facebook.collections;
 
 
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -15,12 +15,12 @@ public class TestMixedTypeMap {
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
-    stringMap = new MixedTypeMap<String>();
+    stringMap = new MixedTypeMap<>();
     key1 = "fuu";
-    value2 = new Pair<Long, Long>(200L, 800L);
+    value2 = new Pair<>(200L, 800L);
     key2 = Key.get("fuu", Pair.class);
     key3 = Key.get("c-map", CounterMap.class);
-    value3 = new CounterMap<String>();
+    value3 = new CounterMap<>();
     value3.addAndGet("a", 1);
     value3.addAndGet("b", 2);
     value3.addAndGet("c", 3);

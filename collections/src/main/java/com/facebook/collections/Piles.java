@@ -29,7 +29,7 @@ public class Piles {
    * @return
    */
   public static <X, Y> List<Y> transmogrify(Iterator<X> iterator, Function<X, Y> function) {
-    Mapper<X, Y> mapper = new FunctionToMapper<>(function);
+    Mapper<X, Y> mapper = new FunctionToMapper<X, Y>(function);
 
     return transmogrify(iterator, mapper);
   }
