@@ -23,7 +23,26 @@ public class LoggerImpl implements Logger {
     org.slf4j.Logger logger = LoggerFactory.getLogger(name);
 
     return new LoggerImpl(logger);
+  }
 
+  /**
+   * Returns a logger for the calling class or context.
+   * <p/>
+   * The fully-qualified name of that class is used to get an slf4j logger, which is then wrapped.
+   * Typical usage is to use this method to initialize a static member variable, e.g.,
+   * {@code private static final Logger LOG = Logger.getLogger();}
+   * <p/>
+   * As getStackTrace() isn't super cheap, this is not the sort of thing you want (or need)
+   * to be doing hundreds of times a second;
+   *
+   * @return a logger for the current scope
+   */
+  public static Logger getClassLogger() {
+    StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+    StackTraceElement element = stacktrace[2];
+    String name = element.getClassName();
+
+    return new LoggerImpl(LoggerFactory.getLogger(name));
   }
 
   @Override
@@ -149,5 +168,10 @@ public class LoggerImpl implements Logger {
     if (logger.isErrorEnabled()) {
       logger.error(message, throwable);
     }
+  }
+
+  @Override
+  public String getName() {
+    return logger.getName();
   }
 }

@@ -9,9 +9,7 @@
 // program reads the stdout and updates the phabricator diff page with
 // the test results.
 
-class FacebookFbcodeUnitTestEngine extends ArcanistBaseUnitTestEngine {
-
-  private $projects;
+final class FacebookBuildServer {
 
   private function getBuildServer() {
     return "ci-builds.fb.com";
@@ -26,13 +24,7 @@ class FacebookFbcodeUnitTestEngine extends ArcanistBaseUnitTestEngine {
       "url={$this->getGitURL()}";
   }
 
-  private function startProjectBuilds($async, $diff_id=null) {
-    $results = array();
-    $options = array();
-
-    $working_copy = $this->getWorkingCopy();
-    $project_id = $working_copy->getProjectID();
-
+  public function startProjectBuilds($async, $diff_id=null) {
     // Push the source up to the master repo so that Jenkins
     // can pull it down and build it
     $gitcmd = "git push origin HEAD:refs/autobuilds/{$diff_id}";
@@ -50,31 +42,6 @@ class FacebookFbcodeUnitTestEngine extends ArcanistBaseUnitTestEngine {
       echo "Launching a build on the Jenkins server...\n";
       $future->resolvex();
     }
-    return $results;
   }
 
-  public function run() {
-
-    $this->projects = "jcommon";
-
-    // If we are running asynchronously, mark all tests as postponed
-    // and return those results.  Otherwise, run the tests and collect
-    // the actual results.
-    if ($this->getEnableAsyncTests()) {
-      $results = array();
-      $result = new ArcanistUnitTestResult();
-      $result->setName("jcommon_build");
-      $result->setResult(ArcanistUnitTestResult::RESULT_POSTPONED);
-      $results[] = $result;
-      return $results;
-    } else {
-      return $this->startProjectBuilds(false);
-    }
-  }
-
-  public function setDifferentialDiffID($id) {
-    if ($this->getEnableAsyncTests() && !empty($this->projects)) {
-      $this->startProjectBuilds(true, $id);
-    }
-  }
 }

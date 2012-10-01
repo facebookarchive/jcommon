@@ -5,7 +5,7 @@ import org.joda.time.DateTimeUtils;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
-public class MultiWindowGauge implements ReadableMultiWindowGauge {
+public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMultiWindowStat {
   private final GaugeCounterFactory gaugeCounterFactory;
   // all-time counter is a windowed counter that is effectively unbounded
   private final CompositeGaugeCounter allTimeCounter;
@@ -58,6 +58,7 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge {
     );
   }
 
+  @Override
   public void add(long delta) {
     rollCurrentIfNeeded();
     currentCounter.add(delta);

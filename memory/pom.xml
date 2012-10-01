@@ -9,6 +9,6 @@
 
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>memory</artifactId>
-  <version>0.1.2-SNAPSHOT</version>
+  <version>${project.default.version}</version>
   <packaging>jar</packaging>
 </project>

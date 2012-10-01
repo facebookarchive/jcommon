@@ -1,7 +1,6 @@
-package com.facebook.stats;
+package com.facebook.stats.topk;
 
 import com.google.common.base.Preconditions;
-import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
 import java.util.Comparator;

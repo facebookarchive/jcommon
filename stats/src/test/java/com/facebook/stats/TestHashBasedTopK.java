@@ -2,6 +2,8 @@ package com.facebook.stats;
 
 import com.facebook.logging.Logger;
 import com.facebook.logging.LoggerImpl;
+import com.facebook.stats.topk.HashBasedTopK;
+import com.facebook.stats.topk.TopK;
 
 public class TestHashBasedTopK extends TestIntegerTopK {
   private static final Logger LOG = LoggerImpl.getLogger(TestHashBasedTopK.class);

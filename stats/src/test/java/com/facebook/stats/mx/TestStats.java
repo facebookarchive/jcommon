@@ -1,6 +1,5 @@
-package com.facebook.stats;
+package com.facebook.stats.mx;
 
-import com.facebook.stats.mx.Stats;
 import com.google.common.collect.ImmutableMap;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

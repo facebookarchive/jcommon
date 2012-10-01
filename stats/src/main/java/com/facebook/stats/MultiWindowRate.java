@@ -5,7 +5,7 @@ import org.joda.time.DateTimeUtils;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
-public class MultiWindowRate implements ReadableMultiWindowRate {
+public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWindowStat {
   private static final int DEFAULT_TIME_BUCKET_SIZE_MILLIS = 6000; // 6 seconds
   // all-time counter is a windowed counter that is effectively unbounded
   private final CompositeSum allTimeCounter;
@@ -69,6 +69,7 @@ public class MultiWindowRate implements ReadableMultiWindowRate {
     return new EventRateImpl(counter, windowSize, start);
   }
 
+  @Override
   public void add(long delta) {
     rollCurrentIfNeeded();
     currentCounter.add(delta);
