@@ -15,18 +15,18 @@ public class MixedTypeMap<K> {
     this(new HashMap<Key<K, ?>, Object>());
   }
 
-  public <V> void put(K id, Class<? super V> clazz, V instance) {
-    Key<K, ?> key = Key.get(id, clazz);
+  public <V1, V2 extends V1> void put(K id, Class<V1> clazz, V2 instance) {
+    Key<K, V1> key = Key.get(id, clazz);
 
     map.put(key, instance);
   }
 
-  public <V> void put(Key<K,? super V> key, V instance) {
+  public <V1, V2 extends V1> void put(Key<K, V1> key, V2 instance) {
     map.put(key, instance);
   }
 
-  public <V> V get(K id, Class<? extends V> clazz) {
-    Key<K, ?> key = Key.get(id, clazz);
+  public <V> V get(K id, Class<V> clazz) {
+    Key<K, V> key = Key.get(id, clazz);
 
     //noinspection unchecked
     return (V) map.get(key);
