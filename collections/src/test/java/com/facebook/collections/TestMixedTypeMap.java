@@ -1,16 +1,20 @@
 package com.facebook.collections;
 
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 public class TestMixedTypeMap {
   private MixedTypeMap<String> stringMap;
   private String key1;
-  private Pair<Long,Long> value2;
-  private Key<String,Pair> key2;
-  private Key<String,CounterMap> key3;
+  private Pair<Long, Long> value2;
+  private Key<String, Pair> key2;
+  private Key<String, CounterMap> key3;
   private CounterMap<String> value3;
 
   @BeforeMethod(alwaysRun = true)
@@ -47,7 +51,7 @@ public class TestMixedTypeMap {
 
   @Test(groups = "fast")
   public void testSanity3() throws Exception {
-    CounterMap<String> value  = stringMap.get(key3);
+    CounterMap<String> value = stringMap.get(key3);
 
     Assert.assertEquals(value.get("a"), 1);
     Assert.assertEquals(value.get("b"), 2);
@@ -60,13 +64,63 @@ public class TestMixedTypeMap {
     Key<String, Number> numberKey = Key.get("x", Number.class);
     Key<String, Float> floatKey = Key.get("x", Float.class);
 
+    asssertSuperTestResults(objectKey, numberKey, floatKey);
+  }
+
+  @Test(groups = "fast")
+  public void testSuperUsingTypeToken() throws Exception {
+    // version that use the type token directly
+    Key<String, Object> objectKey = Key.get("x", TypeToken.of(Object.class));
+    Key<String, Number> numberKey = Key.get("x", TypeToken.of(Number.class));
+    Key<String, Float> floatKey = Key.get("x", TypeToken.of(Float.class));
+
+    asssertSuperTestResults(objectKey, numberKey, floatKey);
+  }
+
+  private void asssertSuperTestResults(
+    Key<String, Object> objectKey,
+    Key<String, Number> numberKey,
+    Key<String, Float> floatKey
+  ) {
     stringMap.put(objectKey, 37);
     stringMap.put(numberKey, 4.16);
     // obvious
-   Assert.assertEquals(stringMap.get(objectKey), 37);
-   Assert.assertEquals(stringMap.get(numberKey), 4.16);
-   //should be obvious: readers/writers agree on what key for a given class to use if it implements
+    Assert.assertEquals(stringMap.get(objectKey), 37);
+    Assert.assertEquals(stringMap.get(numberKey), 4.16);
+    //should be obvious: readers/writers agree on what key for a given class to use if it implements
     // several interfaces, not just the inheritance case
-   Assert.assertNull(stringMap.get(floatKey));
+    Assert.assertNull(stringMap.get(floatKey));
+  }
+
+  @Test(groups = "fast")
+  public void testTypeTokenAndClass() throws Exception {
+    Key<String, Integer> classKey = Key.get("baz", Integer.class);
+    Key<String, Integer> typeKey = Key.get("baz", TypeToken.of(Integer.class));
+
+    stringMap.put(classKey, Integer.MAX_VALUE);
+    Assert.assertEquals(stringMap.get(typeKey).longValue(), Integer.MAX_VALUE);
+    Assert.assertEquals(stringMap.get(classKey).longValue(), Integer.MAX_VALUE);
+    stringMap.put(typeKey, Integer.MIN_VALUE);
+    Assert.assertEquals(stringMap.get(typeKey).longValue(), Integer.MIN_VALUE);
+    Assert.assertEquals(stringMap.get(classKey).longValue(), Integer.MIN_VALUE);
+  }
+
+  @Test(groups = "fast")
+  public void testGenerics() throws Exception {
+    TypeToken<List<String>> stringTypeToken = new TypeToken<List<String>>() {};
+    List<String> stringList = Piles.<String>copyOf(
+      ImmutableList.<String>builder()
+        .add("x")
+        .add("y")
+        .add("z")
+        .add("1")
+        .build().iterator()
+    );
+
+    stringMap.put("fuu", stringTypeToken, stringList);
+    Key myKey = Key.get("fuu", stringTypeToken);
+
+    Assert.assertEquals(stringMap.get(myKey), stringList);
+    Assert.assertEquals(stringMap.get("fuu", stringTypeToken), stringList);
   }
 }
