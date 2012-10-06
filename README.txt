@@ -1,6 +1,14 @@
-initial push of jcommon. Needs pom cleanup and probably.  We may or may not remove the org.json fork we have (just 
-re-org'd into files and made maven pom).
+initial push of jcommon. Needs pom cleanup and probably.  Large dump of generic puma code coming soon.
+ 
+license is Apache2
+See : http://www.apache.org/licenses/LICENSE-2.0.html
 
-License at
-https://github.com/douglascrockford/JSON-java#readme
+Authors/Contributors:
 
+sr@fb.com
+ehwang@fb.com
+lif@fb.com
+timw@fb.com
+groys@fb.com
+martint@fb.com
+dain@fb.com
