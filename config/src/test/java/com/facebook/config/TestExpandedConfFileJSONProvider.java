@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestExpandedConfFileJSONProvider {
-  private Map<File, JSONObject> mockFileParser =
-    new HashMap<File, JSONObject>();
+  private Map<File, JSONObject> mockFileParser = new HashMap<>();
 
   public final static String simpleAConfig = "simpleA.json";
   public final static String simpleBConfig = "simpleB.json";
@@ -128,7 +127,9 @@ public class TestExpandedConfFileJSONProvider {
   private ExpandedConfFileJSONProvider buildJSONProvider(String configPath) {
     return new ExpandedConfFileJSONProvider(new File(configPath)) {
       // Override file parsing so we can get contents w/o having actual files
-      protected JSONObject fileToJSON(File file) {
+      @Override
+      protected JSONObject load(String fileName) {
+        File file = new File(fileName);
         return mockFileParser.get(file);
       }
     };
