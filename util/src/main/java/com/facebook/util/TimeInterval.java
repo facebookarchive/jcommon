@@ -206,8 +206,13 @@ public class TimeInterval {
     return length;
   }
 
+  /**
+   * Returns the interval type. Interval type is null if {@link #isPeriod()} is false.
+   *
+   * @return the interval type
+   */
   @JsonProperty("type")
-  TimeIntervalType getType() {
+  public TimeIntervalType getType() {
     return type;
   }
 
