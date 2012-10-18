@@ -97,6 +97,7 @@ public class TestTimeInterval {
     Assert.assertFalse(timeInterval.isPeriod());
     Assert.assertEquals(timeInterval.getLength(), intervalMillis);
     Assert.assertEquals(timeInterval.toApproxMillis(), intervalMillis);
+    Assert.assertNull(timeInterval.getType());
   }
 
   @DataProvider(name = "intervalParams")
@@ -134,6 +135,7 @@ public class TestTimeInterval {
     Assert.assertEquals(timeInterval.getIntervalStart(eventTime), expectedValue);
     Assert.assertTrue(timeInterval.isPeriod());
     Assert.assertEquals(timeInterval.getLength(), length);
+    Assert.assertEquals(timeInterval.getType(), intervalType);
   }
 
   @DataProvider(name = "intervalLengthFail")
