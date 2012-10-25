@@ -3,7 +3,7 @@
   <groupId>com.facebook</groupId>
   <artifactId>jcommon-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.2.3</version>
+  <version>0.2.4-SNAPSHOT</version>
   <name>java common</name>
   <description>common java libs</description>
   <url>https://phabricator.fb.com/diffusion/</url>
@@ -33,7 +33,7 @@
       scm:git:ssh://projects.git.vip.facebook.com/data/gitrepos/jcommon.git
     </developerConnection>
     <url>https://phabricator.fb.com/diffusion/</url>
-    <tag>jcommon-root-0.1.2</tag>
+    <tag>jcommon-root-0.1.0</tag>
   </scm>
 
   <dependencyManagement>
@@ -42,52 +42,52 @@
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>collections</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>concurrency</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>config</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>lifecycle</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>logging</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>memory</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>stats</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>util</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>zookeeper</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>testing</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
       </dependency>
 
       <!--third party-->

@@ -3,7 +3,7 @@
   <groupId>com.facebook</groupId>
   <artifactId>jcommon-root</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.2</version>
+  <version>0.1.3-SNAPSHOT</version>
   <name>java root</name>
   <description>common java libs</description>
   <url>https://phabricator.fb.com/diffusion/</url>
@@ -19,7 +19,7 @@
       scm:git:ssh://projects.git.vip.facebook.com/data/gitrepos/jcommon.git
     </developerConnection>
     <url>https://phabricator.fb.com/diffusion/</url>
-    <tag>jcommon-root-0.1.2</tag>
+    <tag>jcommon-root-0.1.0</tag>
   </scm>
 
   <distributionManagement>

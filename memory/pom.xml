@@ -3,12 +3,12 @@
   <parent>
     <groupId>com.facebook</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.2.3</version>
+    <version>0.2.4-SNAPSHOT</version>
     <relativePath>../origin/pom.xml</relativePath>
   </parent>
 
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>memory</artifactId>
-  <version>0.1.2</version>
+  <version>0.1.3-SNAPSHOT</version>
   <packaging>jar</packaging>
 </project>
