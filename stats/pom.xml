@@ -3,13 +3,13 @@
   <parent>
     <groupId>com.facebook</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.2.3-SNAPSHOT</version>
+    <version>0.2.3</version>
     <relativePath>../origin/pom.xml</relativePath>
   </parent>
 
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>stats</artifactId>
-  <version>${project.default.version}</version>
+  <version>0.1.2</version>
   <packaging>jar</packaging>
 
   <dependencies>
