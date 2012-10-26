@@ -4,14 +4,14 @@
   <parent>
     <groupId>com.facebook</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.2.3-SNAPSHOT</version>
+    <version>0.2.3</version>
     <relativePath>../origin/pom.xml</relativePath>
   </parent>
 
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>logging</artifactId>
   <packaging>jar</packaging>
-  <version>${project.default.version}</version>
+  <version>0.1.2</version>
   <name>jcommon logging</name>
 
   <properties>
@@ -53,6 +53,6 @@
   </profiles>
 
   <scm>
-    <tag>jcommon-root-0.1.0</tag>
+    <tag>jcommon-root-0.1.2</tag>
   </scm>
 </project>
