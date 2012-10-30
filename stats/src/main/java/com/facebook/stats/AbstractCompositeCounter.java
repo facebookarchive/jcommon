@@ -1,6 +1,7 @@
 package com.facebook.stats;
 
 import com.facebook.collections.PeekableIterator;
+import com.facebook.stats.mx.StatsUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import org.joda.time.DateTime;

@@ -1,5 +1,7 @@
 package com.facebook.collections;
 
+import com.facebook.collectionsbase.Mapper;
+
 import java.util.Iterator;
 
 public class TranslatingIterator<X, Y> implements Iterator<Y> {

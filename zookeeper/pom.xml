@@ -31,6 +31,7 @@
     <dependency>
       <groupId>com.facebook.jcommon</groupId>
       <artifactId>testing</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <!--3rd party-->

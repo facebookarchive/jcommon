@@ -3,7 +3,7 @@ package com.facebook.concurrency;
 import com.facebook.testing.AnnotatedRunnable;
 import com.facebook.testing.LoopThread;
 import com.facebook.testing.MockExecutor;
-import com.facebook.testing.TestUtil;
+import com.facebook.testing.TestUtils;
 import com.facebook.testing.ThreadHelper;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTimeUtils;
@@ -275,7 +275,7 @@ public class TestExecutorServiceFront {
       executorServiceFront.execute(latchTask);
       Assert.assertEquals(mockExecutor.getNumPendingTasks(), 1);
 
-      Thread t = TestUtil.runInThread(
+      Thread t = TestUtils.runInThread(
         new Runnable() {
           @Override
           public void run() {
@@ -385,7 +385,7 @@ public class TestExecutorServiceFront {
   }
 
   private Thread createDrainerThread() {
-    return TestUtil.runInThread(
+    return TestUtils.runInThread(
       new Runnable() {
         @Override
         public void run() {

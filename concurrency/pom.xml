@@ -26,6 +26,7 @@
     <dependency>
       <groupId>com.facebook.jcommon</groupId>
       <artifactId>testing</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

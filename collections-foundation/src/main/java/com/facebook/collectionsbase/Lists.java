@@ -1,4 +1,4 @@
-package com.facebook.collections;
+package com.facebook.collectionsbase;
 
 import java.util.Comparator;
 import java.util.Iterator;

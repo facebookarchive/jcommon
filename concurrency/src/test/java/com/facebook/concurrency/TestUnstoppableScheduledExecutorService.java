@@ -2,7 +2,7 @@ package com.facebook.concurrency;
 
 import com.facebook.testing.Function;
 import com.facebook.testing.MockExecutor;
-import com.facebook.testing.TestUtil;
+import com.facebook.testing.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -80,7 +80,7 @@ public class TestUnstoppableScheduledExecutorService {
       "executor is terminated"
     );
 
-    AtomicInteger completed = TestUtil.countCompletedRunnables(
+    AtomicInteger completed = TestUtils.countCompletedRunnables(
       10,
       new Function<Runnable>() {
         @Override

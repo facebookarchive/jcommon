@@ -21,6 +21,10 @@
     </dependency>
     <dependency>
       <groupId>com.facebook.jcommon</groupId>
+      <artifactId>collections-foundation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook.jcommon</groupId>
       <artifactId>concurrency</artifactId>
     </dependency>
     <dependency>
@@ -42,6 +46,7 @@
     <dependency>
       <groupId>com.facebook.jcommon</groupId>
       <artifactId>testing</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.facebook.jcommon</groupId>

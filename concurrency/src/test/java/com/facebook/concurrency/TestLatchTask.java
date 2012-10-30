@@ -1,6 +1,6 @@
 package com.facebook.concurrency;
 
-import com.facebook.testing.TestUtil;
+import com.facebook.testing.TestUtils;
 import com.facebook.testing.ThreadHelper;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -37,7 +37,7 @@ public class TestLatchTask  {
     );
     
     // imperfect way to test for lock, but has to suffice
-    TestUtil.waitUntilThreadBlocks(thread);
+    TestUtils.waitUntilThreadBlocks(thread);
     // trigger latch
     task.run();
     // wait for thread to complete

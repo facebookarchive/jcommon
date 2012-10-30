@@ -1,5 +1,6 @@
 package com.facebook.collections;
 
+import com.facebook.collectionsbase.Lists;
 import com.google.common.collect.ImmutableList;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

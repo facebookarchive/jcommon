@@ -1,6 +1,6 @@
 package com.facebook.concurrency;
 
-import com.facebook.testing.TestUtil;
+import com.facebook.testing.TestUtils;
 import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -44,10 +44,10 @@ public class TestCriticalSectionFactory {
     final Runnable criticalSection = factory.wrap(runnable);
 
     // t1 will stop in the critical section
-    Thread t1 = TestUtil.runInThread(criticalSection);
+    Thread t1 = TestUtils.runInThread(criticalSection);
     entryLatch.await();
     // now start t2 and wait until it skips critical section
-    Thread t2 = TestUtil.runInThread(criticalSection);
+    Thread t2 = TestUtils.runInThread(criticalSection);
     t2.join();
     // let t1 out of critical section 
     criticalSectionLatch.countDown();

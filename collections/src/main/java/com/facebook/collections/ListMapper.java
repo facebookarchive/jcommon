@@ -1,5 +1,7 @@
 package com.facebook.collections;
 
+import com.facebook.collectionsbase.Mapper;
+
 import java.util.ArrayList;
 import java.util.List;
 

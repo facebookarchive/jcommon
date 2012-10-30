@@ -1,4 +1,4 @@
-package com.facebook.collections;
+package com.facebook.collectionsbase;
 
 import com.google.common.base.Function;
 
@@ -29,7 +29,7 @@ public class Piles {
    * @return
    */
   public static <X, Y> List<Y> transmogrify(Iterator<X> iterator, Function<X, Y> function) {
-    Mapper<X, Y> mapper = new FunctionToMapper<X, Y>(function);
+    com.facebook.collectionsbase.Mapper<X, Y> mapper = new com.facebook.collectionsbase.FunctionToMapper<X, Y>(function);
 
     return transmogrify(iterator, mapper);
   }

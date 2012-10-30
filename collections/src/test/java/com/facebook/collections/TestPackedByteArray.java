@@ -1,5 +1,6 @@
 package com.facebook.collections;
 
+import com.facebook.collectionsbase.Lists;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

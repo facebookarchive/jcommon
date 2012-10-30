@@ -12,11 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * will run hooks by stage and in the order added within stages
  */
 public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
-
   private static final Logger LOG = Logger.getLogger(ShutdownManagerImpl.class);
 
-  private final Map<T, List<Runnable>> shutdownHooksByStage =
-    new ConcurrentHashMap<T, List<Runnable>>();
+  private final Map<T, List<Runnable>> shutdownHooksByStage = new ConcurrentHashMap<>();
   private final Thread thread;
   private final Object shutdownLock = new Object();
   private final T[] stages;
@@ -29,11 +27,15 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
 
   public ShutdownManagerImpl(Class<T> enumClazz, T defaultStage) {
     this.defaultStage = defaultStage;
+
     if (!enumClazz.isEnum()) {
-      throw new IllegalArgumentException(String.format(
-        "%s is not an enum class", enumClazz.getName()
-      ));
+      throw new IllegalArgumentException(
+        String.format(
+          "%s is not an enum class", enumClazz.getName()
+        )
+      );
     }
+
     stages = enumClazz.getEnumConstants();
     for (T stage : stages) {
       shutdownHooksByStage.put(stage, new ArrayList<Runnable>());
@@ -47,19 +49,21 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
     firstStage = stages[0];
     currentStage = firstStage;
     lastStage = stages[stages.length - 1];
-    thread = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        internalShutdown();
+    thread = new Thread(
+      new Runnable() {
+        @Override
+        public void run() {
+          internalShutdown();
+        }
       }
-    });
+    );
   }
 
   @Override
   public boolean tryAddShutdownHook(Runnable hook) {
     return tryAddShutdownHook(defaultStage, hook);
   }
-  
+
   @Override
   public boolean tryAddShutdownHook(T stage, Runnable hook) {
     if (stage == firstStage || stage == lastStage) {
@@ -115,7 +119,6 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
   }
 
   /**
-   * 
    * @return true if this executed the shutdown
    */
   private boolean internalShutdown() {
@@ -149,7 +152,7 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
     }
 
     LOG.info("shutdown complete");
-    
+
     return true;
   }
 }

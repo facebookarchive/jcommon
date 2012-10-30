@@ -1,10 +1,12 @@
 package com.facebook.collections;
 
+import com.facebook.collectionsbase.Mapper;
 import com.google.common.collect.Iterators;
 
 import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -124,7 +126,7 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
   public Iterator<Map.Entry<K, Long>> iterator() {
     return Iterators.unmodifiableIterator(
       new TranslatingIterator<Map.Entry<K, AtomicLong>, Map.Entry<K, Long>>(
-        new Mapper<Map.Entry<K, AtomicLong>, Map.Entry<K, Long>>() {
+        new Mapper<Entry<K, AtomicLong>, Entry<K, Long>>() {
           @Override
           public Map.Entry<K, Long> map(Map.Entry<K, AtomicLong> input) {
             return new AbstractMap.SimpleImmutableEntry<K, Long>(

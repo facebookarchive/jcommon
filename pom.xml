@@ -110,16 +110,18 @@
   <modules>
     <module>origin</module>
     <module>util</module>
+    <module>data</module>
     <module>collections</module>
+    <module>collections-foundation</module>
     <module>config</module>
     <module>logging</module>
     <module>lifecycle</module>
-    <module>testing</module>
     <module>concurrency</module>
     <module>stats</module>
     <module>zookeeper</module>
     <module>memory</module>
     <module>jcommon-all</module>
+    <module>testing</module>
   </modules>
 
 </project>

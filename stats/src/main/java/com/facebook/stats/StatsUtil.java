@@ -1,5 +1,13 @@
-package com.facebook.stats;
+package com.facebook.stats.mx;
 
+import com.facebook.stats.EventCounterIf;
+import com.facebook.stats.MultiWindowDistribution;
+import com.facebook.stats.MultiWindowRate;
+import com.facebook.stats.MultiWindowSpread;
+import com.facebook.stats.QuantileDigest;
+import com.facebook.stats.ReadableMultiWindowCounter;
+import com.facebook.stats.ReadableMultiWindowGauge;
+import com.facebook.stats.ReadableMultiWindowRate;
 import com.google.common.collect.ImmutableList;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;

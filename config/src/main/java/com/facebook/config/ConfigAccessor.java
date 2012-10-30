@@ -1,7 +1,7 @@
 package com.facebook.config;
 
 import com.facebook.collections.ByteArray;
-import com.facebook.collections.Mapper;
+import com.facebook.collectionsbase.Mapper;
 import org.apache.log4j.Logger;
 import org.joda.time.Duration;
 import org.json.JSONArray;
@@ -162,7 +162,7 @@ public class ConfigAccessor {
       @Override
       public Map<String, String> extract(String key, JSONObject jsonObject)
         throws JSONException {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         JSONObject jsonMap = jsonObject.getJSONObject(key);
         ConfigAccessor mapAccessor = new ConfigAccessor(jsonMap);
         Iterator<String> keys = jsonMap.keys();
@@ -179,7 +179,7 @@ public class ConfigAccessor {
   }
 
   public <T> List<T> getList(String key, Mapper<String, T> converter) {
-    List<T> result = new ArrayList<T>();
+    List<T> result = new ArrayList<>();
 
     for (String item : getStringList(key)) {
       result.add(converter.map(item));
@@ -190,7 +190,7 @@ public class ConfigAccessor {
 
   public List<String> getStringList(String key) throws ConfigException {
     JSONArray items;
-    List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
 
     try {
       items = jsonObject.getJSONArray(key);
@@ -209,15 +209,15 @@ public class ConfigAccessor {
   }
 
   public List<ByteArray> getByteArrayList(String key) throws ConfigException {
-    List<ByteArray> result = new ArrayList<ByteArray>();
+    List<ByteArray> result = new ArrayList<>();
     for (String item : getStringList(key)) {
-      result.add(new ByteArray(item.getBytes()));
+      result.add(ByteArray.wrap(item.getBytes()));
     }
     return result;
   }
 
   public List<String> getKeys() {
-    List<String> keys = new ArrayList<String>();
+    List<String> keys = new ArrayList<>();
     Iterator<String> keysIterator = jsonObject.keys();
     while (keysIterator.hasNext()) {
       keys.add(keysIterator.next());

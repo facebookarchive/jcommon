@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.facebook.testing.TestUtil.waitUntilThreadBlocks;
+import static com.facebook.testing.TestUtils.waitUntilThreadBlocks;
 
 public class TestCoreConcurrentCache {
   private static final Logger LOG = Logger.getLogger(TestCoreConcurrentCache.class);

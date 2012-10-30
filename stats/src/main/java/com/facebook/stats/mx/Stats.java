@@ -6,7 +6,6 @@ import com.facebook.logging.LoggerImpl;
 import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
-import com.facebook.stats.StatsUtil;
 
 import java.util.HashMap;
 import java.util.Map;

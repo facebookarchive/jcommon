@@ -4,7 +4,7 @@ import com.facebook.logging.Logger;
 import com.facebook.logging.LoggerImpl;
 import com.facebook.testing.Function;
 import com.facebook.testing.MockExecutor;
-import com.facebook.testing.TestUtil;
+import com.facebook.testing.TestUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -90,7 +90,7 @@ public class TestUnstoppableExecutorService {
       "executor is terminated"
     );
 
-    AtomicInteger completed = TestUtil.countCompletedRunnables(
+    AtomicInteger completed = TestUtils.countCompletedRunnables(
       10,
       new Function<Runnable>() {
         @Override
@@ -123,7 +123,7 @@ public class TestUnstoppableExecutorService {
       "executor is terminated"
     );
 
-    AtomicInteger completed = TestUtil.countCompletedRunnables(
+    AtomicInteger completed = TestUtils.countCompletedRunnables(
       10,
       new Function<Runnable>() {
         @Override
@@ -156,7 +156,7 @@ public class TestUnstoppableExecutorService {
       "executor is terminated"
     );
 
-    AtomicInteger completed = TestUtil.countCompletedRunnables(
+    AtomicInteger completed = TestUtils.countCompletedRunnables(
       10,
       new Function<Runnable>() {
         @Override
@@ -189,7 +189,7 @@ public class TestUnstoppableExecutorService {
       "executor is terminated"
     );
 
-    AtomicInteger completed = TestUtil.<Void>countCompletedCallables(
+    AtomicInteger completed = TestUtils.<Void>countCompletedCallables(
       10,
       new Function<Callable<Void>>() {
         @Override
@@ -218,7 +218,7 @@ public class TestUnstoppableExecutorService {
   @Test(groups = "fast")
   public void testTaskCompletesThenCancel() throws Exception {
     final AtomicReference<Future> future = new AtomicReference<Future>();
-    AtomicInteger completed = TestUtil.<Void>countCompletedCallables(
+    AtomicInteger completed = TestUtils.<Void>countCompletedCallables(
       10,
       new Function<Callable<Void>>() {
         @Override

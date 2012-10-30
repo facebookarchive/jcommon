@@ -11,9 +11,9 @@ public class TestByteArray {
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
-    byteArray1 = new ByteArray("a string".getBytes());
-    byteArray2 = new ByteArray("b string".getBytes());
-    nullArray = new ByteArray(null);
+    byteArray1 = ByteArray.wrap("a string".getBytes());
+    byteArray2 = ByteArray.wrap("b string".getBytes());
+    nullArray = ByteArray.wrap(null);
   }
   
   @Test(groups = "fast")

@@ -1,6 +1,5 @@
-package com.facebook.stats;
+package com.facebook.stats.mx;
 
-import com.facebook.stats.mx.Stats;
 import com.facebook.util.TimeUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;

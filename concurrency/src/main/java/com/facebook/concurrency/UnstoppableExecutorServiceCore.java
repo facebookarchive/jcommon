@@ -1,7 +1,7 @@
 package com.facebook.concurrency;
 
 import com.facebook.collections.ListMapper;
-import com.facebook.collections.Mapper;
+import com.facebook.collectionsbase.Mapper;
 import org.joda.time.DateTimeUtils;
 
 import java.util.ArrayList;

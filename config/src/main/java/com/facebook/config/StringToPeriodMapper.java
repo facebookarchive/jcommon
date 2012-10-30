@@ -1,6 +1,6 @@
 package com.facebook.config;
 
-import com.facebook.collections.Mapper;
+import com.facebook.collectionsbase.Mapper;
 import org.joda.time.Period;
 
 public class StringToPeriodMapper implements Mapper<String, Period> {
