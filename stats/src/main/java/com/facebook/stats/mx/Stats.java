@@ -6,6 +6,7 @@ import com.facebook.logging.LoggerImpl;
 import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
+import com.facebook.stats.mx.StatsUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -121,7 +122,7 @@ public class Stats implements StatsReader, StatsCollector {
 
   @Override
   public void incrementCounter(StatType key, long delta) {
-    internalIncrementCounter(key.getKey(), delta);    
+    internalIncrementCounter(key.getKey(), delta);
   }
 
   @Override
@@ -159,13 +160,13 @@ public class Stats implements StatsReader, StatsCollector {
         value = existingValue;
       }
     }
-    
+
     value.addAndGet(delta);
   }
 
   @Override
   public long getCounter(StatType key) {
-    return internalGetCounter(key.getKey());    
+    return internalGetCounter(key.getKey());
   }
 
   @Override
@@ -195,10 +196,10 @@ public class Stats implements StatsReader, StatsCollector {
 
   /**
    * Sets the dynamic counter if a counter with the specified key doesn't already exist
-   * 
+   *
    * @param key the key for the dynamic counter
    * @param valueProducer the generator value for this counter
-   * 
+   *
    * @return true if the counter was added. False, if a counter with the specified key exists
    * already
    */
@@ -208,17 +209,17 @@ public class Stats implements StatsReader, StatsCollector {
 
   /**
    * Removes a dynamic counter with the specified key
-   * 
+   *
    * @param key the key for the dynamic counter
    * @return true if a counter with the specified key existed and was removed, false otherwise.
    */
   public boolean removeDynamicCounter(String key) {
     return dynamicCounters.remove(key) != null;
   }
-  
+
   private long internalGetCounter(String key) {
     AtomicLong value = counters.get(key);
-    
+
     return value == null ? 0 : value.get();
   }
 
