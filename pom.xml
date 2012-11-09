@@ -230,32 +230,6 @@
     </dependencies>
   </dependencyManagement>
 
-<!--
-  <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.findbugs</groupId>
-      <artifactId>annotations</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
--->
-
   <build>
     <pluginManagement>
       <plugins>
@@ -263,9 +237,7 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-            <argLine>-XX:-UseSplitVerifier</argLine>
             <groups>${testGroups}</groups>
-            <!-- Work around Cobertura incompatibilty with Java 7 -->
           </configuration>
         </plugin>
 
