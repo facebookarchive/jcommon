@@ -2,16 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.facebook</groupId>
+    <groupId>com.facebook.jcommon</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
-    <relativePath>../origin/pom.xml</relativePath>
+    <version>0.1.3-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.facebook.jcommon</groupId>
   <artifactId>config</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.3-SNAPSHOT</version>
   <name>jcommon config</name>
 
   <dependencies>
@@ -20,12 +17,34 @@
       <artifactId>collections</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.facebook.jcommon</groupId>
+      <artifactId>collections-foundation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook.jcommon</groupId>
+      <artifactId>logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

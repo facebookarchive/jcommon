@@ -2,16 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.facebook</groupId>
+    <groupId>com.facebook.jcommon</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
-    <relativePath>../origin/pom.xml</relativePath>
+    <version>0.1.3-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.facebook.jcommon</groupId>
   <artifactId>jcommon-all</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.3-SNAPSHOT</version>
   <name>jcommon-all</name>
 
   <dependencies>
@@ -45,21 +42,21 @@
     </dependency>
     <dependency>
       <groupId>com.facebook.jcommon</groupId>
-      <artifactId>testing</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.facebook.jcommon</groupId>
       <artifactId>util</artifactId>
     </dependency>
     <dependency>
       <groupId>com.facebook.jcommon</groupId>
       <artifactId>zookeeper</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-    </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>
 

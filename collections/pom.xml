@@ -4,15 +4,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.facebook</groupId>
+    <groupId>com.facebook.jcommon</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
-    <relativePath>../origin/pom.xml</relativePath>
+    <version>0.1.3-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.facebook.jcommon</groupId>
   <artifactId>collections</artifactId>
-  <version>0.1.3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -34,12 +31,26 @@
       <artifactId>guava</artifactId>
     </dependency>
     <dependency>
-      <groupId>cern</groupId>
+      <groupId>colt</groupId>
       <artifactId>colt</artifactId>
     </dependency>
     <dependency>
       <groupId>net.sf.trove4j</groupId>
       <artifactId>trove4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

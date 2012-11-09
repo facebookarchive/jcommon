@@ -2,15 +2,24 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.facebook</groupId>
+    <groupId>com.facebook.jcommon</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
-    <relativePath>../origin/pom.xml</relativePath>
+    <version>0.1.3-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.facebook.jcommon</groupId>
   <artifactId>lifecycle</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.3-SNAPSHOT</version>
   <name>jcommon lifecycle</name>
+  <dependencies>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
 </project>
