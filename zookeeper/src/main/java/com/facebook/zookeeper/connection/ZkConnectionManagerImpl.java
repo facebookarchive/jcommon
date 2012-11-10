@@ -19,7 +19,8 @@ import com.facebook.concurrency.ErrorLoggingRunnable;
 import com.facebook.concurrency.NamedThreadFactory;
 import com.facebook.zookeeper.ZooKeeperFactory;
 import com.facebook.zookeeper.ZooKeeperIface;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
@@ -35,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ZkConnectionManagerImpl implements ZkConnectionManager {
   private static final Logger LOG =
-    Logger.getLogger(ZkConnectionManagerImpl.class);
+    LoggerFactory.getLogger(ZkConnectionManagerImpl.class);
 
   private final ZooKeeperFactory zooKeeperFactory;
   private final List<Watcher> registeredWatchers =

@@ -15,8 +15,6 @@
  */
 package com.facebook.concurrency;
 
-import com.facebook.util.exceptions.ExceptionHandler;
-
 /**
  * translates any exception to 'null'. Use only when you know the result
  * won't be thrown 

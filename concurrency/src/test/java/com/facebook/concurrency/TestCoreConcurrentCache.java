@@ -15,7 +15,6 @@
  */
 package com.facebook.concurrency;
 
-import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -26,7 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.facebook.testing.TestUtils.waitUntilThreadBlocks;
 
 public class TestCoreConcurrentCache {
-  private static final Logger LOG = Logger.getLogger(TestCoreConcurrentCache.class);
 
   private static final String STD_KEY = "std";
   private static final String BLOCKING_KEY = "blocking";
@@ -208,7 +206,7 @@ public class TestCoreConcurrentCache {
       cache.get(EXCEPTION_KEY);
       Assert.fail("expected exception");
     } catch (RuntimeException e) {
-      LOG.info("got expected exception");
+      // expected
     }
     // now call removeIfError() twice, with the first one   
     final AtomicInteger removeCount = new AtomicInteger(0);

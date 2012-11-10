@@ -15,10 +15,11 @@
  */
 package com.facebook.concurrency;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ErrorLoggingRunnable implements Runnable {
-  private static final Logger LOG = Logger.getLogger(ErrorLoggingRunnable.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ErrorLoggingRunnable.class);
   private final Runnable delegate;
 
   public ErrorLoggingRunnable(Runnable delegate) {

@@ -15,7 +15,8 @@
  */
 package com.facebook.concurrency.linearization;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -89,7 +90,7 @@ import java.util.concurrent.atomic.AtomicReference;
  </pre>
  */
 public class Linearizer {
-  private static final Logger LOG = Logger.getLogger(Linearizer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Linearizer.class);
   private static final long COMPLETE_WAIT_TIME_SECONDS = 300; 
 
   private final AtomicReference<AtomicInteger> pointCountRef = 

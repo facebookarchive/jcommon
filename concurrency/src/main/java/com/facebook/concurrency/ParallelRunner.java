@@ -16,10 +16,10 @@
 package com.facebook.concurrency;
 
 import com.facebook.util.ExtRunnable;
-import com.facebook.util.exceptions.ExceptionHandler;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * lower than specified, that bound will of course be used.
  */
 public class ParallelRunner {
-  private static final Logger LOG = Logger.getLogger(ParallelRunner.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ParallelRunner.class);
   private static final String DEFAULT_NAME_PREFIX = "ParallelRun-";
 
   private final AtomicLong instanceNumber = new AtomicLong(0);

@@ -15,7 +15,7 @@
  */
 package com.facebook.concurrency;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -27,9 +27,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class TestExecutorServiceFrontBuilder {
-  private static final Logger LOG =
-    Logger.getLogger(TestExecutorServiceFrontBuilder.class);
-
   private ExecutorService coreExecutor;
   private ExecutorServiceFrontBuilder executorFrontBuilder;
   private AtomicLong count;
@@ -54,9 +51,7 @@ public class TestExecutorServiceFrontBuilder {
           count.incrementAndGet();
           finishLatch.countDown();
         } catch (InterruptedException e) {
-          LOG.warn("interrupted waiting on latch!", e);
-
-          throw new RuntimeException(e);
+          throw new RuntimeException("interrupted waiting on latch!", e);
         }
       }
     };
@@ -116,9 +111,7 @@ public class TestExecutorServiceFrontBuilder {
       finishLatch.await();
       Assert.assertEquals(count.get(), 4);
     } catch (InterruptedException e) {
-      LOG.warn("interrupted waiting on latch!", e);
-
-      throw e;
+      throw new RuntimeException("interrupted waiting on latch!", e);
     }
   }
 }

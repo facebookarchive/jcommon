@@ -15,7 +15,8 @@
  */
 package com.facebook.testing;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class MockScheduledFuture<V> implements ScheduledFuture<V>, Runnable {
-  private static final Logger LOG = Logger.getLogger(MockScheduledFuture.class);
+  private static final Logger LOG = LoggerFactory.getLogger(MockScheduledFuture.class);
   
   private final Callable<V> callable;
   private final Object lock = new Object();

@@ -17,7 +17,6 @@ package com.facebook.concurrency;
 
 import com.facebook.collectionsbase.Mapper;
 import com.facebook.collections.TranslatingIterator;
-import com.facebook.util.exceptions.ExceptionHandler;
 
 import java.util.AbstractMap;
 import java.util.Iterator;
