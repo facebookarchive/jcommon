@@ -15,7 +15,8 @@
  */
 package com.facebook.concurrency;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.joda.time.DateTimeUtils;
 
 import java.util.List;
@@ -49,7 +50,7 @@ public class ExecutorServiceFront extends AbstractExecutorService {
   private final long maxTimeSliceMillis;
   private final BlockingQueue<Drainer> drainerList;
 
-  private static final Logger LOG = Logger.getLogger(ExecutorServiceFront.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceFront.class);
 
   /**
    * 

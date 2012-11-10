@@ -15,8 +15,8 @@
  */
 package com.facebook.stats;
 
-import com.facebook.logging.Logger;
 import com.facebook.stats.topk.TopK;
+import org.slf4j.Logger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -87,7 +87,7 @@ public abstract class TestIntegerTopK {
     int maxAdd = 100;
     TopK<Integer> topK = getInstance(keySpaceSize, k);
 
-    LOG.info("Timing add() performance with keySpaceSize = %s, k = %s", keySpaceSize, k);
+    LOG.info("Timing add() performance with keySpaceSize = {}, k = {}", keySpaceSize, k);
 
     Random random = new Random(0);
     long totalTime = 0;
@@ -107,7 +107,7 @@ public abstract class TestIntegerTopK {
     }
 
     LOG.info(
-      "Processed %s entries in %s ms. Insertion rate = %s entries/s",
+      "Processed {} entries in {} ms. Insertion rate = {} entries/s",
       count,
       TimeUnit.NANOSECONDS.toMillis(totalTime),
       count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
@@ -121,7 +121,7 @@ public abstract class TestIntegerTopK {
     int maxAdd = 100;
     TopK<Integer> topK = getInstance(keySpaceSize, k);
 
-    LOG.info("Timing getTopK() performance with keySpaceSize = %s, k = %s", keySpaceSize, k);
+    LOG.info("Timing getTopK() performance with keySpaceSize = {}, k = {}", keySpaceSize, k);
 
     Random random = new Random(0);
     long totalTime = 0;
@@ -144,7 +144,7 @@ public abstract class TestIntegerTopK {
     }
 
     LOG.info(
-      "Processed %s entries in %s ms. Retrieval rate = %s retrievals/s",
+      "Processed {} entries in {} ms. Retrieval rate = {} retrievals/s",
       count,
       TimeUnit.NANOSECONDS.toMillis(totalTime),
       count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))

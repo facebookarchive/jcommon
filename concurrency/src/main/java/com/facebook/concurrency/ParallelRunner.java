@@ -19,7 +19,8 @@ import com.facebook.util.ExtRunnable;
 import com.facebook.util.exceptions.ExceptionHandler;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * lower than specified, that bound will of course be used.
  */
 public class ParallelRunner {
-  private static final Logger LOG = Logger.getLogger(ParallelRunner.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ParallelRunner.class);
   private static final String DEFAULT_NAME_PREFIX = "ParallelRun-";
 
   private final AtomicLong instanceNumber = new AtomicLong(0);
@@ -252,21 +253,17 @@ public class ParallelRunner {
     try {
       while (!executorForInvocation.awaitTermination(10, TimeUnit.SECONDS)) {
         LOG.info(
-          String.format(
-            "(%d) %s waited 10s for %d tasks, waiting some more",
-            Thread.currentThread().getId(),
-            baseName,
-            totalTasks
-          )
+          "({}) {} waited 10s for {} tasks, waiting some more",
+          Thread.currentThread().getId(),
+          baseName,
+          totalTasks
         );
       }
 
       LOG.info(
-        String.format(
-          "(%d) tasksIter for %s completed",
+          "({}) tasksIter for {} completed",
           Thread.currentThread().getId(),
           baseName
-        )
       );
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();

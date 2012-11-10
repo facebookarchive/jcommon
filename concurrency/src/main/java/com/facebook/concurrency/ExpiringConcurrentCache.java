@@ -18,7 +18,8 @@ package com.facebook.concurrency;
 import com.facebook.collectionsbase.Mapper;
 import com.facebook.collections.TranslatingIterator;
 import com.facebook.util.exceptions.ExceptionHandler;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.joda.time.DateTimeUtils;
 
 import java.util.AbstractMap;
@@ -33,7 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ExpiringConcurrentCache<K, V, E extends Exception>
   implements ConcurrentCache<K, V, E> {
-  private static final Logger LOG = Logger.getLogger(ExpiringConcurrentCache.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ExpiringConcurrentCache.class);
 
   private final ConcurrentCache<K, CacheEntry<V, E>, E> baseCache;
   private final long maxAgeMillis;

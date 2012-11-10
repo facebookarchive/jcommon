@@ -17,8 +17,6 @@ package com.facebook.collections.specialized;
 
 import com.facebook.collections.SetFactory;
 import com.facebook.collections.WrappedIterator;
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
 import com.facebook.util.digest.DigestFunction;
 import com.facebook.util.serialization.SerDe;
 import com.facebook.util.serialization.SerDeException;
@@ -44,7 +42,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 // TODO : optimize concurrency if proves to be a bottleneck
 public class SampledSetImpl<T> implements SampledSet<T> {
-  private static final Logger LOG = LoggerImpl.getLogger(SampledSetImpl.class);
 
   private final DigestFunction<T> digestFunction;
   private final SetFactory<T, SnapshotableSet<T>> setFactory;
