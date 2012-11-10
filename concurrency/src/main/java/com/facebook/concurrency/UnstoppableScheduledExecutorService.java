@@ -1,6 +1,7 @@
 package com.facebook.concurrency;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,7 +24,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class UnstoppableScheduledExecutorService
   implements ScheduledExecutorService {
-  private static final Logger LOG = Logger.getLogger(UnstoppableScheduledExecutorService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(UnstoppableScheduledExecutorService.class);
 
   private final UnstoppableExecutorServiceCore executorCore;
   private final ScheduledExecutorService executor;

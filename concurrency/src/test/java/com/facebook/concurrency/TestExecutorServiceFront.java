@@ -5,7 +5,6 @@ import com.facebook.testing.LoopThread;
 import com.facebook.testing.MockExecutor;
 import com.facebook.testing.TestUtils;
 import com.facebook.testing.ThreadHelper;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTimeUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -20,9 +19,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class TestExecutorServiceFront {
-  private static final Logger LOG =
-    Logger.getLogger(TestExecutorServiceFront.class);
-
   private MockExecutor mockExecutor;
   private ExecutorServiceFront executorFront;
   private ExecutorServiceFront executorFront2;
@@ -51,9 +47,7 @@ public class TestExecutorServiceFront {
             offsetTime.addAndGet(20000)
           );
         } catch (SecurityException e) {
-          LOG.warn("security exception on incrementing the system time!", e);
-
-          throw new RuntimeException(e);
+          throw new RuntimeException("security exception on incrementing the system time!", e);
         }
         count.incrementAndGet();
       }

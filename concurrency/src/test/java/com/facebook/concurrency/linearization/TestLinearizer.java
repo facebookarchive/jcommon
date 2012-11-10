@@ -1,6 +1,7 @@
 package com.facebook.concurrency.linearization;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestLinearizer {
-  private static final Logger LOG = Logger.getLogger(TestLinearizer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TestLinearizer.class);
   
   private Linearizer linearizer;
   private AtomicInteger nextTaskId;

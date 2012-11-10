@@ -1,6 +1,7 @@
 package com.facebook.testing;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * class useful in unit tests
  */
 public class ThreadHelper {
-  private static final Logger LOG = Logger.getLogger(ThreadHelper.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ThreadHelper.class);
   
   private final List<Throwable> exceptionList = new ArrayList<Throwable>();
   

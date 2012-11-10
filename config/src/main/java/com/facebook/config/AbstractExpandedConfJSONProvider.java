@@ -1,6 +1,7 @@
 package com.facebook.config;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +37,7 @@ import java.util.Set;
  * key defined in more distantly included objects.
  */
 public abstract class AbstractExpandedConfJSONProvider implements JSONProvider {
-  private static final Logger LOG = Logger.getLogger(AbstractExpandedConfJSONProvider.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractExpandedConfJSONProvider.class);
   private static final String CONF_KEY = "conf";
   private static final String INCLUDES_KEY = "includes";
 

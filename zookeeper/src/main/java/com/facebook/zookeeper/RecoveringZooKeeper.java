@@ -1,6 +1,7 @@
 package com.facebook.zookeeper;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class RecoveringZooKeeper implements ZooKeeperIface {
-  private static final Logger LOG = Logger.getLogger(RecoveringZooKeeper.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RecoveringZooKeeper.class);
 
   private final ZooKeeperIface zk;
   private final RetryCounterFactory retryCounterFactory;

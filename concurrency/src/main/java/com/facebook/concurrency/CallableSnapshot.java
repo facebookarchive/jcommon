@@ -1,7 +1,5 @@
 package com.facebook.concurrency;
 
-import com.facebook.util.exceptions.ExceptionHandler;
-
 import java.util.concurrent.Callable;
 
 public class CallableSnapshot<V, E extends Exception> {

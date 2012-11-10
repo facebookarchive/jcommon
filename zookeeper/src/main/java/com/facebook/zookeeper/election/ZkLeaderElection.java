@@ -6,7 +6,8 @@ import com.facebook.zookeeper.Encodable;
 import com.facebook.zookeeper.ZkUtil;
 import com.facebook.zookeeper.ZooKeeperIface;
 import com.facebook.zookeeper.connection.ZkConnectionManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -33,7 +34,7 @@ import java.util.concurrent.Executors;
  * course of action following an exception thrown on an earlier invocation.
  */
 public class ZkLeaderElection implements LeaderElection {
-  private static final Logger LOG = Logger.getLogger(ZkLeaderElection.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ZkLeaderElection.class);
   
   private final ZkConnectionManager zkConnectionManager;
   private final PathFormat pathFormat;

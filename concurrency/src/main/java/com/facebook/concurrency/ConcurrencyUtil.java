@@ -1,10 +1,10 @@
 package com.facebook.concurrency;
 
 import com.facebook.util.ExtRunnable;
-import com.facebook.util.exceptions.ExceptionHandler;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -32,7 +32,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  */
 public class ConcurrencyUtil {
-  private static final Logger LOG = Logger.getLogger(ConcurrencyUtil.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ConcurrencyUtil.class);
   private static final AtomicLong INSTANCE_NUMBER = new AtomicLong(0);
   private static final ReadWriteLock SHUTDOWN_LOCK =
     new ReentrantReadWriteLock();

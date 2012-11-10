@@ -1,6 +1,7 @@
 package com.facebook.lifecycle;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * will run hooks by stage and in the order added within stages
  */
 public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
-  private static final Logger LOG = Logger.getLogger(ShutdownManagerImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ShutdownManagerImpl.class);
 
   private final Map<T, List<Runnable>> shutdownHooksByStage = new ConcurrentHashMap<>();
   private final Thread thread;

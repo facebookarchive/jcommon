@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.lang.IllegalArgumentException;
 
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * See com.facebook.fb303.stats.HistoryManager for more info.
@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
  * details see com.facebook.fb303.stats.HistoryManager.
  */
 public class StatsManager implements HistoryManager {
-  private static Logger logger_ = Logger.getLogger(StatsManager.class);
+  private static Logger logger_ = LoggerFactory.getLogger(StatsManager.class);
 
   private ConcurrentHashMap<String, Integer> typeMap_;
   // todo: handle mutliple shortName/types

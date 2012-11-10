@@ -1,13 +1,11 @@
 package com.facebook.data.types;
 
 import com.facebook.data.types.StringDatum;
-import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class TestStringDatum {
-  private static final Logger LOG = Logger.getLogger(TestStringDatum.class);
   
   private StringDatum emptyStringDatum;
   private StringDatum trueStringDatum1;
@@ -68,37 +66,37 @@ public class TestStringDatum {
     try {
       stringDatum1.asByte();
     } catch (NumberFormatException e) {
-      LOG.info("got expected exception");
+      // expected
     }
 
     try {
       stringDatum1.asShort();
     } catch (NumberFormatException e) {
-      LOG.info("got expected exception");
+      // expected
     }
 
     try {
       stringDatum1.asInteger();
     } catch (NumberFormatException e) {
-      LOG.info("got expected exception");
+      // expected
     }
 
     try {
       stringDatum1.asLong();
     } catch (NumberFormatException e) {
-      LOG.info("got expected exception");
+      // expected
     }
 
     try {
       stringDatum1.asFloat();
     } catch (NumberFormatException e) {
-      LOG.info("got expected exception");
+      // expected
     }
 
     try {
       stringDatum1.asDouble();
     } catch (NumberFormatException e) {
-      LOG.info("got expected exception");
+      // expected
     }
   }
 }

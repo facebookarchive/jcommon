@@ -1,7 +1,5 @@
 package com.facebook.concurrency;
 
-import com.facebook.util.exceptions.ExceptionHandler;
-
 /**
  * map any exception to a runtime exception
  */

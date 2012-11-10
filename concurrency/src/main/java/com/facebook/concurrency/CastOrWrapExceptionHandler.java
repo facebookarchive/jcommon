@@ -1,7 +1,5 @@
 package com.facebook.concurrency;
 
-import com.facebook.util.exceptions.ExceptionHandler;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 

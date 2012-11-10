@@ -2,7 +2,6 @@ package com.facebook.collections.specialized;
 
 import com.facebook.util.digest.DigestFunction;
 import com.facebook.util.digest.LongMurmur3Hash;
-import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -11,7 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TestSampledSetImpl {
-  private static final Logger LOG = Logger.getLogger(TestSampledSetImpl.class);
 
   private int maxSetSize;
   private SampledSet<Long> integerSet;
@@ -50,7 +48,6 @@ public class TestSampledSetImpl {
     );
     // this test case is deterministic and we expect less than 2-3%
     Assert.assertTrue(error < 0.02, message);
-    LOG.info("success: " + message);
   }
   
   @Test(groups = "fast")
@@ -111,8 +108,6 @@ public class TestSampledSetImpl {
       integerSet.add((long)i);
       assertValidMaxSize();
     }
-
-    LOG.info("success: " + integerSet.getScaledSize());
   }
 
   @Test(groups = "fast")

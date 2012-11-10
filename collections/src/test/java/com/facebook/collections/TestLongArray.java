@@ -1,6 +1,5 @@
 package com.facebook.collections;
 
-import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -8,8 +7,6 @@ import org.testng.annotations.Test;
 import java.util.Iterator;
 
 public class TestLongArray {
-  private static final Logger LOG = Logger.getLogger(TestLongArray.class);
-
 
   private LongArray arraySize4;
   private LongArray arraySize16;
