@@ -34,7 +34,7 @@ limitations under the License.
   <name>java root</name>
   <description>common java libs</description>
 
-  <url>https://phabricator.fb.com/diffusion/</url>
+  <url>https://hgschmie.github.com/${project.artifactId}</url>
   <inceptionYear>2012</inceptionYear>
 
   <properties>
@@ -51,6 +51,51 @@ limitations under the License.
     <url>https://github.com/facebook/jcommon</url>
     <tag>HEAD</tag>
   </scm>
+
+  <distributionManagement>
+    <site>
+      <id>github-project-site</id>
+      <url>gitsite:git@github.com/hgschmie/jcommon.git</url>
+    </site>
+  </distributionManagement>
+
+  <developers>
+    <developer>
+      <id>sr</id>
+      <email>sr@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>ehwang</id>
+      <email>ehwang@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>lif</id>
+      <email>lif@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>timw</id>
+      <email>timw@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>groys</id>
+      <email>groys@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>martint</id>
+      <email>martint@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>dain</id>
+      <email>dain@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+  </developers>
 
   <profiles>
     <profile>
