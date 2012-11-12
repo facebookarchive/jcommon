@@ -34,7 +34,7 @@ limitations under the License.
   <name>java root</name>
   <description>common java libs</description>
 
-  <url>https://hgschmie.github.com/${project.artifactId}</url>
+  <url>https://facebook.github.com/${project.artifactId}</url>
   <inceptionYear>2012</inceptionYear>
 
   <properties>
@@ -51,13 +51,6 @@ limitations under the License.
     <url>https://github.com/facebook/jcommon</url>
     <tag>HEAD</tag>
   </scm>
-
-  <distributionManagement>
-    <site>
-      <id>github-project-site</id>
-      <url>gitsite:git@github.com/hgschmie/jcommon.git</url>
-    </site>
-  </distributionManagement>
 
   <developers>
     <developer>
