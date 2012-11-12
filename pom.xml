@@ -1,95 +1,98 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+Copyright (C) 2012 Facebook, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.facebook</groupId>
-  <artifactId>jcommon-root</artifactId>
+
+  <parent>
+    <groupId>com.facebook</groupId>
+    <artifactId>facebook-oss-pom</artifactId>
+    <version>1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.facebook.jcommon</groupId>
+  <artifactId>jcommon-parent</artifactId>
   <packaging>pom</packaging>
   <version>0.1.3-SNAPSHOT</version>
   <name>java root</name>
   <description>common java libs</description>
-  <url>https://phabricator.fb.com/diffusion/</url>
+
+  <url>https://facebook.github.com/${project.artifactId}</url>
+  <inceptionYear>2012</inceptionYear>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.nexus.hostPort>nexus.vip.facebook.com:8181</project.nexus.hostPort>
+    <testGroups>fast,slow</testGroups>
+    <dep.jackson.version>2.0.6</dep.jackson.version>
+
+    <fb.check.fail-findbugs>false</fb.check.fail-findbugs>
+    <fb.check.fail-pmd>false</fb.check.fail-pmd>
   </properties>
 
   <scm>
-    <connection>scm:git:ssh://projects.git.vip.facebook.com/data/gitrepos/jcommon.git</connection>
-    <developerConnection>
-      scm:git:ssh://projects.git.vip.facebook.com/data/gitrepos/jcommon.git
-    </developerConnection>
-    <url>https://phabricator.fb.com/diffusion/</url>
-    <tag>jcommon-root-0.1.0</tag>
+    <connection>scm:git:git://github.com/facebook/jcommon.git</connection>
+    <developerConnection>scm:git:git@github.com:facebook/jcommon.git</developerConnection>
+    <url>https://github.com/facebook/jcommon</url>
+    <tag>HEAD</tag>
   </scm>
 
-  <distributionManagement>
-    <repository>
-      <id>libs-releases-local</id>
-      <url>${project.libs-releases-local-url}</url>
-    </repository>
-    <snapshotRepository>
-      <id>libs-snapshots-local</id>
-      <url>${project.libs-snapshots-local-url}
-      </url>
-    </snapshotRepository>
-  </distributionManagement>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.3.1</version>
-        <configuration>
-          <pushChanges>false</pushChanges>
-          <localCheckout>true</localCheckout>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <developers>
+    <developer>
+      <id>sr</id>
+      <email>sr@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>ehwang</id>
+      <email>ehwang@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>lif</id>
+      <email>lif@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>timw</id>
+      <email>timw@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>groys</id>
+      <email>groys@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>martint</id>
+      <email>martint@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+    <developer>
+      <id>dain</id>
+      <email>dain@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
+  </developers>
 
   <profiles>
     <profile>
-      <id>nexus</id>
-      <properties>
-        <testGroups>fast,slow</testGroups>
-        <project.libs-releases-local-url>
-          http://${project.nexus.hostPort}/nexus/content/repositories/libs-releases-local
-        </project.libs-releases-local-url>
-        <project.libs-snapshots-local-url>
-          http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
-        </project.libs-snapshots-local-url>
-      </properties>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-    </profile>
-    <profile>
-      <id>default</id>
-      <properties>
-        <testGroups>fast,slow</testGroups>
-        <project.libs-releases-local-url>
-          http://${project.nexus.hostPort}/nexus/content/repositories/libs-releases-local
-        </project.libs-releases-local-url>
-        <project.libs-snapshots-local-url>
-          http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
-        </project.libs-snapshots-local-url>
-      </properties>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-    </profile>
-    <profile>
       <id>jenkins</id>
-      <properties>
-        <testGroups>fast,slow</testGroups>
-        <project.libs-releases-local-url>
-          http://${project.nexus.hostPort}/nexus/content/repositories/libs-releases-local
-        </project.libs-releases-local-url>
-        <project.libs-snapshots-local-url>
-          http://${project.nexus.hostPort}/nexus/content/repositories/libs-snapshots-local
-        </project.libs-snapshots-local-url>
-      </properties>
       <activation>
         <property>
           <name>env.BUILD_NUMBER</name>
@@ -104,11 +107,17 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>fast</id>
+      <properties>
+        <testGroups>fast</testGroups>
+      </properties>
+    </profile>
   </profiles>
 
   <!--aggregator only project; includes upload info -->
   <modules>
-    <module>origin</module>
     <module>util</module>
     <module>data</module>
     <module>collections</module>
@@ -124,4 +133,186 @@
     <module>testing</module>
   </modules>
 
+  <dependencyManagement>
+    <dependencies>
+      <!--jcommon internal-->
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>collections</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>collections-foundation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>concurrency</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>config</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>data</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>lifecycle</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>logging</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>memory</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>stats</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>util</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>zookeeper</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>testing</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>jcommon-all</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!--third party-->
+      <dependency>
+        <groupId>colt</groupId>
+        <artifactId>colt</artifactId>
+        <version>1.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.trove4j</groupId>
+        <artifactId>trove4j</artifactId>
+        <version>3.0.3</version>
+      </dependency>
+      <dependency>
+        <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+        <artifactId>concurrentlinkedhashmap-lru</artifactId>
+        <version>1.3.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20090211</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.zookeeper</groupId>
+        <artifactId>zookeeper</artifactId>
+        <version>3.3.5</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>commons-cli</groupId>
+        <artifactId>commons-cli</artifactId>
+        <version>1.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${dep.jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${dep.jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${dep.jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-guava</artifactId>
+        <version>${dep.jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.iq80.snappy</groupId>
+        <artifactId>snappy</artifactId>
+        <version>0.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>annotations</artifactId>
+        <version>2.0.1</version>
+      </dependency>
+
+      <!--test-->
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>1.9.0</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <groups>${testGroups}</groups>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>1.5</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+              <configuration>
+                <shadedArtifactAttached>true</shadedArtifactAttached>
+                <shadedClassifierName>standalone</shadedClassifierName>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
