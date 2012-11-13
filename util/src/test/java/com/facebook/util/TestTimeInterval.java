@@ -136,6 +136,26 @@ public class TestTimeInterval {
         {time, TimeIntervalType.YEAR, 1, new DateTime(2011 ,1, 1, 0, 0, 0, 0, timeZone)},
         {time, TimeIntervalType.YEAR, 3, new DateTime(2009 ,1, 1, 0, 0, 0, 0, timeZone)},
       }));
+      time = new DateTime(2012, 11, 4, 23, 35, 12, 17, timeZone);
+      params.addAll(Arrays.asList(new Object[][] {
+        {time, TimeIntervalType.SECOND, 5, new DateTime(2012, 11, 4, 23, 35, 10, 0, timeZone)},
+        {time, TimeIntervalType.SECOND, 6, new DateTime(2012, 11, 4, 23, 35, 12, 0, timeZone)},
+        {time, TimeIntervalType.SECOND, 7, new DateTime(2012, 11, 4, 23, 35, 7, 0, timeZone)},
+        {time, TimeIntervalType.SECOND, 30, new DateTime(2012, 11, 4, 23, 35, 0, 0, timeZone)},
+        {time, TimeIntervalType.MINUTE, 6, new DateTime(2012, 11, 4, 23, 30, 0, 0, timeZone)},
+        {time, TimeIntervalType.HOUR, 1, new DateTime(2012, 11, 4, 23, 0, 0, 0, timeZone)},
+        {time, TimeIntervalType.HOUR, 6, PDT.equals(timeZone)
+          ? new DateTime(2012, 11, 4, 23, 0, 0, 0, timeZone)
+          : new DateTime(2012, 11, 4, 18, 0, 0, 0, timeZone)},
+        {time, TimeIntervalType.DAY, 1, new DateTime(2012, 11, 4, 0, 0, 0, 0, timeZone)},
+        {time, TimeIntervalType.DAY, 3, new DateTime(2012, 11, 4, 0, 0, 0, 0, timeZone)},
+        {time, TimeIntervalType.DAY, 7, new DateTime(2012, 11, 1, 0, 0, 0, 0, timeZone)},
+        // Note sunday is the start of week because the 2012-1-1 was a sunday
+        {time, TimeIntervalType.WEEK, 1, new DateTime(2012, 11, 4, 0, 0, 0, 0, timeZone)},
+        {time, TimeIntervalType.MONTH, 1, new DateTime(2012, 11, 1, 0, 0, 0, 0, timeZone)},
+        {time, TimeIntervalType.YEAR, 1, new DateTime(2012, 1, 1, 0, 0, 0, 0, timeZone)},
+        {time, TimeIntervalType.YEAR, 3, new DateTime(2012, 1, 1, 0, 0, 0, 0, timeZone)},
+      }));
     }
     return params.toArray(new Object[params.size()][]);
   }
