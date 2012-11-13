@@ -29,6 +29,7 @@ limitations under the License.
 
   <artifactId>data</artifactId>
   <packaging>jar</packaging>
+  <name>jcommon data package</name>
 
   <properties>
     <fb.main.basedir>${project.parent.basedir}</fb.main.basedir>

@@ -28,6 +28,7 @@ limitations under the License.
 
   <artifactId>memory</artifactId>
   <packaging>jar</packaging>
+  <name>jcommon memory package</name>
 
   <properties>
     <fb.main.basedir>${project.parent.basedir}</fb.main.basedir>

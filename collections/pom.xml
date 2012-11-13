@@ -29,6 +29,7 @@ limitations under the License.
 
   <artifactId>collections</artifactId>
   <packaging>jar</packaging>
+  <name>jcommon collections package</name>
 
   <properties>
     <fb.main.basedir>${project.parent.basedir}</fb.main.basedir>
