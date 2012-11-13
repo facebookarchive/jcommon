@@ -52,6 +52,13 @@ limitations under the License.
     <tag>HEAD</tag>
   </scm>
 
+  <distributionManagement>
+    <site>
+      <id>github-project-site</id>
+      <url>gitsite:git@github.com/facebook/jcommon.git</url>
+    </site>
+  </distributionManagement>
+
   <developers>
     <developer>
       <id>sr</id>
