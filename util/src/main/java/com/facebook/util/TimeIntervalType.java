@@ -19,9 +19,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeField;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
-import org.joda.time.Duration;
 import org.joda.time.DurationField;
 import org.joda.time.Period;
+import org.joda.time.PeriodType;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.field.FieldUtils;
 
@@ -40,31 +40,31 @@ import org.joda.time.field.FieldUtils;
  * </p>
  */
 public enum TimeIntervalType {
-  MILLIS(DateTimeFieldType.millisOfSecond(), null) {
+  MILLIS(PeriodType.millis(), DateTimeFieldType.millisOfSecond(), null) {
     @Override
     public Period toPeriod(int length) {
       return Period.millis(length);
     }
   },
-  SECOND(DateTimeFieldType.secondOfMinute(), MILLIS) {
+  SECOND(PeriodType.seconds(), DateTimeFieldType.secondOfMinute(), MILLIS) {
     @Override
     public Period toPeriod(int length) {
       return Period.seconds(length);
     }
   },
-  MINUTE(DateTimeFieldType.minuteOfHour(), SECOND) {
+  MINUTE(PeriodType.minutes(), DateTimeFieldType.minuteOfHour(), SECOND) {
     @Override
     public Period toPeriod(int length) {
       return Period.minutes(length);
     }
   },
-  HOUR(DateTimeFieldType.hourOfDay(), MINUTE) {
+  HOUR(PeriodType.hours(), DateTimeFieldType.hourOfDay(), MINUTE) {
     @Override
     public Period toPeriod(int length) {
       return Period.hours(length);
     }
   },
-  DAY(DateTimeFieldType.dayOfMonth(), HOUR) {
+  DAY(PeriodType.days(), DateTimeFieldType.dayOfMonth(), HOUR) {
     @Override
     public Period toPeriod(int length) {
       return Period.days(length);
@@ -76,25 +76,26 @@ public enum TimeIntervalType {
    * as a time interval type, until we can have the weeks starting on the
    * correct day (Sunday/Monday) per the locale.
    */
-  WEEK(DateTimeFieldType.weekOfWeekyear(), DAY) {
+  WEEK(PeriodType.weeks(), DateTimeFieldType.weekOfWeekyear(), DAY) {
     @Override
     public Period toPeriod(int length) {
       return Period.weeks(length);
     }
   },
-  MONTH(DateTimeFieldType.monthOfYear(), DAY) {
+  MONTH(PeriodType.months(), DateTimeFieldType.monthOfYear(), DAY) {
     @Override
     public Period toPeriod(int length) {
       return Period.months(length);
     }
   },
-  YEAR(DateTimeFieldType.yearOfCentury(), MONTH) {
+  YEAR(PeriodType.years(), DateTimeFieldType.yearOfCentury(), MONTH) {
     @Override
     public Period toPeriod(int length) {
       return Period.years(length);
     }
   };
 
+  private final PeriodType periodType;
   private final DateTimeFieldType fieldType;
   private final TimeIntervalType subType;
 
@@ -104,7 +105,12 @@ public enum TimeIntervalType {
    * @param type The field type corresponding to this interval type.
    * @param subType The subtype for this type.
    */
-  private TimeIntervalType(DateTimeFieldType type, TimeIntervalType subType) {
+  private TimeIntervalType(
+    PeriodType periodType,
+    DateTimeFieldType type,
+    TimeIntervalType subType
+  ) {
+    this.periodType = periodType;
     this.fieldType = type;
     this.subType = subType;
   }
@@ -160,16 +166,11 @@ public enum TimeIntervalType {
       timeIntervalType = timeIntervalType.subType;
     }
     // figure out the which time interval does the instant lie in
-    Duration duration = new Duration(periodStart, instant);
-    final DurationField durationField = fieldType.getField(
-      ISOChronology.getInstance(
-        instant.getZone()
-      )
-    ).getDurationField();
-    int diff = durationField.getValue(duration.getMillis());
+    Period period = new Period(periodStart, instant, periodType);
+    DurationField durationField = fieldType.getField(instant.getChronology()).getDurationField();
+    int diff = period.get(durationField.getType());
     long startDelta = (diff / length) * length;
-    return periodStart.withFieldAdded(durationField.getType(),
-                                      FieldUtils.safeToInt(startDelta));
+    return periodStart.withFieldAdded(durationField.getType(), FieldUtils.safeToInt(startDelta));
   }
 
   /**
@@ -186,8 +187,7 @@ public enum TimeIntervalType {
   protected DateTime clearField(DateTime value) {
     return value.withField(
       fieldType,
-      fieldType.getField(ISOChronology.getInstance(value.getZone()))
-        .getMinimumValue()
+      fieldType.getField(value.getChronology()).getMinimumValue()
     );
   }
 }
