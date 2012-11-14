@@ -95,6 +95,11 @@ limitations under the License.
       <email>dain@fb.com</email>
       <timezone>-8</timezone>
     </developer>
+    <developer>
+      <id>alessandro</id>
+      <email>alessandro@fb.com</email>
+      <timezone>-8</timezone>
+    </developer>
   </developers>
 
   <profiles>
