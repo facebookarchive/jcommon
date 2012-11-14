@@ -30,41 +30,52 @@ final class StaticModelUtil {
   }
 
   public static double[] weightsToProbabilities(double[] weights) {
+    return weightsToProbabilities(weights, Integer.MAX_VALUE);
+  }
+
+  public static double[] weightsToProbabilities(double[] weights, int iterationLimit) {
     Preconditions.checkNotNull(weights, "weights is null");
     Preconditions.checkArgument(weights.length > 0, "weights is empty");
 
-    return weightsToProbabilities(Arrays.copyOf(weights, weights.length), sum(weights));
+    return weightsToProbabilities(
+      Arrays.copyOf(weights, weights.length), sum(weights), iterationLimit
+    );
   }
 
-  private static double[] weightsToProbabilities(double[] weights, double sum) {
-    for (int i = 0; i < weights.length; i++) {
-      Preconditions.checkArgument(
-          weights[i] >= 0,
-          "weight %s value %s is not greater than zero",
-          i,
-          weights[i]
-      );
-      weights[i] /= sum;
+  private static strictfp double[] weightsToProbabilities(
+    double[] weights, double sum, int iterationLimit
+  ) {
+    int iterationCount = 0;
 
-      // adjust probability is too small or too large
-      // this number is large enough that when multiplied by MAX_TOTAL we get a whole number
-      if (weights[i] < SMALLEST_PROBABILITY) {
-        weights[i] = SMALLEST_PROBABILITY;
-      } else if (weights[i] > 0.999) {
-        // this generally leaves enough room for ever symbol to get a whole number part of MAX_TOTAL
-        weights[i] = 0.999;
+    do {
+      for (int i = 0; i < weights.length; i++) {
+        Preconditions.checkArgument(
+            weights[i] >= 0,
+            "weight %s value %s is not greater than zero",
+            i,
+            weights[i]
+        );
+        weights[i] /= sum;
+
+        // adjust probability is too small or too large
+        // this number is large enough that when multiplied by MAX_TOTAL we get a whole number
+        if (weights[i] < SMALLEST_PROBABILITY) {
+          weights[i] = SMALLEST_PROBABILITY;
+        } else if (weights[i] > 0.999) {
+          // this generally leaves enough room for ever symbol to get a whole number part of MAX_TOTAL
+          weights[i] = 0.999;
+        }
       }
-    }
 
-    // keep normalizing until the total probability falls in a specific range
-    double newSum = sum(weights);
-    if (newSum < 0.9999 || newSum > 1.0001) {
-      weightsToProbabilities(weights, newSum);
-    }
+      // keep normalizing until the total probability falls in a specific range
+      sum = sum(weights);
+      ++iterationCount;
+    } while ((sum < 0.9999 || sum > 1.0001) && iterationCount < iterationLimit);
+
     return weights;
   }
 
-  private static double sum(double[] values) {
+  private static strictfp double sum(double[] values) {
     double sum = 0;
     for (double value : values) {
       sum += value;
