@@ -38,7 +38,7 @@ class StaticModel implements Model {
     counts = new int[weights.length + 1];
     totalIndex = weights.length;
 
-    double[] probabilities = weightsToProbabilities(weights);
+    double[] probabilities = weightsToProbabilities(weights, 10);
 
     for (int symbol = 0; symbol < probabilities.length; symbol++) {
       double probability = probabilities[symbol];
