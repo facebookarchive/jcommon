@@ -46,7 +46,7 @@ limitations under the License.
   </properties>
 
   <scm>
-    <connection>scm:git:git://github.com/facebook/jcommon.git</connection>
+    <connection>scm:git:git@github.com/facebook/jcommon.git</connection>
     <developerConnection>scm:git:git@github.com:facebook/jcommon.git</developerConnection>
     <url>https://github.com/facebook/jcommon</url>
     <tag>HEAD</tag>
