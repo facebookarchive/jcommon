@@ -49,7 +49,8 @@ public class TestTimeIntervalSerialization {
       {TimeInterval.withTypeAndLength(TimeIntervalType.WEEK, 1)},
       {TimeInterval.withTypeAndLength(TimeIntervalType.MONTH, 1)},
       {TimeInterval.withTypeAndLength(TimeIntervalType.MONTH, 12)},
-      {TimeInterval.withTypeAndLength(TimeIntervalType.YEAR, 1)}
+      {TimeInterval.withTypeAndLength(TimeIntervalType.YEAR, 1)},
+      {TimeInterval.withMillis(2592000000L)}
     };
   }
 
