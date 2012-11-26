@@ -99,7 +99,7 @@ public class TimeInterval {
   @JsonCreator
   private static TimeInterval fromJson(
     @JsonProperty("type") TimeIntervalType type,
-    @JsonProperty("length") int length
+    @JsonProperty("length") long length
   ) {
     if (type == null) {
       if (length == 0) {
