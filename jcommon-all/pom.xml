@@ -26,7 +26,7 @@ limitations under the License.
   </parent>
 
   <artifactId>jcommon-all</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
   <name>jcommon-all</name>
 
   <properties>
@@ -74,6 +74,16 @@ limitations under the License.
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <!-- maven-shade-plugin complains if there is nothing generated for
+               the main artifact, so to workaround this, we actually need to
+               generate an empty jar -->
+          <skipIfEmpty>false</skipIfEmpty>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
