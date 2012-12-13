@@ -24,9 +24,12 @@ import java.lang.IllegalArgumentException;
 
 import org.apache.log4j.Logger;
 
-
 /**
- * See com.facebook.fb303.stats.HistoryManager for more info.
+ * This was written to resemble some older libraries.  You may find
+ * more functionality in StatsUtil.java.
+ *
+ * See com.facebook.fb303.stats.HistoryManager for more info on how
+ * this works.
  *
  * The parameters "shortName" refer to a stat name such as "queries"
  * or "cpu_load", and "fullName" refer to the longer
@@ -35,15 +38,15 @@ import org.apache.log4j.Logger;
 
 /**
  * Each stat's name corresponds to a single underlying counter, but
- * each counter can be exported for different uses (ExportTypes).  For
+ * each counter can be exported for different uses (ExportTypes). For
  * details see com.facebook.fb303.stats.HistoryManager.
  */
 public class StatsManager implements HistoryManager {
-  private static Logger logger_ = Logger.getLogger(StatsManager.class);
+  private static Logger logger = Logger.getLogger(StatsManager.class);
 
-  private ConcurrentHashMap<String, Integer> typeMap_;
+  private ConcurrentHashMap<String, Integer> typeMap;
   // todo: handle mutliple shortName/types
-  private ConcurrentHashMap<String, MultiWindowGauge> counterMap_;
+  private ConcurrentHashMap<String, MultiWindowGauge> counterMap;
 
   /**
    * Creates a StatsMgr instance with default settings for the internal
@@ -57,44 +60,47 @@ public class StatsManager implements HistoryManager {
    * Creates a StatsMgr instance with the specified initial capacity and
    * concurrency level for the ConcurrentHashMaps used internally.
    *
-   * @param initialNumKeys    expected initial number of keys
-   * @param loadFactor        load factor of the internal hash maps
-   * @param concurrencyLevel  estimated number of concurrently updating threads
+   * @param initialNumKeys:  expected initial number of keys
+   * @param loadFactor:  load factor of the internal hash maps
+   * @param concurrencyLevel:  estimated number of concurrently updating threads
    */
-  public StatsManager(int initialNumKeys, float loadFactor, int concurrencyLevel) {
-    logger_.trace("StatsMgr Created");
-    this.typeMap_ = new ConcurrentHashMap<String, Integer>(
-        initialNumKeys,
-        loadFactor,
-        concurrencyLevel);
-    this.counterMap_ = new ConcurrentHashMap<String, MultiWindowGauge>(
-        initialNumKeys,
-        loadFactor,
-        concurrencyLevel);
+  public StatsManager(int initialNumKeys,
+                      float loadFactor,
+                      int concurrencyLevel) 
+  {
+    logger.trace("StatsMgr Created");
+    this.typeMap =
+      new ConcurrentHashMap<String, Integer>(initialNumKeys,
+                                             loadFactor,
+                                             concurrencyLevel);
+    this.counterMap =
+      new ConcurrentHashMap<String, MultiWindowGauge>(initialNumKeys,
+                                                      loadFactor,
+                                                      concurrencyLevel);
   }
 
   private void ensureStat(String shortName) {
-    if (counterMap_.containsKey(shortName)) {
+    if (counterMap.containsKey(shortName)) {
       return;
     }
     MultiWindowGauge mwg = new MultiWindowGauge();
-    MultiWindowGauge wasGauge = counterMap_.putIfAbsent(shortName, mwg);
+    MultiWindowGauge wasGauge = counterMap.putIfAbsent(shortName, mwg);
     if (wasGauge == null) {
-      if (logger_.isDebugEnabled()) {
-        logger_.debug("Created stat " + shortName);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Created stat " + shortName);
       }
     } else {
-      if (logger_.isTraceEnabled()) {
-        logger_.trace("almost accidentally created stat" + shortName +
-                      " twice.  phew...");
+      if (logger.isTraceEnabled()) {
+        logger.trace("almost accidentally created stat" + shortName
+                + " twice.  phew...");
       }
     }
   }
 
   private void ensureType(String shortName, ExportType etype) {
-    boolean hasType = typeMap_.containsKey(shortName);
+    boolean hasType = typeMap.containsKey(shortName);
     if (!hasType) {
-      Integer prior = typeMap_.putIfAbsent(shortName, etype.value());
+      Integer prior = typeMap.putIfAbsent(shortName, etype.value());
       if (prior == null) {
         return;
       }
@@ -105,32 +111,30 @@ public class StatsManager implements HistoryManager {
     Integer newValue;
     int tries = 0;
     do {
-      bitmask = typeMap_.get(shortName);
+      bitmask = typeMap.get(shortName);
       newValue = bitmask | etype.value();
       if (bitmask == newValue) {
         break;
       }
-      done = typeMap_.replace(shortName, bitmask, newValue);
+      done = typeMap.replace(shortName, bitmask, newValue);
       tries++;
-    } while(!done);
+    } while (!done);
 
-    if (logger_.isTraceEnabled()) {
-      logger_.trace("Updated type for " + shortName +
-                    ", added " + etype +
-                    ", was " + bitmask +
-                    ", now " + newValue +
-                    " (after " + tries + " tries)");
+    if (logger.isTraceEnabled()) {
+      logger.trace("Updated type for " + shortName + ", added " + etype
+          + ", was " + bitmask + ", now " + newValue + " (after " + tries
+          + " tries)");
     }
     return;
   }
 
   public void addStatExportType(String shortName, ExportType etype) {
     if (shortName == null) {
-      logger_.error("Null value passed as key");
+      logger.error("Null value passed as key");
       return;
     }
     if (etype == null) {
-      logger_.error("Null value passed as exportType");
+      logger.error("Null value passed as exportType");
       return;
     }
     ensureStat(shortName);
@@ -138,10 +142,10 @@ public class StatsManager implements HistoryManager {
   }
 
   public void addStatValue(String shortName, long delta) {
-    if (!counterMap_.containsKey(shortName)) {
+    if (!counterMap.containsKey(shortName)) {
       addStatExportType(shortName, ExportType.AVG);
     }
-    MultiWindowGauge stat = counterMap_.get(shortName);
+    MultiWindowGauge stat = counterMap.get(shortName);
     stat.add(delta);
   }
 
@@ -149,15 +153,17 @@ public class StatsManager implements HistoryManager {
   public long getCounter(String fullName) {
     // todo: convert to a more intelligent table/map version
     int lastDot = fullName.lastIndexOf('.');
+    if (lastDot <= 0) {
+      throw new IllegalArgumentException("Stat name argument '" + fullName
+          + "' not found");
+    }
+
     int preLastDot = -1;
     String shortName = null;
     String ending = null;
     String ending2 = null;
-
-    if (lastDot > 0) {
-      preLastDot = fullName.lastIndexOf('.', lastDot-1);
-      ending = fullName.substring(lastDot);
-    }
+    preLastDot = fullName.lastIndexOf('.', lastDot - 1);
+    ending = fullName.substring(lastDot);
 
     if (preLastDot > 0) {
       shortName = fullName.substring(0, preLastDot);
@@ -169,73 +175,75 @@ public class StatsManager implements HistoryManager {
     try {
       if (ending.equals(".60")) {
         if (ending2.equals(".sum.60")) {
-          return counterMap_.get(shortName).getMinuteSum();
+          return counterMap.get(shortName).getMinuteSum();
         }
         if (ending2.equals(".avg.60")) {
-          return counterMap_.get(shortName).getMinuteAvg();
+          return counterMap.get(shortName).getMinuteAvg();
         }
         if (ending2.equals(".rate.60")) {
-          return counterMap_.get(shortName).getMinuteRate();
+          return counterMap.get(shortName).getMinuteRate();
         }
         if (ending2.equals(".count.60")) {
-          return counterMap_.get(shortName).getMinuteSum();
+          return counterMap.get(shortName).getMinuteSum();
         }
       }
 
       if (ending.equals(".600")) {
         if (ending2.equals(".sum.600")) {
-          return counterMap_.get(shortName).getTenMinuteSum();
+          return counterMap.get(shortName).getTenMinuteSum();
         }
         if (ending2.equals(".avg.600")) {
-          return counterMap_.get(shortName).getTenMinuteAvg();
+          return counterMap.get(shortName).getTenMinuteAvg();
         }
         if (ending2.equals(".rate.600")) {
-          return counterMap_.get(shortName).getTenMinuteRate();
+          return counterMap.get(shortName).getTenMinuteRate();
         }
         if (ending2.equals(".count.600")) {
-          return counterMap_.get(shortName).getTenMinuteSum();
+          return counterMap.get(shortName).getTenMinuteSum();
         }
       }
 
       if (ending.equals(".3600")) {
         if (ending2.equals(".sum.3600")) {
-          return counterMap_.get(shortName).getHourSum();
+          return counterMap.get(shortName).getHourSum();
         }
         if (ending2.equals(".avg.3600")) {
-          return counterMap_.get(shortName).getHourAvg();
+          return counterMap.get(shortName).getHourAvg();
         }
         if (ending2.equals(".rate.3600")) {
-          return counterMap_.get(shortName).getHourRate();
+          return counterMap.get(shortName).getHourRate();
         }
         if (ending2.equals(".count.3600")) {
-          return counterMap_.get(shortName).getHourSum();
+          return counterMap.get(shortName).getHourSum();
         }
       }
 
       if (fullName.endsWith(".sum")) {
-        return counterMap_.get(shortName).getAllTimeSum();
+        return counterMap.get(shortName).getAllTimeSum();
       }
       if (fullName.endsWith(".avg")) {
-        return counterMap_.get(shortName).getAllTimeAvg();
+        return counterMap.get(shortName).getAllTimeAvg();
       }
       if (fullName.endsWith(".rate")) {
-        return counterMap_.get(shortName).getAllTimeRate();
+        return counterMap.get(shortName).getAllTimeRate();
       }
       if (fullName.endsWith(".count")) {
-        return counterMap_.get(shortName).getAllTimeSum();
+        return counterMap.get(shortName).getAllTimeSum();
       }
-    } catch(Exception e) {
-      throw new IllegalArgumentException("Stat name '" + shortName +
-        "' not found for '" + ending2 + "' or '" + ending + "'");
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Stat name '" + shortName
+          + "' not found for '" + ending2 + "' or '" + ending + "'");
     }
 
-    throw new IllegalArgumentException("Stat name argument '" +
-                                       fullName + "' not found");
+    throw new IllegalArgumentException("Stat name argument '" + fullName
+        + "' not found");
   }
 
   /**
-   * fb303: returns a new map of results and any missing keys will
-   * be missing from output map.
+   * Returns a new map of results and any missing keys will be missing
+   * from output map.
+   *
+   * fb303-support
    */
   public Map<String, Long> getSelectedCounters(List<String> keys) {
     Map<String, Long> result = new HashMap<String, Long>();
@@ -251,40 +259,42 @@ public class StatsManager implements HistoryManager {
 
   /**
    * fb303-support
-   * @param fullName  key with the .sum.60 parts, etc
+   *
+   * @param fullName:  key with the .sum.60 parts, etc
    */
   public boolean hasCounter(String fullName) {
     try {
       getCounter(fullName);
       return true;
-    } catch(IllegalArgumentException e) {
+    } catch (IllegalArgumentException e) {
       return false;
     }
   }
 
   /**
-   * Extension
-   * @param shortName  The stat name used with addStatExportType
-   *                   does NOT have the .sum.60 parts, etc
+   * Returns true if the shortName has been added already.
+   *
+   * @param shortName:  The stat name used with addStatExportType does
+   *          NOT have the .sum.60 parts, etc
    */
   public boolean containsKey(String shortName) {
-    return counterMap_.containsKey(shortName);
+    return counterMap.containsKey(shortName);
   }
 
   /**
-   * fb303
+   * fb303-support
    */
-  public Map<String, Long> getCounters()
+  public Map<String, Long> getCounters() 
   {
     Map<String, Long> result = new HashMap<String, Long>();
     String fullname;
     long value;
-    Set<String> typeKeys = typeMap_.keySet();
+    Set<String> typeKeys = typeMap.keySet();
     for (String name : typeKeys) {
-      int bitmask = typeMap_.get(name);
-      MultiWindowGauge stat = counterMap_.get(name);
+      int bitmask = typeMap.get(name);
+      MultiWindowGauge stat = counterMap.get(name);
       for (ExportType type : ExportType.values()) {
-        if ( (bitmask & type.value()) == 0) {
+        if ((bitmask & type.value()) == 0) {
           continue;
         }
         // minute
