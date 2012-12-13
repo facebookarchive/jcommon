@@ -15,7 +15,10 @@
  */
 package com.facebook.stats;
 
-/*
+/**
+ * This was written to resemble some older libraries.  You may find
+ * more functionality in StatsUtil.java.
+ *
  * This is the interface that mirrors
  * fbcode/common/fb303/cpp/FacebookBase.h functionality for adding
  * stats that track their history over 60 secs, 600 secs, 3600 secs,
@@ -46,7 +49,15 @@ public interface HistoryManager {
     public int value() { return value; }
   };
 
+  /**
+   * Declares the export type of the stat.  The same name can
+   * be exported in multiple ways (e.g. avg and sum).
+   */
   public void addStatExportType(String name, ExportType etype);
+
+  /**
+   * Set or increment the value of the stat.
+   */
   public void addStatValue(String name, long delta);
 
   /**
