@@ -15,6 +15,8 @@
  */
 package com.facebook.stats.mx;
 
+import com.facebook.stats.MultiWindowDistribution;
+import com.facebook.stats.QuantileDigest;
 import com.facebook.util.TimeUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -38,7 +40,7 @@ public class TestStatsUtil {
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
     stats = new Stats();
-    countersMap = new HashMap<String, Long>();
+    countersMap = new HashMap<>();
   }
 
   @Test(groups = "fast")

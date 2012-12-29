@@ -15,6 +15,7 @@
  */
 package com.facebook.stats;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
@@ -32,11 +33,26 @@ public class MultiWindowDistribution implements WritableMultiWindowStat {
   private final QuantileDigest oneHour;
   private final QuantileDigest allTime;
 
+  @VisibleForTesting
+  MultiWindowDistribution(
+    QuantileDigest oneMinute,
+    QuantileDigest tenMinutes,
+    QuantileDigest oneHour,
+    QuantileDigest allTime
+  ) {
+    this.oneMinute = oneMinute;
+    this.tenMinutes = tenMinutes;
+    this.oneHour = oneHour;
+    this.allTime = allTime;
+  }
+
   public MultiWindowDistribution() {
-    oneMinute = new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 60));
-    tenMinutes = new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 600));
-    oneHour = new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 3600));
-    allTime = new QuantileDigest(0.01);
+    this(
+      new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 60)),
+      new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 600)),
+      new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 3600)),
+      new QuantileDigest(0.01)
+    );
   }
 
   @Override

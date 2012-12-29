@@ -20,6 +20,14 @@ import java.util.concurrent.TimeUnit;
 public class TestingClock implements Clock {
   private long time;
 
+  public TestingClock(long time) {
+    this.time = time;
+  }
+
+  public TestingClock() {
+    this(0);
+  }
+
   public long getMillis() {
     return time;
   }

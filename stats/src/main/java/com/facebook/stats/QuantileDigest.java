@@ -98,7 +98,7 @@ public class QuantileDigest {
    * with factor "alpha".</p>
    *
    * @param maxError the max error tolerance
-   * @param alpha the exponential decay factor
+   * @param alpha the exponential decay factor (0.0 => no decay)
    */
   public QuantileDigest(double maxError, double alpha) {
     this(maxError, alpha, new RealtimeClock(), true);
@@ -119,6 +119,8 @@ public class QuantileDigest {
 
   /**
    * Adds a value to this digest. The value must be >= 0
+   *
+   * @param value
    */
   public synchronized void add(long value) {
     checkArgument(value >= 0, "value must be >= 0");
