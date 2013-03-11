@@ -15,7 +15,6 @@
  */
 package com.facebook.data.types;
 
-import com.facebook.data.types.StringDatum;
 import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -35,6 +34,10 @@ public class TestStringDatum {
   private StringDatum floatStringDatum;
   private StringDatum stringDatum2;
   private StringDatum stringDatum3;
+  private StringDatum zeroDatum;
+  private StringDatum negativeZeroDatum;
+  private StringDatum multipleDigitsZeroDatum;
+  private StringDatum floatingZeroDatum;
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
@@ -49,6 +52,10 @@ public class TestStringDatum {
     stringDatum2 = new StringDatum("a string");
     stringDatum3 = new StringDatum("b string");
     floatStringDatum = new StringDatum("1.1");
+    zeroDatum = new StringDatum("0");
+    negativeZeroDatum = new StringDatum("-0");
+    multipleDigitsZeroDatum = new StringDatum("0000");
+    floatingZeroDatum = new StringDatum("0.0");
   }
 
   @Test(groups = "fast")
@@ -62,6 +69,11 @@ public class TestStringDatum {
     Assert.assertEquals(longStringDatum.asLong(), 10000000000L);
     Assert.assertEquals(stringDatum1.asBoolean(), true);
     Assert.assertEquals(Float.compare(floatStringDatum.asFloat(), 1.1f), 0);
+    Assert.assertFalse(zeroDatum.asBoolean());
+    Assert.assertFalse(negativeZeroDatum.asBoolean());
+    Assert.assertFalse(multipleDigitsZeroDatum.asBoolean());
+    // TODO should 0.0 be false?
+    Assert.assertTrue(floatingZeroDatum.asBoolean());
   }
 
   @Test(groups = "fast")
