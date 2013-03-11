@@ -37,16 +37,24 @@ public class StringDatum implements Datum {
 
   @Override
   public boolean asBoolean() {
-    boolean check = !"".equals(value) && !"false".equals(value.toLowerCase());
+    if (value.isEmpty() || "0".equals(value) || "false".equalsIgnoreCase(value)) {
+      return false;
+    }
+
+    if ("1".equals(value) || "true".equalsIgnoreCase(value)) {
+      return true;
+    }
 
     try {
-      check |= asByte() != 0;
+      // TODO this treats -0, 00, 000, etc., as false; is this what we want?
+      // (and notably does not think 0.0 is false)
+      return asByte() != 0;
     } catch (NumberFormatException e) {
       // a value that isn't a number, but isn't "" or "false" is still 
       // considered true, so ignore this
     }
 
-    return check;
+    return true;
   }
 
   @Override
