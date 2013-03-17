@@ -69,11 +69,11 @@ public class TestStringDatum {
     Assert.assertEquals(longStringDatum.asLong(), 10000000000L);
     Assert.assertEquals(stringDatum1.asBoolean(), true);
     Assert.assertEquals(Float.compare(floatStringDatum.asFloat(), 1.1f), 0);
+    // all forms of 0 are false, integer, floating point, artificial negatives as well
     Assert.assertFalse(zeroDatum.asBoolean());
     Assert.assertFalse(negativeZeroDatum.asBoolean());
     Assert.assertFalse(multipleDigitsZeroDatum.asBoolean());
-    // TODO should 0.0 be false?
-    Assert.assertTrue(floatingZeroDatum.asBoolean());
+    Assert.assertFalse(floatingZeroDatum.asBoolean());
   }
 
   @Test(groups = "fast")

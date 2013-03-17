@@ -46,11 +46,11 @@ public class StringDatum implements Datum {
     }
 
     try {
-      // TODO this treats -0, 00, 000, etc., as false; is this what we want?
-      // (and notably does not think 0.0 is false)
-      return asByte() != 0;
+      // treat all values that are effectively 0 as false. This includes +/- 0, +/-0.0, any
+      // sequence of +/- 0s ("0000"), and so on
+      return (int)(asDouble()) != 0;
     } catch (NumberFormatException e) {
-      // a value that isn't a number, but isn't "" or "false" is still 
+      // a value that isn't a number, but isn't "" or "false" is still
       // considered true, so ignore this
     }
 
