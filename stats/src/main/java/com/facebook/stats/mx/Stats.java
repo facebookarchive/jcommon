@@ -21,7 +21,6 @@ import com.facebook.logging.LoggerImpl;
 import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
-import com.facebook.stats.mx.StatsUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,19 +34,14 @@ public class Stats implements StatsReader, StatsCollector {
   private static final String ERROR_FLAG = "--ERROR--";
 
   private final String prefix;
-  private final ConcurrentMap<String, Callable<String>> attributes =
-    new ConcurrentHashMap<String, Callable<String>>();
+  private final ConcurrentMap<String, Callable<String>> attributes = new ConcurrentHashMap<>();
   // generic counters; anything here will have sum/rate for 1m/10m/60m/all-time
-  private final ConcurrentMap<String, MultiWindowRate> rates =
-    new ConcurrentHashMap<String, MultiWindowRate>();
-  private final ConcurrentMap<String, AtomicLong> counters =
-    new ConcurrentHashMap<String, AtomicLong>();
-  private final ConcurrentMap<String, Callable<Long>> dynamicCounters =
-    new ConcurrentHashMap<String, Callable<Long>>();
-  private final ConcurrentMap<String, MultiWindowSpread> spreads =
-    new ConcurrentHashMap<String, MultiWindowSpread>();
+  private final ConcurrentMap<String, MultiWindowRate> rates = new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, AtomicLong> counters = new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, Callable<Long>> dynamicCounters = new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, MultiWindowSpread> spreads = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, MultiWindowDistribution> distributions =
-    new ConcurrentHashMap<String, MultiWindowDistribution>();
+    new ConcurrentHashMap<>();
 
   public Stats(String prefix) {
     this.prefix = prefix;
@@ -136,6 +130,16 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   @Override
+  public void setCounter(String key, long value) {
+    internalSetCounter(key, value);
+  }
+
+  @Override
+  public void setCounter(StatType key, long value) {
+    internalSetCounter(key.getKey(), value);
+  }
+
+  @Override
   public void incrementCounter(StatType key, long delta) {
     internalIncrementCounter(key.getKey(), delta);
   }
@@ -162,6 +166,16 @@ public class Stats implements StatsReader, StatsCollector {
   @Override
   public void updateDistribution(String key, long value) {
     getMultiWindowDistribution(key).add(value);
+  }
+
+  private void internalSetCounter(String key, long value) {
+    AtomicLong currentValue = counters.get(key);
+
+    if (currentValue == null) {
+      counters.put(key, new AtomicLong(value));
+    } else {
+      currentValue.set(value);
+    }
   }
 
   private void internalIncrementCounter(String key, long delta) {
