@@ -22,6 +22,8 @@ public interface StatsCollector {
   public void incrementRate(String key, long delta);
   public void incrementCounter(StatType key, long delta);
   public void incrementCounter(String key, long delta);
+  public void setCounter(String key, long value);
+  public void setCounter(StatType key, long value);
   public void incrementSpread(StatType type, long value);
   public void incrementSpread(String key, long value);
   public void updateDistribution(StatType type, long value);
