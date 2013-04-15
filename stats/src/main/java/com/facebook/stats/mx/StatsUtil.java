@@ -50,8 +50,8 @@ public class StatsUtil {
   public static void addRateAndSumToCounters(
     String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap
   ) {
-    addRateToCounters(baseKey,  rate, counterMap);
-    addSumToCounters(baseKey,  rate, counterMap);
+    addRateToCounters(baseKey, rate, counterMap);
+    addSumToCounters(baseKey, rate, counterMap);
   }
 
   public static void addRateToCounters(
@@ -220,10 +220,23 @@ public class StatsUtil {
     return new Duration(start, end);
   }
 
-  public static void main(String[] args) {
-    DateTime start = new DateTime("2012-01-01T01:01:00.000Z");
-    DateTime end= new DateTime("2012-01-01T01:02:00.000Z");
-    Duration x = new Duration(start, end);
-    System.err.println(x.getMillis());
+  /**
+   * helper method that will set the value of a counter
+   */
+  public static long setCounterValue(StatType statType, long value, Stats stats) {
+    long oldValue  = StatsUtil.setCounterValue(statType.getKey(), value, stats);
+
+    return oldValue ;
+  }
+
+  /**
+   * helper method that will set the value of a counter
+   */
+  public static long setCounterValue(String key, long value, Stats stats) {
+    long oldValue = stats.resetCounter(key);
+
+    stats.incrementCounter(key, value);
+
+    return oldValue;
   }
 }

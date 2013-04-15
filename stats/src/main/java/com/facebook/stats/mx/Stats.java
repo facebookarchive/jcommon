@@ -109,13 +109,13 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   @Override
-  public MultiWindowRate getRate(String key) {
-    return getMultiWindowRate(key, rates);
+  public MultiWindowRate getRate(StatType statType) {
+    return getRate(statType.getKey());
   }
 
   @Override
-  public MultiWindowRate getRate(StatType statType) {
-    return getRate(statType.getKey());
+  public MultiWindowRate getRate(String key) {
+    return getMultiWindowRate(key, rates);
   }
 
 
@@ -130,16 +130,6 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   @Override
-  public void setCounter(String key, long value) {
-    internalSetCounter(key, value);
-  }
-
-  @Override
-  public void setCounter(StatType key, long value) {
-    internalSetCounter(key.getKey(), value);
-  }
-
-  @Override
   public void incrementCounter(StatType key, long delta) {
     internalIncrementCounter(key.getKey(), delta);
   }
@@ -149,7 +139,49 @@ public class Stats implements StatsReader, StatsCollector {
     internalIncrementCounter(key, delta);
   }
 
+  private void internalIncrementCounter(String key, long delta) {
+    AtomicLong value = counters.get(key);
+
+    if (value == null) {
+      value = new AtomicLong(0);
+      AtomicLong existingValue = counters.putIfAbsent(key, value);
+
+      if (existingValue != null) {
+        value = existingValue;
+      }
+    }
+
+    value.addAndGet(delta);
+  }
+
   @Override
+  @Deprecated
+  public long setCounter(StatType statType, long value) {
+    return StatsUtil.setCounterValue(statType, value, this);
+  }
+
+  @Override
+  @Deprecated
+  public long setCounter(String key, long value) {
+    return StatsUtil.setCounterValue(key, value, this);
+  }
+
+  @Override
+  public long resetCounter(StatType key) {
+    return resetCounter(key.getKey());
+  }
+
+  @Override
+  public long resetCounter(String key) {
+    return internalResetCounter(key);
+  }
+
+  private long internalResetCounter(String key) {
+    AtomicLong counter = counters.get(key);
+
+    return counter.getAndSet(0);
+  }
+
   public void incrementSpread(StatType type, long value) {
     getMultiWindowSpread(type.getKey()).add(value);  }
 
@@ -166,31 +198,6 @@ public class Stats implements StatsReader, StatsCollector {
   @Override
   public void updateDistribution(String key, long value) {
     getMultiWindowDistribution(key).add(value);
-  }
-
-  private void internalSetCounter(String key, long value) {
-    AtomicLong currentValue = counters.get(key);
-
-    if (currentValue == null) {
-      counters.put(key, new AtomicLong(value));
-    } else {
-      currentValue.set(value);
-    }
-  }
-
-  private void internalIncrementCounter(String key, long delta) {
-    AtomicLong value = counters.get(key);
-
-    if (value == null) {
-      value = new AtomicLong(0);
-      AtomicLong existingValue = counters.putIfAbsent(key, value);
-
-      if (existingValue != null) {
-        value = existingValue;
-      }
-    }
-
-    value.addAndGet(delta);
   }
 
   @Override
