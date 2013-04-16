@@ -132,7 +132,7 @@ public class TestStats {
     stats.incrementCounter(COUNTER_TO_SET, 20);
     stats.incrementCounter(COUNTER_TO_SET, 200);
     Assert.assertEquals(stats.getCounter(COUNTER_TO_SET), 222);
-    StatsUtil.setCounterValue(COUNTER_TO_SET, 1001, stats);
+    Assert.assertEquals(StatsUtil.setCounterValue(COUNTER_TO_SET, 1001, stats), 222);
     Assert.assertEquals(stats.getCounter(COUNTER_TO_SET), 1001);
   }
 
@@ -142,7 +142,7 @@ public class TestStats {
     stats.incrementCounter(ZERO_COUNTER, 1);
     stats.incrementCounter(ZERO_COUNTER, 10);
     stats.incrementCounter(ZERO_COUNTER, 100);
-    stats.resetCounter(ZERO_COUNTER);
+    Assert.assertEquals(stats.resetCounter(ZERO_COUNTER), 111);
     Assert.assertEquals(stats.getCounter(ZERO_COUNTER), 0);
   }
 

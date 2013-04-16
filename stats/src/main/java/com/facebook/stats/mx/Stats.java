@@ -157,7 +157,7 @@ public class Stats implements StatsReader, StatsCollector {
   @Override
   @Deprecated
   public long setCounter(StatType statType, long value) {
-    return StatsUtil.setCounterValue(statType, value, this);
+    return StatsUtil.setCounterValue(statType.getKey(), value, this);
   }
 
   @Override
@@ -166,9 +166,8 @@ public class Stats implements StatsReader, StatsCollector {
     return StatsUtil.setCounterValue(key, value, this);
   }
 
-  @Override
   public long resetCounter(StatType key) {
-    return resetCounter(key.getKey());
+    return internalResetCounter(key.getKey());
   }
 
   @Override
@@ -178,8 +177,9 @@ public class Stats implements StatsReader, StatsCollector {
 
   private long internalResetCounter(String key) {
     AtomicLong counter = counters.get(key);
+    long oldValue = counter.getAndSet(0);
 
-    return counter.getAndSet(0);
+    return oldValue;
   }
 
   public void incrementSpread(StatType type, long value) {

@@ -203,9 +203,7 @@ public class StatsUtil {
     rate.add(delta);
   }
 
-  public static Duration extentOf(
-    EventCounterIf counter1, EventCounterIf counter2
-  ) {
+  public static Duration extentOf(EventCounterIf counter1, EventCounterIf counter2) {
     ReadableDateTime start = counter1.getStart();
     ReadableDateTime end = counter1.getEnd();
 
