@@ -25,17 +25,21 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class TestStats {
-  private Stats stats;
-  private static final String notInsertedKey = "not Inserted";
-  private static final String key1 = "key1";
-  private static final String key2 = "key2";
-  private static final String key3 = "key3";
-  Map<String, String> attributeMap = new ImmutableMap.Builder<String, String>()
-    .put(key1, key2)
-    .put(key2, key3)
-    .put(key3, key1)
+  private static final String NOT_INSERTED_KEY = "not Inserted";
+  private static final String KEY1 = "key1";
+  private static final String KEY2 = "key2";
+  private static final String KEY3 = "key3";
+  private static final String ZERO_COUNTER = "to-0-counter";
+  private static final String COUNTER_TO_SET = "count-to-set";
+
+  private Map<String, String> attributeMap = new ImmutableMap.Builder<String, String>()
+    .put(KEY1, KEY2)
+    .put(KEY2, KEY3)
+    .put(KEY3, KEY1)
     .build();
-  
+
+  private Stats stats;
+
   @BeforeMethod(alwaysRun = true)
   void setup() {
     stats = new Stats();
@@ -43,13 +47,13 @@ public class TestStats {
 
   public void verifyStatAttributes() {
     // Test out getAttribute calls
-    Assert.assertEquals(stats.getAttribute(key1), key2);
-    Assert.assertEquals(stats.getAttribute(key2), key3);
-    Assert.assertEquals(stats.getAttribute(key3), key1);
-    Assert.assertNull(stats.getAttribute(notInsertedKey));
-    stats.setAttribute(key1, key1);
-    Assert.assertEquals(stats.getAttribute(key1), key1);
-    stats.setAttribute(key1, key2);
+    Assert.assertEquals(stats.getAttribute(KEY1), KEY2);
+    Assert.assertEquals(stats.getAttribute(KEY2), KEY3);
+    Assert.assertEquals(stats.getAttribute(KEY3), KEY1);
+    Assert.assertNull(stats.getAttribute(NOT_INSERTED_KEY));
+    stats.setAttribute(KEY1, KEY1);
+    Assert.assertEquals(stats.getAttribute(KEY1), KEY1);
+    stats.setAttribute(KEY1, KEY2);
 
     // Test out that the stats attributemap is as expected
     Map <String, String> statsAttributes = stats.getAttributes();
@@ -65,7 +69,6 @@ public class TestStats {
       stats.setAttribute(attribute.getKey(), attribute.getValue());
     }
     verifyStatAttributes();
-
   }
 
   /**
@@ -73,7 +76,6 @@ public class TestStats {
    */
   @Test(groups = "fast")
   public void testAttributeCallable() {
-        
     for (final String key: attributeMap.keySet()) {
       stats.setAttribute(key, 
         new Callable<String>() {
@@ -83,6 +85,7 @@ public class TestStats {
           }
         });
     }
+
     verifyStatAttributes();
   }
   
@@ -96,7 +99,7 @@ public class TestStats {
     LongWrapper longValue = new LongWrapper(1);
     final String name = "testCounter";
     Assert.assertTrue(stats.addDynamicCounter(name, longValue));
-    final Map<String, Long> exported = new HashMap<String, Long>();
+    final Map<String, Long> exported = new HashMap<>();
     stats.exportCounters(exported);
     Assert.assertEquals(exported.get(name), Long.valueOf(1));
     
@@ -121,6 +124,26 @@ public class TestStats {
     
     // Test unset for non-existent key
     Assert.assertFalse(stats.removeDynamicCounter(name));
+  }
+
+  @Test(groups = "fast")
+  public void testSetCounterValue() throws Exception {
+    stats.incrementCounter(COUNTER_TO_SET, 2);
+    stats.incrementCounter(COUNTER_TO_SET, 20);
+    stats.incrementCounter(COUNTER_TO_SET, 200);
+    Assert.assertEquals(stats.getCounter(COUNTER_TO_SET), 222);
+    Assert.assertEquals(StatsUtil.setCounterValue(COUNTER_TO_SET, 1001, stats), 222);
+    Assert.assertEquals(stats.getCounter(COUNTER_TO_SET), 1001);
+  }
+
+  @Test(groups = "fast")
+  public void testReset() throws Exception {
+    Assert.assertEquals(stats.getCounter(ZERO_COUNTER), 0);
+    stats.incrementCounter(ZERO_COUNTER, 1);
+    stats.incrementCounter(ZERO_COUNTER, 10);
+    stats.incrementCounter(ZERO_COUNTER, 100);
+    Assert.assertEquals(stats.resetCounter(ZERO_COUNTER), 111);
+    Assert.assertEquals(stats.getCounter(ZERO_COUNTER), 0);
   }
 
   /**
