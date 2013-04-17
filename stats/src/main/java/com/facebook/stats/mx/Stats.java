@@ -176,8 +176,13 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   private long internalResetCounter(String key) {
-    AtomicLong counter = counters.get(key);
-    long oldValue = counter.getAndSet(0);
+    long oldValue = 0;
+
+    AtomicLong existingValue = counters.put(key, new AtomicLong(0));
+
+    if (existingValue != null) {
+      oldValue = existingValue.get();
+    }
 
     return oldValue;
   }
