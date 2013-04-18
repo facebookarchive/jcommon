@@ -176,10 +176,9 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   private long internalResetCounter(String key) {
-    AtomicLong counter = counters.get(key);
-    long oldValue = counter.getAndSet(0);
+    AtomicLong value = counters.put(key, new AtomicLong(0));
 
-    return oldValue;
+    return value == null ? 0 : value.get();
   }
 
   public void incrementSpread(StatType type, long value) {

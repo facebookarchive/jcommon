@@ -16,6 +16,7 @@
 package com.facebook.stats.mx;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.math3.analysis.function.Add;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -31,6 +32,7 @@ public class TestStats {
   private static final String KEY3 = "key3";
   private static final String ZERO_COUNTER = "to-0-counter";
   private static final String COUNTER_TO_SET = "count-to-set";
+  private static final String COUNTER_NOT_SET = "counter-not-set";
 
   private Map<String, String> attributeMap = new ImmutableMap.Builder<String, String>()
     .put(KEY1, KEY2)
@@ -144,6 +146,12 @@ public class TestStats {
     stats.incrementCounter(ZERO_COUNTER, 100);
     Assert.assertEquals(stats.resetCounter(ZERO_COUNTER), 111);
     Assert.assertEquals(stats.getCounter(ZERO_COUNTER), 0);
+  }
+
+  @Test(groups = "fast")
+  public void testResetBeforeCallingIncrementOrGet() {
+    stats.resetCounter(COUNTER_NOT_SET);
+    Assert.assertEquals(stats.getCounter(COUNTER_NOT_SET), 0);
   }
 
   /**
