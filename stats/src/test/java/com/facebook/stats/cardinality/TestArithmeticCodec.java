@@ -69,6 +69,27 @@ public class TestArithmeticCodec {
   }
 
   @Test
+  public void testDecodeZeroPaddingRequired() throws Exception {
+    // ArithmeticDecoder buffers 6 bytes; when there are fewer than 6, it should treat the input as
+    // if it had zeros for the missing bytes.  In practice, this rarely matters, but for the case
+    // below, getting it wrong results in an "IllegalArgumentException: targetCount is negative" due
+    // to ArithmeticDecoder.bufferByte() removing underflow bytes from high and low, but not value.
+    int[] buckets = new int[2048];
+
+    buckets[860] = 1;
+    buckets[1258] = 1;
+    buckets[1618] = 1;
+    buckets[2033] = 1;
+
+    testRoundTrip(
+        HyperLogLogCodec.createHyperLogLogSymbolModel(4, 2048, (byte) 1),
+        2,
+        Ints.asList(buckets),
+        2048
+    );
+  }
+
+  @Test
   public void testRoundTrip() throws Exception {
     testRoundTrip(new SortedStaticDataModelFactory(new ExponentiallyDecreasingHistogramFactory()));
     testRoundTrip(new SortedStaticDataModelFactory(new GaussianHistogramFactory()));

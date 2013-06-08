@@ -28,7 +28,6 @@ class ArithmeticDecoder {
   private long low;
   private long high;
   private long value;
-  private int bufferedBytes;
 
   private final InputStream in;
 
@@ -43,7 +42,6 @@ class ArithmeticDecoder {
     // We initialize the decoder with 48 bits (6 bytes) of input.
     for (int i = 0; i < 6; ++i) {
       bufferByte();
-      ++bufferedBytes;
     }
   }
 
@@ -98,11 +96,8 @@ class ArithmeticDecoder {
     // read a byte and add to the value
     int nextByte = in.read();
     if (nextByte < 0) {
-      if (bufferedBytes == 0) {
-        return;
-      }
+      // pad with zeros
       value <<= 8;
-      --bufferedBytes;
     } else {
       value = (value << 8);
       value |= nextByte;
