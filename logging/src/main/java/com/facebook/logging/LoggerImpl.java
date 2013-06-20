@@ -83,7 +83,7 @@ public class LoggerImpl implements Logger {
   @Override
   public void debug(String format, Object... args) {
     if (logger.isDebugEnabled()) {
-      String message = String.format(format, args);
+      String message = formatMessage(format, args);
 
       logger.debug(message);
     }
@@ -92,7 +92,7 @@ public class LoggerImpl implements Logger {
   @Override
   public void debug(Throwable t, String format, Object... args) {
     if (logger.isDebugEnabled()) {
-      String message = String.format(format, args);
+      String message = formatMessage(format, args);
 
       logger.debug(message, t);
     }
@@ -110,7 +110,7 @@ public class LoggerImpl implements Logger {
   @Override
   public void info(String format, Object... args) {
     if (logger.isInfoEnabled()) {
-      String message = String.format(format, args);
+      String message = formatMessage(format, args);
 
       logger.info(message);
     }
@@ -119,7 +119,7 @@ public class LoggerImpl implements Logger {
   @Override
   public void info(Throwable t, String format, Object... args) {
     if (logger.isInfoEnabled()) {
-      String message = String.format(format, args);
+      String message = formatMessage(format, args);
 
       logger.info(message, t);
     }
@@ -136,7 +136,7 @@ public class LoggerImpl implements Logger {
   @Override
   public void warn(String format, Object... args) {
     if (logger.isWarnEnabled()) {
-      String message = String.format(format, args);
+      String message = formatMessage(format, args);
 
       logger.warn(message);
     }
@@ -145,7 +145,7 @@ public class LoggerImpl implements Logger {
   @Override
   public void warn(Throwable t, String format, Object... args) {
     if (logger.isWarnEnabled()) {
-      String message = String.format(format, args);
+      String message = formatMessage(format, args);
 
       logger.warn(message, t);
     }
@@ -162,7 +162,7 @@ public class LoggerImpl implements Logger {
   @Override
   public void error(String format, Object... args) {
     if (logger.isErrorEnabled()) {
-      String message = String.format(format, args);
+      String message = formatMessage(format, args);
 
       logger.error(message);
     }
@@ -171,7 +171,7 @@ public class LoggerImpl implements Logger {
   @Override
   public void error(Throwable t, String format, Object... args) {
     if (logger.isErrorEnabled()) {
-      String message = String.format(format, args);
+      String message = formatMessage(format, args);
 
       logger.error(message, t);
     }
@@ -188,5 +188,9 @@ public class LoggerImpl implements Logger {
   @Override
   public String getName() {
     return logger.getName();
+  }
+
+  private String formatMessage(String format, Object[] args) {
+    return args.length == 0 ? format : String.format(format, args);
   }
 }
