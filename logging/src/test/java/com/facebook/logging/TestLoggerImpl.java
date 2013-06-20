@@ -36,4 +36,14 @@ public class TestLoggerImpl {
 
     Assert.assertEquals(privateLogger.getName(), getClass().getName());
   }
+
+  @Test(groups = "fast")
+  public void testMessageWithPercentChar() throws Exception {
+    // A random message with % in it
+    String message = "A: 50%, B: 80%";
+    Logger privateLogger = LoggerImpl.getClassLogger();
+
+    // this should not cause an UnknownFormatConversionException
+    privateLogger.info(message);
+  }
 }
