@@ -296,9 +296,7 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
     //counter.getstart() < window.getStart()
     checkArgument(
       counterStart.isBefore(windowStart),
-      String.format(
-        "counter should have start %s <= window start %s", counterStart, windowStart
-      )
+      "counter should have start %s <= window start %s", counterStart, windowStart
     );
 
     //
@@ -308,9 +306,8 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
 
     checkState(
       expiredFraction >= 0 && expiredFraction <= 1.0,
-      String.format(
-        "%s not in [0, 1]", expiredFraction
-      )
+      "%s not in [0, 1]",
+      expiredFraction
     );
 
     return expiredFraction;
