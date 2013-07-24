@@ -63,7 +63,7 @@ public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
    */
   @Override
   public void add(long delta, long nsamples) {
-    DateTime now = new DateTime();
+    DateTime now = new DateTime(DateTimeUtils.currentTimeMillis());
     GaugeCounter last;
 
     synchronized (this) {

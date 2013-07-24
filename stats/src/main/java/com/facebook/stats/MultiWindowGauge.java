@@ -16,7 +16,6 @@
 package com.facebook.stats;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
@@ -44,7 +43,7 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
       newCompositeGaugeCounter(60, gaugeCounterFactory),
       newCompositeGaugeCounter(10, gaugeCounterFactory),
       newCompositeGaugeCounter(1, gaugeCounterFactory),
-      new DateTime()
+      new DateTime(DateTimeUtils.currentTimeMillis())
     );
   }
 
@@ -97,7 +96,7 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
     long value = counter.getValue();
     ReadableDateTime end = counter.getEnd();
     ReadableDateTime start = counter.getStart();
-    ReadableDateTime now = new DateTime();
+    ReadableDateTime now = new DateTime(DateTimeUtils.currentTimeMillis());
     Duration duration = now.isBefore(end) ?
       new Duration(start, now) :    // so far
       new Duration(start, end);
@@ -194,7 +193,7 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
 
   @Override
   public long getAllTimeRate() {
-    Duration sinceStart = new Duration(start, new DateTime());
+    Duration sinceStart = new Duration(start, new DateTime(DateTimeUtils.currentTimeMillis()));
     if (sinceStart.getStandardSeconds() == 0) {
       return 0;
     }
@@ -206,7 +205,7 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
    * composite counters.
    */
   private GaugeCounter nextCurrentCounter() {
-    ReadableDateTime now = new DateTime();
+    ReadableDateTime now = new DateTime(DateTimeUtils.currentTimeMillis());
     GaugeCounter gaugeCounter = gaugeCounterFactory.create(
       now, now.toDateTime().plusSeconds(6)
     );

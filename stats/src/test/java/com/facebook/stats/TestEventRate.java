@@ -16,7 +16,6 @@
 package com.facebook.stats;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.joda.time.Duration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

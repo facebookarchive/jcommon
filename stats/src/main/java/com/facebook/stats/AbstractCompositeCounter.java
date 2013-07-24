@@ -70,7 +70,7 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
     this.maxLength = maxLength;
     this.maxChunkLength = maxChunkLength;
 
-    DateTime now = new DateTime();
+    DateTime now = new DateTime(DateTimeUtils.currentTimeMillis());
 
     start = now;
     end = now;
@@ -106,7 +106,7 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    */
   @Override
   public void add(long delta) {
-    DateTime now = new DateTime();
+    DateTime now = new DateTime(DateTimeUtils.currentTimeMillis());
     C last;
 
     synchronized (this) {
@@ -245,7 +245,7 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    * view of the current set of counters.
    */
   protected synchronized void trimIfNeeded() {
-    Duration delta = new Duration(start, new DateTime())
+    Duration delta = new Duration(start, new DateTime(DateTimeUtils.currentTimeMillis()))
       .minus(maxLength);
 
     if (delta.isLongerThan(Duration.ZERO)) {

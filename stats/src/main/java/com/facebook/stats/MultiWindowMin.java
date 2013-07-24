@@ -16,7 +16,6 @@
 package com.facebook.stats;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableDuration;
@@ -99,7 +98,7 @@ public class MultiWindowMin implements ReadableMultiWindowCounter, WritableMulti
   }
 
   private MinEventCounter addNewCurrentCounter() {
-    ReadableDateTime now = new DateTime();
+    ReadableDateTime now = new DateTime(DateTimeUtils.currentTimeMillis());
 
     MinEventCounter minEventCounter = new MinEventCounter(
       now,

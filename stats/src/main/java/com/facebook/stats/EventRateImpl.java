@@ -33,7 +33,7 @@ public class EventRateImpl implements EventRate {
   }
 
   public EventRateImpl(EventCounterIf<EventCounter> counter, Duration windowSize) {
-    this(counter, windowSize, new DateTime());
+    this(counter, windowSize, new DateTime(DateTimeUtils.currentTimeMillis()));
   }
 
   @Override
@@ -54,7 +54,7 @@ public class EventRateImpl implements EventRate {
 
   private Duration getPeriodSize() {
     // normalize by the time since server start
-    ReadableDateTime now = new DateTime();
+    ReadableDateTime now = new DateTime(DateTimeUtils.currentTimeMillis());
     Duration periodSize = new Duration(start, now);
 
     if (periodSize.isLongerThan(windowSize)) {

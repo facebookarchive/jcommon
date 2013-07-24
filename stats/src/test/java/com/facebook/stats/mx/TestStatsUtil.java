@@ -15,11 +15,11 @@
  */
 package com.facebook.stats.mx;
 
+import com.facebook.stats.DateTimeUtils;
 import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.QuantileDigest;
-import com.facebook.util.TimeUtil;
+import com.facebook.stats.TimeUtil;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.joda.time.Duration;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;

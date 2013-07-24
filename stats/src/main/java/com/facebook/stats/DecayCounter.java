@@ -129,7 +129,7 @@ public class DecayCounter implements EventCounter {
   }
 
   DateTime getNow() {
-    return new DateTime();
+    return new DateTime(DateTimeUtils.currentTimeMillis());
   }
 }
 
