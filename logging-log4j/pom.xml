@@ -16,44 +16,34 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <groupId>com.facebook.jcommon</groupId>
     <artifactId>jcommon-parent</artifactId>
+    <groupId>com.facebook.jcommon</groupId>
     <version>0.1.9-SNAPSHOT</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>logging-log4j</artifactId>
+  <packaging>jar</packaging>
+  <name>log4j specific logging</name>
 
   <properties>
     <fb.main.basedir>${project.parent.basedir}</fb.main.basedir>
   </properties>
 
-  <artifactId>testing</artifactId>
-  <packaging>jar</packaging>
-  <name>shared testing utilities</name>
-
   <dependencies>
     <dependency>
-      <groupId>com.facebook.jcommon</groupId>
-      <artifactId>collections</artifactId>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <optional>true</optional>
-    </dependency>
   </dependencies>
+
+
 </project>

@@ -22,7 +22,7 @@ limitations under the License.
   <parent>
     <groupId>com.facebook</groupId>
     <artifactId>facebook-oss-pom</artifactId>
-    <version>5</version>
+    <version>6</version>
   </parent>
 
   <groupId>com.facebook.jcommon</groupId>
@@ -143,6 +143,7 @@ limitations under the License.
     <module>memory</module>
     <module>jcommon-all</module>
     <module>testing</module>
+    <module>logging-log4j</module>
   </modules>
 
   <dependencyManagement>

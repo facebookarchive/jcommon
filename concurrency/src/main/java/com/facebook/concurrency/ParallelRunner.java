@@ -16,6 +16,7 @@
 package com.facebook.concurrency;
 
 import com.facebook.util.ExtRunnable;
+import com.facebook.util.exceptions.ExceptionHandler;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import org.slf4j.Logger;
