@@ -92,11 +92,9 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
       //if the stage being added is our stage or earlier, we can't accept this
       if (stage.compareTo(currentStage) <= 0) {
         LOG.warn(
-          String.format(
-            "cannot add hook for stage %s when in stage %s",
+            "cannot add hook for stage {} when in stage {}",
             stage,
             currentStage
-          )
         );
         return false;
       }

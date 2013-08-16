@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
  * Logger with efficient var-args support.  Underlying logger is Log4j, but may be swapped to
  * any logger.
  */
+@Deprecated
 public class LoggerImpl implements Logger {
   private final org.slf4j.Logger logger;
 
@@ -51,7 +52,10 @@ public class LoggerImpl implements Logger {
    * to be doing hundreds of times a second;
    *
    * @return a logger for the current scope
+   *
+   * @deprecated Use {@link com.facebook.logging.util.LoggingUtil} instead
    */
+  @Deprecated
   public static Logger getClassLogger() {
     StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
     StackTraceElement element = stacktrace[2];

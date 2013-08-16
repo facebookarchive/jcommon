@@ -15,10 +15,10 @@
  */
 package com.facebook.stats;
 
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
 import com.facebook.stats.mx.StatsUtil;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -35,7 +35,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 public class TestQuantileDigest {
-  private final static Logger LOG = LoggerImpl.getLogger(TestQuantileDigest.class);
+  private final static Logger LOG = LoggerFactory.getLogger(TestQuantileDigest.class);
 
   /**
    * This value should be the result of:
@@ -483,14 +483,14 @@ public class TestQuantileDigest {
     digest.validate();
 
     LOG.info(
-      "Processed %s entries in %s ms. Insertion rate = %s entries/s",
+      "Processed {} entries in {} ms. Insertion rate = {} entries/s",
       count,
       TimeUnit.NANOSECONDS.toMillis(totalTime),
       count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
     );
 
     LOG.info(
-      "Compressions: %s, %s entries/compression", digest.getCompressions(),
+      "Compressions: {}, {} entries/compression", digest.getCompressions(),
       digest.getCount() / digest.getCompressions()
     );
   }

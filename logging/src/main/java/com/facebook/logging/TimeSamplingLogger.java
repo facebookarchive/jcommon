@@ -23,7 +23,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * decorates a FacebookLogger with  the ability to sample logging at a specified window size
  * (1 per time specified)
+ * TODO: need to refactor this class to use slf4j under the hood instead of the deprecated
+ * homebrew class
  */
+@Deprecated
 public class TimeSamplingLogger implements Logger {
   private final Logger logger;
   private final long windowSizeMillis;

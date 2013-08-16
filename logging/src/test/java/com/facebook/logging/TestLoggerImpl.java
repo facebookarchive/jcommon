@@ -15,6 +15,7 @@
  */
 package com.facebook.logging;
 
+import com.facebook.logging.LoggerImpl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

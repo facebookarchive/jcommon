@@ -15,11 +15,11 @@
  */
 package com.facebook.concurrency;
 
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
 import com.facebook.testing.Function;
 import com.facebook.testing.MockExecutor;
 import com.facebook.testing.TestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class TestUnstoppableExecutorService {
-  private static final Logger LOG = LoggerImpl.getLogger(TestUnstoppableExecutorService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TestUnstoppableExecutorService.class);
   private static final Runnable NO_OP = new Runnable() {
     @Override
     public void run() {

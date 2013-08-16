@@ -16,11 +16,11 @@
 package com.facebook.stats.mx;
 
 
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
 import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Stats implements StatsReader, StatsCollector {
-  private static final Logger LOG = LoggerImpl.getLogger(Stats.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Stats.class);
   private static final String ERROR_FLAG = "--ERROR--";
 
   private final String prefix;
@@ -92,7 +92,7 @@ public class Stats implements StatsReader, StatsCollector {
     for (Map.Entry<String, AtomicLong> entry : counters.entrySet()) {
       duplicate = counterMap.put(prefix + entry.getKey(), entry.getValue().get());
       if (duplicate != null) {
-        LOG.warn("Duplicate counter : %s, Ignoring old value %d", duplicate);
+        LOG.warn("Duplicate counter : {}, Ignoring old value", duplicate);
       }
     }
 
@@ -100,10 +100,10 @@ public class Stats implements StatsReader, StatsCollector {
       try {
         duplicate = counterMap.put(prefix + entry.getKey(), entry.getValue().call());
         if (duplicate != null) {
-          LOG.warn("Duplicate counter : %s, Ignoring old value %d", duplicate);
+          LOG.warn("Duplicate counter : {}, Ignoring old value", duplicate);
         }
       } catch (Exception e) {
-        LOG.debug(e, "Exception when generating dynamic counter value for %s", entry.getKey());
+        LOG.debug("Exception when generating dynamic counter value for {}", entry.getKey(), e);
       }
     }
   }
@@ -287,7 +287,7 @@ public class Stats implements StatsReader, StatsCollector {
     try {
       attributes.put(key, valueProducer);
     } catch (Exception e) {
-      LOG.error(e, "error in producer for key %s", key);
+      LOG.error("error in producer for key {}", key, e);
     }
   }
 
@@ -302,7 +302,7 @@ public class Stats implements StatsReader, StatsCollector {
 
       return callable == null ? null : callable.call();
     } catch (Exception e) {
-      LOG.error(e, "error producing value for key %s", key);
+      LOG.error("error producing value for key {}", key, e);
       return ERROR_FLAG;
     }
   }
@@ -320,7 +320,7 @@ public class Stats implements StatsReader, StatsCollector {
         materializedAttributes.put(entry.getKey(), entry.getValue().call());
       } catch (Exception e) {
         materializedAttributes.put(entry.getKey(), ERROR_FLAG);
-        LOG.error(e, "error producing value for key %s", entry.getKey());
+        LOG.error("error producing value for key {}", entry.getKey(), e);
       }
     }
 

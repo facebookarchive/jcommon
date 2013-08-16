@@ -253,21 +253,17 @@ public class ParallelRunner {
     try {
       while (!executorForInvocation.awaitTermination(10, TimeUnit.SECONDS)) {
         LOG.info(
-          String.format(
-            "(%d) %s waited 10s for %d tasks, waiting some more",
-            Thread.currentThread().getId(),
-            baseName,
-            totalTasks
-          )
+          "({}) {} waited 10s for {} tasks, waiting some more",
+          Thread.currentThread().getId(),
+          baseName,
+          totalTasks
         );
       }
 
       LOG.info(
-        String.format(
-          "(%d) tasksIter for %s completed",
+          "({}) tasksIter for {} completed",
           Thread.currentThread().getId(),
           baseName
-        )
       );
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();

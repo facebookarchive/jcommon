@@ -61,12 +61,12 @@ public class TimeUtil {
       task.run();
       success = true;
     } finally {
-      LOG.info(String.format(
-        "%s (%b) elapsed time(ms): %d",
+      LOG.info(
+        "{} ({}) elapsed time(ms): {}",
         tag,
         success,
         DateTimeUtils.currentTimeMillis() - start
-      ));
+      );
     }
   }
 
@@ -83,12 +83,12 @@ public class TimeUtil {
 
       return value;
     } finally {
-      LOG.info(String.format(
-        "%s (%b) elapsed time(ms): %d",
+      LOG.info(
+        "{} ({}) elapsed time(ms): {}",
         tag,
         success,
         DateTimeUtils.currentTimeMillis() - start
-      ));
+      );
     }
   }
 
