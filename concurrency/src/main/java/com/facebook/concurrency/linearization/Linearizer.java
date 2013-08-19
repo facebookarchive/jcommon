@@ -238,10 +238,10 @@ public class Linearizer {
     @Override
     public void waitForStart() throws InterruptedException {
       while (!startSignal.await(COMPLETE_WAIT_TIME_SECONDS, TimeUnit.SECONDS)) {
-        LOG.info(String.format(
+        LOG.info(
           "waited %d seconds for LinearizationPoint.start, will wait some more",
           COMPLETE_WAIT_TIME_SECONDS
-        ));
+        );
       }
     }
 
@@ -255,10 +255,10 @@ public class Linearizer {
     @Override
     public void waitForCompletion() throws InterruptedException {
       while (!completeSignal.await(COMPLETE_WAIT_TIME_SECONDS, TimeUnit.SECONDS)) {
-        LOG.info(String.format(
+        LOG.info(
           "waited %d seconds for LinearizationPoint.complete, will wait some more",
           COMPLETE_WAIT_TIME_SECONDS
-        ));
+        );
       }
     }
 

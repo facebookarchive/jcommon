@@ -22,7 +22,6 @@ import org.testng.annotations.Test;
 import java.util.Iterator;
 
 public class TestLongArray {
-
   private LongArray arraySize4;
   private LongArray arraySize16;
   private LongArray array;

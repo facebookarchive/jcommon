@@ -19,14 +19,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Class that captures the convenient methods (that is not found in any of the third-party logging
+ * frameworks) for logging.
  */
 public class LoggingUtil {
+
   /**
    * Returns a logger for the calling class or context.
    * <p/>
    * The fully-qualified name of that class is used to get an slf4j logger, which is then wrapped.
    * Typical usage is to use this method to initialize a static member variable, e.g.,
-   * {@code private static final Logger LOG = Logger.getLogger();}
+   * {@code private static final Logger LOG = LoggingUtil.getClassLogger();}
    * <p/>
    * As getStackTrace() isn't super cheap, this is not the sort of thing you want (or need)
    * to be doing hundreds of times a second;

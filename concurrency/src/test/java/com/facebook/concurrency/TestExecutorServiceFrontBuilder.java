@@ -15,7 +15,6 @@
  */
 package com.facebook.concurrency;
 
-import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;

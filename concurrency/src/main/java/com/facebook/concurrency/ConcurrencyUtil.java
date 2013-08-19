@@ -87,10 +87,8 @@ public class ConcurrencyUtil {
           executor.shutdown();
           if (!executor.awaitTermination(AWAIT_TERMINATION_SECONDS, TimeUnit.SECONDS)) {
             LOG.warn(
-              String.format(
-                "executor didn't finish shutting down in %d seconds, moving on",
-                AWAIT_TERMINATION_SECONDS
-              )
+              "executor didn't finish shutting down in %d seconds, moving on",
+              AWAIT_TERMINATION_SECONDS
             );
           }
         } catch (InterruptedException e) {

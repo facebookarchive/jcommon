@@ -10,5 +10,5 @@ The following packages have been introduced as replacements for the set
 of use cases this package tried to address:
 
 1. As a log4j wrapper that supports varargs: use SLF4J directly
-2. Use LoggerImpl.getClassLogger(): use LoggerUtil in logging-util instead
-3. Use TimeSamplingLogger: use TimeSamplingSLF4JLogger in logging-util instead
+2. Use of LoggerImpl.getClassLogger(): use LoggerUtil in logging-util instead
+3. Use of TimeSamplingLogger: use TimeSamplingSLF4JLogger in logging-util instead

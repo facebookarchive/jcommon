@@ -35,6 +35,10 @@ limitations under the License.
 
   <dependencies>
     <dependency>
+      <groupId>com.facebook.jcommon</groupId>
+      <artifactId>logging-log4j</artifactId>
+    </dependency>
+    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
     </dependency>

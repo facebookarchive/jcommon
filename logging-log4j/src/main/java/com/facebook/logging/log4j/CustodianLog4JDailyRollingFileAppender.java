@@ -62,7 +62,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * {@link org.apache.log4j.appender.DailyRollingFileAppender} so most of the
  * configuration options can be taken from the documentation on that class.
  */
-public class CustodianDailyRollingFileAppender extends FileAppender
+public class CustodianLog4JDailyRollingFileAppender extends FileAppender
 {
 	// The code assumes that the following constants are in a increasing
 	// sequence.
@@ -111,7 +111,7 @@ public class CustodianDailyRollingFileAppender extends FileAppender
 	/**
 	 * The default constructor does nothing.
 	 */
-	public CustodianDailyRollingFileAppender()
+	public CustodianLog4JDailyRollingFileAppender()
 	{
 	}
 
@@ -120,8 +120,10 @@ public class CustodianDailyRollingFileAppender extends FileAppender
 	 * designated by filename. The opened filename will become the ouput
 	 * destination for this appender.
 	 */
-	public CustodianDailyRollingFileAppender(Layout layout, String filename,
-			String datePattern) throws IOException
+	public CustodianLog4JDailyRollingFileAppender(
+    Layout layout, String filename,
+    String datePattern
+  ) throws IOException
 	{
 		super(layout, filename, true);
 		this.datePattern = datePattern;
@@ -462,7 +464,7 @@ class RollingCalendar extends GregorianCalendar
 {
 	private static final long serialVersionUID = -3560331770601814177L;
 
-	int type = CustodianDailyRollingFileAppender.TOP_OF_TROUBLE;
+	int type = CustodianLog4JDailyRollingFileAppender.TOP_OF_TROUBLE;
 
 	RollingCalendar()
 	{
@@ -490,18 +492,18 @@ class RollingCalendar extends GregorianCalendar
 
 		switch (type)
 		{
-		case CustodianDailyRollingFileAppender.TOP_OF_MINUTE:
+		case CustodianLog4JDailyRollingFileAppender.TOP_OF_MINUTE:
 			this.set(Calendar.SECOND, 0);
 			this.set(Calendar.MILLISECOND, 0);
 			this.add(Calendar.MINUTE, 1);
 			break;
-		case CustodianDailyRollingFileAppender.TOP_OF_HOUR:
+		case CustodianLog4JDailyRollingFileAppender.TOP_OF_HOUR:
 			this.set(Calendar.MINUTE, 0);
 			this.set(Calendar.SECOND, 0);
 			this.set(Calendar.MILLISECOND, 0);
 			this.add(Calendar.HOUR_OF_DAY, 1);
 			break;
-		case CustodianDailyRollingFileAppender.HALF_DAY:
+		case CustodianLog4JDailyRollingFileAppender.HALF_DAY:
 			this.set(Calendar.MINUTE, 0);
 			this.set(Calendar.SECOND, 0);
 			this.set(Calendar.MILLISECOND, 0);
@@ -515,14 +517,14 @@ class RollingCalendar extends GregorianCalendar
 				this.add(Calendar.DAY_OF_MONTH, 1);
 			}
 			break;
-		case CustodianDailyRollingFileAppender.TOP_OF_DAY:
+		case CustodianLog4JDailyRollingFileAppender.TOP_OF_DAY:
 			this.set(Calendar.HOUR_OF_DAY, 0);
 			this.set(Calendar.MINUTE, 0);
 			this.set(Calendar.SECOND, 0);
 			this.set(Calendar.MILLISECOND, 0);
 			this.add(Calendar.DATE, 1);
 			break;
-		case CustodianDailyRollingFileAppender.TOP_OF_WEEK:
+		case CustodianLog4JDailyRollingFileAppender.TOP_OF_WEEK:
 			this.set(Calendar.DAY_OF_WEEK, getFirstDayOfWeek());
 			this.set(Calendar.HOUR_OF_DAY, 0);
 			this.set(Calendar.MINUTE, 0);
@@ -530,7 +532,7 @@ class RollingCalendar extends GregorianCalendar
 			this.set(Calendar.MILLISECOND, 0);
 			this.add(Calendar.WEEK_OF_YEAR, 1);
 			break;
-		case CustodianDailyRollingFileAppender.TOP_OF_MONTH:
+		case CustodianLog4JDailyRollingFileAppender.TOP_OF_MONTH:
 			this.set(Calendar.DATE, 1);
 			this.set(Calendar.HOUR_OF_DAY, 0);
 			this.set(Calendar.MINUTE, 0);

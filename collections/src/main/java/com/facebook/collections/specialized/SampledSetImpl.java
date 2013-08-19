@@ -21,7 +21,6 @@ import com.facebook.util.digest.DigestFunction;
 import com.facebook.util.serialization.SerDe;
 import com.facebook.util.serialization.SerDeException;
 import com.google.common.collect.ImmutableSet;
-import org.slf4j.LoggerFactory;
 
 import java.io.DataInput;
 import java.io.DataOutput;

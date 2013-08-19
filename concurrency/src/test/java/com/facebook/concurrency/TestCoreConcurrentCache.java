@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.facebook.testing.TestUtils.waitUntilThreadBlocks;
 
 public class TestCoreConcurrentCache {
-
   private static final String STD_KEY = "std";
   private static final String BLOCKING_KEY = "blocking";
   private static final String EXCEPTION_KEY = "exception";

@@ -53,7 +53,7 @@ public class LoggerImpl implements Logger {
    *
    * @return a logger for the current scope
    *
-   * @deprecated Use {@link com.facebook.logging.util.LoggingUtil} instead
+   * @deprecated Use {@link com.facebook.logging.util.LoggingUtil#getClassLogger()} instead
    */
   @Deprecated
   public static Logger getClassLogger() {

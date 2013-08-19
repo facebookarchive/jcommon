@@ -30,7 +30,6 @@ import java.util.Random;
 import java.util.Set;
 
 public class TestColtHashSet {
-
   private ColtLongHashSet set;
   private int numElements;
 
