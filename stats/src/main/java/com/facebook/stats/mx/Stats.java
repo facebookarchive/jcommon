@@ -92,7 +92,7 @@ public class Stats implements StatsReader, StatsCollector {
     for (Map.Entry<String, AtomicLong> entry : counters.entrySet()) {
       duplicate = counterMap.put(prefix + entry.getKey(), entry.getValue().get());
       if (duplicate != null) {
-        LOG.warn("Duplicate counter : {}, Ignoring old value", duplicate);
+        LOG.warn("Duplicate counter : {}, Ignoring old value {}", prefix + entry.getKey(), duplicate);
       }
     }
 
@@ -100,7 +100,7 @@ public class Stats implements StatsReader, StatsCollector {
       try {
         duplicate = counterMap.put(prefix + entry.getKey(), entry.getValue().call());
         if (duplicate != null) {
-          LOG.warn("Duplicate counter : {}, Ignoring old value", duplicate);
+          LOG.warn("Duplicate counter : {}, Ignoring old value {}", prefix + entry.getKey(), duplicate);
         }
       } catch (Exception e) {
         LOG.debug("Exception when generating dynamic counter value for {}", entry.getKey(), e);

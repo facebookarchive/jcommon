@@ -300,7 +300,7 @@ public class TestUnstoppableExecutorService {
       }
     );
 
-    LOG.info("generating %d tasks", numTasks);
+    LOG.info("generating {} tasks", numTasks);
 
     for (int i = 0; i < numTasks; i++) {
       executor.submit(blockedNoOp);
