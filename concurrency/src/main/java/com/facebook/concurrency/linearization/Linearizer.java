@@ -15,7 +15,8 @@
  */
 package com.facebook.concurrency.linearization;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -89,7 +90,7 @@ import java.util.concurrent.atomic.AtomicReference;
  </pre>
  */
 public class Linearizer {
-  private static final Logger LOG = Logger.getLogger(Linearizer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Linearizer.class);
   private static final long COMPLETE_WAIT_TIME_SECONDS = 300; 
 
   private final AtomicReference<AtomicInteger> pointCountRef = 
@@ -237,10 +238,10 @@ public class Linearizer {
     @Override
     public void waitForStart() throws InterruptedException {
       while (!startSignal.await(COMPLETE_WAIT_TIME_SECONDS, TimeUnit.SECONDS)) {
-        LOG.info(String.format(
-          "waited %d seconds for LinearizationPoint.start, will wait some more",
+        LOG.info(
+          "waited {} seconds for LinearizationPoint.start, will wait some more",
           COMPLETE_WAIT_TIME_SECONDS
-        ));
+        );
       }
     }
 
@@ -254,10 +255,10 @@ public class Linearizer {
     @Override
     public void waitForCompletion() throws InterruptedException {
       while (!completeSignal.await(COMPLETE_WAIT_TIME_SECONDS, TimeUnit.SECONDS)) {
-        LOG.info(String.format(
-          "waited %d seconds for LinearizationPoint.complete, will wait some more",
+        LOG.info(
+          "waited {} seconds for LinearizationPoint.complete, will wait some more",
           COMPLETE_WAIT_TIME_SECONDS
-        ));
+        );
       }
     }
 

@@ -15,10 +15,10 @@
  */
 package com.facebook.collections.specialized;
 
-import com.facebook.util.digest.LongDigestFunction;
 import com.facebook.util.ExtRunnable;
 import com.facebook.util.TimeUtil;
-import org.apache.log4j.Logger;
+import com.facebook.util.digest.LongMurmur3Hash;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -30,8 +30,6 @@ import java.util.Random;
 import java.util.Set;
 
 public class TestColtHashSet {
-  private static final Logger LOG = Logger.getLogger(TestColtHashSet.class);
-
   private ColtLongHashSet set;
   private int numElements;
 
@@ -96,7 +94,6 @@ public class TestColtHashSet {
       iterator.hasNext();
     } catch (Exception e) {
       Assert.assertTrue(e instanceof ConcurrentModificationException);
-      LOG.info("got expected exception", e);
     }
 
   }
@@ -199,7 +196,7 @@ public class TestColtHashSet {
     int inserts = 100000;
     int maxSize = 8000;
     SampledSet<Long> set = new SampledSetImpl<>(
-      maxSize, new LongDigestFunction(), new LongHashSetFactory(maxSize)
+      maxSize, new LongMurmur3Hash(), new LongHashSetFactory(maxSize)
     );
     timeAdds("custom-long-hash-set-2", set, inserts);
   }

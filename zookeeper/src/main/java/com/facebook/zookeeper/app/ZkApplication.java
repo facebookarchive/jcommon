@@ -18,7 +18,8 @@ package com.facebook.zookeeper.app;
 import com.facebook.concurrency.ErrorLoggingRunnable;
 import com.facebook.concurrency.NamedThreadFactory;
 import com.facebook.zookeeper.connection.ZkConnectionManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
@@ -109,7 +110,7 @@ import java.util.concurrent.TimeUnit;
  * regardles of the pre-existing state.
  */
 public abstract class ZkApplication {
-  private static final Logger APP_LOG = Logger.getLogger(ZkApplication.class);
+  private static final Logger APP_LOG = LoggerFactory.getLogger(ZkApplication.class);
   
   protected final ZkConnectionManager zkConnectionManager;
   private final ExecutorService watchExecutor;

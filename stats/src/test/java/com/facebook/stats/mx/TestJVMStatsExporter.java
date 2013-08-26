@@ -15,8 +15,8 @@
  */
 package com.facebook.stats.mx;
 
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -28,7 +28,7 @@ import java.util.TreeMap;
  * Test {@link JVMStatsExporter}
  */
 public class TestJVMStatsExporter {
-  private static final Logger LOG = LoggerImpl.getLogger(TestJVMStatsExporter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TestJVMStatsExporter.class);
   
   @Test(groups = "fast")
   public void testAllStats() throws Exception {
@@ -40,7 +40,7 @@ public class TestJVMStatsExporter {
     exportedStats = new TreeMap<String, Long>(exportedStats);
     for (Map.Entry<String, Long> entry : exportedStats.entrySet()) {
       // Print the stats for visual examination
-      LOG.info("%s = %s", entry.getKey(), entry.getValue());      
+      LOG.info("{} = {}", entry.getKey(), entry.getValue());
     }
     // Verify that top level numeric stat is available
     Assert.assertTrue(exportedStats.containsKey("jvm.Memory.ObjectPendingFinalizationCount"));

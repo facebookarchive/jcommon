@@ -16,7 +16,6 @@
 package com.facebook.concurrency;
 
 import com.facebook.testing.TestUtils;
-import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -24,8 +23,6 @@ import org.testng.annotations.Test;
 import java.util.concurrent.CountDownLatch;
 
 public class TestCriticalSectionFactory {
-  private static final Logger LOG = Logger.getLogger(TestCriticalSectionFactory.class);
-
   private int count;
   private CountDownLatch criticalSectionLatch;
   private CountDownLatch entryLatch;
@@ -44,7 +41,6 @@ public class TestCriticalSectionFactory {
           entryLatch.countDown();
           criticalSectionLatch.await();
         } catch (InterruptedException e) {
-          LOG.error("test interrupted");
           Assert.fail("test interrupted");
         }
         

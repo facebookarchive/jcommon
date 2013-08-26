@@ -17,7 +17,8 @@ package com.facebook.config;
 
 import com.facebook.collections.ByteArray;
 import com.facebook.collectionsbase.Mapper;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.joda.time.Duration;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +39,7 @@ import java.util.Map;
  * 3. provides clean conversions to primitive types and annotated bean classes
  */
 public class ConfigAccessor {
-  private static final Logger LOG = Logger.getLogger(ConfigAccessor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ConfigAccessor.class);
 
   private final JSONObject jsonObject;
 
