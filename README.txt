@@ -26,7 +26,7 @@ files.
 Thanks!
 
 Committers:
-  sr@fb.com
+  rash@fb.com
   hgschmie@fb.com
   ehwang@fb.com
   lif@fb.com
