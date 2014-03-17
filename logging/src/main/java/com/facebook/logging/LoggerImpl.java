@@ -18,7 +18,7 @@ package com.facebook.logging;
 import org.slf4j.LoggerFactory;
 
 /**
- * Logger with efficient var-args support.  Underlying logger is Log4j, but may be swapped to
+ * Logger with efficient var-args support.  Underlying logger is sl4j, but may be swapped to
  * any logger.
  */
 public class LoggerImpl implements Logger {
