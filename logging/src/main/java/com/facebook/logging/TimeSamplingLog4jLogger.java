@@ -24,10 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Logger wrapper to down-sample frequent logs to one log per specified time
- * @deprecated Use {@link com.facebook.logging.util.TimeSamplingSLF4JLogger} instead.
- * That class has the same functionality but does not tie itself into log4j.
  */
-@Deprecated
 public class TimeSamplingLog4jLogger {
   private final Logger logger;
   private final long windowSizeMillis;

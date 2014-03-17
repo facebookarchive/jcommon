@@ -18,15 +18,8 @@ package com.facebook.logging;
 /**
  * Facebook logging interface that is similar to log4j, but adds delayed format processing
  *
- * @deprecated Use slf4j directly instead since this class predates the varargs support
- * (logging formatted string with variable number of parameters) in slf4j and the support in
- * slf4j is introduced in 1.7.x.
- *
- * Note that the migration is a bit non-trivial in that slf4j has a different way to specify
- * placeholders. slf4j uses {} universally but this class assumes the format in the Formatter
- * class is used.
- */
-@Deprecated
+ **/
+
 public interface Logger {
   public boolean isDebugEnabled();
 
