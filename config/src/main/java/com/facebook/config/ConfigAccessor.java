@@ -19,6 +19,7 @@ import com.facebook.collections.ByteArray;
 import com.facebook.collectionsbase.Mapper;
 import com.facebook.logging.Logger;
 import com.facebook.logging.LoggerImpl;
+import com.google.common.collect.Maps;
 import org.joda.time.Duration;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,7 +66,8 @@ public class ConfigAccessor {
 
           if (extractor != null) {
             if (!Extractor.class.isAssignableFrom(extractor.extractorClass())) {
-              String message = String.format("extractor %s does not extend Extractor.class",
+              String message = String.format(
+                "extractor %s does not extend Extractor.class",
                 extractor
               );
 
@@ -93,11 +95,7 @@ public class ConfigAccessor {
       }
 
       return ((ExtractableBeanBuilder<T>) beanBuilder).build();
-    } catch (InstantiationException e) {
-      throw new ConfigException(e);
-    } catch (IllegalAccessException e) {
-      throw new ConfigException(e);
-    } catch (InvocationTargetException e) {
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
       throw new ConfigException(e);
     }
   }
@@ -173,7 +171,8 @@ public class ConfigAccessor {
   }
 
   public Map<String, String> getStringMap(String key) {
-    return get(key, null, new Extractor<Map<String, String>>() {
+    return get(
+      key, null, new Extractor<Map<String, String>>() {
       @Override
       public Map<String, String> extract(String key, JSONObject jsonObject)
         throws JSONException {
@@ -190,7 +189,8 @@ public class ConfigAccessor {
 
         return map;
       }
-    });
+    }
+    );
   }
 
   public <T> List<T> getList(String key, Mapper<String, T> converter) {
@@ -225,6 +225,7 @@ public class ConfigAccessor {
 
   public List<ByteArray> getByteArrayList(String key) throws ConfigException {
     List<ByteArray> result = new ArrayList<>();
+
     for (String item : getStringList(key)) {
       result.add(ByteArray.wrap(item.getBytes()));
     }
@@ -234,14 +235,35 @@ public class ConfigAccessor {
   public List<String> getKeys() {
     List<String> keys = new ArrayList<>();
     Iterator<String> keysIterator = jsonObject.keys();
+
     while (keysIterator.hasNext()) {
       keys.add(keysIterator.next());
     }
+
     return keys;
   }
 
-  private <T> T get(String key, T defaultValue, Extractor<T> extractor)
-    throws ConfigException {
+  /**
+   * @return a copy of the entire configuration in String -> String form
+   */
+  public Map<String, String> getConfigAsMap() {
+    Map<String, String> configAsMap = Maps.newHashMap();
+    Iterator<String> keysIterator = jsonObject.keys();
+
+    while (keysIterator.hasNext()) {
+      String key = keysIterator.next();
+
+      try {
+        configAsMap.put(key, jsonObject.getString(key));
+      } catch (JSONException e) {
+        LOG.warn(e, "unable to extract key %s as a string in config", key);
+      }
+    }
+
+    return configAsMap;
+  }
+
+  private <T> T get(String key, T defaultValue, Extractor<T> extractor) throws ConfigException {
     try {
       if (jsonObject.has(key)) {
         return extractor.extract(key, jsonObject);
