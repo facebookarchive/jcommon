@@ -15,15 +15,14 @@
  */
 package com.facebook.config.dynamic;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class OptionImpl<V> implements Option<V> {
-  private static final Logger LOG = LoggerFactory.getLogger(OptionImpl.class);
-
+  private static final Logger LOG = LoggerImpl.getClassLogger();
   private final List<OptionWatcher<V>> watchers = Lists.newCopyOnWriteArrayList();
 
   private volatile V value;
@@ -58,7 +57,7 @@ public class OptionImpl<V> implements Option<V> {
     try {
       watcher.propertyUpdated(value);
     } catch (Exception e) {
-      LOG.warn("Problem running property watcher for value update: {}", value, e);
+      LOG.warn(e, "Problem running property watcher for value update: %s", value);
     }
   }
 }
