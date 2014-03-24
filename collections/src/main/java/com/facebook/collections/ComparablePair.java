@@ -23,6 +23,11 @@ public class ComparablePair
     super(t1, t2);
   }
 
+  public static <T1 extends Comparable<? super T1>, T2 extends Comparable<? super T2>>
+  Pair<T1, T2> of(T1 first, T2 second) {
+    return new ComparablePair<>(first, second);
+  }
+
   @Override
   public int compareTo(ComparablePair<T1, T2> o) {
     int firstCompareTo = getFirst().compareTo(o.getFirst());
