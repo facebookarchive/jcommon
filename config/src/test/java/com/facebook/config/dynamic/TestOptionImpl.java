@@ -26,7 +26,7 @@ public class TestOptionImpl {
 
   @BeforeMethod(alwaysRun = true)
   protected void setUp() throws Exception {
-    option = new OptionImpl<String>();
+    option = new OptionImpl<>();
   }
 
   @Test(groups = "fast")
@@ -87,6 +87,11 @@ public class TestOptionImpl {
     watcher1.assertState("test", 1);
     watcher2.assertState("test", 1);
     Assert.assertEquals(failureCount.get(), 1);
+  }
+
+  @Test(groups = "fast")
+  public void testInitialValue() throws Exception {
+    Assert.assertEquals(new OptionImpl<>("test").getValue(), "test");
   }
 
   private static class Watcher implements OptionWatcher<String> {
