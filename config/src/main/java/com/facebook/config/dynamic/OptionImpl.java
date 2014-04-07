@@ -27,6 +27,13 @@ public class OptionImpl<V> implements Option<V> {
 
   private volatile V value;
 
+  public OptionImpl() {
+  }
+
+  public OptionImpl(V value) {
+    this.value = value;
+  }
+
   @Override
   public V getValue() {
     return value;
