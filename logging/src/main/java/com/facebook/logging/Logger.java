@@ -29,6 +29,10 @@ public interface Logger {
 
   public boolean isErrorEnabled();
 
+  public void trace(String format, Object... args);
+
+  public void trace(Throwable t, String format, Object... args);
+
   public void debug(String format, Object... args);
 
   public void debug(Throwable t, String format, Object... args);

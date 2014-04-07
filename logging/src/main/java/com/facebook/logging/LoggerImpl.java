@@ -51,7 +51,6 @@ public class LoggerImpl implements Logger {
    * to be doing hundreds of times a second;
    *
    * @return a logger for the current scope
-   *
    */
   public static Logger getClassLogger() {
     StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
@@ -79,6 +78,20 @@ public class LoggerImpl implements Logger {
   @Override
   public boolean isErrorEnabled() {
     return logger.isErrorEnabled();
+  }
+
+  @Override
+  public void trace(String format, Object... args) {
+    if (logger.isTraceEnabled()) {
+      logger.trace(formatMessage(format, args));
+    }
+  }
+
+  @Override
+  public void trace(Throwable t, String format, Object... args) {
+    if (logger.isTraceEnabled()) {
+      logger.trace(formatMessage(format, args), t);
+    }
   }
 
   @Override

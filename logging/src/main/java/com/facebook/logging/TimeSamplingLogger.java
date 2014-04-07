@@ -74,6 +74,20 @@ public class TimeSamplingLogger implements Logger {
   }
 
   @Override
+  public void trace(String format, Object... args) {
+    if (shouldLog()) {
+      logger.trace(format, args);
+    }
+  }
+
+  @Override
+  public void trace(Throwable t, String format, Object... args) {
+    if (shouldLog()) {
+      logger.trace(t, format, args);
+    }
+  }
+
+  @Override
   public void debug(String format, Object... args) {
     if (shouldLog()) {
       logger.debug(format, args);
