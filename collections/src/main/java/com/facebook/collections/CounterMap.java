@@ -67,6 +67,10 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
     return retVal;
   }
 
+  public long size() {
+    return counters.size();
+  }
+
   /**
    * adds a value to key; will create a counter if it doesn't exist already.
    * conversely, since 0 is the value returned for keys not present, if the
