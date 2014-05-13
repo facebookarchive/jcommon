@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.collections;
+package com.facebook.collectionsbase;
 
 /**
- * full function capability: take an input, product an output, and throw checked exceptions or even
+ * full filter capability: take an input, return True/False, and throw checked exceptions or even
  * Error types if necessary
  *
  * @param <K>
- * @param <V>
  * @param <E>
  */
-public interface Function<K, V, E extends Throwable> {
-  public V execute(K input) throws E;
+public interface Filter<K, E extends Throwable> extends Function<K, Boolean, E> {
 }

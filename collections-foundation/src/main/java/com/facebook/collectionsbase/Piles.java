@@ -30,10 +30,6 @@ public class Piles {
       throw new AssertionError();
     }
 
-  public static <S, T extends Collection<S>> Class<T> compose(Class<T> classT, Class<S> clazzS) {
-    return classT;
-  }
-
   /**
    * works with guava's Function interface
    *
@@ -118,6 +114,28 @@ public class Piles {
   public static <T> Collection<T> copyOf(Iterator<T> iterator, Collection<T> target) {
     while (iterator.hasNext()) {
       target.add(iterator.next());
+    }
+
+    return target;
+  }
+
+  /**
+   *
+   * @param source input collection
+   * @param target collection containing filtered items
+   * @param filter
+   * @param <T> item type
+   * @param <C> collection type
+   * @param <E>
+   * @return target
+   * @throws E
+   */
+  public static <T, C extends Collection<T>, E extends Throwable> C filter(Collection<T> source, C target, Filter<T,E> filter)
+    throws E {
+    for (T item : source) {
+      if (filter.execute(item)) {
+        target.add(item);
+      }
     }
 
     return target;

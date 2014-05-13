@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.collections;
+package com.facebook.collectionsbase;
 
 /**
- * the point of this is to restore the utility and equivalence of guava's "Function"
- * in the case that we have code that users our "Function".  The only exception you can throw there
- * or here is a runtime.  The parent, you can declare a checked exception which is useful.
+ * full function capability: take an input, product an output, and throw checked exceptions or even
+ * Error types if necessary
  *
  * @param <K>
  * @param <V>
+ * @param <E>
  */
-public interface SafeFunction<K, V> extends Function<K, V, RuntimeException> {
-  public V execute(K input);
+public interface Function<K, V, E extends Throwable> {
+  public V execute(K input) throws E;
 }

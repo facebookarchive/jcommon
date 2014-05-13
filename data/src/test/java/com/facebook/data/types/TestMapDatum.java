@@ -17,11 +17,14 @@ package com.facebook.data.types;
 
 import com.facebook.util.serialization.SerDe;
 import com.facebook.util.serialization.SerDeUtils;
+
 import com.google.common.collect.ImmutableMap;
 import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.Iterator;
 
 public class TestMapDatum {
 
@@ -97,14 +100,21 @@ public class TestMapDatum {
     Assert.assertEquals(primesJsonObject.getString("3"), "5");
     Assert.assertEquals(primesJsonObject.getString("4"), "7");
   }
-  
+
   @Test(groups = "fast")
   public void testAsJsonString() throws Exception {
-   Assert.assertEquals(
-     DatumUtils.buildJSON(primes1).toString(), "{\"3\":5,\"2\":3,\"1\":2,\"4\":7}"
-   );
+    JSONObject jsonObject = DatumUtils.buildJSON(primes1);
+    JSONObject expected = new JSONObject("{\"3\":5,\"2\":3,\"1\":2,\"4\":7}");
+    Iterator<String> keys = expected.keys();
+    while (keys.hasNext()) {
+      String key = keys.next();
+
+      Assert.assertNotNull(jsonObject.remove(key), String.format("%s not present in result", key));
+    }
+
+    Assert.assertEquals(jsonObject.length(), 0, String.format("keys remaining: [%s]", jsonObject.keys()));
   }
-  
+
   @Test(groups = "fast")
   public void testAsBytes() throws Exception {
     // asBytes() == asString, so if above task passes, and these are equal, we're good
@@ -112,7 +122,7 @@ public class TestMapDatum {
 
     Assert.assertEquals(bytesAsString, primes1.asString());
   }
-  
+
   @Test(groups = "fast")
   public void testSerDe() throws Exception {
     SerDe<Datum> serDe = new MapDatum.SerDeImpl();

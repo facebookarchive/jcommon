@@ -113,7 +113,7 @@ public class TestHyperLogLogCodec {
           }
           expected = new AdaptiveHyperLogLog(buckets);
         } finally {
-          Closeables.closeQuietly(in);
+          Closeables.close(in, true);
         }
 
         // write the serialized data
@@ -122,7 +122,7 @@ public class TestHyperLogLogCodec {
         try {
           actual = codec.decodeAdaptiveHyperLogLog(in);
         } finally {
-          Closeables.closeQuietly(in);
+          Closeables.close(in, true);
         }
 
         // verify results
@@ -154,7 +154,7 @@ public class TestHyperLogLogCodec {
         try {
           codec.encodeAdaptiveHyperLogLog(hyperLogLog, out);
         } finally {
-          Closeables.closeQuietly(out);
+          Closeables.close(out, true);
         }
 
         // write the raw bucket values
@@ -164,7 +164,7 @@ public class TestHyperLogLogCodec {
             out.write(bucketValue);
           }
         } finally {
-          Closeables.closeQuietly(out);
+          Closeables.close(out, true);
         }
       }
     }

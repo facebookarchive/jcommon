@@ -66,4 +66,10 @@ public class MixedTypeMap<K> {
     //noinspection unchecked
     return (V) map.get(key);
   }
+
+  public MixedTypeMap<K> putAll(MixedTypeMap<K> otherMap) {
+    otherMap.map.putAll(map);
+
+    return otherMap;
+  }
 }
