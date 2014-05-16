@@ -26,7 +26,8 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 public class TestMixedTypeMap {
-  private MixedTypeMap<String> stringMap;
+  private MixedTypeMap<String> stringMap1;
+  private MixedTypeMap<String> stringMap2;
   private String key1;
   private Pair<Long, Long> value2;
   private Key<String, Pair> key2;
@@ -35,7 +36,8 @@ public class TestMixedTypeMap {
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
-    stringMap = new MixedTypeMap<>();
+    stringMap1 = new MixedTypeMap<>();
+    stringMap2 = new MixedTypeMap<>();
     key1 = "fuu";
     value2 = new Pair<>(200L, 800L);
     key2 = Key.get("fuu", Pair.class);
@@ -45,21 +47,21 @@ public class TestMixedTypeMap {
     value3.addAndGet("b", 2);
     value3.addAndGet("c", 3);
 
-    stringMap.put(key1, Long.class, 100L);
-    stringMap.put(key2, value2);
-    stringMap.put(key3, value3);
+    stringMap1.put(key1, Long.class, 100L);
+    stringMap1.put(key2, value2);
+    stringMap1.put(key3, value3);
   }
 
   @Test(groups = "fast")
   public void testSanity1() throws Exception {
-    Long value = stringMap.get(key1, Long.class);
+    Long value = stringMap1.get(key1, Long.class);
 
     Assert.assertEquals(value.longValue(), 100L);
   }
 
   @Test(groups = "fast")
   public void testSanity2() throws Exception {
-    Pair pair = stringMap.get(key2);
+    Pair pair = stringMap1.get(key2);
 
     Assert.assertEquals(pair.getFirst(), 200L);
     Assert.assertEquals(pair.getSecond(), 800L);
@@ -67,7 +69,7 @@ public class TestMixedTypeMap {
 
   @Test(groups = "fast")
   public void testSanity3() throws Exception {
-    CounterMap<String> value = stringMap.get(key3);
+    CounterMap<String> value = stringMap1.get(key3);
 
     Assert.assertEquals(value.get("a"), 1);
     Assert.assertEquals(value.get("b"), 2);
@@ -98,14 +100,14 @@ public class TestMixedTypeMap {
     Key<String, Number> numberKey,
     Key<String, Float> floatKey
   ) {
-    stringMap.put(objectKey, 37);
-    stringMap.put(numberKey, 4.16);
+    stringMap1.put(objectKey, 37);
+    stringMap1.put(numberKey, 4.16);
     // obvious
-    Assert.assertEquals(stringMap.get(objectKey), 37);
-    Assert.assertEquals(stringMap.get(numberKey), 4.16);
+    Assert.assertEquals(stringMap1.get(objectKey), 37);
+    Assert.assertEquals(stringMap1.get(numberKey), 4.16);
     //should be obvious: readers/writers agree on what key for a given class to use if it implements
     // several interfaces, not just the inheritance case
-    Assert.assertNull(stringMap.get(floatKey));
+    Assert.assertNull(stringMap1.get(floatKey));
   }
 
   @Test(groups = "fast")
@@ -113,12 +115,12 @@ public class TestMixedTypeMap {
     Key<String, Integer> classKey = Key.get("baz", Integer.class);
     Key<String, Integer> typeKey = Key.get("baz", TypeToken.of(Integer.class));
 
-    stringMap.put(classKey, Integer.MAX_VALUE);
-    Assert.assertEquals(stringMap.get(typeKey).longValue(), Integer.MAX_VALUE);
-    Assert.assertEquals(stringMap.get(classKey).longValue(), Integer.MAX_VALUE);
-    stringMap.put(typeKey, Integer.MIN_VALUE);
-    Assert.assertEquals(stringMap.get(typeKey).longValue(), Integer.MIN_VALUE);
-    Assert.assertEquals(stringMap.get(classKey).longValue(), Integer.MIN_VALUE);
+    stringMap1.put(classKey, Integer.MAX_VALUE);
+    Assert.assertEquals(stringMap1.get(typeKey).longValue(), Integer.MAX_VALUE);
+    Assert.assertEquals(stringMap1.get(classKey).longValue(), Integer.MAX_VALUE);
+    stringMap1.put(typeKey, Integer.MIN_VALUE);
+    Assert.assertEquals(stringMap1.get(typeKey).longValue(), Integer.MIN_VALUE);
+    Assert.assertEquals(stringMap1.get(classKey).longValue(), Integer.MIN_VALUE);
   }
 
   @Test(groups = "fast")
@@ -133,10 +135,26 @@ public class TestMixedTypeMap {
         .build().iterator()
     );
 
-    stringMap.put("fuu", stringTypeToken, stringList);
+    stringMap1.put("fuu", stringTypeToken, stringList);
     Key myKey = Key.get("fuu", stringTypeToken);
 
-    Assert.assertEquals(stringMap.get(myKey), stringList);
-    Assert.assertEquals(stringMap.get("fuu", stringTypeToken), stringList);
+    Assert.assertEquals(stringMap1.get(myKey), stringList);
+    Assert.assertEquals(stringMap1.get("fuu", stringTypeToken), stringList);
+  }
+
+  @Test(groups = "fast")
+  public void testPutAll() throws Exception {
+    stringMap1.put("key1", String.class, "value1");
+    stringMap1.put("key2", String.class, "value2");
+    stringMap1.put("key3", String.class, "value3");
+    stringMap2.put("key4", String.class, "value4");
+    stringMap2.putAll(stringMap1);
+
+    Assert.assertEquals(stringMap2.get("key1", String.class), "value1");
+    Assert.assertEquals(stringMap2.get("key2", String.class), "value2");
+    Assert.assertEquals(stringMap2.get("key3", String.class), "value3");
+    Assert.assertEquals(stringMap2.get("key4", String.class), "value4");
+    Assert.assertEquals(stringMap2.size(), stringMap1.size() + 1, "stringMap2 size");
+    Assert.assertEquals(stringMap1.size(), 6, "stringMap1 size");
   }
 }

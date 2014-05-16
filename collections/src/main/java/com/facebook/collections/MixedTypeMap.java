@@ -68,8 +68,12 @@ public class MixedTypeMap<K> {
   }
 
   public MixedTypeMap<K> putAll(MixedTypeMap<K> otherMap) {
-    otherMap.map.putAll(map);
+    map.putAll(otherMap.map);
 
     return otherMap;
+  }
+
+  public int size() {
+    return map.size();
   }
 }
