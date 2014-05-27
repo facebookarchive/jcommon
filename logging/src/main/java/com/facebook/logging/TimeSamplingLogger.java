@@ -54,6 +54,11 @@ public class TimeSamplingLogger implements Logger {
   }
 
   @Override
+  public boolean isTraceEnabled() {
+    return logger.isTraceEnabled();
+  }
+
+  @Override
   public boolean isDebugEnabled() {
     return logger.isDebugEnabled();
   }

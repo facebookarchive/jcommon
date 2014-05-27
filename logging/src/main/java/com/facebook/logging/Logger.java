@@ -21,6 +21,8 @@ package com.facebook.logging;
  **/
 
 public interface Logger {
+  public boolean isTraceEnabled();
+
   public boolean isDebugEnabled();
 
   public boolean isInfoEnabled();
