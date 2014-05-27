@@ -43,6 +43,7 @@ limitations under the License.
 
     <fb.check.fail-findbugs>false</fb.check.fail-findbugs>
     <fb.check.fail-pmd>false</fb.check.fail-pmd>
+    <fb.check.fail-license>false</fb.check.fail-license>
     <project.build.targetJdk>1.7</project.build.targetJdk>
   </properties>
 
@@ -129,7 +130,6 @@ limitations under the License.
         <fb.check.fail-license>false</fb.check.fail-license>
       </properties>
       <build>
-
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
