@@ -43,7 +43,6 @@ limitations under the License.
 
     <fb.check.fail-findbugs>false</fb.check.fail-findbugs>
     <fb.check.fail-pmd>false</fb.check.fail-pmd>
-    <fb.check.fail-license>false</fb.check.fail-license>
     <project.build.targetJdk>1.7</project.build.targetJdk>
   </properties>
 
@@ -352,6 +351,15 @@ limitations under the License.
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>com.mycila</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <configuration>
+            <includes>
+              <include>src/**</include>
+            </includes>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
