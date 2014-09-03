@@ -76,4 +76,8 @@ public class MixedTypeMap<K> {
   public int size() {
     return map.size();
   }
+
+  public void clear() {
+    map.clear();
+  }
 }
