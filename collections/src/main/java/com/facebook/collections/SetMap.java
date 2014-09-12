@@ -65,4 +65,6 @@ public interface SetMap<K, V, S extends Set<V>>
    * @return null if key not present, set for key otherwise
    */
   public S get(K key);
+
+  public void clear();
 }

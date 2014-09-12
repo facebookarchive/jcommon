@@ -15,16 +15,16 @@
  */
 package com.facebook.collections.specialized;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.facebook.collections.SetFactory;
 import com.facebook.collections.SetMap;
 import com.facebook.collections.SetMapImpl;
 import com.facebook.collections.Trackable;
 import com.facebook.collections.WrappedIterator;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * decorates a SetMap so that a caller can tell if the data structure
@@ -95,6 +95,11 @@ public class TrackableSetMap<K, V, S extends Set<V>>
   @Override
   public S get(K key) {
     return delegate.get(key);
+  }
+
+  @Override
+  public void clear() {
+    delegate.clear();
   }
 
   @Override

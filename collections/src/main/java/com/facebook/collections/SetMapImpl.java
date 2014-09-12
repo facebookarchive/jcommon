@@ -103,6 +103,11 @@ public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K,V,S> {
   }
 
   @Override
+  public void clear() {
+    sets.clear();
+  }
+
+  @Override
   public Iterator<Map.Entry<K, S>> iterator() {
     return sets.entrySet().iterator();
   }
