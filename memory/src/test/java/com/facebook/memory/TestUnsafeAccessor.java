@@ -30,26 +30,29 @@ public class TestUnsafeAccessor {
 
     int size = 1024 * 1024;
     long ptr = unsafe.allocateMemory(size);
-    long writePtr = ptr;
-    
-    for (int i = 0; i < size; i++) {
-      byte b = (byte)(i % 127);
+    try {
+      long writePtr = ptr;
 
-      unsafe.putByte(writePtr, b);
-      writePtr++;
-    }
-    
-    long readPtr = ptr;
-    
-    for (int i = 0; i < size; i++) {
-      byte b = (byte)(i % 127);
+      for (int i = 0; i < size; i++) {
+        byte b = (byte)(i % 127);
 
-      byte readByte = unsafe.getByte(readPtr);
-      readPtr++;
-      
-      Assert.assertEquals(b, readByte);
+        unsafe.putByte(writePtr, b);
+        writePtr++;
+      }
+
+      long readPtr = ptr;
+
+      for (int i = 0; i < size; i++) {
+        byte b = (byte)(i % 127);
+
+        byte readByte = unsafe.getByte(readPtr);
+        readPtr++;
+
+        Assert.assertEquals(b, readByte);
+      }
+    } finally {
+      unsafe.freeMemory(ptr);
     }
-    
-    unsafe.freeMemory(ptr);
+
   }
 }
