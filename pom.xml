@@ -190,6 +190,7 @@ limitations under the License.
     <module>lifecycle</module>
     <module>concurrency</module>
     <module>stats</module>
+    <module>tools</module>
     <module>zookeeper</module>
     <module>memory</module>
     <module>jcommon-all</module>
@@ -254,6 +255,11 @@ limitations under the License.
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>stats</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.facebook.jcommon</groupId>
+        <artifactId>tools</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
