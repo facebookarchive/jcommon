@@ -52,4 +52,9 @@ class CharArraySequence implements CharSequence {
 
     return start == end ? "" : new CharArraySequence(array, offset + start, end - start);
   }
+
+  @Override
+  public String toString() {
+    return new String(array, offset, length);
+  }
 }

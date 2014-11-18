@@ -44,4 +44,9 @@ class SingleCharSequence implements CharSequence {
 
     return end == 0 ? "" : this;
   }
+
+  @Override
+  public String toString() {
+    return Character.toString(character);
+  }
 }
