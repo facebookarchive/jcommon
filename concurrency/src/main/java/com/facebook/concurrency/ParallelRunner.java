@@ -15,8 +15,6 @@
  */
 package com.facebook.concurrency;
 
-import com.facebook.util.ExtRunnable;
-import com.facebook.util.exceptions.ExceptionHandler;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import org.slf4j.Logger;
@@ -28,6 +26,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+
+import com.facebook.util.ExtRunnable;
+import com.facebook.util.exceptions.ExceptionHandler;
 
 /**
  * Utility class in order to execute tasks in parallel on top of an executor, but bound the
@@ -236,6 +237,7 @@ public class ParallelRunner {
         new ExecutorServiceFront(
           new LinkedBlockingQueue<Runnable>(),
           executor,
+          baseName,
           numThreads
         )
       );
