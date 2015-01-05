@@ -97,6 +97,11 @@ public class LongDatum implements Datum {
   }
 
   @Override
+  public String toString() {
+    return asString();
+  }
+
+  @Override
   public int hashCode() {
     return Long.valueOf(value).hashCode();
   }
