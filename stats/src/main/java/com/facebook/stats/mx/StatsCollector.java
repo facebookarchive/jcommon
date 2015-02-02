@@ -31,6 +31,18 @@ public interface StatsCollector {
   public void incrementRate(String key, long delta);
 
   /**
+   * @param type
+   * @param delta
+   */
+  public void incrementSum(StatType type, long delta);
+
+  /**
+   * @param key
+   * @param delta
+   */
+  public void incrementSum(String key, long delta);
+
+  /**
    * @param key
    * @param delta
    */

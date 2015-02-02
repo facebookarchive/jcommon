@@ -37,6 +37,7 @@ public class Stats implements StatsReader, StatsCollector {
   private final ConcurrentMap<String, Callable<String>> attributes = new ConcurrentHashMap<>();
   // generic counters; anything here will have sum/rate for 1m/10m/60m/all-time
   private final ConcurrentMap<String, MultiWindowRate> rates = new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, MultiWindowRate> sums = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, AtomicLong> counters = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, Callable<Long>> dynamicCounters = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, MultiWindowSpread> spreads = new ConcurrentHashMap<>();
@@ -72,6 +73,12 @@ public class Stats implements StatsReader, StatsCollector {
   public void exportCounters(Map<String, Long> counterMap) {
     for (Map.Entry<String, MultiWindowRate> entry : rates.entrySet()) {
       StatsUtil.addRateAndSumToCounters(
+        prefix + entry.getKey(), entry.getValue(), counterMap
+      );
+    }
+
+    for (Map.Entry<String, MultiWindowRate> entry : sums.entrySet()) {
+      StatsUtil.addSumToCounters(
         prefix + entry.getKey(), entry.getValue(), counterMap
       );
     }
@@ -127,6 +134,26 @@ public class Stats implements StatsReader, StatsCollector {
   @Override
   public void incrementRate(String key, long delta) {
     getMultiWindowRate(key, rates).add(delta);
+  }
+
+  @Override
+  public MultiWindowRate getSum(StatType statType) {
+    return getSum(statType.getKey());
+  }
+
+  @Override
+  public MultiWindowRate getSum(String key) {
+    return getMultiWindowRate(key, sums);
+  }
+
+  @Override
+  public void incrementSum(StatType type, long delta) {
+    getMultiWindowRate(type.getKey(), sums).add(delta);
+  }
+
+  @Override
+  public void incrementSum(String key, long delta) {
+    getMultiWindowRate(key, sums).add(delta);
   }
 
   @Override

@@ -221,7 +221,7 @@ public class StatsUtil {
   /**
    * helper method that will set the value of a counter
    */
-  public static long setCounterValue(StatType statType, long value, Stats stats) {
+  public static long setCounterValue(StatType statType, long value, StatsCollector stats) {
     long oldValue  = StatsUtil.setCounterValue(statType.getKey(), value, stats);
 
     return oldValue ;
@@ -230,7 +230,7 @@ public class StatsUtil {
   /**
    * helper method that will set the value of a counter
    */
-  public static long setCounterValue(String key, long value, Stats stats) {
+  public static long setCounterValue(String key, long value, StatsCollector stats) {
     long oldValue = stats.resetCounter(key);
 
     stats.incrementCounter(key, value);
