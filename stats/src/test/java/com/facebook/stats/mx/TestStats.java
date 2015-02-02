@@ -93,7 +93,25 @@ public class TestStats {
   
   @Test(groups = "fast")
   public void testGetEmptyCounter() throws Exception {
-  	Assert.assertEquals(stats.getCounter("fuu"), 0);
+    Assert.assertEquals(stats.getCounter("fuu"), 0);
+  }
+
+  @Test(groups = "fast")
+  public void testRemoveCounter() throws Exception {
+    stats.incrementCounter("fuu", 1);
+    Assert.assertTrue(stats.removeCounter("fuu"));
+    Assert.assertFalse(stats.removeCounter("fuu"));
+    Map<String, Long> counterMap = new HashMap<>();
+    stats.exportCounters(counterMap);
+    Assert.assertNull(counterMap.get("fuu"));
+  }
+
+  @Test(groups = "fast")
+  public void testRemoveAttribute() throws Exception {
+    stats.setAttribute("bar", "bar");
+    Assert.assertTrue(stats.removeAttribute("bar"));
+    Assert.assertFalse(stats.removeAttribute("bar"));
+    Assert.assertNull(stats.getAttributes().get("bar"));
   }
 
   @Test(groups = "fast")

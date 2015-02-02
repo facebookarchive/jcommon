@@ -279,6 +279,16 @@ public class Stats implements StatsReader, StatsCollector {
     return dynamicCounters.remove(key) != null;
   }
 
+  /**
+   * Removes a counter with the specified key
+   *
+   * @param key the key for the counter
+   * @return true if a counter with the specified key existed and was removed, false otherwise.
+   */
+  public boolean removeCounter(String key) {
+    return counters.remove(key) != null;
+  }
+
   private long internalGetCounter(String key) {
     AtomicLong value = counters.get(key);
 
@@ -308,6 +318,16 @@ public class Stats implements StatsReader, StatsCollector {
   @Override
   public void setAttribute(String key, Callable<String> valueProducer) {
     internalSetAttribute(key, valueProducer);
+  }
+
+  /**
+   * Removes an attribute with the specified key
+   *
+   * @param key the key for the attribute
+   * @return true if an attribute with the specified key existed and was removed, false otherwise.
+   */
+  public boolean removeAttribute(String key) {
+    return attributes.remove(key) != null;
   }
 
   private void internalSetAttribute(String key, Callable<String> valueProducer) {
