@@ -16,7 +16,6 @@
 package com.facebook.stats.mx;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.math3.analysis.function.Add;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -58,8 +57,8 @@ public class TestStats {
     stats.setAttribute(KEY1, KEY2);
 
     // Test out that the stats attributemap is as expected
-    Map <String, String> statsAttributes = stats.getAttributes();
-    Assert.assertEquals(attributeMap, statsAttributes);    
+    Map<String, String> statsAttributes = stats.getAttributes();
+    Assert.assertEquals(attributeMap, statsAttributes);
   }
 
   /**
@@ -67,7 +66,7 @@ public class TestStats {
    */
   @Test(groups = "fast")
   public void testAttributeString() {
-    for (Map.Entry<String, String> attribute: attributeMap.entrySet()) {
+    for (Map.Entry<String, String> attribute : attributeMap.entrySet()) {
       stats.setAttribute(attribute.getKey(), attribute.getValue());
     }
     verifyStatAttributes();
@@ -82,7 +81,7 @@ public class TestStats {
       stats.setAttribute(key, 
         new Callable<String>() {
           @Override
-          public String call() throws Exception {          
+          public String call() throws Exception {
             return TestStats.this.attributeMap.get(key);
           }
         });
@@ -122,28 +121,37 @@ public class TestStats {
     final Map<String, Long> exported = new HashMap<>();
     stats.exportCounters(exported);
     Assert.assertEquals(exported.get(name), Long.valueOf(1));
-    
+
     // Test that the value gets exported
     longValue.setValue(123);
     exported.clear();
     stats.exportCounters(exported);
     Assert.assertEquals(exported.get(name), Long.valueOf(123));
-    
+
     // Test that a duplicate set fails to override the previous value
     LongWrapper duplicateValue = new LongWrapper(24);
     Assert.assertFalse(stats.addDynamicCounter(name, duplicateValue));
     exported.clear();
     stats.exportCounters(exported);
     Assert.assertEquals(exported.get(name), Long.valueOf(123));
-    
+
     // Test unset
     Assert.assertTrue(stats.removeDynamicCounter(name));
     exported.clear();
     stats.exportCounters(exported);
     Assert.assertFalse(exported.containsKey(name));
-    
+
     // Test unset for non-existent key
     Assert.assertFalse(stats.removeDynamicCounter(name));
+  }
+
+  @Test(groups = "fast")
+  public void testGetDynamicCounters() throws Exception {
+    LongWrapper longValue = new LongWrapper(1);
+    final String name = "testCounter";
+    Assert.assertTrue(stats.addDynamicCounter(name, longValue));
+    Callable<Long> dynamicCounter = stats.getDynamicCounter(name);
+    Assert.assertEquals(dynamicCounter.call().longValue(), 1);
   }
 
   @Test(groups = "fast")
@@ -185,6 +193,7 @@ public class TestStats {
     }
 
     private long value;
+
     @Override
     public Long call() throws Exception {
       return value;

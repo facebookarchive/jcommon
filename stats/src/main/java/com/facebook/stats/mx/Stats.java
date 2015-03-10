@@ -343,6 +343,16 @@ public class Stats implements StatsReader, StatsCollector {
     return internalGetAttribute(key);
   }
 
+  @Override
+  public Callable<Long> getDynamicCounter(StatType key) {
+    return dynamicCounters.get(key.getKey());
+  }
+
+  @Override
+  public Callable<Long> getDynamicCounter(String key) {
+    return dynamicCounters.get(key);
+  }
+
   private String internalGetAttribute(String key) {
     try {
       Callable<String> callable = attributes.get(key);
