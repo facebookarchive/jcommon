@@ -15,12 +15,18 @@
  */
 package com.facebook.logging;
 
-import java.lang.reflect.Method;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.mockito.Mockito;
 
-import static org.mockito.Mockito.*;
+import java.lang.reflect.Method;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.anyVararg;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class TestSlf4jLoggerAdapter {
 
@@ -41,28 +47,28 @@ public class TestSlf4jLoggerAdapter {
         if (hasThrowableParam(method)) {
           verify(mockLogger, times(1)).error(any(Throwable.class), anyString(), anyVararg());
         } else {
-          verify(mockLogger, times(1)).error(anyString(), anyVararg());
+          verify(mockLogger, times(1)).error(anyString(), Matchers.<Object[]>anyVararg());
         }
         break;
       case "warn":
         if (hasThrowableParam(method)) {
           verify(mockLogger, times(1)).warn(any(Throwable.class), anyString(), anyVararg());
         } else {
-          verify(mockLogger, times(1)).warn(anyString(), anyVararg());
+          verify(mockLogger, times(1)).warn(anyString(), Matchers.<Object[]>anyVararg());
         }
         break;
       case "info":
         if (hasThrowableParam(method)) {
           verify(mockLogger, times(1)).info(any(Throwable.class), anyString(), anyVararg());
         } else {
-          verify(mockLogger, times(1)).info(anyString(), anyVararg());
+          verify(mockLogger, times(1)).info(anyString(), Matchers.<Object[]>anyVararg());
         }
         break;
       case "debug":
         if (hasThrowableParam(method)) {
           verify(mockLogger, times(1)).debug(any(Throwable.class), anyString(), anyVararg());
         } else {
-          verify(mockLogger, times(1)).debug(anyString(), anyVararg());
+          verify(mockLogger, times(1)).debug(anyString(), Matchers.<Object[]>anyVararg());
         }
         break;
       case "trace":
