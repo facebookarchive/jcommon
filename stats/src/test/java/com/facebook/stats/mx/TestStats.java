@@ -127,6 +127,7 @@ public class TestStats {
     exported.clear();
     stats.exportCounters(exported);
     Assert.assertEquals(exported.get(name), Long.valueOf(123));
+    Assert.assertEquals(stats.getCounter(name), 123L);
 
     // Test that a duplicate set fails to override the previous value
     LongWrapper duplicateValue = new LongWrapper(24);
@@ -134,15 +135,17 @@ public class TestStats {
     exported.clear();
     stats.exportCounters(exported);
     Assert.assertEquals(exported.get(name), Long.valueOf(123));
+    Assert.assertEquals(stats.getCounter(name), 123L);
 
     // Test unset
-    Assert.assertTrue(stats.removeDynamicCounter(name));
+    Assert.assertTrue(stats.removeCounter(name));
     exported.clear();
     stats.exportCounters(exported);
     Assert.assertFalse(exported.containsKey(name));
+    Assert.assertEquals(stats.getCounter(name), 0L);
 
     // Test unset for non-existent key
-    Assert.assertFalse(stats.removeDynamicCounter(name));
+    Assert.assertFalse(stats.removeAttribute(name));
   }
 
   @Test(groups = "fast")
@@ -184,6 +187,8 @@ public class TestStats {
    * Helper class for testing dynamic counters.
    */
   private static class LongWrapper implements Callable<Long> {
+    private long value;
+
     private LongWrapper(long value) {
       this.value = value;
     }
@@ -191,8 +196,6 @@ public class TestStats {
     public void setValue(long value) {
       this.value = value;
     }
-
-    private long value;
 
     @Override
     public Long call() throws Exception {

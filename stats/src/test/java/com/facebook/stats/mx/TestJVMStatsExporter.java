@@ -54,7 +54,7 @@ public class TestJVMStatsExporter {
     // Chose an MBean that has a good chance of being there across different jvm versions
     JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
       stats,
-      ".*(UsageThresholdCount|PeakUsage.committed)",
+      ".*(\\.UsageThresholdCount|PeakUsage.committed)",
       "java.lang:type=MemoryPool,name=Code Cache"
     );
     Map<String, Long> exportedStats = getExportedStats(stats);

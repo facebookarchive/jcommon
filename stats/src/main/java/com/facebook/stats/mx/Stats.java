@@ -15,13 +15,6 @@
  */
 package com.facebook.stats.mx;
 
-
-import com.facebook.stats.MultiWindowDistribution;
-import com.facebook.stats.MultiWindowRate;
-import com.facebook.stats.MultiWindowSpread;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -29,17 +22,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
+import com.facebook.stats.MultiWindowDistribution;
+import com.facebook.stats.MultiWindowRate;
+import com.facebook.stats.MultiWindowSpread;
+
 public class Stats implements StatsReader, StatsCollector {
-  private static final Logger LOG = LoggerFactory.getLogger(Stats.class);
+  private static final Logger LOG = LoggerImpl.getClassLogger(); 
   private static final String ERROR_FLAG = "--ERROR--";
+  private static final long ERROR_VALUE = -1;
 
   private final String prefix;
   private final ConcurrentMap<String, Callable<String>> attributes = new ConcurrentHashMap<>();
   // generic counters; anything here will have sum/rate for 1m/10m/60m/all-time
   private final ConcurrentMap<String, MultiWindowRate> rates = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, MultiWindowRate> sums = new ConcurrentHashMap<>();
-  private final ConcurrentMap<String, AtomicLong> counters = new ConcurrentHashMap<>();
-  private final ConcurrentMap<String, Callable<Long>> dynamicCounters = new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, LongCounter> counters = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, MultiWindowSpread> spreads = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, MultiWindowDistribution> distributions =
     new ConcurrentHashMap<>();
@@ -96,21 +95,11 @@ public class Stats implements StatsReader, StatsCollector {
     }
 
     Long duplicate = null;
-    for (Map.Entry<String, AtomicLong> entry : counters.entrySet()) {
+
+    for (Map.Entry<String, LongCounter> entry : counters.entrySet()) {
       duplicate = counterMap.put(prefix + entry.getKey(), entry.getValue().get());
       if (duplicate != null) {
-        LOG.warn("Duplicate counter : {}, Ignoring old value {}", prefix + entry.getKey(), duplicate);
-      }
-    }
-
-    for (Map.Entry<String, Callable<Long>> entry : dynamicCounters.entrySet()) {
-      try {
-        duplicate = counterMap.put(prefix + entry.getKey(), entry.getValue().call());
-        if (duplicate != null) {
-          LOG.warn("Duplicate counter : {}, Ignoring old value {}", prefix + entry.getKey(), duplicate);
-        }
-      } catch (Exception e) {
-        LOG.debug("Exception when generating dynamic counter value for {}", entry.getKey(), e);
+        LOG.warn("Duplicate counter(3) : %s, Ignoring old value %s", prefix + entry.getKey(), duplicate);
       }
     }
   }
@@ -167,18 +156,18 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   private void internalIncrementCounter(String key, long delta) {
-    AtomicLong value = counters.get(key);
+    LongCounter counter = counters.get(key);
 
-    if (value == null) {
-      value = new AtomicLong(0);
-      AtomicLong existingValue = counters.putIfAbsent(key, value);
+    if (counter == null) {
+      counter = new AtomicLongCounter();
+      LongCounter existingCounter = counters.putIfAbsent(key, counter);
 
-      if (existingValue != null) {
-        value = existingValue;
+      if (existingCounter != null) {
+        counter = existingCounter;
       }
     }
 
-    value.addAndGet(delta);
+    counter.update(delta);
   }
 
   @Override
@@ -203,9 +192,9 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   private long internalResetCounter(String key) {
-    AtomicLong value = counters.put(key, new AtomicLong(0));
+    LongCounter counter = counters.remove(key);
 
-    return value == null ? 0 : value.get();
+    return counter == null ? 0 : counter.get();
   }
 
   public void incrementSpread(StatType type, long value) {
@@ -266,18 +255,9 @@ public class Stats implements StatsReader, StatsCollector {
    * already
    */
   public boolean addDynamicCounter(String key, Callable<Long> valueProducer) {
-    return null == dynamicCounters.putIfAbsent(key, valueProducer);
+    return null == counters.putIfAbsent(key, new CallableLongCounter(key, valueProducer));
   }
 
-  /**
-   * Removes a dynamic counter with the specified key
-   *
-   * @param key the key for the dynamic counter
-   * @return true if a counter with the specified key existed and was removed, false otherwise.
-   */
-  public boolean removeDynamicCounter(String key) {
-    return dynamicCounters.remove(key) != null;
-  }
 
   /**
    * Removes a counter with the specified key
@@ -290,9 +270,9 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   private long internalGetCounter(String key) {
-    AtomicLong value = counters.get(key);
+    LongCounter counter = counters.get(key);
 
-    return value == null ? 0 : value.get();
+    return counter == null ? 0 : counter.get();
   }
 
   @Override
@@ -334,7 +314,7 @@ public class Stats implements StatsReader, StatsCollector {
     try {
       attributes.put(key, valueProducer);
     } catch (Exception e) {
-      LOG.error("error in producer for key {}", key, e);
+      LOG.error("error in producer for key %s", key, e);
     }
   }
 
@@ -343,14 +323,28 @@ public class Stats implements StatsReader, StatsCollector {
     return internalGetAttribute(key);
   }
 
+  @Deprecated
   @Override
   public Callable<Long> getDynamicCounter(StatType key) {
-    return dynamicCounters.get(key.getKey());
+    final LongCounter longCounter = counters.get(key.getKey());
+    return new Callable<Long>() {
+      @Override
+      public Long call() throws Exception {
+        return longCounter.get();
+      }
+    };
   }
 
+  @Deprecated
   @Override
   public Callable<Long> getDynamicCounter(String key) {
-    return dynamicCounters.get(key);
+    final LongCounter longCounter = counters.get(key);
+    return new Callable<Long>() {
+      @Override
+      public Long call() throws Exception {
+        return longCounter.get();
+      }
+    };
   }
 
   private String internalGetAttribute(String key) {
@@ -359,7 +353,7 @@ public class Stats implements StatsReader, StatsCollector {
 
       return callable == null ? null : callable.call();
     } catch (Exception e) {
-      LOG.error("error producing value for key {}", key, e);
+      LOG.error("error producing value for key %s", key, e);
       return ERROR_FLAG;
     }
   }
@@ -377,7 +371,7 @@ public class Stats implements StatsReader, StatsCollector {
         materializedAttributes.put(entry.getKey(), entry.getValue().call());
       } catch (Exception e) {
         materializedAttributes.put(entry.getKey(), ERROR_FLAG);
-        LOG.error("error producing value for key {}", entry.getKey(), e);
+        LOG.error("error producing value for key %s", entry.getKey(), e);
       }
     }
 
@@ -420,8 +414,6 @@ public class Stats implements StatsReader, StatsCollector {
     return distribution;
   }
 
-
-
   private static class StringProducer implements Callable<String> {
     private final String value;
 
@@ -432,6 +424,51 @@ public class Stats implements StatsReader, StatsCollector {
     @Override
     public String call() throws Exception {
       return value;
+    }
+  }
+
+  private interface LongCounter {
+    void update(long delta);
+    long get();
+  }
+
+  private static class AtomicLongCounter implements LongCounter {
+    private final AtomicLong value = new AtomicLong(0);
+
+    @Override
+    public void update(long delta) {
+      value.addAndGet(delta);
+    }
+
+    @Override
+    public long get() {
+      return value.get();
+    }
+  }
+
+  private static class CallableLongCounter implements LongCounter {
+    private final String key;
+    private Callable<Long> longCallable;
+
+    private CallableLongCounter(String key, Callable<Long> longCallable) {
+      this.key = key;
+      this.longCallable = longCallable;
+    }
+
+    @Override
+    public void update(long delta) {
+      //no-op
+    }
+
+    @Override
+    public long get() {
+      try {
+        return longCallable.call();
+      } catch (Exception e) {
+        LOG.debug("Exception when generating dynamic counter value for %s", key, e);
+
+        return ERROR_VALUE;
+      }
     }
   }
 }

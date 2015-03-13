@@ -15,12 +15,12 @@
  */
 package com.facebook.stats.mx;
 
+import java.util.Map;
+import java.util.concurrent.Callable;
+
 import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
-
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 public interface StatsReader {
   public void exportCounters(Map<String, Long> counters);
@@ -36,7 +36,9 @@ public interface StatsReader {
   public MultiWindowDistribution getDistribution(String key);
   public String getAttribute(StatType key);
   public String getAttribute(String key);
+  @Deprecated
   public Callable<Long> getDynamicCounter(StatType key);
+  @Deprecated
   public Callable<Long> getDynamicCounter(String key);
 
   /**
