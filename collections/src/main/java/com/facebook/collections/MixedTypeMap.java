@@ -19,7 +19,6 @@ import com.google.common.reflect.TypeToken;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class MixedTypeMap<K> implements ReadOnlyMixedTypeMap<K> {
   private final Map<Key<K, ?>, Object> map;
@@ -79,25 +78,5 @@ public class MixedTypeMap<K> implements ReadOnlyMixedTypeMap<K> {
 
   public void clear() {
     map.clear();
-  }
-
-  public static void main(String[] args) {
-    MixedTypeMap<String> mixedTypeMap = new MixedTypeMap<>();
-    long start = System.nanoTime();
-    for (int i = 0; i < 20; i++) {
-      mixedTypeMap.put(UUID.randomUUID().toString(), String.class, UUID.randomUUID().toString());
-    }
-
-    long total = 0;
-    for (int j = 0; j < 200000; j++) {
-      MixedTypeMap<String> mixedTypeMapCopy = new MixedTypeMap<>();
-      mixedTypeMapCopy.putAll(mixedTypeMap);
-      total += mixedTypeMap.size();
-    }
-
-    long end = System.nanoTime();
-
-    System.err.println("elapsed (ms): " + (end - start) / 1000000.0);
-    System.err.println(total);
   }
 }
