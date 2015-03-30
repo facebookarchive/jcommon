@@ -25,7 +25,8 @@ public class TestStatsManager {
   private static String toString(StatsManager s) {
     Map<String, Long> map = s.getCounters();
     StringBuilder result = new StringBuilder();
-    for (String fullname : map.keySet()) {
+    for (Map.Entry<String, Long> entry : map.entrySet()) {
+      String fullname = entry.getKey();
       result.append(fullname + " = " + map.get(fullname) + "\n");
     }
     return result.toString();
