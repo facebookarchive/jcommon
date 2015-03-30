@@ -15,15 +15,14 @@
  */
 package com.facebook.stats;
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.lang.IllegalArgumentException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 
 /**
  * This was written to resemble some older libraries.  You may find
@@ -43,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * details see com.facebook.fb303.stats.HistoryManager.
  */
 public class StatsManager implements HistoryManager {
-  private static Logger logger = LoggerFactory.getLogger(StatsManager.class);
+  private static Logger logger = LoggerImpl.getLogger(StatsManager.class);
 
   private ConcurrentHashMap<String, Integer> typeMap;
   // todo: handle mutliple shortName/types
