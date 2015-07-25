@@ -42,7 +42,7 @@ limitations under the License.
 
     <fb.check.fail-findbugs>false</fb.check.fail-findbugs>
     <fb.check.fail-pmd>false</fb.check.fail-pmd>
-    <project.build.targetJdk>1.7</project.build.targetJdk>
+    <project.build.targetJdk>1.8</project.build.targetJdk>
     <argLine />
   </properties>
 

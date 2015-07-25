@@ -20,7 +20,6 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -52,12 +51,12 @@ public class ForwardReferenceProxy<T> {
 
   private static <T> T wrap(Class<T> clazz, final AtomicReference<T> instance) {
     Preconditions.checkNotNull(instance, "must pass a non-null atomic reference");
-    InvocationHandler handler = new InvocationHandler() {
-      @Override
-      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return method.invoke(Preconditions.checkNotNull(instance.get(), "instance has not been set"), args);
-      }
-    };
+    InvocationHandler handler = (proxy, method, args) -> method.invoke(
+      Preconditions.checkNotNull(
+        instance.get(),
+        "instance has not been set"
+      ), args
+    );
 
     T wrapper = (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, handler);
 
