@@ -46,7 +46,6 @@ public class ExecutorServiceFront extends AbstractExecutorService {
   private final Lock lock = new ReentrantLock();
   private final BlockingQueue<Runnable> workQueue;
   private final ExecutorService executor;
-  private final String poolName;
   private final long maxTimeSliceMillis;
   private final BlockingQueue<Drainer> drainerList;
 
@@ -70,9 +69,8 @@ public class ExecutorServiceFront extends AbstractExecutorService {
   ) {
     this.workQueue = workQueue;
     this.executor = executor;
-    this.poolName = poolName;
     this.maxTimeSliceMillis = maxTimeSliceUnit.toMillis(maxTimeSlice);
-    drainerList = new ArrayBlockingQueue<Drainer>(maxDrainers);
+    drainerList = new ArrayBlockingQueue<>(maxDrainers);
     
     for (int i = 0; i < maxDrainers; i++) {
       drainerList.add(new Drainer(String.format("%s-%03d", poolName, i)));
@@ -112,7 +110,7 @@ public class ExecutorServiceFront extends AbstractExecutorService {
     TimeUnit maxTimeSliceUnit
   ) {
     this(
-      new LinkedBlockingQueue<Runnable>(), 
+      new LinkedBlockingQueue<>(),
       executor, 
       "Drainer",
       1, 
@@ -121,7 +119,7 @@ public class ExecutorServiceFront extends AbstractExecutorService {
   }
   
   public ExecutorServiceFront(ExecutorService executor) {
-    this(new LinkedBlockingQueue<Runnable>(), executor, 1);
+    this(new LinkedBlockingQueue<>(), executor, 1);
   }
 
   @Override
@@ -181,7 +179,6 @@ public class ExecutorServiceFront extends AbstractExecutorService {
       } finally {
         t.setName(oldName);
       }
-
     }
 
     private void internalRun() {

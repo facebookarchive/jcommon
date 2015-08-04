@@ -33,10 +33,10 @@ import java.util.concurrent.TimeoutException;
 
 public class MockExecutor implements ScheduledExecutorService {
   private final List<AnnotatedRunnable> runnableList =
-    Collections.synchronizedList(new ArrayList<AnnotatedRunnable>());
+    Collections.synchronizedList(new ArrayList<>());
   private final CountDownLatch latch = new CountDownLatch(1);
   private final IdentityHashMap<ScheduledFuture<?>, ScheduledFuture<?>> 
-    outstandingTasks = new IdentityHashMap<ScheduledFuture<?>, ScheduledFuture<?>>();
+    outstandingTasks = new IdentityHashMap<>();
 
   private volatile boolean rejectSubmission = false;
   private volatile boolean isShutdown = false;
@@ -62,7 +62,7 @@ public class MockExecutor implements ScheduledExecutorService {
     latch.countDown();
   }
 
-  public AnnotatedRunnable removeHead() {
+  public synchronized AnnotatedRunnable removeHead() {
     return runnableList.isEmpty() ? null : runnableList.remove(0);
   }
 
@@ -78,17 +78,14 @@ public class MockExecutor implements ScheduledExecutorService {
 
     runnableList.add(new AnnotatedRunnable(command, delay, -1, unit));
 
-    return new MockScheduledFuture<Void>(toCallable(command));
+    return new MockScheduledFuture<>(toCallable(command));
   }
 
   private <T> Callable toCallable(final Runnable runnable, final T result) {
-    return new Callable<T>() {
-      @Override
-      public T call() throws Exception {
-        runnable.run();
+    return () -> {
+      runnable.run();
 
-        return result;
-      }
+      return result;
     };
 
   }
@@ -128,7 +125,7 @@ public class MockExecutor implements ScheduledExecutorService {
 
     runnableList.add(runnable);
 
-    MockScheduledFuture<Void> future = new MockScheduledFuture<Void>(
+    MockScheduledFuture<Void> future = new MockScheduledFuture<>(
       Executors.<Void>callable(runnable, (Void) null)
     );
 
@@ -150,7 +147,7 @@ public class MockExecutor implements ScheduledExecutorService {
 
     runnableList.add(runnable);
 
-    MockScheduledFuture<Void> future = new MockScheduledFuture<Void>(
+    MockScheduledFuture<Void> future = new MockScheduledFuture<>(
       Executors.<Void>callable(runnable, (Void) null)
     );
 
@@ -171,7 +168,7 @@ public class MockExecutor implements ScheduledExecutorService {
   public List<Runnable> shutdownNow() {
     cancelPendingTasks();
     
-    return new ArrayList<Runnable>(runnableList);
+    return new ArrayList<>(runnableList);
   }
 
   private void cancelPendingTasks() {
@@ -200,16 +197,15 @@ public class MockExecutor implements ScheduledExecutorService {
 
   @Override
   public <T> Future<T> submit(final Callable<T> task) {
-    runnableList.add(new AnnotatedRunnable(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          task.call();
-        } catch (Exception e) {
-          throw new RuntimeException(e);
+    runnableList.add(new AnnotatedRunnable(
+        () -> {
+          try {
+            task.call();
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
         }
-      }
-    }));
+      ));
     
     return new MockScheduledFuture<T>(task);
   }
@@ -225,7 +221,7 @@ public class MockExecutor implements ScheduledExecutorService {
   public Future<?> submit(Runnable task) {
     runnableList.add(new AnnotatedRunnable(task));
 
-    return new MockScheduledFuture<Void>(toCallable(task));
+    return new MockScheduledFuture<>(toCallable(task));
   }
 
   @Override
@@ -269,7 +265,12 @@ public class MockExecutor implements ScheduledExecutorService {
   }
 
   public void drain(int maxTasks) {
-    for (int i = 0; i < maxTasks && getNumPendingTasks() > 0; i++)
-      removeHead().run();
+    for (int i = 0; i < maxTasks && getNumPendingTasks() > 0; i++) {
+      AnnotatedRunnable annotatedRunnable = removeHead();
+
+      if (annotatedRunnable != null) {
+        annotatedRunnable.run();
+      }
+    }
   }
 }

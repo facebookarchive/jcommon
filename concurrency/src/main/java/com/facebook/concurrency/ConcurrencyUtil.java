@@ -15,9 +15,6 @@
  */
 package com.facebook.concurrency;
 
-import com.facebook.util.ExtRunnable;
-import com.facebook.util.exceptions.ExceptionHandler;
-import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +27,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import com.facebook.util.ExtRunnable;
+import com.facebook.util.exceptions.ExceptionHandler;
 
 /**
  * This is a helper class for running tasks in parallel. It uses a static, shared thread pool.
@@ -62,16 +62,13 @@ public class ConcurrencyUtil {
   static {
     Runtime.getRuntime().addShutdownHook(
       new Thread(
-        new Runnable() {
-          @Override
-          public void run() {
-            SHUTDOWN_LOCK.writeLock().lock();
+        () -> {
+          SHUTDOWN_LOCK.writeLock().lock();
 
-            try {
-              CACHED_EXECUTOR.shutdown();
-            } finally {
-              SHUTDOWN_LOCK.writeLock().unlock();
-            }
+          try {
+            CACHED_EXECUTOR.shutdown();
+          } finally {
+            SHUTDOWN_LOCK.writeLock().unlock();
           }
         }
       )
@@ -80,20 +77,17 @@ public class ConcurrencyUtil {
 
 
   public static Runnable shutdownExecutorTask(final ExecutorService executor) {
-    return new Runnable() {
-      @Override
-      public void run() {
-        try {
-          executor.shutdown();
-          if (!executor.awaitTermination(AWAIT_TERMINATION_SECONDS, TimeUnit.SECONDS)) {
-            LOG.warn(
-              "executor didn't finish shutting down in {} seconds, moving on",
-              AWAIT_TERMINATION_SECONDS
-            );
-          }
-        } catch (InterruptedException e) {
-          LOG.warn("interrupted shutting down executor");
+    return () -> {
+      try {
+        executor.shutdown();
+        if (!executor.awaitTermination(AWAIT_TERMINATION_SECONDS, TimeUnit.SECONDS)) {
+          LOG.warn(
+            "executor didn't finish shutting down in {} seconds, moving on",
+            AWAIT_TERMINATION_SECONDS
+          );
         }
+      } catch (InterruptedException e) {
+        LOG.warn("interrupted shutting down executor");
       }
     };
   }
@@ -136,24 +130,16 @@ public class ConcurrencyUtil {
   ) throws E {
     final AtomicReference<E> exception = new AtomicReference<E>();
     Iterator<Runnable> wrappedIterator = Iterators.transform(
-      tasksIter, new Function<ExtRunnable<E>, Runnable>() {
-      @Override
-      public Runnable apply(final ExtRunnable<E> task) {
-        return new Runnable() {
-          @Override
-          public void run() {
-            try {
-              // short-circuit if other tasksIter failed
-              if (exception.get() == null) {
-                task.run();
-              }
-            } catch (Exception e) {
-              exception.compareAndSet(null, exceptionHandler.handle(e));
-            }
+      tasksIter, task -> () -> {
+        try {
+          // short-circuit if other tasksIter failed
+          if (exception.get() == null) {
+            task.run();
           }
-        };
+        } catch (Exception e) {
+          exception.compareAndSet(null, exceptionHandler.handle(e));
+        }
       }
-    }
     );
 
     parallelRun(wrappedIterator, numThreads, baseName);
