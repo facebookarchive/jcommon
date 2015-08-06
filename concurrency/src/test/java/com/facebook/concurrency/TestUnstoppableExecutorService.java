@@ -15,16 +15,10 @@
  */
 package com.facebook.concurrency;
 
-import com.facebook.testing.Function;
-import com.facebook.testing.MockExecutor;
-import com.facebook.testing.TestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -33,13 +27,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.facebook.logging.Logger;
+import com.facebook.testing.MockExecutor;
+import com.facebook.testing.TestUtils;
+
 public class TestUnstoppableExecutorService {
-  private static final Logger LOG = LoggerFactory.getLogger(TestUnstoppableExecutorService.class);
-  private static final Runnable NO_OP = new Runnable() {
-    @Override
-    public void run() {
-    }
-  };
+  private static final Logger LOG = com.facebook.logging.LoggerImpl.getClassLogger();
+  private static final Runnable NO_OP = () -> { };
 
   private ExecutorService executor;
   private MockExecutor mockExecutor;
@@ -107,12 +101,7 @@ public class TestUnstoppableExecutorService {
 
     AtomicInteger completed = TestUtils.countCompletedRunnables(
       10,
-      new Function<Runnable>() {
-        @Override
-        public void execute(Runnable argument) {
-          executor.execute(argument);
-        }
-      }
+      executor::execute
     );
 
     executor.shutdown();
@@ -140,12 +129,7 @@ public class TestUnstoppableExecutorService {
 
     AtomicInteger completed = TestUtils.countCompletedRunnables(
       10,
-      new Function<Runnable>() {
-        @Override
-        public void execute(Runnable argument) {
-          executor.submit(argument);
-        }
-      }
+      executor::submit
     );
 
     executor.shutdown();
@@ -173,12 +157,7 @@ public class TestUnstoppableExecutorService {
 
     AtomicInteger completed = TestUtils.countCompletedRunnables(
       10,
-      new Function<Runnable>() {
-        @Override
-        public void execute(Runnable argument) {
-          executor.submit(argument, new Object());
-        }
-      }
+      argument -> executor.submit(argument, new Object())
     );
 
     executor.shutdown();
@@ -204,15 +183,7 @@ public class TestUnstoppableExecutorService {
       "executor is terminated"
     );
 
-    AtomicInteger completed = TestUtils.<Void>countCompletedCallables(
-      10,
-      new Function<Callable<Void>>() {
-        @Override
-        public void execute(Callable<Void> argument) {
-          executor.submit(argument);
-        }
-      }
-    );
+    AtomicInteger completed = TestUtils.<Void>countCompletedCallables(10, executor::submit);
 
     executor.shutdown();
     mockExecutor.drain();
@@ -223,7 +194,6 @@ public class TestUnstoppableExecutorService {
       "executor should be terminated"
     );
 
-
     Assert.assertTrue(
       executor.isTerminated(),
       "executor should be terminated"
@@ -232,15 +202,10 @@ public class TestUnstoppableExecutorService {
 
   @Test(groups = "fast")
   public void testTaskCompletesThenCancel() throws Exception {
-    final AtomicReference<Future> future = new AtomicReference<Future>();
+    final AtomicReference<Future> future = new AtomicReference<>();
     AtomicInteger completed = TestUtils.<Void>countCompletedCallables(
       10,
-      new Function<Callable<Void>>() {
-        @Override
-        public void execute(Callable<Void> argument) {
-          future.compareAndSet(null, executor.submit(argument));
-        }
-      }
+      argument -> future.compareAndSet(null, executor.submit(argument))
     );
 
     executor.shutdown();
@@ -291,16 +256,9 @@ public class TestUnstoppableExecutorService {
     final AtomicInteger count = new AtomicInteger(0);
     ExecutorService realExecutor = Executors.newFixedThreadPool(numThreads);
     executor = new UnstoppableExecutorService(realExecutor);
-    LatchTask blockedNoOp = new LatchTask(
-      new Runnable() {
-        @Override
-        public void run() {
-          count.incrementAndGet();
-        }
-      }
-    );
+    LatchTask blockedNoOp = new LatchTask(count::incrementAndGet);
 
-    LOG.info("generating {} tasks", numTasks);
+    LOG.info("generating %d tasks", numTasks);
 
     for (int i = 0; i < numTasks; i++) {
       executor.submit(blockedNoOp);

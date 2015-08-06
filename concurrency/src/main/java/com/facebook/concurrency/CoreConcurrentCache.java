@@ -15,10 +15,6 @@
  */
 package com.facebook.concurrency;
 
-import com.facebook.collectionsbase.Mapper;
-import com.facebook.collections.TranslatingIterator;
-import com.facebook.util.exceptions.ExceptionHandler;
-
 import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,6 +22,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
+
+import com.facebook.collections.TranslatingIterator;
+import com.facebook.collectionsbase.Mapper;
+import com.facebook.util.exceptions.ExceptionHandler;
 
 @SuppressWarnings({"unchecked"})
 public class CoreConcurrentCache<K, V, E extends Exception>
@@ -54,7 +54,7 @@ public class CoreConcurrentCache<K, V, E extends Exception>
   public CoreConcurrentCache(
     ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler
   ) {
-    this(valueFactory, exceptionHandler, new ConcurrentHashMap<K, Object>());
+    this(valueFactory, exceptionHandler, new ConcurrentHashMap<>());
   }
 
   @Override
@@ -64,21 +64,18 @@ public class CoreConcurrentCache<K, V, E extends Exception>
     // if there isn't entry, do a thread-safe insert into the cache, 
     // and create if necessary 
     if (value == null) {
-      final AtomicReference<Object> valueRef = new AtomicReference<Object>();
-      value = new PrivateFutureHelper<V, E>(
-        new Callable<V>() {
-          @Override
-          public V call() throws E {
-            V producedValue = valueFactory.create(key);
-            
-            // we place our value into the map in place of the factory if and
-            // only if it is still mapped to the same private future helper
-            CoreConcurrentCache.this.cache.replace(
-              key, valueRef.get(), producedValue
-            );
-            
-            return producedValue;
-          }
+      AtomicReference<Object> valueRef = new AtomicReference<>();
+      value = new PrivateFutureHelper<>(
+        () -> {
+          V producedValue = valueFactory.create(key);
+
+          // we place our value into the map in place of the factory if and
+          // only if it is still mapped to the same private future helper
+          CoreConcurrentCache.this.cache.replace(
+            key, valueRef.get(), producedValue
+          );
+
+          return producedValue;
         },
         exceptionHandler
       );
@@ -147,10 +144,7 @@ public class CoreConcurrentCache<K, V, E extends Exception>
 
   @Override
   public Iterator<Map.Entry<K, CallableSnapshot<V, E>>> iterator() {
-    return new TranslatingIterator<
-      Map.Entry<K, Object>,
-      Map.Entry<K, CallableSnapshot<V, E>>
-      >(
+    return new TranslatingIterator<>(
       new ValueMapper(),
       cache.entrySet().iterator()
     );
@@ -163,7 +157,7 @@ public class CoreConcurrentCache<K, V, E extends Exception>
     if (value == null) {
       return null;
     } else {
-      return new CallableSnapshot<V, E>(
+      return new CallableSnapshot<>(
         new CallableFutureHelper(value),
         new CastingExceptionHandler<E>()
       );
@@ -188,12 +182,10 @@ public class CoreConcurrentCache<K, V, E extends Exception>
   private class ValueMapper implements
     Mapper<Map.Entry<K, Object>, Map.Entry<K, CallableSnapshot<V, E>>> {
     @Override
-    public Map.Entry<K, CallableSnapshot<V, E>> map(
-      final Map.Entry<K, Object> input
-    ) {
-      return new AbstractMap.SimpleImmutableEntry<K, CallableSnapshot<V, E>>(
+    public Map.Entry<K, CallableSnapshot<V, E>> map(Map.Entry<K, Object> input) {
+      return new AbstractMap.SimpleImmutableEntry<>(
         input.getKey(),
-        new CallableSnapshot<V, E>(
+        new CallableSnapshot<>(
           new CallableFutureHelper(input.getValue()), 
           new CastingExceptionHandler<E>() // OK to cast b/c know exception type
         )

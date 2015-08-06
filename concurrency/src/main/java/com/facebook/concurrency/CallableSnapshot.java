@@ -15,13 +15,17 @@
  */
 package com.facebook.concurrency;
 
-import com.facebook.util.exceptions.ExceptionHandler;
-
 import java.util.concurrent.Callable;
+
+import com.facebook.util.exceptions.ExceptionHandler;
 
 public class CallableSnapshot<V, E extends Exception> {
   private V value = null;
   private E exception = null;
+
+  private CallableSnapshot(E exception) {
+    this.exception = exception;
+  }
 
   public CallableSnapshot(
     Callable<V> callable, ExceptionHandler<E> exceptionHandler
@@ -31,6 +35,10 @@ public class CallableSnapshot<V, E extends Exception> {
     } catch (Exception e) {
       exception = exceptionHandler.handle(e);
     }
+  }
+
+  public static <V, E extends Exception> CallableSnapshot<V, E> createWithException(E exception) {
+    return new CallableSnapshot<>(exception);
   }
 
   public V get() throws E {

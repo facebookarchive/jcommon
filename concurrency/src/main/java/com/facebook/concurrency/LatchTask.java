@@ -16,37 +16,41 @@
 package com.facebook.concurrency;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class LatchTask implements Runnable {
+  private final CountDownLatch startedLatch = new CountDownLatch(1);
   private final CountDownLatch hasRunLatch = new CountDownLatch(1);
   private final CountDownLatch canRunLatch;
+  private final Semaphore canComplete = new Semaphore(1);
   private final Runnable task;
 
-  private LatchTask(int value, Runnable task) {
-    canRunLatch = new CountDownLatch(value);
+  private LatchTask(boolean canRun, Runnable task) {
+    this.canRunLatch = new CountDownLatch(canRun ? 0 : 1); // 0 => latch won't block
     this.task = task;
   }
-  
+
   public LatchTask(Runnable work) {
-    this(0, work);
+    this(true, work);
   }
 
   public LatchTask() {
-    this(0, NoOp.INSTANCE);
+    this(true, NoOp.INSTANCE);
   }
 
   public static LatchTask createPaused() {
-    return new LatchTask(1, NoOp.INSTANCE);
+    return new LatchTask(false, NoOp.INSTANCE);
   }
 
   public static LatchTask createPaused(Runnable task) {
-    return new LatchTask(1, task);
+    return new LatchTask(false, task);
   }
 
   @Override
   public void run() {
     try {
+      startedLatch.countDown();
       canRunLatch.await();
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
@@ -54,15 +58,43 @@ public class LatchTask implements Runnable {
 
     task.run();
     hasRunLatch.countDown();
+
+    try {
+      canComplete.acquire(1);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    } finally {
+      canComplete.release(1);
+    }
+  }
+
+  public synchronized void pauseAfterCompletion() {
+    canComplete.drainPermits();
+  }
+
+  public synchronized LatchTask resumeAfterCompletion() {
+    canComplete.release(1);
+
+    return this;
   }
 
   /**
    * if paused, signals the task to proceed
    */
-  public void proceed() {
+  public LatchTask proceed() {
     canRunLatch.countDown();
+
+    return this;
   }
-  
+
+  public void waitForStart() throws InterruptedException {
+    startedLatch.await();
+  }
+
+  public boolean hasStarted() {
+    return startedLatch.getCount() == 0;
+  }
+
   public void await() throws InterruptedException {
     hasRunLatch.await();
   }

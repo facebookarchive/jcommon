@@ -15,12 +15,16 @@
  */
 package com.facebook.concurrency;
 
-public class TestCoreConcurrentCache extends AbstractTestConcurrentCache {
-
+public class TestCaffeineConcurrentCache extends AbstractTestConcurrentCache {
   @Override
   protected ConcurrentCache<String, String, RuntimeException> createCache(
     ValueFactory<String, String, RuntimeException> valueFactory
   ) {
-    return new CoreConcurrentCache<>(valueFactory, RuntimeExceptionHandler.INSTANCE);
+    return new CaffeineConcurrentCache<>(valueFactory, RuntimeExceptionHandler.INSTANCE);
+  }
+
+  @Override
+  public void testRemoveBeforeValueSwap() throws Exception {
+    // skip this test since ConcurrentHashMap.computeIfPresent(key, ...) will block remove(key)
   }
 }
