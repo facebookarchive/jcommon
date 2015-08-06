@@ -30,14 +30,13 @@ public class CaffeineConcurrentCache<K, V, E extends Exception> implements Concu
   private final LoadingCache<K, CallableSnapshot<V, E>> cache;
   private final ExceptionHandler<E> exceptionHandler;
   private final ConcurrentMap<K, CallableSnapshot<V, E>> cacheAsMap;
-  private CacheValueLoader<K, V, E> cacheLoader;
 
   /**
    * callers may pass in a Cache object configured appropriately
    *
    * @param valueFactory
    * @param exceptionHandler
-   * @param cache            -  caffeine #Cache class
+   * @param cacheBuilder     - result of Caffeine.newBuilder() + any config (caller may customize the cache)
    */
   public CaffeineConcurrentCache(
     ValueFactory<K, V, E> valueFactory,
@@ -45,19 +44,14 @@ public class CaffeineConcurrentCache<K, V, E extends Exception> implements Concu
     Caffeine<Object, Object> cacheBuilder
   ) {
     this.exceptionHandler = exceptionHandler;
-    cacheLoader = new CacheValueLoader<>(valueFactory, exceptionHandler);
-    this.cache = cacheBuilder.build(cacheLoader);
+    this.cache = cacheBuilder.build(new CacheValueLoader<>(valueFactory, exceptionHandler));
     cacheAsMap = cache.asMap();
   }
 
   public CaffeineConcurrentCache(
     ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler
   ) {
-    this(
-      valueFactory,
-      exceptionHandler,
-      Caffeine.newBuilder()
-    );
+    this(valueFactory, exceptionHandler, Caffeine.newBuilder());
   }
 
   @Override
@@ -69,14 +63,14 @@ public class CaffeineConcurrentCache<K, V, E extends Exception> implements Concu
   public V put(K key, V value) throws E {
     CallableSnapshot<V, E> putResult = cacheAsMap.put(key, new CallableSnapshot<>(() -> value, exceptionHandler));
 
-    return putResult.get();
+    return putResult == null ? null : putResult.get();
   }
 
   @Override
   public V remove(K key) throws E {
     CallableSnapshot<V, E> removeResult = cacheAsMap.remove(key);
 
-    return removeResult.get();
+    return removeResult == null ? null : removeResult.get();
   }
 
   @Override
