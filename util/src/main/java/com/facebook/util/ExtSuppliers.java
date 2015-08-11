@@ -13,9 +13,8 @@ package com.facebook.util;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-
-  NOTE: ADAPTED FROM: com.google.common.base.Supplier
  */
+//  NOTE: ADAPTED FROM: com.google.common.base.Supplier
 public class ExtSuppliers {
   public static <T, E extends Throwable> ExtSupplier<T, E> memoize(ExtSupplier<T, E> supplier) {
     return new MemoizingExtSupplier<>(supplier);
