@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.collections;
+package com.facebook.collections.bytearray;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class TestByteArray {
-  private ByteArray byteArray1;
-  private ByteArray nullArray;
-  private ByteArray byteArray2;
+  private AbstractByteArray byteArray1;
+  private AbstractByteArray nullArray;
+  private AbstractByteArray byteArray2;
+  private ByteArray byteArrayNumbers;
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
-    byteArray1 = ByteArray.wrap("string a".getBytes());
-    byteArray2 = ByteArray.wrap("string b".getBytes());
-    nullArray = ByteArray.wrap(null);
+    byteArray1 = ByteArrays.wrap("string a".getBytes());
+    byteArray2 = ByteArrays.wrap("string b".getBytes());
+    byteArrayNumbers = ByteArrays.wrap(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+    nullArray = ByteArrays.wrap(null);
   }
 
   @Test(groups = "fast")
@@ -54,5 +56,34 @@ public class TestByteArray {
     Assert.assertFalse(nullArray.equals(null));
     Assert.assertFalse(byteArray1.equals(nullArray));
     Assert.assertFalse(nullArray.equals(byteArray1));
+  }
+
+  @Test
+  public void testIterator() throws Exception {
+    int sum = 0;
+
+    for (byte b : byteArrayNumbers) {
+      sum += b;
+    }
+
+    Assert.assertEquals(sum, 55);
+  }
+
+  @Test
+  public void testGet() throws Exception {
+    for (int i = 0; i < 10; i++) {
+      Assert.assertEquals(byteArrayNumbers.getAdjusted(i), i + 1);
+    }
+  }
+
+  @Test
+  public void testPut() throws Exception {
+    byteArrayNumbers.putAdjusted(5, (byte) 0);
+    Assert.assertEquals(byteArrayNumbers.getAdjusted(5), 0);
+  }
+
+  @Test(expectedExceptions = {IndexOutOfBoundsException.class})
+  public void testOutOfBounds() throws Exception {
+    byteArrayNumbers.getAdjusted(10);
   }
 }

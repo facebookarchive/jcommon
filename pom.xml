@@ -30,7 +30,7 @@ limitations under the License.
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>jcommon-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.22-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>java root</name>
   <description>common java libs</description>
 
