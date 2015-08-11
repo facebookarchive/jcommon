@@ -15,9 +15,10 @@
  */
 package com.facebook.collections.specialized;
 
-import com.facebook.collections.ByteArray;
-
 import java.io.ByteArrayOutputStream;
+
+import com.facebook.collections.bytearray.ByteArray;
+import com.facebook.collections.bytearray.ByteArrays;
 
 /**
  * allows direct access to the underlying buffer without a copy
@@ -35,6 +36,6 @@ public class MutableByteArrayOutputStream extends ByteArrayOutputStream {
   }
   
   public ByteArray getBytes() {
-    return ByteArray.wrap(buf, 0, size());
+    return ByteArrays.wrap(buf, 0, size());
   }
 }

@@ -44,14 +44,14 @@ public interface Array<T> extends Iterable<T>{
    * @return value at position i, null if empty
    * @throws ArrayIndexOutOfBoundsException if array is too small, or i is negative
    */
-  public T get(int i) throws IndexOutOfBoundsException;
+  T get(int i) throws IndexOutOfBoundsException;
 
   /**
    * return size of array (# of elements)
    * 
    * @return
    */
-  public int size();
+  int size();
 
   /**
    * return array capacity (size + empty slots)
@@ -59,7 +59,7 @@ public interface Array<T> extends Iterable<T>{
    *
    * @return
    */
-  public int capacity();
+  int capacity();
 
   /**
    * replace a value.  i must be < capacity()
@@ -69,7 +69,7 @@ public interface Array<T> extends Iterable<T>{
    * @return previous value, null if nada
    * @throws IndexOutOfBoundsException i is >= size or i is negative
    */
-  public T set(int i, T value) throws IndexOutOfBoundsException;
+  T set(int i, T value) throws IndexOutOfBoundsException;
 
   /**
    * add an element to the end of the array. Almost always shorthand for:
@@ -90,7 +90,7 @@ public interface Array<T> extends Iterable<T>{
    * @return position inserted at
    */
 
-  public int append(T value);
+  int append(T value);
 
   /**
    * remove a value at position i
@@ -99,7 +99,7 @@ public interface Array<T> extends Iterable<T>{
    * @return value at the position, null if it was empty
    * @throws ArrayIndexOutOfBoundsException i is >= size or i is negative
    */
-  public T remove(int i) throws ArrayIndexOutOfBoundsException;
+  T remove(int i) throws ArrayIndexOutOfBoundsException;
 
 
   /**
@@ -116,5 +116,5 @@ public interface Array<T> extends Iterable<T>{
    *                 > 0
    * @return actual size of new array
    */
-  public int resize(int sizeHint);
+  int resize(int sizeHint);
 }

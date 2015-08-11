@@ -15,10 +15,6 @@
  */
 package com.facebook.config;
 
-import com.facebook.collections.ByteArray;
-import com.facebook.collectionsbase.Mapper;
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
 import com.google.common.collect.Maps;
 import org.joda.time.Duration;
 import org.json.JSONArray;
@@ -32,6 +28,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.facebook.collections.bytearray.ByteArray;
+import com.facebook.collections.bytearray.ByteArrays;
+import com.facebook.collectionsbase.Mapper;
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 
 /**
  * 1. wraps a JSONObject that contains configuration information.
@@ -227,7 +229,7 @@ public class ConfigAccessor {
     List<ByteArray> result = new ArrayList<>();
 
     for (String item : getStringList(key)) {
-      result.add(ByteArray.wrap(item.getBytes()));
+      result.add(ByteArrays.wrap(item.getBytes()));
     }
     return result;
   }
