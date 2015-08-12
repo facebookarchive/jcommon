@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @param <T>
  */
-public abstract class Slot<T extends SlotAccessor> {
+public abstract class Slot<T extends AbstractSlotAccessor> {
   static final ConcurrentMap<Class<?>, Struct> STRUCT_MAP = Maps.newConcurrentMap();
 
   private final int offset;
@@ -68,14 +68,16 @@ public abstract class Slot<T extends SlotAccessor> {
   }
 
   private static Struct findParentStruct(Class<?> clazz) {
-    Class<?> superClazz = clazz.getSuperclass();
+    Class<?> currentClass = clazz.getSuperclass();
 
-    while (!superClazz.equals(Object.class)) {
-      if (isFrameFromOffHeapStructure(superClazz)) {
-        Struct parentStruct = STRUCT_MAP.get(superClazz);
+    while (!currentClass.equals(Object.class)) {
+      if (isFrameFromOffHeapStructure(currentClass)) {
+        Struct parentStruct = STRUCT_MAP.get(currentClass);
 
         return parentStruct;
       }
+
+      currentClass = currentClass.getSuperclass();
     }
 
     return null;

@@ -4,7 +4,7 @@ import sun.misc.Unsafe;
 
 import com.facebook.memory.UnsafeAccessor;
 
-public class PointerAccessor extends SlotAccessor {
+public class PointerAccessor extends AbstractSlotAccessor {
   private final Unsafe unsafe = UnsafeAccessor.get();
 
   public PointerAccessor(long baseAddress, Slot slot) {
