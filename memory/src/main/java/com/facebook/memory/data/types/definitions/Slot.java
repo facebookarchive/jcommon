@@ -14,20 +14,49 @@ import java.util.concurrent.ConcurrentMap;
 public abstract class Slot<T extends SlotAccessor> {
   static final ConcurrentMap<Class<?>, Struct> STRUCT_MAP = Maps.newConcurrentMap();
 
-  private final int offset;
+  private final FieldOffsetMapper fieldOffsetMapper;
 
+  @SuppressWarnings("ThisEscapedInObjectConstruction")
   protected Slot(FieldType fieldType) {
     StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-    offset = updateStructOffset(fieldType, stackTrace);
+    Struct struct = findOrCreateStruct(stackTrace);
 
-    if (offset == -1) {
+    if (struct == null) {
       throw new RuntimeException("your class hierachy doesn't include any OffHeapStructure, does it?");
     }
+
+    Struct.Field lastField = struct.getLastField();
+
+    if (lastField != null) {
+      fieldOffsetMapper = new RelativeFieldOffsetMapper(
+        lastField.getFieldOffsetMapper(), fieldType.getFieldSizeFunction()
+      );
+    } else {
+      fieldOffsetMapper = new RelativeFieldOffsetMapper(fieldType.getFieldSizeFunction());
+    }
+
+    struct.updateStruct(fieldType, fieldOffsetMapper);
   }
 
-  private static int updateStructOffset(FieldType fieldType, StackTraceElement[] stackTrace) {
-    int offsetToUse = -1;
+  protected FieldOffsetMapper getFieldOffsetMapper() {
+    return fieldOffsetMapper;
+  }
 
+  public int getOffset(long address) {
+    return fieldOffsetMapper.getFieldStartOffset(address);
+  }
+
+  public abstract T accessor(long address);
+
+  /**
+   * this is a faster method to create an accessor based on the previous slot/field in the struct
+   *
+   * @param previousSlotAccess previously bound to the base adddress
+   * @return
+   */
+  public abstract T accessor(SlotAccessor previousSlotAccessor);
+
+  private static Struct findOrCreateStruct(StackTraceElement[] stackTrace) {
     for (StackTraceElement element : stackTrace) {
       Context context = getContext(element);
       Class<?> clazz = context.getClazz();
@@ -38,27 +67,12 @@ public abstract class Slot<T extends SlotAccessor> {
           Struct parentStruct = findParentStruct(clazz);
           Struct struct = STRUCT_MAP.computeIfAbsent(clazz, c -> new Struct(clazz, parentStruct));
 
-          if (struct.isTerminated()) {
-            throw new RuntimeException("attempt to add Slot after final");
-          } else {
-            // the current offset in the struct is the next location to use
-            offsetToUse = struct.getOffset();
-            // now update the next available offset
-            struct.updateStruct(fieldType);
-
-            if (fieldType.isTerminal()) {
-              struct.terminate();
-            }
-          }
+          return struct;
         }
       }
     }
 
-    if (offsetToUse >= 0) {
-      return offsetToUse;
-    }
-
-    return -1;
+    return null;
   }
 
   private static Context getContext(StackTraceElement element) {
@@ -91,8 +105,6 @@ public abstract class Slot<T extends SlotAccessor> {
     return clazz;
   }
 
-  public abstract T accessor(long address);
-
   private static boolean isFrameFromOffHeapStructure(Class<?> clazz) {
     Class<?> currentClazz = clazz;
     while (currentClazz != Object.class) {
@@ -110,10 +122,6 @@ public abstract class Slot<T extends SlotAccessor> {
     }
 
     return false;
-  }
-
-  public int getOffset() {
-    return offset;
   }
 
   static void forceSizing(Class<? extends OffHeapStructure> clazz) {
@@ -142,7 +150,7 @@ public abstract class Slot<T extends SlotAccessor> {
       currentClazz = currentClazz.getSuperclass();
     }
 
-    updateStructOffset(FieldType.MEASURE, Thread.currentThread().getStackTrace());
+    findOrCreateStruct(Thread.currentThread().getStackTrace());
   }
 
   private static class Context {

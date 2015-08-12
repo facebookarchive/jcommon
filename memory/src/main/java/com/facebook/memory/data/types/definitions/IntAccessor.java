@@ -4,18 +4,26 @@ import sun.misc.Unsafe;
 
 import com.facebook.memory.UnsafeAccessor;
 
-public class IntAccessor extends SlotAccessor {
+public class IntAccessor extends AbstractSlotAccessor {
   private static final Unsafe unsafe = UnsafeAccessor.get();
 
-  public IntAccessor(long baseAddress, Slot slot) {
-    super(baseAddress, slot);
+  public IntAccessor(long baseAddress, FieldOffsetMapper fieldOffsetMapper) {
+    super(baseAddress, fieldOffsetMapper);
+  }
+
+  public IntAccessor(
+    SlotAccessor previousSlotAccess,
+    FieldOffsetMapper fieldOffsetMapper
+  ) {
+    super(previousSlotAccess, fieldOffsetMapper);
   }
 
   public void put(int i) {
-    unsafe.putInt(getOffset(), i);
+    unsafe.putInt(getSlotAddress(), i);
   }
 
   public int get() {
-    return unsafe.getInt(getOffset());
+    return unsafe.getInt(getSlotAddress());
   }
+
 }

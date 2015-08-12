@@ -1,32 +1,26 @@
 package com.facebook.memory.data.types.definitions;
 
 import com.facebook.memory.MemoryConstants;
+import com.facebook.memory.UnsafeAccessor;
 
 public enum FieldType {
-  MEASURE(0),
   INT(Integer.BYTES),
   LONG(Long.BYTES),
   ADDRESS(MemoryConstants.ADDRESS_SIZE),
-  BYTE_ARRAY(0, true),
-  ;
+  BYTE_ARRAY(address -> UnsafeAccessor.get().getInt(address) + Integer.BYTES)
+  ,;
 
-  private final int size;
-  private final boolean isTerminal;
+  private final FieldSizeFunction fieldSizeFunction;
 
-  FieldType(int size, boolean isTerminal) {
-    this.size = size;
-    this.isTerminal = isTerminal;
+  FieldType(FieldSizeFunction fieldSizeFunction) {
+    this.fieldSizeFunction = fieldSizeFunction;
   }
 
   FieldType(int size) {
-    this(size, false);
+    this(new FixedFieldSizeFunction(size));
   }
 
-  public int getSize() {
-    return size;
-  }
-
-  public boolean isTerminal() {
-    return isTerminal;
+  public FieldSizeFunction getFieldSizeFunction() {
+    return fieldSizeFunction;
   }
 }

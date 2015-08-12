@@ -1,8 +1,5 @@
 package com.facebook.memory.data.types.definitions;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -14,9 +11,6 @@ public class Struct {
   private final Struct parent;
   private final AtomicInteger offset;
   private final Deque<Field> fields = new ArrayDeque<>();
-  private final Supplier<List<Field>> mergedFieldListSupplier;
-
-  private volatile boolean isTerminated = false;
 
   public Struct(Class<?> thisClass, Struct parent) {
     this.thisClass = thisClass;
@@ -25,26 +19,14 @@ public class Struct {
 
     offset = new AtomicInteger(initialOffset);
     this.parent = parent;
-    mergedFieldListSupplier = Suppliers.memoize(this::internalGetMergedFieldsList);
   }
 
   public int getOffset() {
     return offset.get();
   }
 
-  public void terminate() {
-    isTerminated = true;
-  }
-
-  public void updateStruct(FieldType fieldType) {
-    // ignore requests to measure the struct
-    if (fieldType != FieldType.MEASURE) {
-      fields.add(new Field(fieldType, offset.getAndAdd(fieldType.getSize())));
-    }
-  }
-
-  public boolean isTerminated() {
-    return isTerminated;
+  public void updateStruct(FieldType fieldType, FieldOffsetMapper fieldOffsetMapper) {
+    fields.add(new Field(fieldType, fieldOffsetMapper));
   }
 
   public Class<?> getThisClass() {
@@ -56,18 +38,18 @@ public class Struct {
   }
 
   public List<Field> getMergedFieldList() {
-    return mergedFieldListSupplier.get();
+    Deque<Field> mergedFieldList = getMergedFieldDeque();
+
+    return mergedFieldList.stream().collect(Collectors.toList());
   }
 
-  /**
-   * this pushes fields from struct to struct.parent ... in reverse order, then reverses that
-   * this = [a,b,c]
-   * parent = [d,e]
-   *
-   * returns [e,d,c,b,a]
-   * @return
-   */
-  private List<Field> internalGetMergedFieldsList() {
+  public Field getLastField() {
+    Deque<Field> fieldDeque = getMergedFieldDeque();
+
+    return fieldDeque.isEmpty() ? null : fieldDeque.getFirst();
+  }
+
+  private Deque<Field> getMergedFieldDeque() {
     Struct node = parent;
     Deque<Field> mergedFieldList = new ArrayDeque<>();
 
@@ -77,25 +59,28 @@ public class Struct {
       node.fields.descendingIterator().forEachRemaining(mergedFieldList::push);
       node = node.getParent();
     }
-
-    return mergedFieldList.stream().collect(Collectors.toList());
+    return mergedFieldList;
   }
 
   public static class Field {
     private final FieldType fieldType;
-    private final int offset;
+    private final FieldOffsetMapper fieldOffsetMapper;
 
-    public Field(FieldType fieldType, int offset) {
+    public Field(FieldType fieldType, FieldOffsetMapper fieldOffsetMapper) {
       this.fieldType = fieldType;
-      this.offset = offset;
+      this.fieldOffsetMapper = fieldOffsetMapper;
     }
 
     public FieldType getFieldType() {
       return fieldType;
     }
 
-    public int getOffset() {
-      return offset;
+    public FieldOffsetMapper getFieldOffsetMapper() {
+      return fieldOffsetMapper;
+    }
+
+    public int getOffset(long address) {
+      return fieldOffsetMapper.getFieldStartOffset(address);
     }
   }
 }

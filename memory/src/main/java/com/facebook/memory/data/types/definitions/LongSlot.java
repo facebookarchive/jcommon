@@ -6,7 +6,12 @@ public class LongSlot extends Slot {
   }
 
   @Override
-  public SlotAccessor accessor(long address) {
-    return new LongAccessor(address, this);
+  public LongAccessor accessor(long address) {
+    return new LongAccessor(address, getFieldOffsetMapper());
+  }
+
+  @Override
+  public LongAccessor accessor(SlotAccessor previousSlotAccessor) {
+    return new LongAccessor(previousSlotAccessor, getFieldOffsetMapper());
   }
 }

@@ -7,6 +7,11 @@ public class ByteArraySlot extends Slot<ByteArraySlotAccessor> {
 
   @Override
   public ByteArraySlotAccessor accessor(long address) {
-    return new ByteArraySlotAccessor(address, this);
+    return new ByteArraySlotAccessor(address, getFieldOffsetMapper());
+  }
+
+  @Override
+  public ByteArraySlotAccessor accessor(SlotAccessor previousSlotAccessor) {
+    return new ByteArraySlotAccessor(previousSlotAccessor, getFieldOffsetMapper());
   }
 }

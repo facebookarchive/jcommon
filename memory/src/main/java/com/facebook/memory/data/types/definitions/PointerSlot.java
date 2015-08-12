@@ -7,6 +7,11 @@ public class PointerSlot extends Slot {
 
   @Override
   public PointerAccessor accessor(long address) {
-    return new PointerAccessor(address, this);
+    return new PointerAccessor(address, getFieldOffsetMapper());
+  }
+
+  @Override
+  public PointerAccessor accessor(SlotAccessor previousSlotAccessor) {
+    return new PointerAccessor(previousSlotAccessor, getFieldOffsetMapper());
   }
 }

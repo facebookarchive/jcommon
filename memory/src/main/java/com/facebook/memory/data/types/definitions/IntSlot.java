@@ -5,7 +5,13 @@ public class IntSlot extends Slot<IntAccessor> {
     super(FieldType.INT);
   }
 
+  @Override
   public IntAccessor accessor(long address) {
-    return new IntAccessor(address, this);
+    return new IntAccessor(address, getFieldOffsetMapper());
+  }
+
+  @Override
+  public IntAccessor accessor(SlotAccessor previousSlotAccess) {
+    return new IntAccessor(previousSlotAccess, getFieldOffsetMapper());
   }
 }
