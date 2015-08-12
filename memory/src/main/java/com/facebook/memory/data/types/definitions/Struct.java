@@ -38,7 +38,7 @@ public class Struct {
 
   public void updateStruct(FieldType fieldType) {
     // ignore requests to measure the struct
-    if (fieldType != FieldType.MEASURE) {
+    if (fieldType.isUpdatesStruct()) {
       fields.add(new Field(fieldType, offset.getAndAdd(fieldType.getSize())));
     }
   }
