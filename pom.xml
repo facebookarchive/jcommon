@@ -28,7 +28,7 @@ limitations under the License.
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>jcommon-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.25-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>java root</name>
   <description>common java libs</description>
 
@@ -283,6 +283,11 @@ limitations under the License.
       </dependency>
 
       <!--third party-->
+      <dependency>
+      	<groupId>net.jpountz.lz4</groupId>
+      	<artifactId>lz4</artifactId>
+      	<version>1.0.0</version>
+      </dependency>
       <dependency>
         <groupId>com.github.ben-manes.caffeine</groupId>
         <artifactId>caffeine</artifactId>
