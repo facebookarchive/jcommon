@@ -6,7 +6,7 @@ public class LongSlot extends Slot {
   }
 
   @Override
-  public SlotAccessor accessor(long address) {
+  public AbstractSlotAccessor accessor(long address) {
     return new LongAccessor(address, this);
   }
 }
