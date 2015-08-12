@@ -15,8 +15,7 @@
  */
 package com.facebook.collections.specialized;
 
-import com.facebook.collections.SimpleHeapFactory;
-import com.facebook.collections.specialized.LongTupleHeap;
+import com.facebook.collections.heaps.SimpleHeapFactory;
 
 public class LongTupleHeapFactory implements SimpleHeapFactory<long[], LongTupleHeap> {
   private final int tupleSize;

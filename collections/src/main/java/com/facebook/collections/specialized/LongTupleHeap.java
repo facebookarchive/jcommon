@@ -15,7 +15,7 @@
  */
 package com.facebook.collections.specialized;
 
-import com.facebook.collections.SimpleHeap;
+import com.facebook.collections.heaps.SimpleHeap;
 
 /**
  * marker interface; also binds some return types more tightly (makeCopy)
