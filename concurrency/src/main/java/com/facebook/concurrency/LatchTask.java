@@ -68,8 +68,10 @@ public class LatchTask implements Runnable {
     }
   }
 
-  public synchronized void pauseAfterCompletion() {
+  public synchronized LatchTask pauseAfterCompletion() {
     canComplete.drainPermits();
+
+    return this;
   }
 
   public synchronized LatchTask resumeAfterCompletion() {

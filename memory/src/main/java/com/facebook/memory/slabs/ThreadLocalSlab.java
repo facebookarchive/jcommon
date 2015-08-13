@@ -30,11 +30,21 @@ public class ThreadLocalSlab implements Slab {
     return thisTlab.allocate(sizeBytes);
   }
 
+  /**
+   * this will be an over-approximation: its the amount of memory used from this TLS perspective. It includes
+   * all memory it has allocated and used, plus any "reserved" by other TLSs.
+   * @return
+   */
   @Override
   public long getUsed() {
     return slab.getUsed() - getThisTlab().getFree();
   }
 
+  /**
+   * this is not strictly free memory in the system; it is from this TLS's perspective.
+   * It inclueds free memory in this TLS as well as unallocated memory in the backing slab.
+   * @return
+   */
   @Override
   public long getFree() {
     // the free memory from this thread's view: global + local
@@ -95,8 +105,9 @@ public class ThreadLocalSlab implements Slab {
 
   private AllocateOnlySlab refreshThisTlab() throws FailedAllocationException {
     // AllocateOnlySlab.getUsed() will be the offset of unused memory; return to the underlying slab
-    if (tlab.get().getFree() > 0) {
-      slab.free(slab.getBaseAddress() + slab.getUsed(), (int) slab.getFree());
+    AllocateOnlySlab thisTlab = tlab.get();
+    if (thisTlab.getFree() > 0) {
+      slab.free(slab.getBaseAddress() + thisTlab.getUsed(), (int) thisTlab.getFree());
     }
 
     tlab.set(allocateThisTlab());

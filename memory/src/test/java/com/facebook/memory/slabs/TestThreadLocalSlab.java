@@ -1,6 +1,7 @@
 package com.facebook.memory.slabs;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -9,7 +10,7 @@ import com.facebook.memory.Sizes;
 import com.facebook.testing.ThreadHelper;
 import com.facebook.util.TimeUtil;
 
-public class TestTheadLocalSlab {
+public class TestThreadLocalSlab {
 
   private ThreadLocalSlab tlab1;
   private Slab baseSlab1;
@@ -26,6 +27,19 @@ public class TestTheadLocalSlab {
     baseSlab2 = slabFactory.create(Sizes.GB.ov(1));
     tlab2 = new ThreadLocalSlab(Sizes.MB.ov(1), baseSlab1);
     threadHelper = new ThreadHelper();
+  }
+
+  @AfterMethod(alwaysRun = true)
+  public void tearDown() throws Exception {
+    baseSlab1.freeSlab();
+    baseSlab2.freeSlab();
+  }
+
+  @Test
+  public void testAllocate() throws Exception {
+    tlab1.allocate(Sizes.KB.ov(10));
+    Assert.assertEquals(tlab1.getUsed(), Sizes.KB.ov(10));
+    Assert.assertEquals(tlab1.getFree(), baseSlab1.getSize() - Sizes.KB.ov(10));
   }
 
   @Test
@@ -61,23 +75,51 @@ public class TestTheadLocalSlab {
   }
 
   @Test
+  public void testNoRefreshAtBoundary() throws Exception {
+    // allocates 1 MB from backing and 512 from that;
+    // returns 512 KB
+    // then allocates 1 MB from backing
+    tlab2.allocate(Sizes.KB.ov(512));
+    tlab2.allocate(Sizes.KB.ov(512));
+    Assert.assertEquals(baseSlab1.getUsed(), Sizes.MB.ov(1));
+    Assert.assertEquals(tlab2.getUsed(), Sizes.MB.ov(1));
+  }
+
+  @Test
+  public void testRefresh() throws Exception {
+    // allocates 1 MB from backing and 512 from that;
+    // returns 512 KB
+    // then allocates 1 MB from backing
+    tlab2.allocate(Sizes.KB.ov(512));
+    tlab2.allocate(Sizes.KB.ov(513));
+    Assert.assertEquals(baseSlab1.getUsed(), Sizes.MB.ov(1) + Sizes.KB.ov(512)); // 1.5 KB
+    // the tlab perspective only sees 1 MB used
+    Assert.assertEquals(tlab2.getUsed(), Sizes.MB.ov(1));
+  }
+
+  @Test
   public void testSpeed() throws Exception {
+    int size = Sizes.KB.ov(10);
     TimeUtil.logElapsedTime(
       "tlab.allocate loop",
       () ->
       {
-        while (tlab1.getFree() > Sizes.KB.ov(1)) {
-          tlab1.allocate(Sizes.KB.ov(1));
+        while (tlab2.getFree() > size) {
+          tlab2.allocate(size);
         }
       }
     );
-    TimeUtil.logElapsedTime(
-      "new loop",
-      () -> {
-        for (int i = 0; i < 1024 * 1024; i++) {
-          byte[] barr = new byte[1024];
-        }
-      }
-    );
+//
+//    TimeUtil.logElapsedTime(
+//      "new loop",
+//      () -> {
+//        long totalBytesToAllocate = tlab1.getSize();
+//
+//        while(totalBytesToAllocate >= size) {
+//          byte[] barr = new byte[size];
+//          totalBytesToAllocate -= size;
+//        }
+//      }
+//    );
   }
 }
