@@ -68,14 +68,16 @@ public abstract class Slot {
   }
 
   private static Struct findParentStruct(Class<?> clazz) {
-    Class<?> superClazz = clazz.getSuperclass();
+    Class<?> currentClass = clazz.getSuperclass();
 
-    while (!superClazz.equals(Object.class)) {
-      if (isFrameFromOffHeapStructure(superClazz)) {
-        Struct parentStruct = STRUCT_MAP.get(superClazz);
+    while (!currentClass.equals(Object.class)) {
+      if (isFrameFromOffHeapStructure(currentClass)) {
+        Struct parentStruct = STRUCT_MAP.get(currentClass);
 
         return parentStruct;
       }
+
+      currentClass = currentClass.getSuperclass();
     }
 
     return null;

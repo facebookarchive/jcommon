@@ -5,8 +5,10 @@ import com.google.common.base.Preconditions;
 import java.util.Arrays;
 
 import com.facebook.collections.bytearray.AbstractByteArray;
+import com.facebook.memory.FailedAllocationException;
 import com.facebook.memory.MemoryConstants;
 import com.facebook.memory.data.types.definitions.ByteArraySlot;
+import com.facebook.memory.slabs.Slab;
 
 public class OffHeapByteArrayImpl extends AbstractByteArray implements OffHeapByteArray {
   private static final ByteArraySlot BYTE_ARRAY = new ByteArraySlot();
@@ -30,6 +32,12 @@ public class OffHeapByteArrayImpl extends AbstractByteArray implements OffHeapBy
     this(address, BYTE_ARRAY.wrap(address).getLength());
   }
 
+  public static OffHeapByteArray allocate(int length, Slab slab) throws FailedAllocationException {
+    long address = slab.allocate(length + Integer.BYTES);
+    BYTE_ARRAY.create(address, length);
+
+    return new OffHeapByteArrayImpl(address, length);
+  }
 
   /**
    * reads the length from the off-heap location
@@ -41,6 +49,16 @@ public class OffHeapByteArrayImpl extends AbstractByteArray implements OffHeapBy
     return new OffHeapByteArrayImpl(address);
   }
 
+  public static OffHeapByteArray fromHeapByteArray(byte[] bytes, Slab slab) throws FailedAllocationException {
+    OffHeapByteArray offHeapByteArray = new OffHeapByteArrayImpl(slab.allocate(bytes.length), bytes.length);
+    int i = 0;
+
+    for (byte b : bytes) {
+      offHeapByteArray.putAdjusted(i++, b);
+    }
+
+    return offHeapByteArray;
+  }
 
   @Override
   public int getLength() {

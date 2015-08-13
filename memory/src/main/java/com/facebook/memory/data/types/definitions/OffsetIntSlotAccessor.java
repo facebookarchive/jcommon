@@ -24,7 +24,7 @@ public class OffsetIntSlotAccessor implements SlotAccessor {
 
   @Override
   public int getSlotSize() {
-    return 0;
+    return Integer.BYTES;
   }
 
   @Override

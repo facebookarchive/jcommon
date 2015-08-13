@@ -14,23 +14,7 @@ public class DoublyLinkedListNode extends LinkedListNode implements OffHeapStruc
     return PREVIOUS.accessor(address).get();
   }
 
-  public DoublyLinkedListNode setPrevious(long value) {
+  public void setPrevious(long value) {
     PREVIOUS.accessor(address).put(value);
-
-    return this;
-  }
-
-  @Override
-  public DoublyLinkedListNode setNext(long value) {
-    super.setNext(value);
-
-    return this;
-  }
-
-  @Override
-  public DoublyLinkedListNode setDataPointer(long value) {
-    super.setDataPointer(value);
-
-    return this;
   }
 }
