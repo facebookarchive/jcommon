@@ -17,12 +17,12 @@ limitations under the License.
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.facebook.jcommon</groupId>
     <artifactId>jcommon-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>memory</artifactId>
   <packaging>jar</packaging>
@@ -34,12 +34,71 @@ limitations under the License.
 
   <dependencies>
     <dependency>
+      <groupId>net.jpountz.lz4</groupId>
+      <artifactId>lz4</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook.jcommon</groupId>
+      <artifactId>logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook.jcommon</groupId>
+      <artifactId>concurrency</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook.jcommon</groupId>
+      <artifactId>collections-foundation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook.jcommon</groupId>
+      <artifactId>util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook.jcommon</groupId>
+      <artifactId>config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook.jcommon</groupId>
+      <artifactId>testing</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!--3rd party-->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>colt</groupId>
+      <artifactId>colt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.trove4j</groupId>
+      <artifactId>trove4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -47,7 +106,7 @@ limitations under the License.
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <!-- Override Werror to allow Unsafe -->
-          <compilerArguments combine.self="override" />
+          <compilerArguments combine.self="override"/>
         </configuration>
       </plugin>
     </plugins>
