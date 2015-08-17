@@ -3,14 +3,11 @@ package com.facebook.memory.slabs;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.facebook.memory.FailedAllocationException;
-import com.facebook.memory.data.structures.FreeList;
-import com.facebook.memory.data.structures.IntRange;
-import com.facebook.memory.data.structures.TreeSetFreeList;
+import com.facebook.memory.data.structures.freelists.FreeList;
+import com.facebook.memory.data.structures.freelists.TreeSetFreeList;
 import com.facebook.memory.views.ByteStream;
 import com.facebook.memory.views.BytesVisitor;
 import com.facebook.memory.views.MemoryView;
@@ -22,11 +19,15 @@ public class ManagedSlab implements Slab {
   private final FreeList freeList;
   private final AtomicInteger bytesUsed = new AtomicInteger(0);
 
-  public ManagedSlab(long baseAddress, RawSlab slab, int managedSlabSize) {
+  public ManagedSlab(long baseAddress, RawSlab slab, int managedSlabSize, FreeList freeList) {
     this.baseAddress = baseAddress;
     this.slab = slab;
     this.managedSlabSize = managedSlabSize;
-    freeList = new TreeSetFreeList(managedSlabSize);
+    this.freeList = freeList;
+  }
+
+  public ManagedSlab(long baseAddress, RawSlab slab, int managedSlabSize) {
+    this(baseAddress, slab, managedSlabSize, new TreeSetFreeList(managedSlabSize));
   }
 
   public static ManagedSlab fromRawSlab(RawSlab slab) {
@@ -53,9 +54,10 @@ public class ManagedSlab implements Slab {
 
   @Override
   public long allocate(int sizeBytes) throws FailedAllocationException {
+    Preconditions.checkState(freeList.getSize() == getFree(), "1");
     long address = baseAddress + freeList.allocate(Slabs.validateSize(sizeBytes));
-
     bytesUsed.addAndGet(Slabs.validateSize(sizeBytes));
+    Preconditions.checkState(freeList.getSize() == getFree(), "2");
 
     return address;
   }
@@ -106,20 +108,19 @@ public class ManagedSlab implements Slab {
     long offset = (address - baseAddress);
     Preconditions.checkArgument(offset >= 0, "offset %d < 0", offset);
 
+    // TODO : remove
     long rangeSizeSum1 = freeList.getSize();
     long freeBytes1 = getFree();
-    if (rangeSizeSum1 != freeBytes1) {
-      throw new AssertionError();
-    }
+    Preconditions.checkState(rangeSizeSum1 == freeBytes1);
 
-    Set<IntRange> intRanges = new TreeSet<>(freeList.asRangeSet());
     freeList.free(Slabs.validateSize(offset), size);
     bytesUsed.addAndGet(Slabs.validateSize(-size));
+
+    // todo: remove
     long rangeSizeSum2 = freeList.getSize();
     long freeBytes2 = getFree();
-    if (rangeSizeSum2 != freeBytes2) {
-      throw new AssertionError();
-    }
+
+    Preconditions.checkState(rangeSizeSum2 == freeBytes2);
   }
 
   @Override

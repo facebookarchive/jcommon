@@ -79,6 +79,7 @@ public class ThreadLocalSlab implements Slab {
   @Override
   public void free(long address, int size) {
     // TODO+ need to guard against freeing memory that hasn't been allocated in the TLSlab layer
+    // don't yet know how to do this.
     slab.free(address, size);
   }
 

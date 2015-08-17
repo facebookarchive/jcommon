@@ -22,19 +22,15 @@ public class LinkedListNode implements OffHeapStructure {
     return NEXT.accessor(address).get();
   }
 
-  public LinkedListNode setNext(long next) {
+  public void setNext(long next) {
     NEXT.accessor(address).put(next);
-
-    return this;
   }
 
   public long getDataPointer() {
     return DATA_POINTER.accessor(address).get();
   }
 
-  public LinkedListNode setDataPointer(long data) {
+  public void setDataPointer(long data) {
     DATA_POINTER.accessor(address).put(data);
-
-    return this ;
   }
 }

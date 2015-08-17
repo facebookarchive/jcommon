@@ -10,13 +10,14 @@ import java.util.List;
 import java.util.Set;
 
 import com.facebook.memory.FailedAllocationException;
-import com.facebook.memory.data.structures.FreeList;
-import com.facebook.memory.data.structures.IntRange;
-import com.facebook.memory.data.structures.Ranges;
+import com.facebook.memory.data.structures.freelists.FreeList;
+import com.facebook.collections.heaps.IntRange;
+import com.facebook.memory.data.structures.freelists.Ranges;
 import com.facebook.memory.views.MemoryView;
 import com.facebook.memory.views.MemoryView32;
 import com.facebook.memory.views.MemoryViewController;
 
+@SuppressWarnings("ALL")
 public class TestManagedSlab {
   private ManagedSlab managedSlab1;
   private ManagedSlab managedSlab5;
@@ -207,7 +208,7 @@ public class TestManagedSlab {
     for (int i = 0; i < numAllocs; i++) {
       addressList.add(smallSlab.allocate(mb));
     }
-
+    int x = 9;
     for (int i = 0; i < numAllocs; i += 2) {
       smallSlab.free(addressList.get(i), mb);
     }
