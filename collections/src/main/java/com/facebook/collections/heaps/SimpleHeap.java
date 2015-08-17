@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.collections;
+package com.facebook.collections.heaps;
 
 import java.util.Collection;
 
@@ -30,21 +30,21 @@ public interface SimpleHeap<T> extends Iterable<T>{
    * 
    * @return the top of the heap, or least according to comparison order; null if empty  heap
    */
-  public T peek();
+  T peek();
 
   /**
    * removes the top of the heap
    * 
    * @return the top of the heap, or least according to comparison order; null if empty heap
    */
-  public T poll();
+  T poll();
 
   /**
    * adds an item to the heap.  
    * @param item
    * @return true iff only added (ex: heap impls may be bounded)
    */
-  public boolean add(T item);
+  boolean add(T item);
 
   /**
    * adds a collection of items to the head of the heap
@@ -52,13 +52,13 @@ public interface SimpleHeap<T> extends Iterable<T>{
    * @param items 
    * @return true iff at least one item was added
    */
-  public boolean addAll(Collection<? extends T> items);
+  boolean addAll(Collection<? extends T> items);
 
   /**
    * 
    * @return  number of elements in the heap
    */
-  public int size();
+  int size();
 
   /**
    * optional method, may be a no-op
@@ -68,12 +68,12 @@ public interface SimpleHeap<T> extends Iterable<T>{
    * @return may return the # of slots or bytes saved. A return value of 0 need not indicate
    * 0 saved, per see. See implementation's documentation
    */
-  public int shrink();
+  int shrink();
 
   /**
    * makes a copy of the heap. May be faster than iterating and calling add() or addAll()
    * 
    * @return copy of the heap. 
    */
-  public SimpleHeap<T> makeCopy();
+  SimpleHeap<T> makeCopy();
 }
