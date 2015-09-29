@@ -1,4 +1,5 @@
 package com.facebook.util;
+
 /*
  * Copyright (C) 2012 Facebook, Inc.
  *
@@ -20,28 +21,33 @@ public class ExtSuppliers {
     return new MemoizingExtSupplier<>(supplier);
   }
 
+  public static <T, E extends Throwable> RefreshableExtSupplier<T, E> memoizeAllowRefresh(ExtSupplier<T, E> supplier) {
+    return new MemoizingExtSupplier<>(supplier);
+  }
+
   public static <T, E extends Throwable> ExtSupplier<T, E> ofInstance(T instance) {
     return new InstanceExtSupplier<>(instance);
   }
 
-  private static class MemoizingExtSupplier<T, E extends Throwable> implements ExtSupplier<T, E> {
+  private static class MemoizingExtSupplier<T, E extends Throwable> implements RefreshableExtSupplier<T, E> {
     private final ExtSupplier<T, E> delegate;
-    private volatile boolean initialized;
+    private volatile boolean shouldCalculateValue = true;
     private T value;
 
     private MemoizingExtSupplier(ExtSupplier<T, E> delegate) {
       this.delegate = delegate;
     }
 
+    @SuppressWarnings({"DoubleCheckedLocking", "SynchronizeOnThis"})
     @Override
     public T get() throws E {
-      if (!initialized) {
+      if (shouldCalculateValue) {
         synchronized (this) {
-          if (!initialized) {
+          if (shouldCalculateValue) {
             T t = delegate.get();
 
             value = t;
-            initialized = true;
+            shouldCalculateValue = false;
 
             return t;
           }
@@ -49,6 +55,11 @@ public class ExtSuppliers {
       }
 
       return value;
+    }
+
+    @Override
+    public void reset() {
+      shouldCalculateValue = true;
     }
   }
 
