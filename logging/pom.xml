@@ -20,7 +20,7 @@
   <parent>
     <groupId>com.facebook.jcommon</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.1.22-SNAPSHOT</version>
+    <version>0.1.22</version>
   </parent>
 
   <artifactId>logging</artifactId>
