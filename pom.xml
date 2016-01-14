@@ -28,7 +28,7 @@ limitations under the License.
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>jcommon-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.23</version>
+  <version>0.1.24-SNAPSHOT</version>
   <name>java root</name>
   <description>common java libs</description>
 
@@ -51,7 +51,7 @@ limitations under the License.
     <connection>scm:git:git@github.com/facebook/jcommon.git</connection>
     <developerConnection>scm:git:git@github.com:facebook/jcommon.git</developerConnection>
     <url>https://github.com/facebook/jcommon</url>
-    <tag>jcommon-parent-0.1.23</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
