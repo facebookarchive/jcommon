@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -98,9 +99,16 @@ class SubprocessImpl implements Subprocess {
     stdout.background();
 
     try {
-      return process.waitFor();
+      int result = process.waitFor();
+
+      stdoutFuture.get();
+      stderrFuture.get();
+
+      return result;
     } catch (InterruptedException e) {
       throw new ErrorMessage(e, "Interrupted while waiting for: %s", name);
+    } catch (ExecutionException e) {
+      throw new ErrorMessage(e, "Error while waiting for: %s", name);
     } finally {
       close();
     }
