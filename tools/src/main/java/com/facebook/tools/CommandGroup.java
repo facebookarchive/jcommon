@@ -49,8 +49,12 @@ public class CommandGroup implements CommandBuilder {
 
   @Override
   public void runCommand(CliParser parser) {
+    run(parser);
+  }
+
+  public int run(CliParser parser) {
     List<String> arguments = parser.getTrailing();
 
-    commandDispatcher.run(arguments);
+    return commandDispatcher.run(arguments);
   }
 }

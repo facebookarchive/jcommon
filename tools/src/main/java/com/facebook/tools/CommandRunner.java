@@ -53,7 +53,12 @@ public class CommandRunner {
   public int run(CommandBuilder command, CliParser parser) {
     try {
       parser.verify(io.out);
-      command.runCommand(parser);
+
+      if (command instanceof CommandGroup) {
+        return ((CommandGroup) command).run(parser);
+      } else {
+        command.runCommand(parser);
+      }
     } catch (ErrorMessage e) {
       io.err.println(e.getMessage());
 
