@@ -50,6 +50,7 @@ class SubprocessImpl implements Subprocess {
   private final Future<?> stdoutFuture;
   private final Future<?> stderrFuture;
   private final AtomicBoolean consumedStdout = new AtomicBoolean(false);
+  private final Thread shutdownHook;
 
   SubprocessImpl(
     List<String> command, Process process, IO echo, int outputBytesLimit, boolean streaming
@@ -86,6 +87,26 @@ class SubprocessImpl implements Subprocess {
       Executors.newCachedThreadPool(new NamedDaemonThreadFactory(name + "-stderr"));
     stdoutFuture = stdoutExecutorService.submit(stdout);
     stderrFuture = stderrExecutorService.submit(stderr);
+
+    shutdownHook = new Thread(
+      new Runnable() {
+        @Override
+        public void run() {
+          //noinspection EmptyTryBlock,UnusedDeclaration
+          try (
+            InputStream inputStream = process.getInputStream();
+            OutputStream outputStream = process.getOutputStream();
+            InputStream errorStream = process.getErrorStream()
+          ) {
+          } catch (IOException | RuntimeException ignored) {
+          }
+
+          process.destroy();
+        }
+      }
+    );
+
+    Runtime.getRuntime().addShutdownHook(shutdownHook);
   }
 
 
@@ -164,6 +185,7 @@ class SubprocessImpl implements Subprocess {
     stderrFuture.cancel(true);
     stdoutExecutorService.shutdownNow();
     stderrExecutorService.shutdownNow();
+    Runtime.getRuntime().removeShutdownHook(shutdownHook);
   }
 
   @Override

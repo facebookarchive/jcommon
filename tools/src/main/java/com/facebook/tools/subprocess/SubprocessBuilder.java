@@ -18,9 +18,6 @@ package com.facebook.tools.subprocess;
 import com.facebook.tools.io.IO;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -171,26 +168,6 @@ public class SubprocessBuilder {
           RedirectErrorsTo.STDERR, environmentOverrides, workingDirectory, command
         );
       }
-
-      Runtime.getRuntime().addShutdownHook(
-        new Thread(
-          new Runnable() {
-            @Override
-            public void run() {
-              //noinspection EmptyTryBlock,UnusedDeclaration
-              try (
-                InputStream inputStream = process.getInputStream();
-                OutputStream outputStream = process.getOutputStream();
-                InputStream errorStream = process.getErrorStream()
-              ) {
-              } catch (IOException | RuntimeException ignored) {
-              }
-
-              process.destroy();
-            }
-          }
-        )
-      );
 
       if (echoCommand != null) {
         Iterator<String> iterator = command.iterator();
