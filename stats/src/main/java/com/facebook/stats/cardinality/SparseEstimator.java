@@ -50,19 +50,24 @@ class SparseEstimator
   */
   private long[] slots;
 
-  public SparseEstimator(int numberOfBuckets) {
+  SparseEstimator(int numberOfBuckets) {
     this(numberOfBuckets, 1);
   }
 
-  public SparseEstimator(int[] buckets) {
+  SparseEstimator(int[] buckets) {
     this(buckets.length, countNonZeroBuckets(buckets));
 
-    for (int i = 0; i < buckets.length; i++) {
-      setIfGreater(i, buckets[i]);
+    for (int bucket = 0; bucket < buckets.length; bucket++) {
+      int value = buckets[bucket];
+
+      if (value != 0) {
+        setEntry(bucketCount, bucket, value);
+        ++bucketCount;
+      }
     }
   }
 
-  public SparseEstimator(int numberOfBuckets, int initialCapacity) {
+  SparseEstimator(int numberOfBuckets, int initialCapacity) {
     Preconditions.checkArgument(
       Numbers.isPowerOf2(numberOfBuckets),
       "numberOfBuckets must be a power of 2"
@@ -89,7 +94,9 @@ class SparseEstimator
     if (index < 0) {
       insertAt(-(index + 1), bucket, highestBitPosition);
       return true;
-    } else if (getEntry(index).getValue() < highestBitPosition) {
+    }
+
+    if (getEntry(index).getValue() < highestBitPosition) {
       setEntry(index, bucket, highestBitPosition);
       return true;
     }
@@ -246,7 +253,7 @@ class SparseEstimator
 
   private static int countNonZeroBuckets(int[] buckets) {
     int count = 0;
-    for (Integer bucket : buckets) {
+    for (int bucket : buckets) {
       if (bucket > 0) {
         ++count;
       }

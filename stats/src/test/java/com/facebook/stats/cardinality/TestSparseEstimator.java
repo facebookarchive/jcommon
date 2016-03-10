@@ -15,7 +15,10 @@
  */
 package com.facebook.stats.cardinality;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;
 
@@ -36,5 +39,28 @@ public class TestSparseEstimator
 
     SparseEstimator other = new SparseEstimator(estimator.buckets());
     assertEquals(estimator.buckets(), other.buckets());
+  }
+
+  @Test
+  public void testBucketsConstructor() {
+    int[] buckets = new int[1024];
+
+    for (int bucket = 0; bucket < buckets.length; ++bucket) {
+      for (int maxBit = 0; maxBit < 16; ++maxBit) {
+        buckets[bucket] = maxBit;
+
+        SparseEstimator actual = new SparseEstimator(buckets);
+        SparseEstimator expected = new SparseEstimator(buckets.length);
+
+        for (int x = 0; x < buckets.length; ++x) {
+          expected.setIfGreater(x, buckets[x]);
+        }
+
+        // Assert.assertEquals() is much slower -- using it doubles the test time!
+        if (!Arrays.equals(actual.buckets(), expected.buckets())) {
+          Assert.fail(bucket + " " + maxBit);
+        }
+      }
+    }
   }
 }
