@@ -368,6 +368,11 @@ limitations under the License.
     <pluginManagement>
       <plugins>
         <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-release-plugin</artifactId>
+	        <version>2.5.3</version>
+        </plugin>
+        <plugin>
           <groupId>com.mycila</groupId>
           <artifactId>license-maven-plugin</artifactId>
           <configuration>
