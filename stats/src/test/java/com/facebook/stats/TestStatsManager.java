@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
@@ -78,6 +78,13 @@ public class TestStatsManager {
     Assert.assertEquals(stats.getCounter("test-count.avg.60"), amt);
     Assert.assertEquals(stats.getCounter("test-count.avg.600"), amt);
     Assert.assertEquals(stats.getCounter("test-count.avg.3600"), amt);
+
+    // all time rate is not well defined here since we can get a firm
+    // number for how long it has been running
+    Assert.assertEquals(stats.getCounter("test-count.rate.60"), amt*num/60);
+    Assert.assertEquals(stats.getCounter("test-count.rate.600"), amt*num/600);
+    Assert.assertEquals(stats.getCounter("test-count.rate.3600"), amt*num/3600);
+
 
     stats.addStatExportType("test-all", HistoryManager.ExportType.SUM);
     stats.addStatExportType("test-all", HistoryManager.ExportType.RATE);
