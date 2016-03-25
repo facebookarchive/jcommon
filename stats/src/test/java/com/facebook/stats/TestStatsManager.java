@@ -43,21 +43,21 @@ public class TestStatsManager {
     }
     System.out.println(toString(stats));
 
-    Assert.assertEquals(amt, stats.getCounter("basic.avg"));
-    Assert.assertEquals(amt, stats.getCounter("basic.avg.60"));
-    Assert.assertEquals(amt, stats.getCounter("basic.avg.600"));
-    Assert.assertEquals(amt, stats.getCounter("basic.avg.3600"));
+    Assert.assertEquals(stats.getCounter("basic.avg"), amt);
+    Assert.assertEquals(stats.getCounter("basic.avg.60"), amt);
+    Assert.assertEquals(stats.getCounter("basic.avg.600"), amt);
+    Assert.assertEquals(stats.getCounter("basic.avg.3600"), amt);
 
     stats.addStatExportType("test-sum", HistoryManager.ExportType.SUM);
     for (int i=0; i<num; i++) {
-      stats.addStatValue("test-sum", 1);
+      stats.addStatValue("test-sum", amt);
     }
     System.out.println(toString(stats));
 
-    Assert.assertEquals(num, stats.getCounter("test-sum.sum"));
-    Assert.assertEquals(num, stats.getCounter("test-sum.sum.60"));
-    Assert.assertEquals(num, stats.getCounter("test-sum.sum.600"));
-    Assert.assertEquals(num, stats.getCounter("test-sum.sum.3600"));
+    Assert.assertEquals(stats.getCounter("test-sum.sum"), num*amt);
+    Assert.assertEquals(stats.getCounter("test-sum.sum.60"), num*amt);
+    Assert.assertEquals(stats.getCounter("test-sum.sum.600"), num*amt);
+    Assert.assertEquals(stats.getCounter("test-sum.sum.3600"), num*amt);
 
     stats.addStatExportType("test-rate", HistoryManager.ExportType.RATE);
     stats.addStatExportType("test-avg", HistoryManager.ExportType.AVG);
@@ -67,20 +67,30 @@ public class TestStatsManager {
       stats.addStatValue("test-avg", amt);
       stats.addStatValue("test-count", amt);
     }
-    Assert.assertEquals(amt*num, stats.getCounter("test-count.count"));
+
+    System.out.println(toString(stats));
+    Assert.assertEquals(stats.getCounter("test-count.count"), num);
+    Assert.assertEquals(stats.getCounter("test-count.count.60"), num);
+    Assert.assertEquals(stats.getCounter("test-count.count.600"), num);
+    Assert.assertEquals(stats.getCounter("test-count.count.3600"), num);
+
+    Assert.assertEquals(stats.getCounter("test-count.avg"), amt);
+    Assert.assertEquals(stats.getCounter("test-count.avg.60"), amt);
+    Assert.assertEquals(stats.getCounter("test-count.avg.600"), amt);
+    Assert.assertEquals(stats.getCounter("test-count.avg.3600"), amt);
 
     stats.addStatExportType("test-all", HistoryManager.ExportType.SUM);
     stats.addStatExportType("test-all", HistoryManager.ExportType.RATE);
     stats.addStatExportType("test-all", HistoryManager.ExportType.AVG);
     stats.addStatExportType("test-all", HistoryManager.ExportType.COUNT);
 
+
+    stats.addStatValue("test-all", amt);
+    stats.addStatValue("test-all", amt);
+
     System.out.println(toString(stats));
-
-    stats.addStatValue("test-all", amt);
-    stats.addStatValue("test-all", amt);
-
-    Assert.assertEquals(amt+amt, stats.getCounter("test-all.sum"));
-    Assert.assertEquals(amt, stats.getCounter("test-all.avg"));
-    Assert.assertEquals(amt+amt, stats.getCounter("test-all.count"));
+    Assert.assertEquals(stats.getCounter("test-all.sum"), amt+amt);
+    Assert.assertEquals(stats.getCounter("test-all.avg"), amt);
+    Assert.assertEquals(stats.getCounter("test-all.count"), 2);
   }
 }
