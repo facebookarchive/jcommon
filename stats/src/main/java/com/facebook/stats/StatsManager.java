@@ -184,7 +184,7 @@ public class StatsManager implements HistoryManager {
           return counterMap.get(shortName).getMinuteRate();
         }
         if (ending2.equals(".count.60")) {
-          return counterMap.get(shortName).getMinuteSum();
+          return counterMap.get(shortName).getMinuteSamples();
         }
       }
 
@@ -199,7 +199,7 @@ public class StatsManager implements HistoryManager {
           return counterMap.get(shortName).getTenMinuteRate();
         }
         if (ending2.equals(".count.600")) {
-          return counterMap.get(shortName).getTenMinuteSum();
+          return counterMap.get(shortName).getTenMinuteSamples();
         }
       }
 
@@ -214,7 +214,7 @@ public class StatsManager implements HistoryManager {
           return counterMap.get(shortName).getHourRate();
         }
         if (ending2.equals(".count.3600")) {
-          return counterMap.get(shortName).getHourSum();
+          return counterMap.get(shortName).getHourSamples();
         }
       }
 
@@ -228,7 +228,7 @@ public class StatsManager implements HistoryManager {
         return counterMap.get(shortName).getAllTimeRate();
       }
       if (fullName.endsWith(".count")) {
-        return counterMap.get(shortName).getAllTimeSum();
+        return counterMap.get(shortName).getAllTimeSamples();
       }
     } catch (Exception e) {
       throw new IllegalArgumentException("Stat name '" + shortName
