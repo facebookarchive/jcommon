@@ -93,18 +93,6 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
     }
   }
 
-  private long calcRate(EventCounterIf<GaugeCounter> counter) {
-    long value = counter.getValue();
-    ReadableDateTime end = counter.getEnd();
-    ReadableDateTime start = counter.getStart();
-    ReadableDateTime now = new DateTime();
-    Duration duration = now.isBefore(end) ?
-      new Duration(start, now) :    // so far
-      new Duration(start, end);
-    long secs = duration.getStandardSeconds();
-    return secs > 0 ? value / secs : value;
-  }
-
   @Override
   public long getMinuteSum() {
     rollCurrentIfNeeded();
@@ -126,7 +114,7 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
   @Override
   public long getMinuteRate() {
     rollCurrentIfNeeded();
-    return calcRate(minuteCounter);
+    return minuteCounter.getValue()/60;
   }
 
   @Override
@@ -150,7 +138,7 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
   @Override
   public long getTenMinuteRate() {
     rollCurrentIfNeeded();
-    return calcRate(tenMinuteCounter);
+    return minuteCounter.getValue()/600;
   }
 
   @Override
@@ -174,7 +162,7 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
   @Override
   public long getHourRate() {
     rollCurrentIfNeeded();
-    return calcRate(hourCounter);
+    return minuteCounter.getValue()/3600;
   }
 
   @Override
