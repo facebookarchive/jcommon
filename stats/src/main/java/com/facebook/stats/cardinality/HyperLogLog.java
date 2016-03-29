@@ -60,6 +60,9 @@ public class HyperLogLog {
       );
       this.buckets[i] = (byte) value;
       currentSum += 1.0 / (1 << value);
+      if (value != 0) {
+        nonZeroBuckets++;
+      }
     }
   }
 
