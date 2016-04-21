@@ -20,7 +20,7 @@ limitations under the License.
   <parent>
     <artifactId>jcommon-parent</artifactId>
     <groupId>com.facebook.jcommon</groupId>
-    <version>0.1.26</version>
+    <version>0.1.27-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
