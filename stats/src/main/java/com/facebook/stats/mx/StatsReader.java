@@ -15,6 +15,7 @@
  */
 package com.facebook.stats.mx;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -22,28 +23,36 @@ import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
 
-public interface StatsReader {
-  public void exportCounters(Map<String, Long> counters);
-  public MultiWindowRate getRate(String key);
-  public MultiWindowRate getRate(StatType statType);
-  public MultiWindowRate getSum(String key);
-  public MultiWindowRate getSum(StatType statType);
-  public long getCounter(StatType key);
-  public long getCounter(String key);
-  public MultiWindowSpread getSpread(StatType key);
-  public MultiWindowSpread getSpread(String key);
-  public MultiWindowDistribution getDistribution(StatType key);
-  public MultiWindowDistribution getDistribution(String key);
-  public String getAttribute(StatType key);
-  public String getAttribute(String key);
+interface StatsReader {
+  void exportCounters(Map<String, Long> counters);
+  MultiWindowRate getRate(String key);
+  MultiWindowRate getRate(StatType statType);
+  MultiWindowRate getSum(String key);
+  MultiWindowRate getSum(StatType statType);
+  long getCounter(StatType key);
+  long getCounter(String key);
+  MultiWindowSpread getSpread(StatType key);
+  MultiWindowSpread getSpread(String key);
+  MultiWindowDistribution getDistribution(StatType key);
+  MultiWindowDistribution getDistribution(String key);
+  String getAttribute(StatType key);
+  String getAttribute(String key);
   @Deprecated
-  public Callable<Long> getDynamicCounter(StatType key);
+  Callable<Long> getDynamicCounter(StatType key);
   @Deprecated
-  public Callable<Long> getDynamicCounter(String key);
+  Callable<Long> getDynamicCounter(String key);
 
   /**
    * @return returns a snapshot copy of the attributes
    */
-  public Map<String, String> getAttributes();
+  Map<String, String> getAttributes();
+
+  default Map<String, Long> getCounters() {
+    Map<String, Long> result = new HashMap<>();
+    exportCounters(result);
+
+    return result;
+  }
+
 }
 
