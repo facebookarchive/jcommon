@@ -87,6 +87,13 @@ public class JVMStatsExporter {
     this(stats, ".*", "java.lang:type=*,*");
   }
 
+  @SuppressWarnings("ResultOfObjectAllocationIgnored")
+  public static Stats createAndBindTo(Stats stats) throws JMException {
+    new JVMStatsExporter(stats);
+
+    return stats;
+  }
+
   /**
    * Exports all the numeric attributes of beans matching the supplied MXBean name pattern.
    * Also, discovers the numeric properties of the attributes of type CompositeData and registers
