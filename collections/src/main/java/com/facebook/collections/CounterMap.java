@@ -174,6 +174,16 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
     }
   }
 
+  public void clear() {
+    removalLock.writeLock().lock();
+
+    try {
+      counters.clear();
+    } finally {
+      removalLock.writeLock().unlock();
+    }
+  }
+
   @Override
   public Iterator<Map.Entry<K, Long>> iterator() {
     return Iterators.unmodifiableIterator(
