@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 public class StandardObjectMapper {
   public static final ObjectMapper MAPPER = new ObjectMapper();
@@ -33,7 +34,7 @@ public class StandardObjectMapper {
     MAPPER.disable(MapperFeature.AUTO_DETECT_GETTERS);
     MAPPER.disable(MapperFeature.AUTO_DETECT_IS_GETTERS);
     // to allow C/C++ style comments in JSON (non-standard, disabled by default)
-    JsonFactory jsonFactory = MAPPER.getJsonFactory();
+    JsonFactory jsonFactory = MAPPER.getFactory();
     jsonFactory.enable(JsonParser.Feature.ALLOW_COMMENTS);
     // to allow (non-standard) unquoted field names in JSON:
     jsonFactory.enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES);
@@ -42,6 +43,7 @@ public class StandardObjectMapper {
     jsonFactory.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
     jsonFactory.enable(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER);
     MAPPER.registerModule(new GuavaModule());
+    MAPPER.registerModule(new JodaModule());
   }
 
   private StandardObjectMapper() {
