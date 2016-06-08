@@ -15,7 +15,6 @@
  */
 package com.facebook.concurrency;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,25 +143,8 @@ public class ParallelRunner {
     String baseName
   ) throws E {
     final AtomicReference<E> exception = new AtomicReference<E>();
-    Iterator<Runnable> wrappedIterator = Iterators.transform(
-      tasksIter, new Function<ExtRunnable<E>, Runnable>() {
-      @Override
-      public Runnable apply(final ExtRunnable<E> task) {
-        return new Runnable() {
-          @Override
-          public void run() {
-            try {
-              // short-circuit if other tasksIter failed
-              if (exception.get() == null) {
-                task.run();
-              }
-            } catch (Exception e) {
-              exception.compareAndSet(null, exceptionHandler.handle(e));
-            }
-          }
-        };
-      }
-    });
+    Iterator<Runnable> wrappedIterator =
+      Iterators.transform(tasksIter, new ShortCircuitRunnable<>(exception, exceptionHandler));
 
     parallelRun(wrappedIterator, numThreads, baseName);
 
@@ -273,4 +255,5 @@ public class ParallelRunner {
       LOG.warn("interrupted waiting for tasks to complete", e);
     }
   }
+
 }
