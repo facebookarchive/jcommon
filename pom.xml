@@ -16,7 +16,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -44,7 +46,7 @@ limitations under the License.
     <fb.check.fail-pmd>false</fb.check.fail-pmd>
     <project.build.targetJdk>1.8</project.build.targetJdk>
     <dep.guava.version>18.0</dep.guava.version>
-    <argLine />
+    <argLine/>
   </properties>
 
   <scm>
@@ -378,9 +380,21 @@ limitations under the License.
     <pluginManagement>
       <plugins>
         <plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-release-plugin</artifactId>
-	        <version>2.5.3</version>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>2.10</version>
+          <configuration>
+            <ignoredDependencies>
+              <ignoredDependency>com.google.code.findbugs:jsr305</ignoredDependency>
+              <ignoredDependency>com.google.code.findbugs:annotations</ignoredDependency>
+            </ignoredDependencies>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.3</version>
         </plugin>
         <plugin>
           <groupId>com.mycila</groupId>
@@ -443,12 +457,13 @@ limitations under the License.
             </execution>
           </executions>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.10</version>
-        </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+    </plugins>
   </build>
 </project>
