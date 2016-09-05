@@ -18,7 +18,7 @@ package com.facebook.stats;
 import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableDuration;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * stats class that is useful for tracking the number of events that occur
@@ -33,21 +33,33 @@ import java.util.Arrays;
 public class CompositeSum extends AbstractCompositeSum<EventCounter>
   implements EventCounter {
 
+  private final LongCounterFactory longCounterFactory;
+
   public CompositeSum(
-    ReadableDuration maxLength, ReadableDuration maxChunkLength
+    ReadableDuration maxLength, ReadableDuration maxChunkLength, LongCounterFactory longCounterFactory
   ) {
     super(maxLength, maxChunkLength);
+    this.longCounterFactory = longCounterFactory;
+  }
+
+  public CompositeSum(ReadableDuration maxLength, ReadableDuration maxChunkLength) {
+    this(maxLength, maxChunkLength, AtomicLongCounter::new);
+  }
+
+  public CompositeSum(ReadableDuration maxLength, LongCounterFactory longCounterFactory) {
+    super(maxLength);
+    this.longCounterFactory = longCounterFactory;
   }
 
   public CompositeSum(ReadableDuration maxLength) {
-    super(maxLength);
+    this(maxLength, AtomicLongCounter::new);
   }
 
   @Override
   protected EventCounter nextCounter(
     ReadableDateTime start, ReadableDateTime end
   ) {
-    return new EventCounterImpl(start, end);
+    return new EventCounterImpl(start, end, longCounterFactory);
   }
 
   @Override
@@ -56,12 +68,12 @@ public class CompositeSum extends AbstractCompositeSum<EventCounter>
     if (counter instanceof CompositeSum) {
       return internalMerge(
         ((CompositeSum) counter).getEventCounters(),
-        new CompositeSum(getMaxLength(), getMaxChunkLength())
+        new CompositeSum(getMaxLength(), getMaxChunkLength(), longCounterFactory)
       );
     } else {
       return internalMerge(
-        Arrays.asList(counter),
-        new CompositeSum(getMaxLength(), getMaxChunkLength())
+        Collections.singletonList(counter),
+        new CompositeSum(getMaxLength(), getMaxChunkLength(), longCounterFactory)
       );
     }
   }

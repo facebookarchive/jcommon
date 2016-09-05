@@ -18,10 +18,21 @@ package com.facebook.stats;
 import org.joda.time.ReadableDateTime;
 
 public class DefaultGaugeCounterFactory implements GaugeCounterFactory {
+  @Deprecated
   public static GaugeCounterFactory INSTANCE = new DefaultGaugeCounterFactory();
+
+  private final LongCounterFactory longCounterFactory;
+
+  public DefaultGaugeCounterFactory(LongCounterFactory longCounterFactory) {
+    this.longCounterFactory = longCounterFactory;
+  }
+
+  public DefaultGaugeCounterFactory() {
+    this(AtomicLongCounter::new);
+  }
 
   @Override
   public GaugeCounter create(ReadableDateTime start, ReadableDateTime end) {
-    return new DefaultGaugeCounter(start, end);
+    return new DefaultGaugeCounter(start, end, longCounterFactory);
   }
 }

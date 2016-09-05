@@ -25,10 +25,12 @@ import org.joda.time.ReadableDateTime;
 public class DefaultGaugeCounter implements GaugeCounter {
   private final ReadableDateTime start;
   private final ReadableDateTime end;
+  private final LongCounterFactory longCounterFactory;
   private long value = 0;
   private long nsamples = 0;
 
-  public DefaultGaugeCounter(ReadableDateTime start, ReadableDateTime end) {
+  public DefaultGaugeCounter(ReadableDateTime start, ReadableDateTime end, LongCounterFactory longCounterFactory) {
+    this.longCounterFactory = longCounterFactory;
     if (start.isAfter(end)) {
       this.start = end;
       this.end = start;
@@ -36,6 +38,10 @@ public class DefaultGaugeCounter implements GaugeCounter {
       this.start = start;
       this.end = end;
     }
+  }
+
+  public DefaultGaugeCounter(ReadableDateTime start, ReadableDateTime end) {
+    this(start, end, AtomicLongCounter::new);
   }
 
   @Override
@@ -94,13 +100,12 @@ public class DefaultGaugeCounter implements GaugeCounter {
       mergedEnd = counter.getEnd();
     }
 
-    DefaultGaugeCounter mergedCounter =
-      new DefaultGaugeCounter(mergedStart, mergedEnd);
+    DefaultGaugeCounter mergedCounter = new DefaultGaugeCounter(mergedStart, mergedEnd, longCounterFactory);
 
-      mergedCounter.add(
-        value + counter.getValue(),
-        nsamples + ((GaugeCounter)counter).getSamples()
-      );
+    mergedCounter.add(
+      value + counter.getValue(),
+      nsamples + ((GaugeCounter) counter).getSamples()
+    );
 
     return mergedCounter;
   }

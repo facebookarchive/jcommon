@@ -26,8 +26,12 @@ public class MultiWindowSpread implements WritableMultiWindowStat {
   private final MultiWindowGauge gauge;
   private final MultiWindowMax max;
 
+  public MultiWindowSpread(LongCounterFactory longCounterFactory) {
+    this(new DefaultGaugeCounterFactory(longCounterFactory));
+  }
+
   public MultiWindowSpread() {
-    this(DefaultGaugeCounterFactory.INSTANCE);
+    this(AtomicLongCounter::new);
   }
 
   public MultiWindowSpread(GaugeCounterFactory gaugeCounterFactory) {

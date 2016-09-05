@@ -33,18 +33,24 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
   private final ReadableDateTime start;
   private final Object rollLock = new Object();
   private final int timeBucketSizeMillis;
+  private final LongCounterFactory longCounterFactory;
 
   private volatile EventCounterIf<EventCounter> currentCounter;
 
-  MultiWindowRate(int timeBucketSizeMillis) {
+  MultiWindowRate(int timeBucketSizeMillis, LongCounterFactory longCounterFactory) {
     this(
-      newCompositeEventCounter(Integer.MAX_VALUE),
-      newCompositeEventCounter(60),
-      newCompositeEventCounter(10),
-      newCompositeEventCounter(1),
+      newCompositeEventCounter(Integer.MAX_VALUE, longCounterFactory),
+      newCompositeEventCounter(60, longCounterFactory),
+      newCompositeEventCounter(10, longCounterFactory),
+      newCompositeEventCounter(1, longCounterFactory),
       new DateTime(),
-      timeBucketSizeMillis
+      timeBucketSizeMillis,
+      longCounterFactory
     );
+  }
+
+  MultiWindowRate(int timeBucketSizeMillis) {
+    this(timeBucketSizeMillis, AtomicLongCounter::new);
   }
 
   MultiWindowRate(
@@ -53,7 +59,8 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
     CompositeSum tenMinuteCounter,
     CompositeSum minuteCounter,
     ReadableDateTime start,
-    int timeBucketSizeMillis
+    int timeBucketSizeMillis,
+    LongCounterFactory longCounterFactory
   ) {
     this.allTimeCounter = allTimeCounter;
     this.hourCounter = hourCounter;
@@ -61,6 +68,7 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
     this.minuteCounter = minuteCounter;
     this.start = start;
     this.timeBucketSizeMillis = timeBucketSizeMillis;
+    this.longCounterFactory = longCounterFactory;
     hourRate =
       newEventRate(hourCounter, Duration.standardMinutes(60), start);
     tenMinuteRate =
@@ -70,12 +78,16 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
     currentCounter = nextCurrentCounter(start.toDateTime());
   }
 
-  public MultiWindowRate() {
-    this(DEFAULT_TIME_BUCKET_SIZE_MILLIS);
+  public MultiWindowRate(LongCounterFactory longCounterFactory) {
+    this(DEFAULT_TIME_BUCKET_SIZE_MILLIS, longCounterFactory);
   }
 
-  private static CompositeSum newCompositeEventCounter(int minutes) {
-    return new CompositeSum(Duration.standardMinutes(minutes));
+  public MultiWindowRate() {
+    this(DEFAULT_TIME_BUCKET_SIZE_MILLIS, AtomicLongCounter::new);
+  }
+
+  private static CompositeSum newCompositeEventCounter(int minutes, LongCounterFactory longCounterFactory) {
+    return new CompositeSum(Duration.standardMinutes(minutes), longCounterFactory);
   }
 
   private EventRate newEventRate(
@@ -169,7 +181,7 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
   // current
   private EventCounterIf<EventCounter> nextCurrentCounter(ReadableDateTime now) {
     EventCounter eventCounter =
-      new EventCounterImpl(now, now.toDateTime().plusMillis(timeBucketSizeMillis));
+      new EventCounterImpl(now, now.toDateTime().plusMillis(timeBucketSizeMillis), longCounterFactory);
 
     allTimeCounter.addEventCounter(eventCounter);
     hourCounter.addEventCounter(eventCounter);
@@ -181,12 +193,13 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
 
   public MultiWindowRate merge(MultiWindowRate rate) {
     return new MultiWindowRate(
-      (CompositeSum)allTimeCounter.merge(rate.allTimeCounter),
-      (CompositeSum)hourCounter.merge(rate.hourCounter),
-      (CompositeSum)tenMinuteCounter.merge(rate.tenMinuteCounter),
-      (CompositeSum)minuteCounter.merge(rate.minuteCounter),
+      (CompositeSum) allTimeCounter.merge(rate.allTimeCounter),
+      (CompositeSum) hourCounter.merge(rate.hourCounter),
+      (CompositeSum) tenMinuteCounter.merge(rate.tenMinuteCounter),
+      (CompositeSum) minuteCounter.merge(rate.minuteCounter),
       start.isBefore(rate.start) ? start : rate.start,
-      timeBucketSizeMillis
+      timeBucketSizeMillis,
+      longCounterFactory
     );
   }
 }

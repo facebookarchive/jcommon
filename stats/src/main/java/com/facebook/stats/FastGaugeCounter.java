@@ -18,8 +18,6 @@ package com.facebook.stats;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * Fast implementation of GaugeCounter that may give slightly inaccurate values
  * in certain race conditions, but should produce close to accurate results
@@ -28,10 +26,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class FastGaugeCounter implements GaugeCounter {
   private final ReadableDateTime start;
   private final ReadableDateTime end;
-  private final AtomicLong value = new AtomicLong(0);
-  private final AtomicLong nsamples = new AtomicLong(0);
+  private final LongCounter value;
+  private final LongCounter nsamples;
+  private final LongCounterFactory longCounterFactory;
 
-  public FastGaugeCounter(ReadableDateTime start, ReadableDateTime end) {
+  FastGaugeCounter(ReadableDateTime start, ReadableDateTime end, LongCounterFactory longCounterFactory) {
+    this.longCounterFactory = longCounterFactory;
     if (start.isAfter(end)) {
       this.start = end;
       this.end = start;
@@ -39,12 +39,18 @@ public class FastGaugeCounter implements GaugeCounter {
       this.start = start;
       this.end = end;
     }
+    value = longCounterFactory.create();
+    nsamples = longCounterFactory.create();
+  }
+
+  FastGaugeCounter(ReadableDateTime start, ReadableDateTime end) {
+    this(start, end, AtomicLongCounter::new);
   }
 
   @Override
   public void add(long delta, long samples) {
-    value.addAndGet(delta);
-    nsamples.addAndGet(samples);
+    value.update(delta);
+    nsamples.update(samples);
   }
 
   @Override
@@ -98,12 +104,11 @@ public class FastGaugeCounter implements GaugeCounter {
       mergedEnd = counter.getEnd();
     }
 
-    DefaultGaugeCounter mergedCounter =
-      new DefaultGaugeCounter(mergedStart, mergedEnd);
+    FastGaugeCounter mergedCounter = new FastGaugeCounter(mergedStart, mergedEnd, longCounterFactory);
 
     mergedCounter.add(
       value.get() + counter.getValue(),
-      nsamples.get() + ((GaugeCounter)counter).getSamples()
+      nsamples.get() + ((GaugeCounter) counter).getSamples()
     );
 
     return mergedCounter;

@@ -24,11 +24,15 @@ public interface StatsCollector {
    */
   public void incrementRate(StatType type, long delta);
 
+  void incrementRateAdder(StatType type, long delta);
+
   /**
    * @param key
    * @param delta
    */
   public void incrementRate(String key, long delta);
+
+  void incrementRateAdder(String key, long delta);
 
   /**
    * @param type
@@ -36,17 +40,23 @@ public interface StatsCollector {
    */
   public void incrementSum(StatType type, long delta);
 
+  void incrementSumAdder(StatType type, long delta);
+
   /**
    * @param key
    * @param delta
    */
   public void incrementSum(String key, long delta);
 
+  void incrementSumAdder(String key, long delta);
+
   /**
    * @param key
    * @param delta
    */
   public void incrementCounter(StatType key, long delta);
+
+  void incrementCounterAdder(StatType key, long delta);
 
   /**
    * @param key
@@ -61,6 +71,8 @@ public interface StatsCollector {
    */
   @Deprecated
   public long setCounter(String key, long value);
+
+  void incrementCounterAdder(String key, long delta);
 
   /**
    * deprecated, see

@@ -17,7 +17,6 @@ package com.facebook.stats;
 
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * reference implementation of a simple counter for a bounded period of time
@@ -25,9 +24,16 @@ import java.util.concurrent.atomic.AtomicLong;
 public class EventCounterImpl implements EventCounter {
   private final ReadableDateTime start;
   private final ReadableDateTime end;
-  private final AtomicLong value;
+  private final LongCounter value;
+  private final LongCounterFactory longCounterFactory;
 
-  public EventCounterImpl(ReadableDateTime start, ReadableDateTime end, long initialValue) {
+  public EventCounterImpl(
+    ReadableDateTime start,
+    ReadableDateTime end,
+    long initialValue,
+    LongCounterFactory longCounterFactory
+  ) {
+    this.longCounterFactory = longCounterFactory;
     if (start.isAfter(end)) {
       this.start = end;
       this.end = start;
@@ -36,15 +42,42 @@ public class EventCounterImpl implements EventCounter {
       this.end = end;
     }
 
-    this.value = new AtomicLong(initialValue);
+    this.value = longCounterFactory.create(initialValue);
   }
 
-  public EventCounterImpl(ReadableDateTime start, ReadableDateTime end) {
-    this(start, end, 0L);
+  public EventCounterImpl(
+    ReadableDateTime start,
+    ReadableDateTime end,
+    long initialValue
+  ) {
+    this(start, end, initialValue, AtomicLongCounter::new);
+  }
+
+  public EventCounterImpl(
+    ReadableDateTime start,
+    ReadableDateTime end,
+    LongCounterFactory longCounterFactory
+  ) {
+    this(start, end, 0, longCounterFactory);
+  }
+
+  public EventCounterImpl(
+    ReadableDateTime start,
+    ReadableDateTime end
+  ) {
+    this(start, end, AtomicLongCounter::new);
+  }
+
+  public static EventCounterImpl create(ReadableDateTime start, ReadableDateTime end) {
+    return new EventCounterImpl(start, end, 0, AtomicLongCounter::new);
+  }
+
+  public static EventCounterImpl createAdder(ReadableDateTime start, ReadableDateTime end) {
+    return new EventCounterImpl(start, end, 0, LongAdderCounter::new);
   }
 
   public void add(long delta) {
-    value.addAndGet(delta);
+    value.update(delta);
   }
 
   public long getValue() {
@@ -78,7 +111,7 @@ public class EventCounterImpl implements EventCounter {
       mergedEnd = counter.getEnd();
     }
 
-    EventCounterImpl mergedCounter = new EventCounterImpl(mergedStart, mergedEnd);
+    EventCounterImpl mergedCounter = new EventCounterImpl(mergedStart, mergedEnd, 0, longCounterFactory);
 
     mergedCounter.add(value.get() + counter.getValue());
 

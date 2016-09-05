@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Facebook, Inc.
+ * Copyright (C) 2016 Facebook, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,8 @@
  */
 package com.facebook.stats;
 
-import org.joda.time.ReadableDateTime;
+public interface LongCounter {
+  void update(long delta);
 
-public class MaxEventCounter extends AssociativeAggregationCounter {
-  public static final AssociativeAggregation AGGREGATION = Math::max;
-
-  public MaxEventCounter(
-    ReadableDateTime start, ReadableDateTime end, long initialValue
-  ) {
-    super(start, end, AGGREGATION, initialValue);
-  }
-
-  public MaxEventCounter(ReadableDateTime start, ReadableDateTime end) {
-    this(start, end, Long.MIN_VALUE);
-  }
+  long get();
 }

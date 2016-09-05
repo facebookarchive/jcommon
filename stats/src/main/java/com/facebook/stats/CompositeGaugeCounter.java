@@ -47,7 +47,7 @@ public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
   }
 
   public CompositeGaugeCounter(ReadableDuration maxLength) {
-    this(maxLength, DefaultGaugeCounterFactory.INSTANCE);
+    this(maxLength, new DefaultGaugeCounterFactory());
   }
 
   public synchronized CompositeEventCounterIf<GaugeCounter> add(

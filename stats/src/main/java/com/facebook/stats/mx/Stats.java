@@ -20,20 +20,24 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 import com.facebook.logging.Logger;
 import com.facebook.logging.LoggerImpl;
+import com.facebook.stats.AtomicLongCounter;
+import com.facebook.stats.LongAdderCounter;
+import com.facebook.stats.LongCounter;
+import com.facebook.stats.LongCounterFactory;
 import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
 
 public class Stats implements StatsReader, StatsCollector {
-  private static final Logger LOG = LoggerImpl.getClassLogger(); 
+  private static final Logger LOG = LoggerImpl.getClassLogger();
   private static final String ERROR_FLAG = "--ERROR--";
   private static final long ERROR_VALUE = -1;
 
   private final String prefix;
+  private final LongCounterFactory longCounterFactory;
   private final ConcurrentMap<String, Callable<String>> attributes = new ConcurrentHashMap<>();
   // generic counters; anything here will have sum/rate for 1m/10m/60m/all-time
   private final ConcurrentMap<String, MultiWindowRate> rates = new ConcurrentHashMap<>();
@@ -43,27 +47,33 @@ public class Stats implements StatsReader, StatsCollector {
   private final ConcurrentMap<String, MultiWindowDistribution> distributions =
     new ConcurrentHashMap<>();
 
-  public Stats(String prefix) {
+  public Stats(String prefix, LongCounterFactory longCounterFactory) {
     this.prefix = prefix;
+    this.longCounterFactory = longCounterFactory;
+  }
+
+  public Stats(String prefix) {
+    this(prefix, AtomicLongCounter::new);
+  }
+
+  public Stats(LongCounterFactory longCounterFactory) {
+    this("", longCounterFactory);
   }
 
   public Stats() {
-    this("");
+    this("", AtomicLongCounter::new);
   }
 
-  private MultiWindowRate getMultiWindowRate(
-    String key, ConcurrentMap<String, MultiWindowRate> map
-  ) {
-    MultiWindowRate rate = map.get(key);
+  public static Stats newUsingLongAdder(String prefix) {
+    return new Stats(prefix, LongAdderCounter::new);
+  }
 
-    if (rate == null) {
-      rate = new MultiWindowRate();
-      MultiWindowRate existingRate = map.putIfAbsent(key, rate);
+  public static Stats newUsingLongAdder() {
+    return new Stats(LongAdderCounter::new);
+  }
 
-      if (existingRate != null) {
-        rate = existingRate;
-      }
-    }
+  private MultiWindowRate getMultiWindowRate( String key, ConcurrentMap<String, MultiWindowRate> map) {
+    MultiWindowRate rate = map.computeIfAbsent(key, k -> new MultiWindowRate(longCounterFactory));
 
     return rate;
   }
@@ -104,8 +114,6 @@ public class Stats implements StatsReader, StatsCollector {
     }
   }
 
-
-
   @Override
   public MultiWindowRate getRate(StatType statType) {
     return getRate(statType.getKey());
@@ -116,14 +124,23 @@ public class Stats implements StatsReader, StatsCollector {
     return getMultiWindowRate(key, rates);
   }
 
-
   @Override
   public void incrementRate(StatType type, long delta) {
     getMultiWindowRate(type.getKey(), rates).add(delta);
   }
 
   @Override
+  public void incrementRateAdder(StatType type, long delta) {
+    getMultiWindowRate(type.getKey(), rates).add(delta);
+  }
+
+  @Override
   public void incrementRate(String key, long delta) {
+    getMultiWindowRate(key, rates).add(delta);
+  }
+
+  @Override
+  public void incrementRateAdder(String key, long delta) {
     getMultiWindowRate(key, rates).add(delta);
   }
 
@@ -143,7 +160,17 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   @Override
+  public void incrementSumAdder(StatType type, long delta) {
+    getMultiWindowRate(type.getKey(), sums).add(delta);
+  }
+
+  @Override
   public void incrementSum(String key, long delta) {
+    getMultiWindowRate(key, sums).add(delta);
+  }
+
+  @Override
+  public void incrementSumAdder(String key, long delta) {
     getMultiWindowRate(key, sums).add(delta);
   }
 
@@ -153,7 +180,17 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   @Override
+  public void incrementCounterAdder(StatType key, long delta) {
+    internalIncrementCounter(key.getKey(), delta);
+  }
+
+  @Override
   public void incrementCounter(String key, long delta) {
+    internalIncrementCounter(key, delta);
+  }
+
+  @Override
+  public void incrementCounterAdder(String key, long delta) {
     internalIncrementCounter(key, delta);
   }
 
@@ -161,12 +198,9 @@ public class Stats implements StatsReader, StatsCollector {
     LongCounter counter = counters.get(key);
 
     if (counter == null) {
-      counter = new AtomicLongCounter();
-      LongCounter existingCounter = counters.putIfAbsent(key, counter);
+      LongCounter existingCounter = counters.computeIfAbsent(key, k -> longCounterFactory.create());
 
-      if (existingCounter != null) {
-        counter = existingCounter;
-      }
+      counter = existingCounter;
     }
 
     counter.update(delta);
@@ -200,7 +234,8 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   public void incrementSpread(StatType type, long value) {
-    getMultiWindowSpread(type.getKey()).add(value);  }
+    getMultiWindowSpread(type.getKey()).add(value);
+  }
 
   @Override
   public void incrementSpread(String key, long value) {
@@ -250,16 +285,14 @@ public class Stats implements StatsReader, StatsCollector {
   /**
    * Sets the dynamic counter if a counter with the specified key doesn't already exist
    *
-   * @param key the key for the dynamic counter
+   * @param key           the key for the dynamic counter
    * @param valueProducer the generator value for this counter
-   *
    * @return true if the counter was added. False, if a counter with the specified key exists
    * already
    */
   public boolean addDynamicCounter(String key, Callable<Long> valueProducer) {
     return null == counters.putIfAbsent(key, new CallableLongCounter(key, valueProducer));
   }
-
 
   /**
    * Removes a counter with the specified key
@@ -387,31 +420,13 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   private MultiWindowSpread getMultiWindowSpread(String key) {
-    MultiWindowSpread spread = spreads.get(key);
-
-    if (spread == null) {
-      spread = new MultiWindowSpread();
-      MultiWindowSpread existingSpreads = spreads.putIfAbsent(key, spread);
-
-      if (existingSpreads != null) {
-        spread = existingSpreads;
-      }
-    }
+    MultiWindowSpread spread = spreads.computeIfAbsent(key, k -> new MultiWindowSpread(longCounterFactory));
 
     return spread;
   }
 
   private MultiWindowDistribution getMultiWindowDistribution(String key) {
-    MultiWindowDistribution distribution = distributions.get(key);
-
-    if (distribution == null) {
-      distribution = new MultiWindowDistribution();
-      MultiWindowDistribution existing = distributions.putIfAbsent(key, distribution);
-
-      if (existing != null) {
-        distribution = existing;
-      }
-    }
+    MultiWindowDistribution distribution = distributions.computeIfAbsent(key, k -> new MultiWindowDistribution());
 
     return distribution;
   }
@@ -426,25 +441,6 @@ public class Stats implements StatsReader, StatsCollector {
     @Override
     public String call() throws Exception {
       return value;
-    }
-  }
-
-  private interface LongCounter {
-    void update(long delta);
-    long get();
-  }
-
-  private static class AtomicLongCounter implements LongCounter {
-    private final AtomicLong value = new AtomicLong(0);
-
-    @Override
-    public void update(long delta) {
-      value.addAndGet(delta);
-    }
-
-    @Override
-    public long get() {
-      return value.get();
     }
   }
 

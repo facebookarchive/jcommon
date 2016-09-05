@@ -34,7 +34,7 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
 
 
   public MultiWindowGauge() {
-    this(DefaultGaugeCounterFactory.INSTANCE);
+    this(new DefaultGaugeCounterFactory());
   }
 
   public MultiWindowGauge(GaugeCounterFactory gaugeCounterFactory) {

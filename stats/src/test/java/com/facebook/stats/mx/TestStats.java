@@ -17,7 +17,7 @@ package com.facebook.stats.mx;
 
 import com.google.common.collect.ImmutableMap;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
@@ -39,14 +39,7 @@ public class TestStats {
     .put(KEY3, KEY1)
     .build();
 
-  private Stats stats;
-
-  @BeforeMethod(alwaysRun = true)
-  void setup() {
-    stats = new Stats();
-  }
-
-  public void verifyStatAttributes() {
+  public void verifyStatAttributes(Stats stats) {
     // Test out getAttribute calls
     Assert.assertEquals(stats.getAttribute(KEY1), KEY2);
     Assert.assertEquals(stats.getAttribute(KEY2), KEY3);
@@ -64,39 +57,36 @@ public class TestStats {
   /**
    * Test the setAttribute(String, String) function
    */
-  @Test(groups = "fast")
-  public void testAttributeString() {
+  @Test(groups = "fast", dataProvider = "stats")
+  public void testAttributeString(Stats stats) {
     for (Map.Entry<String, String> attribute : attributeMap.entrySet()) {
       stats.setAttribute(attribute.getKey(), attribute.getValue());
     }
-    verifyStatAttributes();
+    verifyStatAttributes(stats);
   }
 
   /**
    * Test the setAttribute(String, Callable <String> ) function
    */
-  @Test(groups = "fast")
-  public void testAttributeCallable() {
-    for (final String key: attributeMap.keySet()) {
-      stats.setAttribute(key, 
-        new Callable<String>() {
-          @Override
-          public String call() throws Exception {
-            return TestStats.this.attributeMap.get(key);
-          }
-        });
+  @Test(groups = "fast", dataProvider = "stats")
+  public void testAttributeCallable(Stats stats) {
+    for (final String key : attributeMap.keySet()) {
+      stats.setAttribute(
+        key,
+        () -> { return TestStats.this.attributeMap.get(key); }
+      );
     }
 
-    verifyStatAttributes();
+    verifyStatAttributes(stats);
   }
-  
-  @Test(groups = "fast")
-  public void testGetEmptyCounter() throws Exception {
+
+  @Test(groups = "fast", dataProvider = "stats")
+  public void testGetEmptyCounter(Stats stats) throws Exception {
     Assert.assertEquals(stats.getCounter("fuu"), 0);
   }
 
-  @Test(groups = "fast")
-  public void testRemoveCounter() throws Exception {
+  @Test(groups = "fast", dataProvider = "stats")
+  public void testRemoveCounter(Stats stats) throws Exception {
     stats.incrementCounter("fuu", 1);
     Assert.assertTrue(stats.removeCounter("fuu"));
     Assert.assertFalse(stats.removeCounter("fuu"));
@@ -105,16 +95,16 @@ public class TestStats {
     Assert.assertNull(counterMap.get("fuu"));
   }
 
-  @Test(groups = "fast")
-  public void testRemoveAttribute() throws Exception {
+  @Test(groups = "fast", dataProvider = "stats")
+  public void testRemoveAttribute(Stats stats) throws Exception {
     stats.setAttribute("bar", "bar");
     Assert.assertTrue(stats.removeAttribute("bar"));
     Assert.assertFalse(stats.removeAttribute("bar"));
     Assert.assertNull(stats.getAttributes().get("bar"));
   }
 
-  @Test(groups = "fast")
-  public void testDynamicCounters() throws Exception {
+  @Test(groups = "fast", dataProvider = "stats")
+  public void testDynamicCounters(Stats stats) throws Exception {
     LongWrapper longValue = new LongWrapper(1);
     final String name = "testCounter";
     Assert.assertTrue(stats.addDynamicCounter(name, longValue));
@@ -148,8 +138,8 @@ public class TestStats {
     Assert.assertFalse(stats.removeAttribute(name));
   }
 
-  @Test(groups = "fast")
-  public void testGetDynamicCounters() throws Exception {
+  @Test(groups = "fast", dataProvider = "stats")
+  public void testGetDynamicCounters(Stats stats) throws Exception {
     LongWrapper longValue = new LongWrapper(1);
     final String name = "testCounter";
     Assert.assertTrue(stats.addDynamicCounter(name, longValue));
@@ -157,8 +147,8 @@ public class TestStats {
     Assert.assertEquals(dynamicCounter.call().longValue(), 1);
   }
 
-  @Test(groups = "fast")
-  public void testSetCounterValue() throws Exception {
+  @Test(groups = "fast", dataProvider = "stats")
+  public void testSetCounterValue(Stats stats) throws Exception {
     stats.incrementCounter(COUNTER_TO_SET, 2);
     stats.incrementCounter(COUNTER_TO_SET, 20);
     stats.incrementCounter(COUNTER_TO_SET, 200);
@@ -167,8 +157,8 @@ public class TestStats {
     Assert.assertEquals(stats.getCounter(COUNTER_TO_SET), 1001);
   }
 
-  @Test(groups = "fast")
-  public void testReset() throws Exception {
+  @Test(groups = "fast", dataProvider = "stats")
+  public void testReset(Stats stats) throws Exception {
     Assert.assertEquals(stats.getCounter(ZERO_COUNTER), 0);
     stats.incrementCounter(ZERO_COUNTER, 1);
     stats.incrementCounter(ZERO_COUNTER, 10);
@@ -177,10 +167,18 @@ public class TestStats {
     Assert.assertEquals(stats.getCounter(ZERO_COUNTER), 0);
   }
 
-  @Test(groups = "fast")
-  public void testResetBeforeCallingIncrementOrGet() {
+  @Test(groups = "fast", dataProvider = "stats")
+  public void testResetBeforeCallingIncrementOrGet(Stats stats) {
     stats.resetCounter(COUNTER_NOT_SET);
     Assert.assertEquals(stats.getCounter(COUNTER_NOT_SET), 0);
+  }
+
+  @DataProvider(name = "stats")
+  public Object[][] statsProvider() {
+    return new Object[][]{
+      {new Stats()},
+      {Stats.newUsingLongAdder()}
+    };
   }
 
   /**
