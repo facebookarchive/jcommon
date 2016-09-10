@@ -76,7 +76,7 @@ public class MockExecutor implements ScheduledExecutorService {
       throw new RejectedExecutionException();
     }
 
-    runnableList.add(new AnnotatedRunnable(command, delay, -1, unit));
+    runnableList.add(new AnnotatedRunnable(command, delay, delay, unit));
 
     return new MockScheduledFuture<Void>(toCallable(command));
   }
@@ -105,8 +105,8 @@ public class MockExecutor implements ScheduledExecutorService {
       throw new RejectedExecutionException();
     }
 
-    MockScheduledFuture<V> future = new MockScheduledFuture<V>(callable);
-    AnnotatedRunnable runnable = new AnnotatedRunnable(future, delay, -1, unit);
+    MockScheduledFuture<V> future = new MockScheduledFuture<>(callable);
+    AnnotatedRunnable runnable = new AnnotatedRunnable(future, delay, delay, unit);
     
     runnable.setFuture(future);
     runnableList.add(runnable);
