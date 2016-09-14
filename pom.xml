@@ -16,9 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -30,7 +28,7 @@ limitations under the License.
   <groupId>com.facebook.jcommon</groupId>
   <artifactId>jcommon-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.28-SNAPSHOT</version>
+  <version>0.1.28</version>
   <name>java root</name>
   <description>common java libs</description>
 
@@ -46,14 +44,14 @@ limitations under the License.
     <fb.check.fail-pmd>false</fb.check.fail-pmd>
     <project.build.targetJdk>1.8</project.build.targetJdk>
     <dep.guava.version>18.0</dep.guava.version>
-    <argLine/>
+    <argLine />
   </properties>
 
   <scm>
     <connection>scm:git:git@github.com/facebook/jcommon.git</connection>
     <developerConnection>scm:git:git@github.com:facebook/jcommon.git</developerConnection>
     <url>https://github.com/facebook/jcommon</url>
-    <tag>HEAD</tag>
+    <tag>jcommon-parent-0.1.28</tag>
   </scm>
 
   <distributionManagement>
