@@ -19,7 +19,6 @@ import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableDuration;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 public class CompositeMax extends AbstractCompositeCounter<EventCounter>
   implements EventCounter {

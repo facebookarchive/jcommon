@@ -15,8 +15,6 @@
  */
 package com.facebook.stats;
 
-import org.joda.time.DateTimeUtils;
-
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ShardedConcurrentCounter {

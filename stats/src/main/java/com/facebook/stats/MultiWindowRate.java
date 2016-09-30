@@ -16,7 +16,6 @@
 package com.facebook.stats;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
@@ -42,7 +41,7 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
       newCompositeEventCounter(60),
       newCompositeEventCounter(10),
       newCompositeEventCounter(1),
-      new DateTime(),
+      new DateTime(DateTimeUtils.currentTimeMillis()),
       timeBucketSizeMillis
     );
   }
@@ -163,7 +162,7 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
   }
 
   protected ReadableDateTime getNow() {
-    return new DateTime();
+    return new DateTime(DateTimeUtils.currentTimeMillis());
   }
 
   // current

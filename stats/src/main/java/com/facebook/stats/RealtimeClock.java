@@ -18,6 +18,6 @@ package com.facebook.stats;
 class RealtimeClock implements Clock {
   @Override
   public long getMillis() {
-    return System.currentTimeMillis();
+    return System.nanoTime() / 1000000;
   }
 }
