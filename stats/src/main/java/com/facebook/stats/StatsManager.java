@@ -66,7 +66,7 @@ public class StatsManager implements HistoryManager {
    */
   public StatsManager(int initialNumKeys,
                       float loadFactor,
-                      int concurrencyLevel) 
+                      int concurrencyLevel)
   {
     logger.trace("StatsMgr Created");
     this.typeMap =
@@ -128,7 +128,8 @@ public class StatsManager implements HistoryManager {
     return;
   }
 
-  public void addStatExportType(String shortName, ExportType etype) {
+  @Override
+public void addStatExportType(String shortName, ExportType etype) {
     if (shortName == null) {
       logger.error("Null value passed as key");
       return;
@@ -141,7 +142,8 @@ public class StatsManager implements HistoryManager {
     ensureType(shortName, etype);
   }
 
-  public void addStatValue(String shortName, long delta) {
+  @Override
+public void addStatValue(String shortName, long delta) {
     if (!counterMap.containsKey(shortName)) {
       addStatExportType(shortName, ExportType.AVG);
     }
@@ -284,7 +286,7 @@ public class StatsManager implements HistoryManager {
   /**
    * fb303-support
    */
-  public Map<String, Long> getCounters() 
+  public Map<String, Long> getCounters()
   {
     Map<String, Long> result = new HashMap<String, Long>();
     String fullname;
@@ -304,7 +306,7 @@ public class StatsManager implements HistoryManager {
           value = stat.getMinuteSum();
           break;
         case COUNT:
-          value = stat.getMinuteSum();
+          value = stat.getMinuteSamples();
           break;
         case AVG:
           value = stat.getMinuteAvg();
@@ -324,7 +326,7 @@ public class StatsManager implements HistoryManager {
           value = stat.getTenMinuteSum();
           break;
         case COUNT:
-          value = stat.getTenMinuteSum();
+          value = stat.getTenMinuteSamples();
           break;
         case AVG:
           value = stat.getTenMinuteAvg();
@@ -344,7 +346,7 @@ public class StatsManager implements HistoryManager {
           value = stat.getHourSum();
           break;
         case COUNT:
-          value = stat.getHourSum();
+          value = stat.getHourSamples();
           break;
         case AVG:
           value = stat.getHourAvg();
@@ -364,7 +366,7 @@ public class StatsManager implements HistoryManager {
           value = stat.getAllTimeSum();
           break;
         case COUNT:
-          value = stat.getAllTimeSum();
+          value = stat.getAllTimeSamples();
           break;
         case AVG:
           value = stat.getAllTimeAvg();
