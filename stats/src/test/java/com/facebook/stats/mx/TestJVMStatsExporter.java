@@ -20,8 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.management.ObjectName;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -61,6 +63,30 @@ public class TestJVMStatsExporter {
     Assert.assertEquals(2, exportedStats.size());
     Assert.assertTrue(exportedStats.containsKey("jvm.MemoryPool.Code_Cache.UsageThresholdCount"));
     Assert.assertTrue(exportedStats.containsKey("jvm.MemoryPool.Code_Cache.PeakUsage.committed"));
+  }
+
+  @Test(groups = "fast")
+  public void testStatNameReplacer() throws Exception {
+    Stats stats = new Stats();
+    // Chose an MBean that has a good chance of being there across different jvm versions
+    JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
+      stats,
+      (bean, attribute, keys) -> {
+        StringBuilder name = new StringBuilder();
+        name.append("test");
+        name.append(".").append(attribute);
+        for (String attributeName : keys) {
+          name.append('.').append(attributeName);
+        }
+
+        return Optional.of(name.toString());
+      },
+      "java.lang:type=MemoryPool,name=Code Cache"
+    );
+    Map<String, Long> exportedStats = getExportedStats(stats);
+    for (Map.Entry<String, Long> entry : exportedStats.entrySet()) {
+      Assert.assertTrue(entry.getKey().contains("test."));
+    }
   }
   
   private static Map<String, Long> getExportedStats(Stats stats) {
