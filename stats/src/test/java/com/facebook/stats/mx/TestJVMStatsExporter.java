@@ -22,6 +22,7 @@ import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -37,7 +38,7 @@ public class TestJVMStatsExporter {
     Map<String, Long> exportedStats = getExportedStats(stats);
     Assert.assertTrue(exportedStats.size() > 10);
     // Sort the stats for printing.
-    exportedStats = new TreeMap<String, Long>(exportedStats);
+    exportedStats = new TreeMap<>(exportedStats);
     for (Map.Entry<String, Long> entry : exportedStats.entrySet()) {
       // Print the stats for visual examination
       LOG.info("{} = {}", entry.getKey(), entry.getValue());
@@ -62,9 +63,48 @@ public class TestJVMStatsExporter {
     Assert.assertTrue(exportedStats.containsKey("jvm.MemoryPool.Code_Cache.UsageThresholdCount"));
     Assert.assertTrue(exportedStats.containsKey("jvm.MemoryPool.Code_Cache.PeakUsage.committed"));
   }
+
+  @Test(groups = "fast")
+  public void testStatNameReplacer() throws Exception {
+    Stats stats = new Stats();
+    // Chose an MBean that has a good chance of being there across different jvm versions
+    JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
+      stats,
+      (bean, attribute, key) -> {
+        String name = "test";
+
+        if (attribute != null) {
+          name += "." + attribute;
+        }
+
+        if (key != null) {
+          name += "." + key;
+        }
+
+        return Optional.of(name);
+      },
+      "java.lang:type=MemoryPool,name=Code Cache"
+    );
+    Map<String, Long> exportedStats = getExportedStats(stats);
+    Assert.assertTrue(exportedStats.containsKey("test.Usage.used"));
+    Assert.assertTrue(exportedStats.containsKey("test.Usage.max"));
+  }
+
+  @Test(groups = "fast")
+  public void testStatNameReplacerFilterAll() throws Exception {
+    Stats stats = new Stats();
+    // Chose an MBean that has a good chance of being there across different jvm versions
+    JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
+      stats,
+      (bean, attribute, key) -> Optional.empty(),
+      "java.lang:type=MemoryPool,name=Code Cache"
+    );
+    Map<String, Long> exportedStats = getExportedStats(stats);
+    Assert.assertEquals(exportedStats.size(), 0);
+  }
   
   private static Map<String, Long> getExportedStats(Stats stats) {
-    Map<String, Long> statsMap = new HashMap<String, Long>();
+    Map<String, Long> statsMap = new HashMap<>();
     stats.exportCounters(statsMap);
     return statsMap;
   }
