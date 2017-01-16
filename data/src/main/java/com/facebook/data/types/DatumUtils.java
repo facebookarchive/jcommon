@@ -115,7 +115,7 @@ public class DatumUtils {
   public static MapDatum toMapDatum(LongDatum[] rawTuple, StringDatum[] keyNames) {
     assert rawTuple.length == keyNames.length;
 
-    Map<Datum, Datum> datumMap = new HashMap<Datum, Datum>(rawTuple.length);
+    Map<Datum, Datum> datumMap = new HashMap<>(rawTuple.length);
 
     for (int i = 0; i < rawTuple.length; i++) {
       datumMap.put(keyNames[i], rawTuple[i]);

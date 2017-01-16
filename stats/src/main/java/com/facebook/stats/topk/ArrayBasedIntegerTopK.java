@@ -57,7 +57,7 @@ public class ArrayBasedIntegerTopK implements TopK<Integer> {
         return Longs.compare(counts[i], counts[j]);
       }
     };
-    PriorityQueue<Integer> topK = new PriorityQueue<Integer>(k, comparator);
+    PriorityQueue<Integer> topK = new PriorityQueue<>(k, comparator);
 
     for (int key = 0; key < counts.length; ++key) {
       if (topK.size() < k) {
@@ -70,7 +70,7 @@ public class ArrayBasedIntegerTopK implements TopK<Integer> {
       }
     }
 
-    LinkedList<Integer> sortedTopK = new LinkedList<Integer>();
+    LinkedList<Integer> sortedTopK = new LinkedList<>();
 
     while (!topK.isEmpty()) {
       sortedTopK.addFirst(topK.poll());

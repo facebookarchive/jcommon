@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class MockWatcher implements Watcher {
-  private Queue<WatchedEvent> eventQueue = new LinkedList<WatchedEvent>();
+  private Queue<WatchedEvent> eventQueue = new LinkedList<>();
 
   public Queue<WatchedEvent> getEventQueue() {
     return eventQueue;

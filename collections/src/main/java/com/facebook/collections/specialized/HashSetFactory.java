@@ -23,6 +23,6 @@ import java.util.Set;
 public class HashSetFactory<T> implements SetFactory<T, Set<T>> {
   @Override
   public Set<T> create() {
-    return new HashSet<T>(64);
+    return new HashSet<>(64);
   }
 }

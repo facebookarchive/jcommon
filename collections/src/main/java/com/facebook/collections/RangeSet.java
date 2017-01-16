@@ -32,7 +32,7 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
   /**
    * Map that indexes each LongSegment with the smallest value in its range
    */
-  private final NavigableMap<Long, LongSegment> map = new TreeMap<Long, LongSegment>();
+  private final NavigableMap<Long, LongSegment> map = new TreeMap<>();
   private int size = 0;
 
   @Override

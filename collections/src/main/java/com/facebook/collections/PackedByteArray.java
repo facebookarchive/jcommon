@@ -56,7 +56,7 @@ public class PackedByteArray {
 
     // 256 magic number--just guessing it won't be bigger. If it is,
     // ArrayList will resize
-    List<Byte> byteList = new ArrayList<Byte>(MAGIC_INITIAL_BYTE_ARRAY_SIZE);
+    List<Byte> byteList = new ArrayList<>(MAGIC_INITIAL_BYTE_ARRAY_SIZE);
     byte b;
 
     while ((b = in.readByte()) != terminalDelimiter) {
@@ -83,7 +83,7 @@ public class PackedByteArray {
 
     // 256 magic number--just guessing it won't be bigger. If it is,
     // ArrayList will resize
-    List<Byte> byteList = new ArrayList<Byte>(MAGIC_INITIAL_BYTE_ARRAY_SIZE);
+    List<Byte> byteList = new ArrayList<>(MAGIC_INITIAL_BYTE_ARRAY_SIZE);
     byte b;
 
     while ((b = in.readByte()) != terminalDelimiter) {
@@ -169,9 +169,9 @@ public class PackedByteArray {
   public static List<byte[]> unpackComparable(
     byte[] packedArray, byte delimiter, byte terminalDelimiter
   ) {
-    List<byte[]> results = new ArrayList<byte[]>();
+    List<byte[]> results = new ArrayList<>();
     List<Byte> currentToken =
-      new ArrayList<Byte>(MAGIC_INITIAL_BYTE_ARRAY_SIZE); // very magic
+      new ArrayList<>(MAGIC_INITIAL_BYTE_ARRAY_SIZE); // very magic
 
     for (int i = 0; i < packedArray.length; i++) {
       if (packedArray[i] == terminalDelimiter) {
@@ -181,7 +181,7 @@ public class PackedByteArray {
       } else if (packedArray[i] == delimiter) {
         // end of an element, store and move to next
         results.add(byteListToArray(currentToken));
-        currentToken = new ArrayList<Byte>(MAGIC_INITIAL_BYTE_ARRAY_SIZE);
+        currentToken = new ArrayList<>(MAGIC_INITIAL_BYTE_ARRAY_SIZE);
       } else {
         // put byte into current array
         currentToken.add(packedArray[i]);
@@ -197,7 +197,7 @@ public class PackedByteArray {
    * {@literal
    * <numItems><len1,len2,...len_n><item1,item2,...item_n> }
    *
-   * @param arrayList
+   * @param arrays
    * @return packed byte array
    */
   public static byte[] pack(List<byte[]> arrays) {

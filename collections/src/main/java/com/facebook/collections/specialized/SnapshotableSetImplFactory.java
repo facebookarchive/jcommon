@@ -29,6 +29,6 @@ public class SnapshotableSetImplFactory<T> implements SetFactory<T, Snapshotable
 
   @Override
   public SnapshotableSet<T> create() {
-    return new SnapshotableSetImpl<T>(factory.create(), this);
+    return new SnapshotableSetImpl<>(factory.create(), this);
   }
 }

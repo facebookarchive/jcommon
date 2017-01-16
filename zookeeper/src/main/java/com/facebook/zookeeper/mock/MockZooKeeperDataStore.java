@@ -45,7 +45,7 @@ public class MockZooKeeperDataStore {
   private final AtomicLong nextSessionId = new AtomicLong(0);
   private final ZNode root = ZNode.createRoot();
   private final Map<String, RetrieveableSet<ContextedWatcher>> creationWatchers =
-    new HashMap<String, RetrieveableSet<ContextedWatcher>>();
+    new HashMap<>();
 
   public long getUniqueSessionId() {
     return nextSessionId.addAndGet(1);
@@ -177,7 +177,7 @@ public class MockZooKeeperDataStore {
     if (watcher != null) {
       node.addWatcher(sessionId, watcher, WatchTriggerPolicy.WatchType.GETCHILDREN);
     }
-    return new ArrayList<String>(node.getChildren().keySet());
+    return new ArrayList<>(node.getChildren().keySet());
   }
 
   private static boolean isRootPath(String path) {
@@ -233,9 +233,9 @@ public class MockZooKeeperDataStore {
     private final Stat stat = new Stat();
     private final AtomicLong nextSeqNum = new AtomicLong(0);
     private final AtomicInteger version = new AtomicInteger(0);
-    private final Map<String, ZNode> children = new HashMap<String, ZNode>();
+    private final Map<String, ZNode> children = new HashMap<>();
     private final RetrieveableSet<ContextedWatcher> contextedWatchers =
-      new RetrieveableSet<ContextedWatcher>();
+      new RetrieveableSet<>();
 
     private ZNode(
       long sessionId,
@@ -488,7 +488,7 @@ public class MockZooKeeperDataStore {
       private ZNodeTreeIterator(ZNode initialZNode) {
         this.initialZNode = initialZNode;
         List<ZNode> childrenCopy =
-          new ArrayList<ZNode>(initialZNode.getChildren().values());
+          new ArrayList<>(initialZNode.getChildren().values());
         childIter = childrenCopy.iterator();
       }
 
@@ -633,7 +633,7 @@ public class MockZooKeeperDataStore {
 
     private static Map<WatchType, Set<EventType>> constructMapping() {
       Map<WatchType, Set<EventType>> mapping =
-        new EnumMap<WatchType, Set<EventType>>(WatchType.class);
+        new EnumMap<>(WatchType.class);
       mapping.put(WatchType.EXISTS,
         EnumSet.of(
           EventType.NodeCreated,

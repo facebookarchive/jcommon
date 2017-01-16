@@ -60,7 +60,7 @@ public class ZkUtil {
   public static List<String> filterByPrefix(
     List<String> nodes, String... prefixes
   ) {
-    List<String> lockChildren = new ArrayList<String>();
+    List<String> lockChildren = new ArrayList<>();
     for (String child : nodes){
       for (String prefix : prefixes){
         if (child.startsWith(prefix)){

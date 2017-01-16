@@ -540,7 +540,7 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
 
   @Override
   public SnapshotableSet<Long> makeTransientSnapshot() {
-    return new SnapshotableSetImpl<Long>(
+    return new SnapshotableSetImpl<>(
       Collections.<Long>synchronizedSet(new HashSet<Long>(this)),
       new SnapshotableSetImplFactory<Long>(new HashSetFactory<Long>())
     );

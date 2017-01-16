@@ -53,7 +53,7 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
 
   // adds/removes to eventCounters happen only when synchronized on "this"
   @GuardedBy("this")
-  private final Deque<C> eventCounters = new ArrayDeque<C>();
+  private final Deque<C> eventCounters = new ArrayDeque<>();
   private final ReadableDuration maxLength;      // total window size
   private final ReadableDuration maxChunkLength; // size per counter
 
@@ -216,8 +216,8 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   protected synchronized <C2 extends CompositeEventCounterIf<C>> C2 internalMerge(
     Collection<? extends C> otherCounters, C2 mergedCounter
   ) {
-    PeekableIterator<C> iter1 = new PeekableIterator<C>(eventCounters.iterator());
-    PeekableIterator<C> iter2 = new PeekableIterator<C>(otherCounters.iterator());
+    PeekableIterator<C> iter1 = new PeekableIterator<>(eventCounters.iterator());
+    PeekableIterator<C> iter2 = new PeekableIterator<>(otherCounters.iterator());
 
     while (iter1.hasNext() || iter2.hasNext()) {
       if (iter1.hasNext() && iter2.hasNext()) {
@@ -321,7 +321,7 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    */
   @Deprecated
   protected synchronized List<C> getEventCountersCopy() {
-    return new ArrayList<C>(eventCounters);
+    return new ArrayList<>(eventCounters);
   }
 
   /**

@@ -150,7 +150,7 @@ public class ZNodePruner extends ZkScript {
 
   private Set<String> expandToKeepSet(List<String> toKeep) {
     // Add all listed ZNodes as well as all of their ancestors
-    Set<String> keepSet = new HashSet<String>();
+    Set<String> keepSet = new HashSet<>();
     for (String pathStr : toKeep) {
       ZkGenericPath path = ZkGenericPath.parse("/", pathStr);
       Iterator<ZkGenericPath> lineageIter = path.lineageIterator();

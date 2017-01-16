@@ -34,7 +34,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K,V,S> {
   private final ConcurrentMap<K, S> sets =
-    new ConcurrentHashMap<K, S>();
+    new ConcurrentHashMap<>();
   private final ReadWriteLock removalLock = new ReentrantReadWriteLock();
   private final SetFactory<V, S> setFactory;
 

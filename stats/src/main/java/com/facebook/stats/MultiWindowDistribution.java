@@ -102,7 +102,7 @@ public class MultiWindowDistribution implements WritableMultiWindowStat {
     Iterator<Quantile> keyIterator = keys.iterator();
     Iterator<Long> valueIterator = values.iterator();
 
-    EnumMap<Quantile, Long> result = new EnumMap<Quantile, Long>(Quantile.class);
+    EnumMap<Quantile, Long> result = new EnumMap<>(Quantile.class);
     while (keyIterator.hasNext() && valueIterator.hasNext()) {
       result.put(keyIterator.next(), valueIterator.next());
     }

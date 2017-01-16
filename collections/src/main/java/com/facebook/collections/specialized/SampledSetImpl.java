@@ -247,7 +247,7 @@ public class SampledSetImpl<T> implements SampledSet<T> {
       downSampleLock.readLock().unlock();
     }
 
-    return new SampledSetSnapshot<T>(setCopySampleRate, maxSetSize, setCopy);
+    return new SampledSetSnapshot<>(setCopySampleRate, maxSetSize, setCopy);
   }
 
   @Override
@@ -421,7 +421,7 @@ public class SampledSetImpl<T> implements SampledSet<T> {
 
   @Override
   public SampledSet<T> makeSnapshot() {
-    return new SampledSetImpl<T>(
+    return new SampledSetImpl<>(
       maxSetSize,
       digestFunction,
       baseSet.makeSnapshot(),
@@ -433,10 +433,10 @@ public class SampledSetImpl<T> implements SampledSet<T> {
   @Override
   public SampledSet<T> makeTransientSnapshot() {
     SnapshotableSetImplFactory<T> cpuEfficientHashSetFactory =
-      new SnapshotableSetImplFactory<T>(new HashSetFactory<T>());
+      new SnapshotableSetImplFactory<>(new HashSetFactory<T>());
     SnapshotableSet<T> cpuEfficientHashSet = baseSet.makeTransientSnapshot();
 
-    return new SampledSetImpl<T>(
+    return new SampledSetImpl<>(
       maxSetSize,
       digestFunction,
       cpuEfficientHashSet,

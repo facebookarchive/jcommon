@@ -72,7 +72,7 @@ public class ExecutorServiceFront extends AbstractExecutorService {
     this.executor = executor;
     this.poolName = poolName;
     this.maxTimeSliceMillis = maxTimeSliceUnit.toMillis(maxTimeSlice);
-    drainerList = new ArrayBlockingQueue<Drainer>(maxDrainers);
+    drainerList = new ArrayBlockingQueue<>(maxDrainers);
     
     for (int i = 0; i < maxDrainers; i++) {
       drainerList.add(new Drainer(String.format("%s-%03d", poolName, i)));

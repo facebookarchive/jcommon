@@ -262,7 +262,7 @@ public class ListDatum implements Datum {
     public Datum deserialize(DataInput in) throws SerDeException {
       try {
         int numItems = in.readInt();
-        List<Datum> datumList = new ArrayList<Datum>(numItems);
+        List<Datum> datumList = new ArrayList<>(numItems);
 
         for (int i = 0; i < numItems; i++) {
           byte typeAsByte = in.readByte();

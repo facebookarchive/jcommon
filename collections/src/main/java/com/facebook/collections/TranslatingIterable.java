@@ -30,6 +30,6 @@ public class TranslatingIterable<X, Y> implements Iterable<Y> {
 
   @Override
   public Iterator<Y> iterator() {
-    return new TranslatingIterator<X,Y>(mapper, iterable.iterator());
+    return new TranslatingIterator<>(mapper, iterable.iterator());
   }
 }

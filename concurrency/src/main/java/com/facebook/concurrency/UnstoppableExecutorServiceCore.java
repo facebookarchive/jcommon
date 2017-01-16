@@ -44,7 +44,7 @@ class UnstoppableExecutorServiceCore {
       throw new RejectedExecutionException("executor shutdown already");
     }
 
-    List<Runnable> result = new ArrayList<Runnable>();
+    List<Runnable> result = new ArrayList<>();
 
     for (Runnable task : taskList) {
       result.add(new TrackedRunnableImpl(task));
@@ -60,7 +60,7 @@ class UnstoppableExecutorServiceCore {
       throw new RejectedExecutionException("executor shutdown already");
     }
 
-    List<TrackedCallable<V>> result = new ArrayList<TrackedCallable<V>>();
+    List<TrackedCallable<V>> result = new ArrayList<>();
 
     for (Callable<V> task : taskList) {
       result.add(new TrackedCallableImpl<V>(task));
@@ -82,7 +82,7 @@ class UnstoppableExecutorServiceCore {
       throw new RejectedExecutionException("executor shutdown already");
     }
 
-    return new TrackedCallableImpl<V>(task);
+    return new TrackedCallableImpl<>(task);
   }
 
   private void decrementRemaining() {
@@ -150,13 +150,13 @@ class UnstoppableExecutorServiceCore {
   }
 
   public <V> Future<V> trackFuture(Future<V> future, Completable task) {
-    return new TrackedFuture<V>(future, task);
+    return new TrackedFuture<>(future, task);
   }
 
   public <V> ScheduledFuture<V> trackScheduledFuture(
     ScheduledFuture<V> future, Completable task
   ) {
-    return new TrackedScheduledFuture<V>(future, task);
+    return new TrackedScheduledFuture<>(future, task);
   }
 
   private class TrackedRunnableImpl implements TrackedRunnable {
@@ -254,7 +254,7 @@ class UnstoppableExecutorServiceCore {
 
     @Override
     public Future<V> map(Future<V> input) {
-      TrackedFuture<V> trackedFuture = new TrackedFuture<V>(input, completableList.get(index));
+      TrackedFuture<V> trackedFuture = new TrackedFuture<>(input, completableList.get(index));
 
       index++;
 

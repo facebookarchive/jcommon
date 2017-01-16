@@ -27,7 +27,7 @@ public class StringOptions {
   private final ConcurrentMap<String, Option<String>> optionMap = Maps.newConcurrentMap();
 
   public Option<String> getOption(String key) {
-    Option<String> option = new OptionImpl<String>();
+    Option<String> option = new OptionImpl<>();
     Option<String> existing = optionMap.putIfAbsent(key, option);
 
     return existing == null ? option : existing;

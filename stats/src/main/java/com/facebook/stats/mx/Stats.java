@@ -366,7 +366,7 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   private Map<String, String> materializeAttributes() {
-    Map<String, String> materializedAttributes = new HashMap<String, String>();
+    Map<String, String> materializedAttributes = new HashMap<>();
 
     for (Map.Entry<String, Callable<String>> entry : attributes.entrySet()) {
       try {

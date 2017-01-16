@@ -142,7 +142,7 @@ public class ParallelRunner {
     final ExceptionHandler<E> exceptionHandler,
     String baseName
   ) throws E {
-    final AtomicReference<E> exception = new AtomicReference<E>();
+    final AtomicReference<E> exception = new AtomicReference<>();
     Iterator<Runnable> wrappedIterator =
       Iterators.transform(tasksIter, new ShortCircuitRunnable<>(exception, exceptionHandler));
 

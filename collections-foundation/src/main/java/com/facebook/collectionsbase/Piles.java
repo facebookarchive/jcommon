@@ -40,7 +40,7 @@ public class Piles {
    * @return
    */
   public static <X, Y> List<Y> transmogrify(Iterator<X> iterator, Function<X, Y> function) {
-    com.facebook.collectionsbase.Mapper<X, Y> mapper = new com.facebook.collectionsbase.FunctionToMapper<X, Y>(function);
+    com.facebook.collectionsbase.Mapper<X, Y> mapper = new com.facebook.collectionsbase.FunctionToMapper<>(function);
 
     return transmogrify(iterator, mapper);
   }
@@ -70,7 +70,7 @@ public class Piles {
    * @return
    */
   public static <T> List<T> copyOf(Iterator<T> iterator) {
-    List<T> result = new ArrayList<T>();
+    List<T> result = new ArrayList<>();
 
     copyOf(iterator, result);
 

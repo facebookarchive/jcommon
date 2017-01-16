@@ -28,7 +28,7 @@ import java.util.List;
 public class MockZkConnectionManager implements ZkConnectionManager {
   private final ZooKeeperFactory zooKeeperFactory;
   private ZooKeeperIface zk;
-  private final List<Watcher> watchers = new ArrayList<Watcher>();
+  private final List<Watcher> watchers = new ArrayList<>();
   private boolean isShutdown = false;
 
   public MockZkConnectionManager(ZooKeeperFactory zooKeeperFactory) {

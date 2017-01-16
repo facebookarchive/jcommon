@@ -36,9 +36,9 @@ public class TimeUtil {
 
   static {
     ImmutableMap.Builder<String, DateTimeZone> timeZoneBuilder =
-      new ImmutableMap.Builder<String, DateTimeZone>();
+      new ImmutableMap.Builder<>();
     ImmutableMap.Builder<String, ISOChronology> chronologyBuilder =
-      new ImmutableMap.Builder<String, ISOChronology>();
+      new ImmutableMap.Builder<>();
 
     for (Object id : DateTimeZone.getAvailableIDs()) {
       String tz = (String) id;

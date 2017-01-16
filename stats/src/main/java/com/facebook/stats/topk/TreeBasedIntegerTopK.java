@@ -35,7 +35,7 @@ public class TreeBasedIntegerTopK implements TopK<Integer> {
   private final long[] counts;
   private final boolean[] isInTop;
   private final TreeSet<ComparablePair<Long, Integer>> topPairs =
-    new TreeSet<ComparablePair<Long, Integer>>();
+    new TreeSet<>();
   private long smallestTopCount = Long.MAX_VALUE;
 
   public TreeBasedIntegerTopK(int keySpaceSize, int k) {
@@ -63,17 +63,17 @@ public class TreeBasedIntegerTopK implements TopK<Integer> {
     counts[key] += count;
 
     if (isInTop[key]) {
-      topPairs.remove(new ComparablePair<Long, Integer>(currentCount, key));
-      topPairs.add(new ComparablePair<Long, Integer>(counts[key], key));
+      topPairs.remove(new ComparablePair<>(currentCount, key));
+      topPairs.add(new ComparablePair<>(counts[key], key));
     } else if (topPairs.size() < k) {
-      topPairs.add(new ComparablePair<Long, Integer>(counts[key], key));
+      topPairs.add(new ComparablePair<>(counts[key], key));
       isInTop[key] = true;
       smallestTopCount = Math.min(smallestTopCount, counts[key]);
     } else if (counts[key] > smallestTopCount) {
       ComparablePair<Long, Integer> smallestTopPair = topPairs.pollFirst();
 
       isInTop[smallestTopPair.getSecond()] = false;
-      topPairs.add(new ComparablePair<Long, Integer>(counts[key], key));
+      topPairs.add(new ComparablePair<>(counts[key], key));
       isInTop[key] = true;
       smallestTopCount = topPairs.first().getFirst();
     }
@@ -81,7 +81,7 @@ public class TreeBasedIntegerTopK implements TopK<Integer> {
 
   @Override
   public synchronized List<Integer> getTopK() {
-    LinkedList<Integer> topK = new LinkedList<Integer>();
+    LinkedList<Integer> topK = new LinkedList<>();
 
     for (ComparablePair<Long, Integer> pair : topPairs) {
       topK.addFirst(pair.getSecond());

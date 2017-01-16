@@ -22,7 +22,7 @@ import java.util.List;
 
 public class ListMapper {
   public static <X,Y> List<Y> map(List<X> list, Mapper<X, Y> mapper) {
-    List<Y> result = new ArrayList<Y>();
+    List<Y> result = new ArrayList<>();
 
     for (X item : list) {
       result.add(mapper.map(item));

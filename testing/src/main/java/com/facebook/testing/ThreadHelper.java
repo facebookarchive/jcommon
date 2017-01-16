@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ThreadHelper {
   private static final Logger LOG = LoggerFactory.getLogger(ThreadHelper.class);
   
-  private final List<Throwable> exceptionList = new ArrayList<Throwable>();
+  private final List<Throwable> exceptionList = new ArrayList<>();
   
   public Thread doInThread(Runnable operation) {
     return doInThread(operation, null);

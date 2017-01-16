@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 public class TaskGroup {
   private final ExecutorService defaultExecutor;
   private final Collection<Pair<ExecutorService, Runnable>> taskPairs =
-    new ArrayList<Pair<ExecutorService, Runnable>>();
+    new ArrayList<>();
 
   public TaskGroup(ExecutorService defaultExecutor) {
     this.defaultExecutor = defaultExecutor;

@@ -21,7 +21,7 @@ import java.util.List;
 
 public class ZkPathCoreBuilder {
   private final String appRoot;
-  private final List<String> zNodes = new ArrayList<String>();
+  private final List<String> zNodes = new ArrayList<>();
 
   public ZkPathCoreBuilder(ZkPathCore basePathCore) {
     this(basePathCore.getAppRoot());

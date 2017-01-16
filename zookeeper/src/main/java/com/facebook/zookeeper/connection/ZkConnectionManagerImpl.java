@@ -40,7 +40,7 @@ public class ZkConnectionManagerImpl implements ZkConnectionManager {
 
   private final ZooKeeperFactory zooKeeperFactory;
   private final List<Watcher> registeredWatchers =
-    new CopyOnWriteArrayList<Watcher>();
+    new CopyOnWriteArrayList<>();
   private final ConnectionWatcher connectionWatcher = new ConnectionWatcher();
   private final ConnectionRenewer connectionRenewer =
     new ConnectionRenewer();

@@ -256,7 +256,7 @@ public abstract class ZkApplication {
     private volatile State state = State.PRESTART;
     private final Object transitionLock = new Object();
     private final Map<State, StateHandler> handlerCache =
-      new EnumMap<State, StateHandler>(State.class);
+      new EnumMap<>(State.class);
 
     private StateContext() {
       // Should be one entry per possible state
