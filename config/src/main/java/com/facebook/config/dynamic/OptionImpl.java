@@ -35,7 +35,7 @@ public class OptionImpl<V> implements Option<V> {
   }
 
   @Override
-  public V getValue() {
+  public synchronized V getValue() {
     return value;
   }
 
