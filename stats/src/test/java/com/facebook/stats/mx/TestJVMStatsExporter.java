@@ -22,6 +22,7 @@ import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -61,6 +62,46 @@ public class TestJVMStatsExporter {
     Assert.assertEquals(2, exportedStats.size());
     Assert.assertTrue(exportedStats.containsKey("jvm.MemoryPool.Code_Cache.UsageThresholdCount"));
     Assert.assertTrue(exportedStats.containsKey("jvm.MemoryPool.Code_Cache.PeakUsage.committed"));
+  }
+
+  @Test(groups = "fast")
+  public void testStatNameReplacer() throws Exception {
+    Stats stats = new Stats();
+    // Chose an MBean that has a good chance of being there across different jvm versions
+    JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
+      stats,
+      (bean, attribute, key) -> {
+        StringBuilder name = new StringBuilder();
+        name.append("test");
+
+        if (attribute != null) {
+          name.append('.').append(attribute);
+        }
+        if (key != null) {
+          name.append('.').append(key);
+        }
+        return Optional.of(name.toString());
+      },
+      "java.lang:type=MemoryPool,name=Code Cache"
+    );
+    Map<String, Long> exportedStats = getExportedStats(stats);
+    Assert.assertTrue(exportedStats.containsKey("test.Usage.used"));
+    Assert.assertTrue(exportedStats.containsKey("test.Usage.max"));
+  }
+
+  @Test(groups = "fast")
+  public void testStatNameReplacerFilterAll() throws Exception {
+    Stats stats = new Stats();
+    // Chose an MBean that has a good chance of being there across different jvm versions
+    JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
+      stats,
+      (bean, attribute, key) -> {
+        return Optional.empty();
+      },
+      "java.lang:type=MemoryPool,name=Code Cache"
+    );
+    Map<String, Long> exportedStats = getExportedStats(stats);
+    Assert.assertTrue(exportedStats.size() == 0);
   }
   
   private static Map<String, Long> getExportedStats(Stats stats) {
