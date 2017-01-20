@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import javax.management.ObjectName;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -71,22 +70,38 @@ public class TestJVMStatsExporter {
     // Chose an MBean that has a good chance of being there across different jvm versions
     JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
       stats,
-      (bean, attribute, keys) -> {
+      (bean, attribute, key) -> {
         StringBuilder name = new StringBuilder();
         name.append("test");
-        name.append(".").append(attribute);
-        for (String attributeName : keys) {
-          name.append('.').append(attributeName);
-        }
 
+        if (attribute != null) {
+          name.append('.').append(attribute);
+        }
+        if (key != null) {
+          name.append('.').append(key);
+        }
         return Optional.of(name.toString());
       },
       "java.lang:type=MemoryPool,name=Code Cache"
     );
     Map<String, Long> exportedStats = getExportedStats(stats);
-    for (Map.Entry<String, Long> entry : exportedStats.entrySet()) {
-      Assert.assertTrue(entry.getKey().contains("test."));
-    }
+    Assert.assertTrue(exportedStats.containsKey("test.Usage.used"));
+    Assert.assertTrue(exportedStats.containsKey("test.Usage.max"));
+  }
+
+  @Test(groups = "fast")
+  public void testStatNameReplacerFilterAll() throws Exception {
+    Stats stats = new Stats();
+    // Chose an MBean that has a good chance of being there across different jvm versions
+    JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
+      stats,
+      (bean, attribute, key) -> {
+        return Optional.empty();
+      },
+      "java.lang:type=MemoryPool,name=Code Cache"
+    );
+    Map<String, Long> exportedStats = getExportedStats(stats);
+    Assert.assertTrue(exportedStats.size() == 0);
   }
   
   private static Map<String, Long> getExportedStats(Stats stats) {
