@@ -23,7 +23,7 @@ import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
 
-interface StatsReader {
+public interface StatsReader {
   void exportCounters(Map<String, Long> counters);
   MultiWindowRate getRate(String key);
   MultiWindowRate getRate(StatType statType);
