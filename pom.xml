@@ -408,6 +408,11 @@ limitations under the License.
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
             <groups>${testGroups}</groups>
+            <forkCount>0.5C</forkCount>
+            <reuseForks>true</reuseForks>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            <trimStackTrace>false</trimStackTrace>
+            <forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
           </configuration>
         </plugin>
         <plugin>
