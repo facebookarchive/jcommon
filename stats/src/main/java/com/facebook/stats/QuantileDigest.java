@@ -16,7 +16,7 @@
 package com.facebook.stats;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
@@ -24,7 +24,6 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.util.concurrent.AtomicDouble;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,6 +32,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * <p></p>Implements http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.132.7343, a data
@@ -717,7 +717,7 @@ public class QuantileDigest {
 
     public Node getSingleChild() {
       checkState(hasSingleChild(), "Node does not have a single child");
-      return Objects.firstNonNull(left, right);
+      return MoreObjects.firstNonNull(left, right);
     }
 
     public long getUpperBound() {

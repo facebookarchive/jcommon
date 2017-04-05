@@ -51,9 +51,7 @@ final class StaticModelUtil {
       for (int i = 0; i < weights.length; i++) {
         Preconditions.checkArgument(
             weights[i] >= 0,
-            "weight %s value %s is not greater than zero",
-            i,
-            weights[i]
+            String.format("weight %s value %s is not greater than zero", i, weights[i])
         );
         weights[i] /= sum;
 

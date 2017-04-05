@@ -43,7 +43,7 @@ limitations under the License.
     <fb.check.fail-findbugs>false</fb.check.fail-findbugs>
     <fb.check.fail-pmd>false</fb.check.fail-pmd>
     <project.build.targetJdk>1.8</project.build.targetJdk>
-    <dep.guava.version>18.0</dep.guava.version>
+    <dep.guava.version>21.0</dep.guava.version>
     <argLine />
   </properties>
 
