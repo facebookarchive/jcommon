@@ -15,10 +15,7 @@
  */
 package com.facebook.stats;
 
-import com.facebook.stats.mx.StatsUtil;
 import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -30,12 +27,16 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
+import com.facebook.stats.mx.StatsUtil;
+
 import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 public class TestQuantileDigest {
-  private final static Logger LOG = LoggerFactory.getLogger(TestQuantileDigest.class);
+  private final static Logger LOG = LoggerImpl.getLogger(TestQuantileDigest.class);
 
   /**
    * This value should be the result of:
@@ -483,14 +484,14 @@ public class TestQuantileDigest {
     digest.validate();
 
     LOG.info(
-      "Processed {} entries in {} ms. Insertion rate = {} entries/s",
+      "Processed %d entries in %d ms. Insertion rate = %f entries/s",
       count,
       TimeUnit.NANOSECONDS.toMillis(totalTime),
       count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
     );
 
     LOG.info(
-      "Compressions: {}, {} entries/compression", digest.getCompressions(),
+      "Compressions: %d, %f entries/compression", digest.getCompressions(),
       digest.getCount() / digest.getCompressions()
     );
   }

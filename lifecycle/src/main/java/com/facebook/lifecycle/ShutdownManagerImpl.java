@@ -15,20 +15,20 @@
  */
 package com.facebook.lifecycle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 
 /**
  * Runtime.addShutdownHook() has no guarantee of order.  This class
  * will run hooks by stage and in the order added within stages
  */
 public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
-  private static final Logger LOG = LoggerFactory.getLogger(ShutdownManagerImpl.class);
+  private static final Logger LOG = LoggerImpl.getLogger(ShutdownManagerImpl.class);
 
   private final Map<T, List<Runnable>> shutdownHooksByStage = new ConcurrentHashMap<>();
   private final Thread thread;
@@ -57,7 +57,7 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
       shutdownHooksByStage.put(stage, new ArrayList<Runnable>());
     }
 
-    // three values : being/end sentinel and at least one usable value 
+    // three values : being/end sentinel and at least one usable value
     if (stages.length < 3) {
       throw new IllegalArgumentException("enum class must have at least 3 values");
     }
@@ -92,7 +92,7 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
       //if the stage being added is our stage or earlier, we can't accept this
       if (stage.compareTo(currentStage) <= 0) {
         LOG.warn(
-            "cannot add hook for stage {} when in stage {}",
+            "cannot add hook for stage %s when in stage %s",
             stage,
             currentStage
         );

@@ -15,8 +15,6 @@
  */
 package com.facebook.stats;
 
-import com.facebook.stats.topk.TopK;
-import org.slf4j.Logger;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -24,13 +22,16 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import com.facebook.logging.Logger;
+import com.facebook.stats.topk.TopK;
+
 import static org.testng.Assert.assertEquals;
 
 public abstract class TestIntegerTopK {
   // few hundred millis each test to keep tests short
   private static final long TEST_TIME_NANOS = TimeUnit.MILLISECONDS.toNanos(1250);
   private static Logger LOG;
-  
+
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
     LOG = getLogger();
@@ -87,7 +88,7 @@ public abstract class TestIntegerTopK {
     int maxAdd = 100;
     TopK<Integer> topK = getInstance(keySpaceSize, k);
 
-    LOG.info("Timing add() performance with keySpaceSize = {}, k = {}", keySpaceSize, k);
+    LOG.info("Timing add() performance with keySpaceSize = %d, k = %d", keySpaceSize, k);
 
     Random random = new Random(0);
     long totalTime = 0;
@@ -107,7 +108,7 @@ public abstract class TestIntegerTopK {
     }
 
     LOG.info(
-      "Processed {} entries in {} ms. Insertion rate = {} entries/s",
+      "Processed %d entries in %d ms. Insertion rate = %f entries/s",
       count,
       TimeUnit.NANOSECONDS.toMillis(totalTime),
       count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
@@ -121,7 +122,7 @@ public abstract class TestIntegerTopK {
     int maxAdd = 100;
     TopK<Integer> topK = getInstance(keySpaceSize, k);
 
-    LOG.info("Timing getTopK() performance with keySpaceSize = {}, k = {}", keySpaceSize, k);
+    LOG.info("Timing getTopK() performance with keySpaceSize = %d, k = %d", keySpaceSize, k);
 
     Random random = new Random(0);
     long totalTime = 0;
@@ -144,7 +145,7 @@ public abstract class TestIntegerTopK {
     }
 
     LOG.info(
-      "Processed {} entries in {} ms. Retrieval rate = {} retrievals/s",
+      "Processed %d entries in %d ms. Retrieval rate = %f retrievals/s",
       count,
       TimeUnit.NANOSECONDS.toMillis(totalTime),
       count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))

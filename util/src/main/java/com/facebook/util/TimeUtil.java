@@ -16,8 +16,6 @@
 package com.facebook.util;
 
 import com.google.common.collect.ImmutableMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
@@ -26,8 +24,11 @@ import org.joda.time.chrono.ISOChronology;
 
 import java.util.Map;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
+
 public class TimeUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(TimeUtil.class);
+  private static final Logger LOG = LoggerImpl.getLogger(TimeUtil.class);
 
   // DateTimeZone.forID() and ISOChronology.getInstance() are very expensive,
   // so we statically pre-compute a fast lookup table.
@@ -62,7 +63,7 @@ public class TimeUtil {
       success = true;
     } finally {
       LOG.info(
-        "{} ({}) elapsed time(ms): {}",
+        "%s (%s) elapsed time(ms): %d",
         tag,
         success,
         DateTimeUtils.currentTimeMillis() - start
@@ -84,7 +85,7 @@ public class TimeUtil {
       return value;
     } finally {
       LOG.info(
-        "{} ({}) elapsed time(ms): {}",
+        "%s (%s) elapsed time(ms): %d",
         tag,
         success,
         DateTimeUtils.currentTimeMillis() - start

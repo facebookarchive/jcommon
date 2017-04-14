@@ -15,8 +15,6 @@
  */
 package com.facebook.stats.mx;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -25,12 +23,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
+
 /**
  * Test {@link JVMStatsExporter}
  */
 public class TestJVMStatsExporter {
-  private static final Logger LOG = LoggerFactory.getLogger(TestJVMStatsExporter.class);
-  
+  private static final Logger LOG = LoggerImpl.getLogger(TestJVMStatsExporter.class);
+
   @Test(groups = "fast")
   public void testAllStats() throws Exception {
     Stats stats = new Stats();
@@ -41,14 +42,14 @@ public class TestJVMStatsExporter {
     exportedStats = new TreeMap<>(exportedStats);
     for (Map.Entry<String, Long> entry : exportedStats.entrySet()) {
       // Print the stats for visual examination
-      LOG.info("{} = {}", entry.getKey(), entry.getValue());
+      LOG.info("%s = %s", entry.getKey(), entry.getValue());
     }
     // Verify that top level numeric stat is available
     Assert.assertTrue(exportedStats.containsKey("jvm.Memory.ObjectPendingFinalizationCount"));
     // Verify that a numeric attribute of composite data is available
     Assert.assertTrue(exportedStats.containsKey("jvm.Memory.HeapMemoryUsage.committed"));
   }
-  
+
   @Test(groups = "fast")
   public void testFilteredStats() throws Exception {
     Stats stats = new Stats();
@@ -102,7 +103,7 @@ public class TestJVMStatsExporter {
     Map<String, Long> exportedStats = getExportedStats(stats);
     Assert.assertEquals(exportedStats.size(), 0);
   }
-  
+
   private static Map<String, Long> getExportedStats(Stats stats) {
     Map<String, Long> statsMap = new HashMap<>();
     stats.exportCounters(statsMap);

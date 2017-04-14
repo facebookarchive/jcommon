@@ -16,13 +16,14 @@
 package com.facebook.config.dynamic;
 
 import com.google.common.collect.Maps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentMap;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
+
 public class StringOptions {
-  private static final Logger LOG = LoggerFactory.getLogger(StringOptions.class);
+  private static final Logger LOG = LoggerImpl.getLogger(StringOptions.class);
 
   private final ConcurrentMap<String, Option<String>> optionMap = Maps.newConcurrentMap();
 
@@ -34,7 +35,7 @@ public class StringOptions {
   }
 
   public void setOption(String key, String value) {
-    LOG.info("Setting option {} to {}", key, value);
+    LOG.info("Setting option %s to %s", key, value);
 
     Option<String> option = getOption(key);
 

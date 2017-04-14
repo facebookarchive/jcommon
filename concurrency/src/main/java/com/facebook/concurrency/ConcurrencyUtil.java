@@ -16,8 +16,6 @@
 package com.facebook.concurrency;
 
 import com.google.common.collect.Iterators;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -28,6 +26,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 import com.facebook.util.ExtRunnable;
 import com.facebook.util.exceptions.ExceptionHandler;
 
@@ -48,7 +48,7 @@ import com.facebook.util.exceptions.ExceptionHandler;
  *
  */
 public class ConcurrencyUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(ConcurrencyUtil.class);
+  private static final Logger LOG = LoggerImpl.getLogger(ConcurrencyUtil.class);
   private static final AtomicLong INSTANCE_NUMBER = new AtomicLong(0);
   private static final ReadWriteLock SHUTDOWN_LOCK =
     new ReentrantReadWriteLock();
@@ -87,7 +87,7 @@ public class ConcurrencyUtil {
           executor.shutdown();
           if (!executor.awaitTermination(AWAIT_TERMINATION_SECONDS, TimeUnit.SECONDS)) {
             LOG.warn(
-              "executor didn't finish shutting down in {} seconds, moving on",
+              "executor didn't finish shutting down in %d seconds, moving on",
               AWAIT_TERMINATION_SECONDS
             );
           }
@@ -105,7 +105,7 @@ public class ConcurrencyUtil {
   ) throws E {
     parallelRunExt(tasks.iterator(), numThreads, exceptionHandler);
   }
-  
+
   public static <E extends Exception> void parallelRunExt(
     Iterator<? extends ExtRunnable<E>> tasksIter,
     int numThreads,
@@ -127,7 +127,7 @@ public class ConcurrencyUtil {
   ) throws E {
     parallelRunExt(tasks.iterator(), numThreads, exceptionHandler, baseName);
   }
-  
+
   public static <E extends Exception> void parallelRunExt(
     Iterator<? extends ExtRunnable<E>> tasksIter,
     int numThreads,
@@ -148,7 +148,7 @@ public class ConcurrencyUtil {
   public static void parallelRun(Iterable<? extends Runnable> tasks, int numThreads) {
     parallelRun(tasks.iterator(), numThreads);
   }
-  
+
   public static void parallelRun(Iterator<? extends Runnable> tasksIter, int numThreads) {
     parallelRun(
       tasksIter, numThreads, "ParallelRun-" + INSTANCE_NUMBER.getAndIncrement()
@@ -160,7 +160,7 @@ public class ConcurrencyUtil {
   ) {
     parallelRun(tasks.iterator(), numThreads, baseName);
   }
-  
+
   public static void parallelRun(
     Iterator<? extends Runnable> tasksIter, int numThreads, String baseName
   ) {
@@ -176,7 +176,7 @@ public class ConcurrencyUtil {
       } else {
         // we have to create a one-off for this run
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
-        
+
         parallelRunner = new ParallelRunner(
           executor,
           "ParallelRunExt-"
@@ -191,7 +191,7 @@ public class ConcurrencyUtil {
 
   public static void shutdown() {
     SHUTDOWN_LOCK.writeLock().lock();
-    
+
     try {
       CACHED_EXECUTOR.shutdown();
     } finally {

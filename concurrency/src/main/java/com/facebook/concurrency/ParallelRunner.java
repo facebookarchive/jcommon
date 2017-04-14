@@ -16,8 +16,6 @@
 package com.facebook.concurrency;
 
 import com.google.common.collect.Iterators;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -26,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 import com.facebook.util.ExtRunnable;
 import com.facebook.util.exceptions.ExceptionHandler;
 
@@ -35,7 +35,7 @@ import com.facebook.util.exceptions.ExceptionHandler;
  * lower than specified, that bound will of course be used.
  */
 public class ParallelRunner {
-  private static final Logger LOG = LoggerFactory.getLogger(ParallelRunner.class);
+  private static final Logger LOG = LoggerImpl.getLogger(ParallelRunner.class);
   private static final String DEFAULT_NAME_PREFIX = "ParallelRun-";
 
   private final AtomicLong instanceNumber = new AtomicLong(0);
@@ -45,7 +45,7 @@ public class ParallelRunner {
 
   /**
    * Create an instance on top of an underlying executor
-   * 
+   *
    * @param executor executor to wrap
    * @param defaultNamePrefix borrowed threads will use this name prefix
    */
@@ -56,7 +56,7 @@ public class ParallelRunner {
 
   /**
    * use a default naming prefix, ParallelRunner.DEFAULT_NAME_PREFIX
-   * 
+   *
    * @param executor
    */
   public ParallelRunner(ExecutorService executor) {
@@ -178,7 +178,7 @@ public class ParallelRunner {
 
   /**
    * adapter method for Iterables
-   * 
+   *
    * @param tasks
    * @param numThreads
    * @param baseName
@@ -190,7 +190,7 @@ public class ParallelRunner {
   }
 
   /**
-   * This is the core method of ParallelRunner , which takes an iterator of tasks. It is ideal as 
+   * This is the core method of ParallelRunner , which takes an iterator of tasks. It is ideal as
    * often it is desirable to begin execution of tasks before the entire set has been created.  In
    * this way, task are started immediately as they are pulled off of the iterator than than
    * draining the iterator and then executing them.
@@ -211,7 +211,7 @@ public class ParallelRunner {
     Iterator<? extends Runnable> tasksIter, int numThreads, String baseName
   ) {
     ExecutorService executorForInvocation;
-    
+
     // create a virtual executor that bounds the # of threads we can use
     // for this run
     executorForInvocation =
@@ -223,21 +223,21 @@ public class ParallelRunner {
           numThreads
         )
       );
-    
+
     int totalTasks = 0;
 
     while (tasksIter.hasNext()) {
       executorForInvocation.execute(tasksIter.next());
       totalTasks++;
     }
-    
+
     // now wait for everything to finish
     executorForInvocation.shutdown();
-    
+
     try {
       while (!executorForInvocation.awaitTermination(10, TimeUnit.SECONDS)) {
         LOG.info(
-          "({}) {} waited 10s for {} tasks, waiting some more",
+          "(%d) %s waited 10s for %d tasks, waiting some more",
           Thread.currentThread().getId(),
           baseName,
           totalTasks
@@ -245,7 +245,7 @@ public class ParallelRunner {
       }
 
       LOG.info(
-          "({}) tasksIter for {} completed",
+          "(%d) tasksIter for %s completed",
           Thread.currentThread().getId(),
           baseName
       );

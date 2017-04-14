@@ -15,13 +15,13 @@
  */
 package com.facebook.stats;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 import com.facebook.stats.topk.HashBasedTopK;
 import com.facebook.stats.topk.TopK;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TestHashBasedTopK extends TestIntegerTopK {
-  private static final Logger LOG = LoggerFactory.getLogger(TestHashBasedTopK.class);
+  private static final Logger LOG = LoggerImpl.getLogger(TestHashBasedTopK.class);
 
   protected TopK<Integer> getInstance(int keySpaceSize, int k) {
     return new HashBasedTopK(k);
