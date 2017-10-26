@@ -13,14 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.util;
+package com.facebook.util.function;
 
-import java.util.concurrent.Callable;
+import com.facebook.util.ExtRunnable;
+import java.util.Objects;
+import java.util.function.Consumer;
 
-public interface ExtCallable<V, E extends Throwable> {
-  V call() throws E;
+public interface ExtConsumer<T, E extends Throwable> {
+  void accept(T t) throws E;
   
-  static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
-    return () -> ExtSupplier.quiet(() -> callable.call()).get();
+  default ExtConsumer<T, E> andThen(ExtConsumer<? super T, E> after) {
+    Objects.requireNonNull(after);
+    return (t) -> {
+      accept(t);
+      after.accept(t);
+    };
+  }
+  
+  static <T> Consumer<T> quiet(ExtConsumer<T, ?> consumer) {
+    return (t) -> ExtRunnable.quiet(() -> consumer.accept(t)).run();
   }
 }

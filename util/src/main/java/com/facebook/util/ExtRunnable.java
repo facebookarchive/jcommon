@@ -15,6 +15,8 @@
  */
 package com.facebook.util;
 
+import com.facebook.util.exceptions.UncheckedCheckedException;
+
 /**
  * extended runnable that throws an exception. Does not a produce a value
  * (hence not a Callable)
@@ -22,5 +24,17 @@ package com.facebook.util;
  * @param <E> type of exception you want to be able to throw
  */
 public interface ExtRunnable<E extends Throwable>{
-  public void run() throws E;
+  void run() throws E;
+  
+  static Runnable quiet(ExtRunnable<?> runnable) {
+    return () -> {
+      try {
+        runnable.run();
+      } catch (Error | RuntimeException e) {
+        throw e;
+      } catch (Throwable e) {
+        throw new UncheckedCheckedException(e);
+      }
+    };
+  }
 }

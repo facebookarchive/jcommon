@@ -24,7 +24,7 @@ public class ExceptionUtils {
 
   public static <T extends Exception, S extends Exception> T wrap(S e, Class<T> clazz) {
     if (clazz.isAssignableFrom(e.getClass())) {
-      return (T) e;
+      return clazz.cast(e);
     }
 
     try {

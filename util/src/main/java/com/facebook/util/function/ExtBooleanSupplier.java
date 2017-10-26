@@ -13,14 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.util;
+package com.facebook.util.function;
 
-import java.util.concurrent.Callable;
+import com.facebook.util.exceptions.UncheckedCheckedException;
+import java.util.function.BooleanSupplier;
 
-public interface ExtCallable<V, E extends Throwable> {
-  V call() throws E;
+public interface ExtBooleanSupplier<E extends Throwable> {
+  boolean getAsBoolean() throws E;
   
-  static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
-    return () -> ExtSupplier.quiet(() -> callable.call()).get();
+  static BooleanSupplier quiet(ExtBooleanSupplier<?> booleanSupplier) {
+    return () -> {
+      try {
+        return booleanSupplier.getAsBoolean();
+      } catch (Error | RuntimeException e) {
+        throw e;
+      } catch (Throwable e) {
+        throw new UncheckedCheckedException(e);
+      }
+    };
   }
 }

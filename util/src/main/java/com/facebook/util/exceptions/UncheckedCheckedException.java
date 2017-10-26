@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.util;
+package com.facebook.util.exceptions;
 
-import java.util.concurrent.Callable;
+/**
+ * This exception represents a checked exception that was caught and re-thrown as a {@link RuntimeException}.
+ */
+public class UncheckedCheckedException extends RuntimeException {
+  private static final long serialVersionUID = 1L;
 
-public interface ExtCallable<V, E extends Throwable> {
-  V call() throws E;
-  
-  static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
-    return () -> ExtSupplier.quiet(() -> callable.call()).get();
+  public UncheckedCheckedException(Throwable t) {
+    super(t);
   }
 }
