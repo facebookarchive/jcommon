@@ -15,7 +15,21 @@
  */
 package com.facebook.util;
 
+import com.facebook.util.exceptions.UncheckedCheckedException;
+import java.util.function.Supplier;
+
 public interface ExtSupplier<T, E extends Throwable> {
   T get() throws E;
+  
+  public static <T> Supplier<T> quiet(ExtSupplier<T, ?> supplier) {
+    return () -> {
+      try {
+        return supplier.get();
+      } catch (Error | RuntimeException e) {
+        throw e;
+      } catch (Throwable e) {
+        throw new UncheckedCheckedException(e);
+      }
+    };
+  }
 }
-

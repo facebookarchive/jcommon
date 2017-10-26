@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.util;
+package com.facebook.util.function;
 
-import java.util.concurrent.Callable;
+import java.util.function.IntBinaryOperator;
 
-public interface ExtCallable<V, E extends Throwable> {
-  V call() throws E;
+public interface ExtIntBinaryOperator<E extends Throwable> {
+  int applyAsInt(int left, int right) throws E;
   
-  static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
-    return () -> ExtSupplier.quiet(() -> callable.call()).get();
+  static IntBinaryOperator quiet(ExtIntBinaryOperator<?> intBinaryOperator) {
+    return (left, right) -> ExtIntSupplier.quiet(() -> intBinaryOperator.applyAsInt(left, right)).getAsInt();
   }
 }

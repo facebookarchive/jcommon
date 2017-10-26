@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.util;
+package com.facebook.util.function;
 
-import java.util.concurrent.Callable;
+import com.facebook.util.TestQuietFunctionBase;
+import java.util.function.Supplier;
 
-public interface ExtCallable<V, E extends Throwable> {
-  V call() throws E;
-  
-  static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
-    return () -> ExtSupplier.quiet(() -> callable.call()).get();
+public class TestExtIntSupplier extends TestQuietFunctionBase {
+  @Override
+  protected void throwFromQuiet(Supplier<? extends Throwable> toThrow) {
+    ExtIntSupplier.quiet(() -> { throw toThrow.get(); }).getAsInt();
   }
 }

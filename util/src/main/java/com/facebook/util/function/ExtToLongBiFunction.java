@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.util;
+package com.facebook.util.function;
 
-import java.util.concurrent.Callable;
+import java.util.function.ToLongBiFunction;
 
-public interface ExtCallable<V, E extends Throwable> {
-  V call() throws E;
+public interface ExtToLongBiFunction<T, U, E extends Throwable> {
+  long applyAsLong(T t, U u) throws E;
   
-  static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
-    return () -> ExtSupplier.quiet(() -> callable.call()).get();
+  static <T, U> ToLongBiFunction<T, U> quiet(ExtToLongBiFunction<T, U, ?> toLongBiFunction) {
+    return (t, u) -> ExtLongSupplier.quiet(() -> toLongBiFunction.applyAsLong(t, u)).getAsLong();
   }
 }
