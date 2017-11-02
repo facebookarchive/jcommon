@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.util;
+package com.facebook.util.function;
 
-import java.util.concurrent.Callable;
+import com.facebook.util.ExtSupplier;
+import java.util.Objects;
+import java.util.function.BiFunction;
 
-public interface ExtCallable<V, E extends Throwable> {
-  V call() throws E;
+public interface ExtBiFunction<T, U, R, E extends Throwable> {
+  R apply(T t, U u) throws E;
   
-  static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
-    return () -> ExtSupplier.quiet(() -> callable.call()).get();
+  default <V> ExtBiFunction<T, U, V, E> andThen(ExtFunction<? super R, ? extends V, E> after) {
+    Objects.requireNonNull(after);
+    return (t, u) -> after.apply(apply(t, u));
+  }
+  
+  static <T, U, R> BiFunction<T, U, R> quiet(ExtBiFunction<T, U, R, ?> biFunction) {
+    return (t, u) -> ExtSupplier.quiet(() -> biFunction.apply(t, u)).get();
   }
 }

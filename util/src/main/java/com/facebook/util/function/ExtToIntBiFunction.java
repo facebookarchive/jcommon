@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.util;
+package com.facebook.util.function;
 
-import java.util.concurrent.Callable;
+import java.util.function.ToIntBiFunction;
 
-public interface ExtCallable<V, E extends Throwable> {
-  V call() throws E;
+public interface ExtToIntBiFunction<T, U, E extends Throwable> {
+  int applyAsInt(T t, U u) throws E;
   
-  static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
-    return () -> ExtSupplier.quiet(() -> callable.call()).get();
+  static <T, U> ToIntBiFunction<T, U> quiet(ExtToIntBiFunction<T, U, ?> toIntBiFunction) {
+    return (t, u) -> ExtIntSupplier.quiet(() -> toIntBiFunction.applyAsInt(t, u)).getAsInt();
   }
 }

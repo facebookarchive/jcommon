@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.util;
+package com.facebook.util.function;
 
-import java.util.concurrent.Callable;
+import java.util.function.IntToDoubleFunction;
 
-public interface ExtCallable<V, E extends Throwable> {
-  V call() throws E;
+public interface ExtIntToDoubleFunction<E extends Throwable> {
+  double applyAsDouble(int value) throws E;
   
-  static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
-    return () -> ExtSupplier.quiet(() -> callable.call()).get();
+  static IntToDoubleFunction quiet(ExtIntToDoubleFunction<?> intToDoubleFunction) {
+    return (value) -> ExtDoubleSupplier.quiet(() -> intToDoubleFunction.applyAsDouble(value)).getAsDouble();
   }
 }

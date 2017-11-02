@@ -15,12 +15,11 @@
  */
 package com.facebook.util;
 
-import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
-public interface ExtCallable<V, E extends Throwable> {
-  V call() throws E;
-  
-  static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
-    return () -> ExtSupplier.quiet(() -> callable.call()).get();
+public class TestExtRunnable extends TestQuietFunctionBase {
+  @Override
+  protected void throwFromQuiet(Supplier<? extends Throwable> toThrow) {
+    ExtRunnable.quiet(() -> { throw toThrow.get(); }).run();
   }
 }
