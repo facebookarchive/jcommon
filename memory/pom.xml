@@ -21,7 +21,7 @@ limitations under the License.
   <parent>
     <groupId>com.facebook.jcommon</groupId>
     <artifactId>jcommon-parent</artifactId>
-    <version>0.1.31</version>
+    <version>0.1.32-SNAPSHOT</version>
   </parent>
 
   <artifactId>memory</artifactId>
