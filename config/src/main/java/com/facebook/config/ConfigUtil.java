@@ -82,19 +82,14 @@ public class ConfigUtil {
 
       if (matcher.group(2) != null) {
         char unit = matcher.group(2).toLowerCase().charAt(0);
-
-        switch (unit) {
-          case 'b':
+        
+        for (char item: new char[]{'b','k','m','g'}) {
+          if (unit == item) {
             return number;
-          case 'k':
-            return number * 1024;
-          case 'm':
-            return number * 1024 * 1024;
-          case 'g':
-            return number * 1024 * 1024 * 1024;
-          default:
-            throw new ConfigException("unknown size unit :" + unit);
+          }
+          number *= 1024;
         }
+        throw new ConfigException("unknown size unit :" + unit);
       } else {
         return number;
       }
