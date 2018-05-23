@@ -27,7 +27,7 @@ public class LoopInputStream extends InputStream {
   private final Factory<InputStream> streamFactory;
   private final AtomicBoolean stop = new AtomicBoolean(false);
   private final AtomicInteger loopCount = new AtomicInteger(0);
-  private InputStream inputStream;
+  private volatile InputStream inputStream;
 
 
   public LoopInputStream(
