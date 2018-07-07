@@ -15,6 +15,7 @@
  */
 package com.facebook.stats.mx;
 
+import com.facebook.stats.concurrent.Stat;
 import com.google.common.collect.ImmutableMap;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -22,6 +23,7 @@ import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
 public class TestStats {
@@ -181,6 +183,96 @@ public class TestStats {
   public void testResetBeforeCallingIncrementOrGet() {
     stats.resetCounter(COUNTER_NOT_SET);
     Assert.assertEquals(stats.getCounter(COUNTER_NOT_SET), 0);
+  }
+
+  @Test(groups = "fast")
+  public void testConcurrentRateExports() {
+    Stat stat = stats.concurrentRate("test-concurrent");
+    Map<String, Long> actual = new TreeMap<>();
+
+    stats.exportCounters(actual);
+    Assert.assertNotNull(stat);
+    Assert.assertEquals(
+      actual.toString(),
+      "{" +
+        "test-concurrent.rate=0, " +
+        "test-concurrent.rate.3600=0, " +
+        "test-concurrent.rate.60=0, " +
+        "test-concurrent.rate.600=0, " +
+        "test-concurrent.sum=0, " +
+        "test-concurrent.sum.3600=0, " +
+        "test-concurrent.sum.60=0, " +
+        "test-concurrent.sum.600=0" +
+        "}"
+    );
+  }
+
+  @Test(groups = "fast")
+  public void testConcurrentSpreadExports() {
+    Stat stat = stats.concurrentSpread("test-concurrent");
+    Map<String, Long> actual = new TreeMap<>();
+
+    stats.exportCounters(actual);
+    Assert.assertNotNull(stat);
+    Assert.assertEquals(
+      actual.toString(),
+      "{" +
+        "test-concurrent.avg=0, " +
+        "test-concurrent.avg.3600=0, " +
+        "test-concurrent.avg.60=0, " +
+        "test-concurrent.avg.600=0, " +
+        "test-concurrent.max=-9223372036854775808, " +
+        "test-concurrent.max.3600=-9223372036854775808, " +
+        "test-concurrent.max.60=-9223372036854775808, " +
+        "test-concurrent.max.600=-9223372036854775808, " +
+        "test-concurrent.min=9223372036854775807, " +
+        "test-concurrent.min.3600=9223372036854775807, " +
+        "test-concurrent.min.60=9223372036854775807, " +
+        "test-concurrent.min.600=9223372036854775807, " +
+        "test-concurrent.samples=0, " +
+        "test-concurrent.samples.3600=0, " +
+        "test-concurrent.samples.60=0, " +
+        "test-concurrent.samples.600=0" +
+        "}"
+    );
+  }
+
+  @Test(groups = "fast")
+  public void testConcurrentSpreadRateExports() {
+    Stat stat = stats.concurrentSpreadRate("test-concurrent");
+    Map<String, Long> actual = new TreeMap<>();
+
+    stats.exportCounters(actual);
+    Assert.assertNotNull(stat);
+    Assert.assertEquals(
+      actual.toString(),
+      "{" +
+        "test-concurrent.avg=0, " +
+        "test-concurrent.avg.3600=0, " +
+        "test-concurrent.avg.60=0, " +
+        "test-concurrent.avg.600=0, " +
+        "test-concurrent.max=-9223372036854775808, " +
+        "test-concurrent.max.3600=-9223372036854775808, " +
+        "test-concurrent.max.60=-9223372036854775808, " +
+        "test-concurrent.max.600=-9223372036854775808, " +
+        "test-concurrent.min=9223372036854775807, " +
+        "test-concurrent.min.3600=9223372036854775807, " +
+        "test-concurrent.min.60=9223372036854775807, " +
+        "test-concurrent.min.600=9223372036854775807, " +
+        "test-concurrent.rate=0, " +
+        "test-concurrent.rate.3600=0, " +
+        "test-concurrent.rate.60=0, " +
+        "test-concurrent.rate.600=0, " +
+        "test-concurrent.samples=0, " +
+        "test-concurrent.samples.3600=0, " +
+        "test-concurrent.samples.60=0, " +
+        "test-concurrent.samples.600=0, " +
+        "test-concurrent.sum=0, " +
+        "test-concurrent.sum.3600=0, " +
+        "test-concurrent.sum.60=0, " +
+        "test-concurrent.sum.600=0" +
+        "}"
+    );
   }
 
   /**

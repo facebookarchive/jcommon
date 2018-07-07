@@ -24,6 +24,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.facebook.logging.Logger;
 import com.facebook.logging.LoggerImpl;
+import com.facebook.stats.concurrent.RateStat;
+import com.facebook.stats.concurrent.SpreadStat;
+import com.facebook.stats.concurrent.Stat;
 import com.facebook.stats.MultiWindowDistribution;
 import com.facebook.stats.MultiWindowRate;
 import com.facebook.stats.MultiWindowSpread;
@@ -42,6 +45,7 @@ public class Stats implements StatsReader, StatsCollector {
   private final ConcurrentMap<String, MultiWindowSpread> spreads = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, MultiWindowDistribution> distributions =
     new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, Stat> concurrent = new ConcurrentHashMap<>();
 
   public Stats(String prefix) {
     this.prefix = prefix;
@@ -94,10 +98,8 @@ public class Stats implements StatsReader, StatsCollector {
       );
     }
 
-    Long duplicate = null;
-
     for (Map.Entry<String, LongCounter> entry : counters.entrySet()) {
-      duplicate = counterMap.put(prefix + entry.getKey(), entry.getValue().get());
+      Long duplicate = counterMap.put(prefix + entry.getKey(), entry.getValue().get());
       if (duplicate != null) {
         LOG.warn("Duplicate counter(3) : %s, Ignoring old value %s", prefix + entry.getKey(), duplicate);
       }
@@ -329,24 +331,14 @@ public class Stats implements StatsReader, StatsCollector {
   @Override
   public Callable<Long> getDynamicCounter(StatType key) {
     final LongCounter longCounter = counters.get(key.getKey());
-    return new Callable<Long>() {
-      @Override
-      public Long call() throws Exception {
-        return longCounter.get();
-      }
-    };
+    return longCounter::get;
   }
 
   @Deprecated
   @Override
   public Callable<Long> getDynamicCounter(String key) {
     final LongCounter longCounter = counters.get(key);
-    return new Callable<Long>() {
-      @Override
-      public Long call() throws Exception {
-        return longCounter.get();
-      }
-    };
+    return longCounter::get;
   }
 
   private String internalGetAttribute(String key) {
@@ -365,8 +357,92 @@ public class Stats implements StatsReader, StatsCollector {
     return materializeAttributes();
   }
 
+  public Stat concurrentRate(String key) {
+    return concurrent.computeIfAbsent(
+      key,
+      k -> {
+        RateStat stat = new RateStat(key);
+
+        addDynamicCounter(key + ".rate", () -> stat.getRate().getAllTime());
+        addDynamicCounter(key + ".rate.3600", () -> stat.getRate().getHour());
+        addDynamicCounter(key + ".rate.600", () -> stat.getRate().getTenMinute());
+        addDynamicCounter(key + ".rate.60", () -> stat.getRate().getMinute());
+        addDynamicCounter(key + ".sum", () -> stat.getSum().getAllTime());
+        addDynamicCounter(key + ".sum.3600", () -> stat.getSum().getHour());
+        addDynamicCounter(key + ".sum.600", () -> stat.getSum().getTenMinute());
+        addDynamicCounter(key + ".sum.60", () -> stat.getSum().getMinute());
+
+        return stat;
+      }
+    );
+  }
+
+  public Stat concurrentSpread(String key) {
+    return concurrent.computeIfAbsent(
+      key,
+      k -> {
+        SpreadStat stat = new SpreadStat(key);
+
+        addDynamicCounter(key + ".min", () -> stat.getMin().getAllTime());
+        addDynamicCounter(key + ".min.3600", () -> stat.getMin().getHour());
+        addDynamicCounter(key + ".min.600", () -> stat.getMin().getTenMinute());
+        addDynamicCounter(key + ".min.60", () -> stat.getMin().getMinute());
+        addDynamicCounter(key + ".max", () -> stat.getMax().getAllTime());
+        addDynamicCounter(key + ".max.3600", () -> stat.getMax().getHour());
+        addDynamicCounter(key + ".max.600", () -> stat.getMax().getTenMinute());
+        addDynamicCounter(key + ".max.60", () -> stat.getMax().getMinute());
+        addDynamicCounter(key + ".avg", () -> stat.getAverage().getAllTime());
+        addDynamicCounter(key + ".avg.3600", () -> stat.getAverage().getHour());
+        addDynamicCounter(key + ".avg.600", () -> stat.getAverage().getTenMinute());
+        addDynamicCounter(key + ".avg.60", () -> stat.getAverage().getMinute());
+        addDynamicCounter(key + ".samples", () -> stat.getSamples().getAllTime());
+        addDynamicCounter(key + ".samples.3600", () -> stat.getSamples().getHour());
+        addDynamicCounter(key + ".samples.600", () -> stat.getSamples().getTenMinute());
+        addDynamicCounter(key + ".samples.60", () -> stat.getSamples().getMinute());
+
+        return stat;
+      }
+    );
+  }
+
+  public Stat concurrentSpreadRate(String key) {
+    return concurrent.computeIfAbsent(
+      key,
+      k -> {
+        SpreadStat stat = new SpreadStat(key);
+
+        addDynamicCounter(key + ".rate", () -> stat.getRate().getAllTime());
+        addDynamicCounter(key + ".rate.3600", () -> stat.getRate().getHour());
+        addDynamicCounter(key + ".rate.600", () -> stat.getRate().getTenMinute());
+        addDynamicCounter(key + ".rate.60", () -> stat.getRate().getMinute());
+        addDynamicCounter(key + ".sum", () -> stat.getSum().getAllTime());
+        addDynamicCounter(key + ".sum.3600", () -> stat.getSum().getHour());
+        addDynamicCounter(key + ".sum.600", () -> stat.getSum().getTenMinute());
+        addDynamicCounter(key + ".sum.60", () -> stat.getSum().getMinute());
+        addDynamicCounter(key + ".min", () -> stat.getMin().getAllTime());
+        addDynamicCounter(key + ".min.3600", () -> stat.getMin().getHour());
+        addDynamicCounter(key + ".min.600", () -> stat.getMin().getTenMinute());
+        addDynamicCounter(key + ".min.60", () -> stat.getMin().getMinute());
+        addDynamicCounter(key + ".max", () -> stat.getMax().getAllTime());
+        addDynamicCounter(key + ".max.3600", () -> stat.getMax().getHour());
+        addDynamicCounter(key + ".max.600", () -> stat.getMax().getTenMinute());
+        addDynamicCounter(key + ".max.60", () -> stat.getMax().getMinute());
+        addDynamicCounter(key + ".avg", () -> stat.getAverage().getAllTime());
+        addDynamicCounter(key + ".avg.3600", () -> stat.getAverage().getHour());
+        addDynamicCounter(key + ".avg.600", () -> stat.getAverage().getTenMinute());
+        addDynamicCounter(key + ".avg.60", () -> stat.getAverage().getMinute());
+        addDynamicCounter(key + ".samples", () -> stat.getSamples().getAllTime());
+        addDynamicCounter(key + ".samples.3600", () -> stat.getSamples().getHour());
+        addDynamicCounter(key + ".samples.600", () -> stat.getSamples().getTenMinute());
+        addDynamicCounter(key + ".samples.60", () -> stat.getSamples().getMinute());
+
+        return stat;
+      }
+    );
+  }
+
   private Map<String, String> materializeAttributes() {
-    Map<String, String> materializedAttributes = new HashMap<String, String>();
+    Map<String, String> materializedAttributes = new HashMap<>();
 
     for (Map.Entry<String, Callable<String>> entry : attributes.entrySet()) {
       try {

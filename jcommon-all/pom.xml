@@ -48,6 +48,10 @@ limitations under the License.
     </dependency>
     <dependency>
       <groupId>com.facebook.jcommon</groupId>
+      <artifactId>concurrent-stats</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.facebook.jcommon</groupId>
       <artifactId>config</artifactId>
     </dependency>
     <dependency>
