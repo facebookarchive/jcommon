@@ -28,12 +28,12 @@ import static com.facebook.stats.cardinality.HyperLogLogUtil.computeHash;
  */
 @NotThreadSafe
 public class HyperLogLog {
-  private final byte[] buckets;
+  protected final byte[] buckets;
 
   // The current sum of 1 / (1L << buckets[i]). Updated as new items are added and used for
   // estimation
-  private double currentSum;
-  private int nonZeroBuckets = 0;
+  protected double currentSum;
+  protected int nonZeroBuckets = 0;
 
   public HyperLogLog(int numberOfBuckets) {
     Preconditions.checkArgument(
