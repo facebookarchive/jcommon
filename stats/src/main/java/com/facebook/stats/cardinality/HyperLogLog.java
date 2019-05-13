@@ -66,12 +66,13 @@ public class HyperLogLog {
     }
   }
 
-  public void add(long value) {
+  /**
+   * @return true if the buckets are updated
+   */
+  public boolean add(long value) {
     BucketAndHash bucketAndHash = BucketAndHash.fromHash(computeHash(value), buckets.length);
     int bucket = bucketAndHash.getBucket();
-
     int lowestBitPosition = Long.numberOfTrailingZeros(bucketAndHash.getHash()) + 1;
-
     int previous = buckets[bucket];
 
     if (previous == 0) {
@@ -83,7 +84,9 @@ public class HyperLogLog {
       currentSum += 1.0 / (1L << lowestBitPosition);
 
       buckets[bucket] = (byte) lowestBitPosition;
+      return true;
     }
+    return false;
   }
 
   public long estimate() {
