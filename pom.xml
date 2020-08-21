@@ -37,7 +37,7 @@ limitations under the License.
 
   <properties>
     <testGroups>fast,slow</testGroups>
-    <dep.jackson.version>2.7.4</dep.jackson.version>
+    <dep.jackson.version>2.11.2</dep.jackson.version>
     <dep.plugin.surefire.version>2.17</dep.plugin.surefire.version>
 
     <fb.check.fail-findbugs>false</fb.check.fail-findbugs>
