@@ -181,7 +181,6 @@ limitations under the License.
   <!--aggregator only project; includes upload info -->
   <modules>
     <module>util</module>
-    <module>data</module>
     <module>collections</module>
     <module>collections-foundation</module>
     <module>config</module>
