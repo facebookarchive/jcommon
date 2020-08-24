@@ -193,7 +193,6 @@ limitations under the License.
     <module>memory</module>
     <module>jcommon-all</module>
     <module>testing</module>
-    <module>logging-log4j</module>
     <module>logging-util</module>
   </modules>
 
@@ -238,11 +237,6 @@ limitations under the License.
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
         <artifactId>logging</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.facebook.jcommon</groupId>
-        <artifactId>logging-log4j</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
