@@ -191,7 +191,6 @@ limitations under the License.
     <module>stats</module>
     <module>concurrent-stats</module>
     <module>tools</module>
-    <module>zookeeper</module>
     <module>memory</module>
     <module>jcommon-all</module>
     <module>testing</module>
@@ -274,11 +273,6 @@ limitations under the License.
       </dependency>
       <dependency>
         <groupId>com.facebook.jcommon</groupId>
-        <artifactId>zookeeper</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.facebook.jcommon</groupId>
         <artifactId>testing</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -308,17 +302,6 @@ limitations under the License.
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
         <version>20090211</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.zookeeper</groupId>
-        <artifactId>zookeeper</artifactId>
-        <version>3.3.5</version>
-        <exclusions>
-          <exclusion>
-            <artifactId>junit</artifactId>
-            <groupId>junit</groupId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>commons-cli</groupId>
