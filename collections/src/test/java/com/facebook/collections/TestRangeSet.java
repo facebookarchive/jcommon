@@ -91,7 +91,7 @@ public class TestRangeSet {
     Assert.assertTrue(set.addAll(Arrays.asList(0L, 2L, 3L, 5L, 6L, 8L, 9L, 10L)));
     Assert.assertEquals(set.size(), 8);
 
-    // Remove non-existant
+    // Remove non-existent
     Assert.assertFalse(set.remove(-1L));
     Assert.assertFalse(set.remove(1L));
     Assert.assertFalse(set.remove(4L));
@@ -127,7 +127,7 @@ public class TestRangeSet {
     Assert.assertTrue(set.addAll(Arrays.asList(0L, 2L, 3L, 5L, 6L, 8L, 9L, 10L)));
     Assert.assertEquals(set.size(), 8);
 
-    // Remove non-existant values
+    // Remove non-existent values
     Assert.assertFalse(set.removeAll(Arrays.asList(11L, 12L, 13L, 15L, 16L)));
     Assert.assertEquals(set.size(), 8);
 

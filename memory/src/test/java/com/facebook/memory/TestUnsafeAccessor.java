@@ -24,7 +24,7 @@ public class TestUnsafeAccessor {
    * allocates 1MB, write a bunch of bytes, reads them back, frees the memory
    * @throws Exception
    */
-  @Test(groups = "fast")
+  @Test
   public void testSanity() throws Exception {
   	Unsafe unsafe = UnsafeAccessor.get();
 

@@ -15,8 +15,6 @@
  */
 package com.facebook.collections.specialized;
 
-
-
 import com.facebook.collections.specialized.LongTupleHeap;
 
 import java.util.Arrays;

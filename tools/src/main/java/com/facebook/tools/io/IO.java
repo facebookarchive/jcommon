@@ -114,7 +114,7 @@ public class IO {
    * if (io.ask(YesNo.YES, "Are you sure you want to dance").isYes()) {
    *   io.out.println("Dance party!!");
    * } else {
-   *   io.out.println("Some other time, then…");
+   *   io.out.println("Some other time, then...");
    * }
    * <p/>
    * </code></pre>

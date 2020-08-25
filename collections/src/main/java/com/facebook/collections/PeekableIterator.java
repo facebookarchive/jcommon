@@ -38,7 +38,7 @@ public class PeekableIterator<T> implements Iterator<T> {
   }
 
   /**
-   * will use the 'cached' value from a peek if availble
+   * will use the 'cached' value from a peek if available
    * @return
    * @throws NoSuchElementException
    */
