@@ -15,24 +15,20 @@
  */
 package com.facebook.stats.mx;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
-
-/**
- * Test {@link JVMStatsExporter}
- */
+/** Test {@link JVMStatsExporter} */
 public class TestJVMStatsExporter {
   private static final Logger LOG = LoggerImpl.getLogger(TestJVMStatsExporter.class);
 
-  @Test(groups = "fast")
+  @Test
   public void testAllStats() throws Exception {
     Stats stats = new Stats();
     JVMStatsExporter exporter = new JVMStatsExporter(stats);
@@ -50,56 +46,57 @@ public class TestJVMStatsExporter {
     Assert.assertTrue(exportedStats.containsKey("jvm.Memory.HeapMemoryUsage.committed"));
   }
 
-  @Test(groups = "fast")
+  @Test
   public void testFilteredStats() throws Exception {
     Stats stats = new Stats();
-    // Chose an MBean that has a good chance of being there across different jvm versions
-    JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
-      stats,
-      ".*(\\.UsageThresholdCount|PeakUsage.committed)",
-      "java.lang:type=MemoryPool,name=Code Cache"
-    );
+    // part of the standard API in JDK8 and later
+    JVMStatsExporter jvmStatsExporter =
+        new JVMStatsExporter(stats, ".*(HeapMemoryUsage).*", "java.lang:type=Memory");
     Map<String, Long> exportedStats = getExportedStats(stats);
-    Assert.assertEquals(2, exportedStats.size());
-    Assert.assertTrue(exportedStats.containsKey("jvm.MemoryPool.Code_Cache.UsageThresholdCount"));
-    Assert.assertTrue(exportedStats.containsKey("jvm.MemoryPool.Code_Cache.PeakUsage.committed"));
+    Assert.assertTrue(exportedStats.size() >= 2, "expected both stats in " + exportedStats);
+    Assert.assertTrue(
+        exportedStats.containsKey("jvm.Memory.HeapMemoryUsage.max"),
+        "expected HeapMemoryUsage.max in " + exportedStats);
+    Assert.assertTrue(
+        exportedStats.containsKey("jvm.Memory.HeapMemoryUsage.used"),
+        "expected HeapMemoryUsage.used in " + exportedStats);
   }
 
-  @Test(groups = "fast")
+  @Test
   public void testStatNameReplacer() throws Exception {
     Stats stats = new Stats();
-    // Chose an MBean that has a good chance of being there across different jvm versions
-    JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
-      stats,
-      (bean, attribute, key) -> {
-        String name = "test";
+    // part of the standard API in JDK8 and later
+    JVMStatsExporter jvmStatsExporter =
+        new JVMStatsExporter(
+            stats,
+            (bean, attribute, key) -> {
+              String name = "test";
 
-        if (attribute != null) {
-          name += "." + attribute;
-        }
+              if (attribute != null) {
+                name += "." + attribute;
+              }
 
-        if (key != null) {
-          name += "." + key;
-        }
+              if (key != null) {
+                name += "." + key;
+              }
 
-        return Optional.of(name);
-      },
-      "java.lang:type=MemoryPool,name=Code Cache"
-    );
+              return Optional.of(name);
+            },
+            "java.lang:type=Memory");
     Map<String, Long> exportedStats = getExportedStats(stats);
-    Assert.assertTrue(exportedStats.containsKey("test.Usage.used"));
-    Assert.assertTrue(exportedStats.containsKey("test.Usage.max"));
+    Assert.assertTrue(exportedStats.containsKey("test.HeapMemoryUsage.used"));
+    Assert.assertTrue(exportedStats.containsKey("test.HeapMemoryUsage.max"));
   }
 
-  @Test(groups = "fast")
+  @Test
   public void testStatNameReplacerFilterAll() throws Exception {
     Stats stats = new Stats();
     // Chose an MBean that has a good chance of being there across different jvm versions
-    JVMStatsExporter jvmStatsExporter = new JVMStatsExporter(
-      stats,
-      (bean, attribute, key) -> Optional.empty(),
-      "java.lang:type=MemoryPool,name=Code Cache"
-    );
+    JVMStatsExporter jvmStatsExporter =
+        new JVMStatsExporter(
+            stats,
+            (bean, attribute, key) -> Optional.empty(),
+            "java.lang:type=MemoryPool,name=Code Cache");
     Map<String, Long> exportedStats = getExportedStats(stats);
     Assert.assertEquals(exportedStats.size(), 0);
   }
