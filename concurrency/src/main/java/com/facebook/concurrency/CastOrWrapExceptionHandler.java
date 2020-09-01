@@ -16,22 +16,20 @@
 package com.facebook.concurrency;
 
 import com.facebook.util.exceptions.ExceptionHandler;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
  * Performs a safecast from an exception of type S to an exception of type T if possible.
  *
- * Otherwise, performs wrapping if T has a constructor to wrap a 'cause'.
+ * <p>Otherwise, performs wrapping if T has a constructor to wrap a 'cause'.
  *
- * RuntimeExceptions otherwise
+ * <p>RuntimeExceptions otherwise
  *
  * @param <T>
  */
-public class CastOrWrapExceptionHandler<T extends Exception>
-  implements ExceptionHandler<T> {
-  
+public class CastOrWrapExceptionHandler<T extends Exception> implements ExceptionHandler<T> {
+
   private final Class<T> exceptionClass;
 
   public CastOrWrapExceptionHandler(Class<T> exceptionClass) {
@@ -44,16 +42,14 @@ public class CastOrWrapExceptionHandler<T extends Exception>
     if (exceptionClass.isAssignableFrom(e.getClass())) {
       // this cast is in fact safe since we know e is an instanceof Class<T>
       //noinspection unchecked
-      return (T)e;
+      return (T) e;
     } else {
       try {
-        Constructor<T> constructor = exceptionClass.getConstructor(
-          Throwable.class
-        );
+        Constructor<T> constructor = exceptionClass.getConstructor(Throwable.class);
         // get the exception constructor with one argument
         return constructor.newInstance(e);
       } catch (InstantiationException e1) {
-          throw new RuntimeException(e1);
+        throw new RuntimeException(e1);
       } catch (IllegalAccessException e1) {
         throw new RuntimeException(e1);
       } catch (InvocationTargetException e1) {

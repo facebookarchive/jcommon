@@ -15,15 +15,14 @@
  */
 package com.facebook.stats.cardinality;
 
+import static com.facebook.stats.cardinality.StaticModelUtil.weightsToProbabilities;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static com.facebook.stats.cardinality.StaticModelUtil.weightsToProbabilities;
 
 class SortedStaticModel implements Model {
   private final int[] symbolToIndex;
@@ -38,9 +37,7 @@ class SortedStaticModel implements Model {
 
     Preconditions.checkArgument(weights.length > 1, "weights is empty");
     Preconditions.checkArgument(
-        weights.length <= 512,
-        "weights is can not have more than 512 entries"
-    );
+        weights.length <= 512, "weights is can not have more than 512 entries");
 
     symbolToIndex = new int[weights.length + 1];
     indexToSymbol = new int[weights.length + 1];
@@ -72,8 +69,7 @@ class SortedStaticModel implements Model {
             "Internal error: symbol %s high value %s is not greater than the low value %s",
             symbol,
             countsByIndex[symbolIndex + 1],
-            countsByIndex[symbolIndex]
-        );
+            countsByIndex[symbolIndex]);
       }
 
       symbolIndex++;
@@ -81,17 +77,14 @@ class SortedStaticModel implements Model {
 
     Preconditions.checkState(
         countsByIndex[totalIndex - 1] < StaticModelUtil.MAX_COUNT,
-        "Internal error: model max value %s must be less than %s"
-    );
+        "Internal error: model max value %s must be less than %s");
     symbolToIndex[totalIndex] = -1;
     countsByIndex[totalIndex] = StaticModelUtil.MAX_COUNT;
 
     // verify model
     for (int i = 1; i < countsByIndex.length; i++) {
       Preconditions.checkState(
-          countsByIndex[i - 1] < countsByIndex[i],
-          "Internal error: model is invalid"
-      );
+          countsByIndex[i - 1] < countsByIndex[i], "Internal error: model is invalid");
     }
   }
 
@@ -116,10 +109,7 @@ class SortedStaticModel implements Model {
       int count = countsByIndex[symbolIndex + 1];
       if (targetCount < count) {
         return new SymbolInfo(
-            indexToSymbol[symbolIndex],
-            countsByIndex[symbolIndex],
-            countsByIndex[symbolIndex + 1]
-        );
+            indexToSymbol[symbolIndex], countsByIndex[symbolIndex], countsByIndex[symbolIndex + 1]);
       }
     }
     throw new IllegalArgumentException("invalid target count " + targetCount);
@@ -164,8 +154,7 @@ class SortedStaticModel implements Model {
 
     @Override
     public int compareTo(SymbolProbability o) {
-      return ComparisonChain
-          .start()
+      return ComparisonChain.start()
           .compare(o.probability, probability)
           .compare(symbol, o.symbol)
           .result();

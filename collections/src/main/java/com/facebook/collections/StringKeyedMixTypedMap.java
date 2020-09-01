@@ -17,8 +17,8 @@ package com.facebook.collections;
 
 import java.util.Map;
 
-/***
- * marker interface for commonly used type
+/**
+ * * marker interface for commonly used type
  *
  * @param <String>
  */
@@ -27,6 +27,5 @@ public class StringKeyedMixTypedMap extends MixedTypeMap<String> {
     super(map);
   }
 
-  public StringKeyedMixTypedMap() {
-  }
+  public StringKeyedMixTypedMap() {}
 }

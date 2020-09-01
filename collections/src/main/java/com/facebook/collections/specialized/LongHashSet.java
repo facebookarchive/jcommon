@@ -19,8 +19,6 @@ import com.facebook.collections.Trackable;
 import com.facebook.collectionsbase.Mapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-
-import javax.annotation.concurrent.GuardedBy;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,13 +31,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import javax.annotation.concurrent.GuardedBy;
 
 /**
  * stores a set of non-negative long values using a fixed-size array.
  *
- * this class is thread-safe, and allows decent parallelism using a
- * ReadWriteLock.  The iterator is thread-safe, but can still throw
- * a ConcurrentModificationException (TODO: can probably fix this)
+ * <p>this class is thread-safe, and allows decent parallelism using a ReadWriteLock. The iterator
+ * is thread-safe, but can still throw a ConcurrentModificationException (TODO: can probably fix
+ * this)
  */
 public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   // these are values for slots
@@ -55,20 +54,19 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   private final ReadWriteLock lock = new ReentrantReadWriteLock();
   private final AtomicLong version = new AtomicLong(0);
   private long lastCheckedVersion = 0;
+
   @GuardedBy("lock")
   private volatile long[] values;
+
   private AtomicInteger size = new AtomicInteger(0);
   private final int maxCapacity;
 
-  public LongHashSet(
-    int initialCapacity, int maxCapacity, Mapper<Long, Integer> hashFunction
-  ) {
+  public LongHashSet(int initialCapacity, int maxCapacity, Mapper<Long, Integer> hashFunction) {
     Preconditions.checkArgument(
-      initialCapacity <= maxCapacity,
-      "initial capacity of %s cannot be larger than max of %s",
-      initialCapacity,
-      maxCapacity
-    );
+        initialCapacity <= maxCapacity,
+        "initial capacity of %s cannot be larger than max of %s",
+        initialCapacity,
+        maxCapacity);
     this.maxCapacity = maxCapacity;
     initArrays(initialCapacity);
     this.hashFunction = hashFunction;
@@ -87,24 +85,20 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
    */
   public LongHashSet(int initialCapacity, int maxCapacity) {
     this(
-      initialCapacity,
-      maxCapacity,
-      new Mapper<Long, Integer>() {
-        @Override
-        public Integer map(Long input) {
-          return (int) (input ^ (input >>> 32));
-        }
-      }
-    );
+        initialCapacity,
+        maxCapacity,
+        new Mapper<Long, Integer>() {
+          @Override
+          public Integer map(Long input) {
+            return (int) (input ^ (input >>> 32));
+          }
+        });
   }
 
   private void resize() {
     if (values.length == maxCapacity) {
       throw new IllegalStateException(
-        String.format(
-          "cannot resize: max capacity of %d already reached", maxCapacity
-        )
-      );
+          String.format("cannot resize: max capacity of %d already reached", maxCapacity));
     }
 
     int desiredSize = (int) (values.length / MIN_LOAD_FACTOR);
@@ -126,13 +120,11 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   }
 
   /**
-   * returns location of either the value, or the next location to place
-   * the value
+   * returns location of either the value, or the next location to place the value
    *
    * @param aLong
-   * @return if aLong is present in the set, returns the index of it; if it
-   *         is not present, returns the index of where it may be placed,
-   *         or FULL_SET(-2) if the set is full
+   * @return if aLong is present in the set, returns the index of it; if it is not present, returns
+   *     the index of where it may be placed, or FULL_SET(-2) if the set is full
    */
   private int findLocationOf(long aLong) {
     int index = hashValueOf(aLong);
@@ -176,10 +168,7 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   private void validateArgument(Long aLong) {
     if (aLong < 0) {
       throw new IllegalArgumentException(
-        String.format(
-          "only non-negative integers are allowed (tried to use %d)", aLong
-        )
-      );
+          String.format("only non-negative integers are allowed (tried to use %d)", aLong));
     }
   }
 
@@ -278,9 +267,7 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
         try {
           if (!canRemove) {
             // TODO : clean this up?
-            throw new IllegalStateException(
-              "repeated remove() calls or next() not called"
-            );
+            throw new IllegalStateException("repeated remove() calls or next() not called");
           }
 
           // this works because we verify the set hasn't changed and
@@ -321,8 +308,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
       if (a.length >= size.get()) {
         result = a;
       } else {
-        result = (T[]) java.lang.reflect.Array
-          .newInstance(a.getClass().getComponentType(), size.get());
+        result =
+            (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size.get());
       }
 
       int i = 0;
@@ -372,11 +359,7 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
 
     if (index == FULL_SET) {
       throw new IllegalStateException(
-        String.format(
-          "set is full with %d elements, cannot add more",
-          values.length
-        )
-      );
+          String.format("set is full with %d elements, cannot add more", values.length));
     }
 
     if (isEmptySlot(index)) {
@@ -439,7 +422,7 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   public boolean addAll(Collection<? extends Long> c) {
     boolean changed = false;
 
-    //rely on add() holding the writeLock
+    // rely on add() holding the writeLock
     for (Long element : c) {
       if (add(element)) {
         changed = true;
@@ -541,9 +524,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   @Override
   public SnapshotableSet<Long> makeTransientSnapshot() {
     return new SnapshotableSetImpl<Long>(
-      Collections.<Long>synchronizedSet(new HashSet<Long>(this)),
-      new SnapshotableSetImplFactory<Long>(new HashSetFactory<Long>())
-    );
+        Collections.<Long>synchronizedSet(new HashSet<Long>(this)),
+        new SnapshotableSetImplFactory<Long>(new HashSetFactory<Long>()));
   }
 
   private void internalClear() {
@@ -567,7 +549,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
     if (!(o instanceof Set)) {
       return false;
     }
-    @SuppressWarnings("unchecked") Collection<Long> c = (Collection<Long>) o;
+    @SuppressWarnings("unchecked")
+    Collection<Long> c = (Collection<Long>) o;
     if (c.size() != size()) {
       return false;
     }

@@ -15,16 +15,15 @@
  */
 package com.facebook.tools.io;
 
-import com.facebook.tools.ErrorMessage;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.facebook.tools.ErrorMessage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class InputStreamInput implements Input {
   private final BufferedReader reader;

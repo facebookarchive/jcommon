@@ -44,7 +44,7 @@ public class CounterCacher {
     long count = 0;
 
     public Thread newThread(Runnable r) {
-      count ++;
+      count++;
       return new Thread(threadGroup, r, threadGroup.getName() + "-" + count);
     }
   }
@@ -66,21 +66,21 @@ public class CounterCacher {
       log.log(Level.INFO, "Cacheing counters every " + minWait + " - " + maxWait + " msec");
 
       try {
-        while(wantRunning) {
+        while (wantRunning) {
           try {
             long startTime = System.currentTimeMillis();
             counters = reporter.makeCounters();
             Thread.sleep(minWait);
             long runTime = System.currentTimeMillis() - startTime;
             long remainingWait = maxWait - runTime;
-            if(remainingWait > 0) {
+            if (remainingWait > 0) {
               Thread.sleep(remainingWait);
             }
-          } catch(InterruptedException iex) {
+          } catch (InterruptedException iex) {
             wantRunning = false;
           }
         }
-      } catch(RuntimeException rex) {
+      } catch (RuntimeException rex) {
         log.log(Level.SEVERE, "RuntimeException thrown while running makeCounters()", rex);
       } finally {
         running = false;
@@ -88,9 +88,8 @@ public class CounterCacher {
     }
   }
 
-  private final static ThreadGroup threadGroup = new ThreadGroup("CounterCacher");
-  private final static ThreadFactory threadFactory = new ThreadFactory();
-
+  private static final ThreadGroup threadGroup = new ThreadGroup("CounterCacher");
+  private static final ThreadFactory threadFactory = new ThreadFactory();
 
   private volatile Thread thread;
   private final Runnable runnable;
@@ -102,18 +101,13 @@ public class CounterCacher {
   private volatile Map<String, Long> counters;
 
   /**
-   * @param  FacebookStatsReporter    Your service
-   * @param  long minWait             Minimum time to wait between calls
-   *                                  to makeCounters (default=1000, or 1s)
-   * @param  long maxWait             Maximum time to wait between calls
-   *                                  to makeCounters (default=1000, or 1s)
-   *
-   * Example:
-   *
-   * If it takes 2 seconds to make your counters, minWait is 1 second,
-   * and maxWait is 10 seconds then there will be an 8 second delay
-   * between calls. If it takes 15 seconds to make your counters, there
-   * will be a 1 second delay.
+   * @param FacebookStatsReporter Your service
+   * @param long minWait Minimum time to wait between calls to makeCounters (default=1000, or 1s)
+   * @param long maxWait Maximum time to wait between calls to makeCounters (default=1000, or 1s)
+   *     <p>Example:
+   *     <p>If it takes 2 seconds to make your counters, minWait is 1 second, and maxWait is 10
+   *     seconds then there will be an 8 second delay between calls. If it takes 15 seconds to make
+   *     your counters, there will be a 1 second delay.
    */
   public CounterCacher(final FacebookStatsReporter reporter, long minWait, long maxWait) {
     runnable = new CounterCacherRunner(minWait, maxWait);
@@ -129,7 +123,7 @@ public class CounterCacher {
   }
 
   public void start() {
-    if(running) {
+    if (running) {
       throw new IllegalStateException("start() called while already running!");
     }
 
@@ -138,7 +132,7 @@ public class CounterCacher {
   }
 
   public void stop() {
-    if(!running) {
+    if (!running) {
       throw new IllegalStateException("stop() called while not running!");
     }
 
@@ -146,7 +140,8 @@ public class CounterCacher {
     thread.interrupt();
     try {
       thread.join();
-    } catch(InterruptedException iex) { }
+    } catch (InterruptedException iex) {
+    }
     thread = null;
   }
 
@@ -154,4 +149,3 @@ public class CounterCacher {
     return counters;
   }
 }
-

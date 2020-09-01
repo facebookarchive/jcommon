@@ -16,7 +16,6 @@
 package com.facebook.tools.io;
 
 import com.facebook.tools.subprocess.SubprocessBuilder;
-
 import java.io.Console;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
@@ -27,30 +26,30 @@ import java.util.Map;
 /**
  * Container for standard input/output-related objects. Mimics {@link java.lang.System} with the
  * following public fields:
+ *
  * <dl>
- * <dt>{@link #out}</dt>
- * <dd>A {@link com.facebook.tools.io.StatusPrintStream} instance for stdout-like output</dd>
- * <dt>{@link #err}</dt>
- * <dd>A {@link com.facebook.tools.io.PrintStreamPlus} instance for stderr-like output</dd>
- * <dt>{@link #in}</dt>
- * <dd>A {@link com.facebook.tools.io.Input} instance for stdin-like input</dd>
+ *   <dt>{@link #out}
+ *   <dd>A {@link com.facebook.tools.io.StatusPrintStream} instance for stdout-like output
+ *   <dt>{@link #err}
+ *   <dd>A {@link com.facebook.tools.io.PrintStreamPlus} instance for stderr-like output
+ *   <dt>{@link #in}
+ *   <dd>A {@link com.facebook.tools.io.Input} instance for stdin-like input
  * </dl>
- * <p/>
- * The {@link #ask(Enum, String, Object...)} and {@link #ask(Enum, String)} methods can be used to
- * easily prompt for decisions.
- * <p/>
- * Also included is a {@link #subprocess} builder for spawing new processes.
- * <p/>
- * Some behavior depends on whether Java is being run on an interactive terminal or spawned from
+ *
+ * <p>The {@link #ask(Enum, String, Object...)} and {@link #ask(Enum, String)} methods can be used
+ * to easily prompt for decisions.
+ *
+ * <p>Also included is a {@link #subprocess} builder for spawing new processes.
+ *
+ * <p>Some behavior depends on whether Java is being run on an interactive terminal or spawned from
  * another process, e.g., {@literal java -jar my-tool.jar} vs {@literal java -jar my-tool.jar | wc}.
- * If interactive, output to {@link #err} inserts
- * <a href="http://en.wikipedia.org/wiki/ANSI_escape_code#Colors">ANSII escape codes</a> to render
+ * If interactive, output to {@link #err} inserts <a
+ * href="http://en.wikipedia.org/wiki/ANSI_escape_code#Colors">ANSII escape codes</a> to render
  * error output as white text on a bright red background. Additional escape codes are used so that
  * consecutive {@link com.facebook.tools.io.Status} methods overwrite previous ones, making them
- * appropriate for outputting status that would otherwise be too spammy, e.g.,
- * {@code io.out.statusf("Finished %s of %s", done, total);}.
- * If non-interactive, no escape codes are inserted, and {@link com.facebook.tools.io.Status}
- * methods do nothing.
+ * appropriate for outputting status that would otherwise be too spammy, e.g., {@code
+ * io.out.statusf("Finished %s of %s", done, total);}. If non-interactive, no escape codes are
+ * inserted, and {@link com.facebook.tools.io.Status} methods do nothing.
  */
 public class IO {
   private static final String WHITE_ON_RED = "\033[1;37;41m";
@@ -72,17 +71,16 @@ public class IO {
 
       this.out = new InteractiveStatusPrintStream(out, status, DEFAULT_COLORS);
       this.err = new InteractiveStatusPrintStream(err, status, WHITE_ON_RED);
-      Runtime.getRuntime().addShutdownHook(
-        new Thread(
-          new Runnable() {
-            @Override
-            public void run() {
-              // reset console color and erase final status line
-              IO.this.out.print("");
-            }
-          }
-        )
-      );
+      Runtime.getRuntime()
+          .addShutdownHook(
+              new Thread(
+                  new Runnable() {
+                    @Override
+                    public void run() {
+                      // reset console color and erase final status line
+                      IO.this.out.print("");
+                    }
+                  }));
     }
 
     this.in = in;
@@ -90,8 +88,8 @@ public class IO {
   }
 
   /**
-   * Creates a new container using {@link java.lang.System#out}, {@link java.lang.System#err},
-   * and {@link java.lang.System#in}.
+   * Creates a new container using {@link java.lang.System#out}, {@link java.lang.System#err}, and
+   * {@link java.lang.System#in}.
    */
   public IO() {
     this(System.out, System.err, new InputStreamInput(System.in));
@@ -110,6 +108,7 @@ public class IO {
 
   /**
    * Prompts the user to make a decision. For example:
+   *
    * <pre><code>
    * if (io.ask(YesNo.YES, "Are you sure you want to dance").isYes()) {
    *   io.out.println("Dance party!!");
@@ -118,20 +117,22 @@ public class IO {
    * }
    * <p/>
    * </code></pre>
+   *
    * <pre><tt>
    * > Are you sure you want to dance? [Y/n] x
    * > Are you sure you want to dance? [Y/n] this is not a valid response
    * > Are you sure you want to dance? [Y/n] y
    * > Dance party!!
    * </tt></pre>
-   * The options shown are determined by {@code defaultValue} which must be an {@code enum} with
-   * its members annotated with {@link com.facebook.tools.io.Answer}. The first
-   * {@link com.facebook.tools.io.Answer#value()} is show in the brackets after the prompt, but any
-   * of the values is accepted. The values must all be lower-case; the default value, i.e., the one
-   * used if the user simply hits enter, is capitalized.
+   *
+   * The options shown are determined by {@code defaultValue} which must be an {@code enum} with its
+   * members annotated with {@link com.facebook.tools.io.Answer}. The first {@link
+   * com.facebook.tools.io.Answer#value()} is show in the brackets after the prompt, but any of the
+   * values is accepted. The values must all be lower-case; the default value, i.e., the one used if
+   * the user simply hits enter, is capitalized.
    *
    * @param defaultValue value to use if no input is given
-   * @param prompt       message to show user
+   * @param prompt message to show user
    * @return the {@code enum} value corresponding to the user's input
    */
   public <T extends Enum> T ask(T defaultValue, String prompt) {
@@ -146,9 +147,9 @@ public class IO {
       if (annotation != null) {
         int modifiers = field.getModifiers();
 
-        if (enumClass.isAssignableFrom(field.getType()) &&
-          Modifier.isStatic(modifiers) &&
-          Modifier.isPublic(modifiers)) {
+        if (enumClass.isAssignableFrom(field.getType())
+            && Modifier.isStatic(modifiers)
+            && Modifier.isPublic(modifiers)) {
           String fieldName = enumClass.getName() + "." + field.getName();
           T answer;
 
@@ -171,16 +172,15 @@ public class IO {
 
             if (!value.equals(value.trim().toLowerCase())) {
               throw new IllegalArgumentException(
-                String.format("Values must be all lower-case, but got %s for %s", value, fieldName)
-              );
+                  String.format(
+                      "Values must be all lower-case, but got %s for %s", value, fieldName));
             }
 
             T existing = answers.put(value, answer);
 
             if (existing != null) {
               throw new IllegalArgumentException(
-                String.format("Duplicate value %s for %s", value, fieldName)
-              );
+                  String.format("Duplicate value %s for %s", value, fieldName));
             }
           }
 

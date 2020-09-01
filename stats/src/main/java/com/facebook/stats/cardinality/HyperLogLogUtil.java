@@ -15,23 +15,20 @@
  */
 package com.facebook.stats.cardinality;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Preconditions;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-
 import java.util.Random;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class HyperLogLogUtil {
   private static final HashFunction HASH = Hashing.murmur3_128();
 
   public static long estimateCardinality(int[] bucketValues) {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(bucketValues.length),
-      "number of buckets must be a power of 2"
-    );
+        Numbers.isPowerOf2(bucketValues.length), "number of buckets must be a power of 2");
 
     int zeroBuckets = 0;
     double sum = 0;
@@ -58,9 +55,7 @@ public class HyperLogLogUtil {
 
   public static int[] generateBuckets(int numberOfBuckets, long cardinality) {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(numberOfBuckets),
-      "number of buckets must be a power of 2"
-    );
+        Numbers.isPowerOf2(numberOfBuckets), "number of buckets must be a power of 2");
 
     double[] probabilities = computeProbabilities(numberOfBuckets, cardinality, Byte.MAX_VALUE);
 
@@ -80,16 +75,12 @@ public class HyperLogLogUtil {
     return result;
   }
 
-  /**
-   * Probability that a bucket has a value <= k
-   */
+  /** Probability that a bucket has a value <= k */
   private static double cumulativeProbability(int numberOfBuckets, long cardinality, int k) {
     return Math.pow(1.0 - 1.0 / ((1L << k) * 1.0 * numberOfBuckets), cardinality);
   }
 
-  /**
-   * Compute cumulative probabilities for value <= k for all k = 0..maxK
-   */
+  /** Compute cumulative probabilities for value <= k for all k = 0..maxK */
   private static double[] computeProbabilities(int numberOfBuckets, long cardinality, int maxK) {
     double[] result = new double[maxK];
 
@@ -104,11 +95,10 @@ public class HyperLogLogUtil {
     checkNotNull(first, "first is null");
     checkNotNull(second, "second is null");
     checkArgument(
-      first.length == second.length,
-      "Array sizes must match, found %s vs %s",
-      first.length,
-      second.length
-    );
+        first.length == second.length,
+        "Array sizes must match, found %s vs %s",
+        first.length,
+        second.length);
 
     int[] result = new int[first.length];
     for (int i = 0; i < first.length; i++) {
@@ -139,9 +129,9 @@ public class HyperLogLogUtil {
   /**
    * Computes a 64-bit hash suitable for adding to a hyperloglog instance.
    *
-   * The hyperloglog implementation uses bits from least significant to most significant first, so
-   * If you need to keep shorter hashes around (e.g., for storage), make sure to drop bits from the
-   * most significant side, as the hyperloglog implementation uses bits from least significant
+   * <p>The hyperloglog implementation uses bits from least significant to most significant first,
+   * so If you need to keep shorter hashes around (e.g., for storage), make sure to drop bits from
+   * the most significant side, as the hyperloglog implementation uses bits from least significant
    * to most significant.
    */
   public static long computeHash(long value) {

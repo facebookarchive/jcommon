@@ -15,18 +15,13 @@
  */
 package com.facebook.stats;
 
+import java.util.Arrays;
 import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableDuration;
 
-import java.util.Arrays;
-import java.util.Iterator;
+public class CompositeMin extends AbstractCompositeCounter<EventCounter> implements EventCounter {
 
-public class CompositeMin extends AbstractCompositeCounter<EventCounter>
-  implements EventCounter {
-
-  public CompositeMin(
-    ReadableDuration maxLength, ReadableDuration maxChunkLength
-  ) {
+  public CompositeMin(ReadableDuration maxLength, ReadableDuration maxChunkLength) {
     super(maxLength, maxChunkLength);
   }
 
@@ -38,21 +33,16 @@ public class CompositeMin extends AbstractCompositeCounter<EventCounter>
   public EventCounter merge(EventCounter counter) {
     if (counter instanceof CompositeMin) {
       return internalMerge(
-        ((CompositeMin) counter).getEventCounters(),
-        new CompositeMin(getMaxLength(), getMaxChunkLength())
-      );
+          ((CompositeMin) counter).getEventCounters(),
+          new CompositeMin(getMaxLength(), getMaxChunkLength()));
     } else {
       return internalMerge(
-        Arrays.asList(counter),
-        new CompositeMin(getMaxLength(), getMaxChunkLength())
-      );
+          Arrays.asList(counter), new CompositeMin(getMaxLength(), getMaxChunkLength()));
     }
   }
 
   @Override
-  protected EventCounter nextCounter(
-    ReadableDateTime start, ReadableDateTime end
-  ) {
+  protected EventCounter nextCounter(ReadableDateTime start, ReadableDateTime end) {
     return new MinEventCounter(start, end);
   }
 

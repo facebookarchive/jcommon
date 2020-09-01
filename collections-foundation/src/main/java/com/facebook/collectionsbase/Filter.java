@@ -22,5 +22,4 @@ package com.facebook.collectionsbase;
  * @param <K>
  * @param <E>
  */
-public interface Filter<K, E extends Throwable> extends Function<K, Boolean, E> {
-}
+public interface Filter<K, E extends Throwable> extends Function<K, Boolean, E> {}

@@ -17,12 +17,12 @@ package com.facebook.collections.specialized;
 
 import com.facebook.util.serialization.SerDeException;
 import com.facebook.util.serialization.Serializer;
-
 import java.io.DataOutput;
 import java.io.IOException;
 
 /**
  * base serializer for all long[](TimestampedLongTuple) types
+ *
  * @param <T>
  */
 public class LongTupleSerializer implements Serializer<long[]> {

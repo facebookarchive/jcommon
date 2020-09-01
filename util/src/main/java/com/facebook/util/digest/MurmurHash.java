@@ -18,12 +18,9 @@ package com.facebook.util.digest;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-
 import javax.annotation.concurrent.ThreadSafe;
 
-/**
- * Murmur Hash 3 from http://sites.google.com/site/murmurhash/
- */
+/** Murmur Hash 3 from http://sites.google.com/site/murmurhash/ */
 @ThreadSafe
 public class MurmurHash {
   //  one constant seed we use when, for the same input at two arbitrary executions, spanning JVM
@@ -39,6 +36,7 @@ public class MurmurHash {
 
   /**
    * This returns our MurmurHasher such that hash(x) = y "for all time"
+   *
    * @return
    */
   public static MurmurHash createRepeatableHasher() {
@@ -62,7 +60,7 @@ public class MurmurHash {
   /**
    * Hash the given byte array into 128-bit values
    *
-   * use guava imple
+   * <p>use guava imple
    *
    * @param data data to hash
    * @return 128 bits of hash result
@@ -78,7 +76,6 @@ public class MurmurHash {
 
     return hashCode.asLong();
   }
-
 
   /**
    * A special version for long integers

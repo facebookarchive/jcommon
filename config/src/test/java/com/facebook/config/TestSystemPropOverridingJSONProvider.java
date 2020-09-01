@@ -35,8 +35,7 @@ public class TestSystemPropOverridingJSONProvider {
     JSONObject jsonObject = new JSONObject();
     jsonObject.put(KEY1, "value1");
     jsonObject.put(KEY2, "value2");
-    jsonProvider =
-      new SystemPropOverridingJSONProvider(new MockJSONProvider(jsonObject));
+    jsonProvider = new SystemPropOverridingJSONProvider(new MockJSONProvider(jsonObject));
   }
 
   @AfterMethod(alwaysRun = true)
@@ -67,10 +66,10 @@ public class TestSystemPropOverridingJSONProvider {
     Assert.assertEquals(jsonObject.getString(KEY2), "propvalue2");
     Assert.assertEquals(jsonObject.getString(KEY3), "propvalue1");
   }
-  
+
   @Test(groups = "fast")
   public void testValueAsJSON() throws Exception {
-  	System.setProperty(KEY5, "{nested_key : nested_value}");
+    System.setProperty(KEY5, "{nested_key : nested_value}");
     JSONObject jsonObject = jsonProvider.get();
     JSONObject nestedJSONObject = jsonObject.getJSONObject(KEY5);
 

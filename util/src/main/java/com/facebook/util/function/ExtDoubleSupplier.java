@@ -20,7 +20,7 @@ import java.util.function.DoubleSupplier;
 
 public interface ExtDoubleSupplier<E extends Throwable> {
   double getAsDouble() throws E;
-  
+
   static DoubleSupplier quiet(ExtDoubleSupplier<?> doubleSupplier) {
     return () -> {
       try {

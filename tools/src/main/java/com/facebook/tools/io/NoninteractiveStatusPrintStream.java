@@ -33,48 +33,37 @@ class NoninteractiveStatusPrintStream extends StatusPrintStream {
   }
 
   @Override
-  public void status(String line) {
-  }
+  public void status(String line) {}
 
   @Override
-  public void status(boolean value) {
-  }
+  public void status(boolean value) {}
 
   @Override
-  public void status(char value) {
-  }
+  public void status(char value) {}
 
   @Override
-  public void status(int value) {
-  }
+  public void status(int value) {}
 
   @Override
-  public void status(long value) {
-  }
+  public void status(long value) {}
 
   @Override
-  public void status(float value) {
-  }
+  public void status(float value) {}
 
   @Override
-  public void status(double value) {
-  }
+  public void status(double value) {}
 
   @Override
-  public void status(char[] value) {
-  }
+  public void status(char[] value) {}
 
   @Override
-  public void status(Object value) {
-  }
+  public void status(Object value) {}
 
   @Override
-  public void statusf(String format, Object... args) {
-  }
+  public void statusf(String format, Object... args) {}
 
   @Override
-  public void clearStatus() {
-  }
+  public void clearStatus() {}
 
   @Override
   public void flush() {
@@ -199,49 +188,49 @@ class NoninteractiveStatusPrintStream extends StatusPrintStream {
   @Override
   public PrintStream printf(String format, Object... args) {
     printStream.printf(format, args);
-    
+
     return this;
   }
 
   @Override
   public PrintStream printf(Locale locale, String format, Object... args) {
     printStream.printf(locale, format, args);
-    
+
     return this;
   }
 
   @Override
   public PrintStream format(String format, Object... args) {
     printStream.format(format, args);
-    
+
     return this;
   }
 
   @Override
   public PrintStream format(Locale locale, String format, Object... args) {
     printStream.format(locale, format, args);
-    
+
     return this;
   }
 
   @Override
   public PrintStream append(CharSequence sequence) {
     printStream.append(sequence);
-    
+
     return this;
   }
 
   @Override
   public PrintStream append(CharSequence sequence, int start, int end) {
     printStream.append(sequence, start, end);
-    
+
     return this;
   }
 
   @Override
   public PrintStream append(char c) {
     printStream.append(c);
-    
+
     return this;
   }
 }

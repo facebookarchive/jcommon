@@ -29,8 +29,8 @@ public class TestEventRate {
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
     DateTimeUtils.setCurrentMillisFixed(new DateTime("2010-01-01").getMillis());
-    
-    eventCounter = new CompositeSum(Duration.standardSeconds(60)); 
+
+    eventCounter = new CompositeSum(Duration.standardSeconds(60));
     rate = new EventRateImpl(eventCounter, Duration.standardSeconds(60));
   }
 
@@ -48,8 +48,6 @@ public class TestEventRate {
   }
 
   private void advanceNowSeconds(int seconds) {
-    DateTimeUtils.setCurrentMillisFixed(
-      DateTimeUtils.currentTimeMillis() + seconds * 1000
-    );
+    DateTimeUtils.setCurrentMillisFixed(DateTimeUtils.currentTimeMillis() + seconds * 1000);
   }
 }

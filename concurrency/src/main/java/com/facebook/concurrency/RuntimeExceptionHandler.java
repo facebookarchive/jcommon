@@ -17,9 +17,7 @@ package com.facebook.concurrency;
 
 import com.facebook.util.exceptions.ExceptionHandler;
 
-/**
- * map any exception to a runtime exception
- */
+/** map any exception to a runtime exception */
 public class RuntimeExceptionHandler implements ExceptionHandler<RuntimeException> {
   public static final RuntimeExceptionHandler INSTANCE = new RuntimeExceptionHandler();
 

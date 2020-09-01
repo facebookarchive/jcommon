@@ -17,9 +17,7 @@ package com.facebook.collections.specialized;
 
 import com.facebook.collections.SetFactory;
 
-/**
- * Long in order to be compatible with SampledUniqueCount
- */
+/** Long in order to be compatible with SampledUniqueCount */
 public class IntegerHashSetFactory implements SetFactory<Long, SnapshotableSet<Long>> {
   public static final int DEFAULT_MAX_SIZE = 8000;
   public static final int DEFAULT_INITIAL_SIZE = 4;

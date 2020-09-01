@@ -17,7 +17,6 @@ package com.facebook.tools.example;
 
 import com.facebook.tools.parser.CliConverter;
 import com.google.common.net.HostAndPort;
-
 import java.io.File;
 import java.util.List;
 
@@ -26,16 +25,18 @@ public class Converters {
   public static CliConverter<List<Integer>> INT_LIST = CliConverter.INT_LIST;
   public static CliConverter<List<String>> LIST = CliConverter.LIST;
   public static CliConverter<Boolean> BOOLEAN = CliConverter.BOOLEAN;
-  public static CliConverter<File> FILE = new CliConverter<File>() {
-    @Override
-    public File convert(String value) throws Exception {
-      return value == null ? null : new File(value);
-    }
-  };
-  public static CliConverter<HostAndPort> HOST_PORT = new CliConverter<HostAndPort>() {
-    @Override
-    public HostAndPort convert(String value) throws Exception {
-      return value == null ? null : HostAndPort.fromString(value);
-    }
-  };
+  public static CliConverter<File> FILE =
+      new CliConverter<File>() {
+        @Override
+        public File convert(String value) throws Exception {
+          return value == null ? null : new File(value);
+        }
+      };
+  public static CliConverter<HostAndPort> HOST_PORT =
+      new CliConverter<HostAndPort>() {
+        @Override
+        public HostAndPort convert(String value) throws Exception {
+          return value == null ? null : HostAndPort.fromString(value);
+        }
+      };
 }

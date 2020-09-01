@@ -114,7 +114,7 @@ class InteractiveStatusPrintStream extends StatusPrintStream {
   @Override
   public void write(int b) {
     //noinspection NumericCastThatLosesPrecision
-    appender.appendBytes(new byte[]{(byte) b}, 0, 1);
+    appender.appendBytes(new byte[] {(byte) b}, 0, 1);
   }
 
   @Override

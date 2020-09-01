@@ -15,18 +15,17 @@
  */
 package com.facebook.concurrency;
 
+import com.facebook.util.exceptions.ExceptionHandler;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.base.Preconditions;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
-import com.facebook.util.exceptions.ExceptionHandler;
-
-public class CaffeineConcurrentCache<K, V, E extends Exception> implements ConcurrentCache<K, V, E> {
+public class CaffeineConcurrentCache<K, V, E extends Exception>
+    implements ConcurrentCache<K, V, E> {
   private final LoadingCache<K, CallableSnapshot<V, E>> cache;
   private final ExceptionHandler<E> exceptionHandler;
   private final ConcurrentMap<K, CallableSnapshot<V, E>> cacheAsMap;
@@ -36,21 +35,20 @@ public class CaffeineConcurrentCache<K, V, E extends Exception> implements Concu
    *
    * @param valueFactory
    * @param exceptionHandler
-   * @param cacheBuilder     - result of Caffeine.newBuilder() + any config (caller may customize the cache)
+   * @param cacheBuilder - result of Caffeine.newBuilder() + any config (caller may customize the
+   *     cache)
    */
   public CaffeineConcurrentCache(
-    ValueFactory<K, V, E> valueFactory,
-    ExceptionHandler<E> exceptionHandler,
-    Caffeine<Object, Object> cacheBuilder
-  ) {
+      ValueFactory<K, V, E> valueFactory,
+      ExceptionHandler<E> exceptionHandler,
+      Caffeine<Object, Object> cacheBuilder) {
     this.exceptionHandler = exceptionHandler;
     this.cache = cacheBuilder.build(new CacheValueLoader<>(valueFactory, exceptionHandler));
     cacheAsMap = cache.asMap();
   }
 
   public CaffeineConcurrentCache(
-    ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler
-  ) {
+      ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler) {
     this(valueFactory, exceptionHandler, Caffeine.newBuilder());
   }
 
@@ -61,7 +59,8 @@ public class CaffeineConcurrentCache<K, V, E extends Exception> implements Concu
 
   @Override
   public V put(K key, V value) throws E {
-    CallableSnapshot<V, E> putResult = cacheAsMap.put(key, new CallableSnapshot<>(() -> value, exceptionHandler));
+    CallableSnapshot<V, E> putResult =
+        cacheAsMap.put(key, new CallableSnapshot<>(() -> value, exceptionHandler));
 
     return putResult == null ? null : putResult.get();
   }
@@ -116,11 +115,13 @@ public class CaffeineConcurrentCache<K, V, E extends Exception> implements Concu
     return cache.getIfPresent(key);
   }
 
-  private static class CacheValueLoader<K, V, E extends Exception> implements CacheLoader<K, CallableSnapshot<V, E>> {
+  private static class CacheValueLoader<K, V, E extends Exception>
+      implements CacheLoader<K, CallableSnapshot<V, E>> {
     private final ValueFactory<K, V, E> valueFactory;
     private final ExceptionHandler<E> exceptionHandler;
 
-    private CacheValueLoader(ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler) {
+    private CacheValueLoader(
+        ValueFactory<K, V, E> valueFactory, ExceptionHandler<E> exceptionHandler) {
       this.valueFactory = valueFactory;
       this.exceptionHandler = exceptionHandler;
     }

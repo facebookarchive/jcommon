@@ -15,15 +15,13 @@
  */
 package com.facebook.stats;
 
+import java.util.concurrent.atomic.AtomicLong;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
- * Fast implementation of GaugeCounter that may give slightly inaccurate values
- * in certain race conditions, but should produce close to accurate results
- * in the long run.
+ * Fast implementation of GaugeCounter that may give slightly inaccurate values in certain race
+ * conditions, but should produce close to accurate results in the long run.
  */
 public class FastGaugeCounter implements GaugeCounter {
   private final ReadableDateTime start;
@@ -98,13 +96,10 @@ public class FastGaugeCounter implements GaugeCounter {
       mergedEnd = counter.getEnd();
     }
 
-    DefaultGaugeCounter mergedCounter =
-      new DefaultGaugeCounter(mergedStart, mergedEnd);
+    DefaultGaugeCounter mergedCounter = new DefaultGaugeCounter(mergedStart, mergedEnd);
 
     mergedCounter.add(
-      value.get() + counter.getValue(),
-      nsamples.get() + ((GaugeCounter)counter).getSamples()
-    );
+        value.get() + counter.getValue(), nsamples.get() + ((GaugeCounter) counter).getSamples());
 
     return mergedCounter;
   }

@@ -15,22 +15,22 @@
  */
 package com.facebook.stats.concurrent;
 
+import static java.lang.Long.MAX_VALUE;
+import static java.lang.Long.MIN_VALUE;
+
 import java.time.Clock;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
-import static java.lang.Long.MAX_VALUE;
-import static java.lang.Long.MIN_VALUE;
-
 /**
  * Computes sum, average, sample count, min, max and per-second rate with the ability to compute
- * "till-now" values over the last hour.
- * Uses a circular arrays where each element contains the all-time (in the case of sum and
- * count) or interval (in the case of min/max) value at the end of a 1-second window. The total sum
- * or count over a given time range is computed by taking the difference between two elements. The
- * min/max is computed by iterating over the windows in the range. Since old elements are removed on
- * 1-second boundaries, there can be a slight over estimate of the rate and count: in the average
- * case of a fairly consistent rate, this is less than 1% for the 1 minute rate or count.
+ * "till-now" values over the last hour. Uses a circular arrays where each element contains the
+ * all-time (in the case of sum and count) or interval (in the case of min/max) value at the end of
+ * a 1-second window. The total sum or count over a given time range is computed by taking the
+ * difference between two elements. The min/max is computed by iterating over the windows in the
+ * range. Since old elements are removed on 1-second boundaries, there can be a slight over estimate
+ * of the rate and count: in the average case of a fairly consistent rate, this is less than 1% for
+ * the 1 minute rate or count.
  */
 public class SpreadStat implements Stat {
   private static final int WINDOW_COUNT = 3601;
@@ -106,12 +106,11 @@ public class SpreadStat implements Stat {
       int offset = currentOffset + WINDOW_COUNT;
 
       return new Snapshot(
-        "sum",
-        total,
-        total - rollingWindows[(offset - 3600) % WINDOW_COUNT][TOTAL_INDEX],
-        total - rollingWindows[(offset - 600) % WINDOW_COUNT][TOTAL_INDEX],
-        total - rollingWindows[(offset - 60) % WINDOW_COUNT][TOTAL_INDEX]
-      );
+          "sum",
+          total,
+          total - rollingWindows[(offset - 3600) % WINDOW_COUNT][TOTAL_INDEX],
+          total - rollingWindows[(offset - 600) % WINDOW_COUNT][TOTAL_INDEX],
+          total - rollingWindows[(offset - 60) % WINDOW_COUNT][TOTAL_INDEX]);
     }
   }
 
@@ -123,12 +122,11 @@ public class SpreadStat implements Stat {
       int offset = currentOffset + WINDOW_COUNT;
 
       return new Snapshot(
-        "samples",
-        count,
-        count - rollingWindows[(offset - 3600) % WINDOW_COUNT][COUNT_INDEX],
-        count - rollingWindows[(offset - 600) % WINDOW_COUNT][COUNT_INDEX],
-        count - rollingWindows[(offset - 60) % WINDOW_COUNT][COUNT_INDEX]
-      );
+          "samples",
+          count,
+          count - rollingWindows[(offset - 3600) % WINDOW_COUNT][COUNT_INDEX],
+          count - rollingWindows[(offset - 600) % WINDOW_COUNT][COUNT_INDEX],
+          count - rollingWindows[(offset - 60) % WINDOW_COUNT][COUNT_INDEX]);
     }
   }
 
@@ -149,12 +147,11 @@ public class SpreadStat implements Stat {
     }
 
     return new Snapshot(
-      "average",
-      average(total.getAllTime(), count.getAllTime()),
-      average(total.getHour(), count.getHour()),
-      average(total.getTenMinute(), count.getTenMinute()),
-      average(total.getMinute(), count.getMinute())
-    );
+        "average",
+        average(total.getAllTime(), count.getAllTime()),
+        average(total.getHour(), count.getHour()),
+        average(total.getTenMinute(), count.getTenMinute()),
+        average(total.getMinute(), count.getMinute()));
   }
 
   public Snapshot getMin() {

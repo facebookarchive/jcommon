@@ -19,7 +19,7 @@ import java.util.concurrent.Callable;
 
 public interface ExtCallable<V, E extends Throwable> {
   V call() throws E;
-  
+
   static <V> Callable<V> quiet(ExtCallable<V, ?> callable) {
     return () -> ExtSupplier.quiet(() -> callable.call()).get();
   }

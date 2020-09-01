@@ -15,12 +15,11 @@
  */
 package com.facebook.stats;
 
+import java.util.Iterator;
 import org.joda.time.ReadableDuration;
 
-import java.util.Iterator;
-
 public abstract class AbstractCompositeSum<C extends EventCounterIf<C>>
-  extends AbstractCompositeCounter<C> {
+    extends AbstractCompositeCounter<C> {
 
   protected AbstractCompositeSum(ReadableDuration maxLength, ReadableDuration maxChunkLength) {
     super(maxLength, maxChunkLength);
@@ -31,9 +30,8 @@ public abstract class AbstractCompositeSum<C extends EventCounterIf<C>>
   }
 
   /**
-   * Note: this is a snapshot of some moment, but component EventCounters
-   * may change value while the sum is computed. The only guarantee is that
-   * no new EventCounters are added during the call.
+   * Note: this is a snapshot of some moment, but component EventCounters may change value while the
+   * sum is computed. The only guarantee is that no new EventCounters are added during the call.
    *
    * @return sum of counter in the range
    */

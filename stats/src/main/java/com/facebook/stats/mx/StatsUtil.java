@@ -24,39 +24,32 @@ import com.facebook.stats.ReadableMultiWindowCounter;
 import com.facebook.stats.ReadableMultiWindowGauge;
 import com.facebook.stats.ReadableMultiWindowRate;
 import com.google.common.collect.ImmutableList;
-import org.joda.time.DateTime;
+import java.util.List;
+import java.util.Map;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
-import java.util.List;
-import java.util.Map;
-
 /**
- * Helper methods for converting stat objects into key/value pairs that conform to standing
- * naming conventions around <type>.<time_window>
+ * Helper methods for converting stat objects into key/value pairs that conform to standing naming
+ * conventions around <type>.<time_window>
  */
 public class StatsUtil {
-  /**
-   * @deprecated replaced by addRateAndSumToCounters
-   */
+  /** @deprecated replaced by addRateAndSumToCounters */
   @Deprecated
   public static void adddKeyToCounters(
-    String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap
-  ) {
-    addRateToCounters(baseKey,  rate, counterMap);
-    addSumToCounters(baseKey,  rate, counterMap);
+      String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap) {
+    addRateToCounters(baseKey, rate, counterMap);
+    addSumToCounters(baseKey, rate, counterMap);
   }
 
   public static void addRateAndSumToCounters(
-    String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap
-  ) {
+      String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap) {
     addRateToCounters(baseKey, rate, counterMap);
     addSumToCounters(baseKey, rate, counterMap);
   }
 
   public static void addRateToCounters(
-    String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap
-  ) {
+      String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap) {
     counterMap.put(baseKey + ".rate", rate.getAllTimeRate());
     counterMap.put(baseKey + ".rate.3600", rate.getHourRate());
     counterMap.put(baseKey + ".rate.600", rate.getTenMinuteRate());
@@ -64,8 +57,7 @@ public class StatsUtil {
   }
 
   public static void addSumToCounters(
-    String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap
-  ) {
+      String baseKey, ReadableMultiWindowRate rate, Map<String, Long> counterMap) {
     counterMap.put(baseKey + ".sum", rate.getAllTimeSum());
     counterMap.put(baseKey + ".sum.3600", rate.getHourSum());
     counterMap.put(baseKey + ".sum.600", rate.getTenMinuteSum());
@@ -73,8 +65,7 @@ public class StatsUtil {
   }
 
   public static void addGaugeAvgToCounters(
-    String baseKey, ReadableMultiWindowGauge gauge, Map<String, Long> counterMap
-  ) {
+      String baseKey, ReadableMultiWindowGauge gauge, Map<String, Long> counterMap) {
     counterMap.put(baseKey + ".avg", gauge.getAllTimeAvg());
     counterMap.put(baseKey + ".avg.3600", gauge.getHourAvg());
     counterMap.put(baseKey + ".avg.600", gauge.getTenMinuteAvg());
@@ -82,8 +73,7 @@ public class StatsUtil {
   }
 
   public static void addGaugeSamplesToCounters(
-    String baseKey, ReadableMultiWindowGauge gauge, Map<String, Long> counterMap
-  ) {
+      String baseKey, ReadableMultiWindowGauge gauge, Map<String, Long> counterMap) {
     counterMap.put(baseKey + ".samples", gauge.getAllTimeSamples());
     counterMap.put(baseKey + ".samples.3600", gauge.getHourSamples());
     counterMap.put(baseKey + ".samples.600", gauge.getTenMinuteSamples());
@@ -98,8 +88,7 @@ public class StatsUtil {
    * @param counterMap map of counters
    */
   private static void addValueToCounters(
-    String baseKey, ReadableMultiWindowCounter counter, Map<String, Long> counterMap
-  ) {
+      String baseKey, ReadableMultiWindowCounter counter, Map<String, Long> counterMap) {
     counterMap.put(baseKey, counter.getAllTimeValue());
     counterMap.put(baseKey + ".3600", counter.getHourValue());
     counterMap.put(baseKey + ".600", counter.getTenMinuteValue());
@@ -107,8 +96,7 @@ public class StatsUtil {
   }
 
   public static void addSpreadToCounters(
-    String baseKey, MultiWindowSpread spread, Map<String, Long> counterMap
-  ) {
+      String baseKey, MultiWindowSpread spread, Map<String, Long> counterMap) {
     addValueToCounters(baseKey + ".min", spread.getMin(), counterMap);
     addValueToCounters(baseKey + ".max", spread.getMax(), counterMap);
     addGaugeAvgToCounters(baseKey, spread.getGauge(), counterMap);
@@ -116,8 +104,7 @@ public class StatsUtil {
   }
 
   public static void addQuantileToCounters(
-    String baseKey, MultiWindowDistribution quantiles, Map<String, Long> counterMap
-  ) {
+      String baseKey, MultiWindowDistribution quantiles, Map<String, Long> counterMap) {
     addQuantilesToCounters(baseKey, ".60", counterMap, quantiles.getOneMinuteQuantiles());
     addQuantilesToCounters(baseKey, ".600", counterMap, quantiles.getTenMinuteQuantiles());
     addQuantilesToCounters(baseKey, ".3600", counterMap, quantiles.getOneHourQuantiles());
@@ -125,8 +112,7 @@ public class StatsUtil {
   }
 
   public static void addHistogramToExportedValues(
-    String baseKey, MultiWindowDistribution quantiles, Map<String, String> values
-  ) {
+      String baseKey, MultiWindowDistribution quantiles, Map<String, String> values) {
     addHistogramToExportedValues(baseKey, ".60", values, quantiles.getOneMinute());
     addHistogramToExportedValues(baseKey, ".600", values, quantiles.getTenMinutes());
     addHistogramToExportedValues(baseKey, ".3600", values, quantiles.getOneHour());
@@ -134,8 +120,7 @@ public class StatsUtil {
   }
 
   private static void addHistogramToExportedValues(
-    String baseKey, String windowKey, Map<String, String> values, QuantileDigest digest
-  ) {
+      String baseKey, String windowKey, Map<String, String> values, QuantileDigest digest) {
     values.put(baseKey + ".hist" + windowKey, serializeHistogram(digest));
   }
 
@@ -165,12 +150,13 @@ public class StatsUtil {
         lowBoundary = boundaries.get(i - 1);
       }
 
-      builder.append(lowBoundary)
-        .append(':')
-        .append(Math.round(counts.get(i).getCount()))
-        .append(':')
-        .append(Math.round(counts.get(i).getMean()))
-        .append(',');
+      builder
+          .append(lowBoundary)
+          .append(':')
+          .append(Math.round(counts.get(i).getCount()))
+          .append(':')
+          .append(Math.round(counts.get(i).getMean()))
+          .append(',');
     }
 
     // add a final bucket so that fb303 ui shows the max value
@@ -181,11 +167,10 @@ public class StatsUtil {
   }
 
   private static void addQuantilesToCounters(
-    String baseKey,
-    String windowKey,
-    Map<String, Long> counters,
-    Map<MultiWindowDistribution.Quantile, Long> oneMinuteQuantiles
-  ) {
+      String baseKey,
+      String windowKey,
+      Map<String, Long> counters,
+      Map<MultiWindowDistribution.Quantile, Long> oneMinuteQuantiles) {
     for (Map.Entry<MultiWindowDistribution.Quantile, Long> entry : oneMinuteQuantiles.entrySet()) {
       counters.put(baseKey + "." + entry.getKey().getKey() + windowKey, entry.getValue());
     }
@@ -193,10 +178,15 @@ public class StatsUtil {
 
   public static void setAllTimeSum(MultiWindowRate rate, long value) {
     long old = rate.getAllTimeSum();
-    if(old > value) {
-      throw new IllegalArgumentException("MultiWindowRate counters can not decrement their allTimeSum (" + old + " > " + value + ")");
+    if (old > value) {
+      throw new IllegalArgumentException(
+          "MultiWindowRate counters can not decrement their allTimeSum ("
+              + old
+              + " > "
+              + value
+              + ")");
     }
-    if(old == value) {
+    if (old == value) {
       return;
     }
     long delta = value - old;
@@ -218,18 +208,14 @@ public class StatsUtil {
     return new Duration(start, end);
   }
 
-  /**
-   * helper method that will set the value of a counter
-   */
+  /** helper method that will set the value of a counter */
   public static long setCounterValue(StatType statType, long value, StatsCollector stats) {
-    long oldValue  = StatsUtil.setCounterValue(statType.getKey(), value, stats);
+    long oldValue = StatsUtil.setCounterValue(statType.getKey(), value, stats);
 
-    return oldValue ;
+    return oldValue;
   }
 
-  /**
-   * helper method that will set the value of a counter
-   */
+  /** helper method that will set the value of a counter */
   public static long setCounterValue(String key, long value, StatsCollector stats) {
     long oldValue = stats.resetCounter(key);
 

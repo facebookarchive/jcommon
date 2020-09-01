@@ -20,10 +20,11 @@ import java.util.Iterator;
 import java.util.PriorityQueue;
 
 /**
- * reference implementation of a SimpleHeap that delegates to a PriorityQueue.  This is 
- * basic delegation
- * 
- * NOTE: NOT thread-safe due to shrink operation
+ * reference implementation of a SimpleHeap that delegates to a PriorityQueue. This is basic
+ * delegation
+ *
+ * <p>NOTE: NOT thread-safe due to shrink operation
+ *
  * @param <T>
  */
 public class PriorityQueueHeap<T> implements SimpleHeap<T> {
@@ -60,16 +61,17 @@ public class PriorityQueueHeap<T> implements SimpleHeap<T> {
   }
 
   /**
-   * attempts to reclaim slots, but we can't know how many, so always return 0.  
+   * attempts to reclaim slots, but we can't know how many, so always return 0.
+   *
    * @return
    */
   @Override
   public int shrink() {
     PriorityQueue<T> newPriorityQueue = new PriorityQueue<T>(priorityQueue);
-    
+
     priorityQueue = newPriorityQueue;
     // unfortunately, we don't know the # of slots saved, so we still return 0
-    
+
     return 0;
   }
 

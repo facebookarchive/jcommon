@@ -15,9 +15,8 @@
  */
 package com.facebook.memory;
 
-import sun.misc.Unsafe;
-
 import java.lang.reflect.Field;
+import sun.misc.Unsafe;
 
 public class UnsafeAccessor {
   private static Unsafe UNSAFE = null;

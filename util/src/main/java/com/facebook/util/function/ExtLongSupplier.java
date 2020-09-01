@@ -20,7 +20,7 @@ import java.util.function.LongSupplier;
 
 public interface ExtLongSupplier<E extends Throwable> {
   long getAsLong() throws E;
-  
+
   static LongSupplier quiet(ExtLongSupplier<?> longSupplier) {
     return () -> {
       try {

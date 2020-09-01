@@ -16,8 +16,7 @@
 package com.facebook.util.serialization;
 
 public class SerDeException extends Exception {
-  public SerDeException() {
-  }
+  public SerDeException() {}
 
   public SerDeException(String message) {
     super(message);
@@ -32,11 +31,7 @@ public class SerDeException extends Exception {
   }
 
   public SerDeException(
-    String message,
-    Throwable cause,
-    boolean enableSuppression,
-    boolean writableStackTrace
-  ) {
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
   }
 }

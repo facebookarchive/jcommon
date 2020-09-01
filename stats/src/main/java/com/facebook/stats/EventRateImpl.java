@@ -24,9 +24,7 @@ public class EventRateImpl implements EventRate {
   private final Duration windowSize;
   private final ReadableDateTime start;
 
-  EventRateImpl(
-    EventCounterIf<EventCounter> counter, Duration windowSize, ReadableDateTime start
-  ) {
+  EventRateImpl(EventCounterIf<EventCounter> counter, Duration windowSize, ReadableDateTime start) {
     this.counter = counter;
     this.windowSize = windowSize;
     this.start = start;

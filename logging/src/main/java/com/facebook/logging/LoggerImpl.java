@@ -18,8 +18,8 @@ package com.facebook.logging;
 import org.slf4j.LoggerFactory;
 
 /**
- * Logger with efficient var-args support.  Underlying logger is sl4j, but may be swapped to
- * any logger.
+ * Logger with efficient var-args support. Underlying logger is sl4j, but may be swapped to any
+ * logger.
  */
 public class LoggerImpl implements Logger {
   private final org.slf4j.Logger logger;
@@ -42,13 +42,13 @@ public class LoggerImpl implements Logger {
 
   /**
    * Returns a logger for the calling class or context.
-   * <p/>
-   * The fully-qualified name of that class is used to get an slf4j logger, which is then wrapped.
-   * Typical usage is to use this method to initialize a static member variable, e.g.,
+   *
+   * <p>The fully-qualified name of that class is used to get an slf4j logger, which is then
+   * wrapped. Typical usage is to use this method to initialize a static member variable, e.g.,
    * {@code private static final Logger LOG = Logger.getLogger();}
-   * <p/>
-   * As getStackTrace() isn't super cheap, this is not the sort of thing you want (or need)
-   * to be doing hundreds of times a second;
+   *
+   * <p>As getStackTrace() isn't super cheap, this is not the sort of thing you want (or need) to be
+   * doing hundreds of times a second;
    *
    * @return a logger for the current scope
    */
@@ -123,7 +123,6 @@ public class LoggerImpl implements Logger {
     if (logger.isDebugEnabled()) {
       logger.debug(message, throwable);
     }
-
   }
 
   @Override

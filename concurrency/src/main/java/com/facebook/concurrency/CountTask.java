@@ -24,7 +24,7 @@ public class CountTask implements Runnable {
   public void run() {
     count.incrementAndGet();
   }
-  
+
   public long getValue() {
     return count.get();
   }

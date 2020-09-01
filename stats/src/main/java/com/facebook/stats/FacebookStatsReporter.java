@@ -17,9 +17,7 @@ package com.facebook.stats;
 
 import java.util.Map;
 
-/**
- * A interface for reporting statistics (counters, exported values)
- */
+/** A interface for reporting statistics (counters, exported values) */
 public interface FacebookStatsReporter {
 
   void deleteCounter(String key);
@@ -38,4 +36,3 @@ public interface FacebookStatsReporter {
 
   Map<String, Long> makeCounters();
 }
-

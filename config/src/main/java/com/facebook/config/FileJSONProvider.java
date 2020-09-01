@@ -15,22 +15,19 @@
  */
 package com.facebook.config;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-/**
- * Provides JSON stored in a file
- */
+/** Provides JSON stored in a file */
 public class FileJSONProvider implements JSONProvider {
   private static final Pattern COMMENT_LINE = Pattern.compile("^\\s*//.*");
-  
+
   private final File file;
 
   public FileJSONProvider(File file) {

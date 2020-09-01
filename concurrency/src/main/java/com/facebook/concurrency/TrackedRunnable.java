@@ -15,5 +15,4 @@
  */
 package com.facebook.concurrency;
 
-public interface TrackedRunnable extends Runnable, Completable {
-}
+public interface TrackedRunnable extends Runnable, Completable {}

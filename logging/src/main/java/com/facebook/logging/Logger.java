@@ -15,11 +15,7 @@
  */
 package com.facebook.logging;
 
-/**
- * Facebook logging interface that is similar to log4j, but adds delayed format processing
- *
- **/
-
+/** Facebook logging interface that is similar to log4j, but adds delayed format processing */
 public interface Logger {
   public boolean isTraceEnabled();
 
@@ -39,9 +35,7 @@ public interface Logger {
 
   public void debug(Throwable t, String format, Object... args);
 
-  /**
-   * @deprecated you might prefer {@link #debug(Throwable, String)}
-   */
+  /** @deprecated you might prefer {@link #debug(Throwable, String)} */
   @Deprecated
   public void debug(String message, Throwable throwable);
 
@@ -49,9 +43,7 @@ public interface Logger {
 
   public void info(Throwable t, String format, Object... args);
 
-  /**
-   * @deprecated you might prefer {@link #info(Throwable, String)}
-   */
+  /** @deprecated you might prefer {@link #info(Throwable, String)} */
   @Deprecated
   public void info(String message, Throwable throwable);
 
@@ -59,9 +51,7 @@ public interface Logger {
 
   public void warn(Throwable t, String format, Object... args);
 
-  /**
-   * @deprecated you might prefer {@link #warn(Throwable, String)}
-   */
+  /** @deprecated you might prefer {@link #warn(Throwable, String)} */
   @Deprecated
   public void warn(String message, Throwable throwable);
 
@@ -69,15 +59,10 @@ public interface Logger {
 
   public void error(Throwable t, String format, Object... args);
 
-  /**
-   * @deprecated you might prefer {@link #error(Throwable, String)}
-   */
+  /** @deprecated you might prefer {@link #error(Throwable, String)} */
   @Deprecated
   public void error(String message, Throwable throwable);
 
-
-  /**
-   * @return the name of the logger instance
-   */
+  /** @return the name of the logger instance */
   public String getName();
 }

@@ -20,7 +20,7 @@ import java.util.function.DoubleFunction;
 
 public interface ExtDoubleFunction<R, E extends Throwable> {
   R apply(double value) throws E;
-  
+
   static <R> DoubleFunction<R> quiet(ExtDoubleFunction<R, ?> doubleFunction) {
     return (value) -> ExtSupplier.quiet(() -> doubleFunction.apply(value)).get();
   }

@@ -25,16 +25,14 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Highly concurrent (no limit, uses ReadLock) for adds.  Removes hold
- * the write lock if the set is found to be empty and an attempt to remove it
- * from the map is made 
+ * Highly concurrent (no limit, uses ReadLock) for adds. Removes hold the write lock if the set is
+ * found to be empty and an attempt to remove it from the map is made
  *
  * @param <K> type for the key
  * @param <V> type of the elements in the set
  */
-public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K,V,S> {
-  private final ConcurrentMap<K, S> sets =
-    new ConcurrentHashMap<K, S>();
+public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K, V, S> {
+  private final ConcurrentMap<K, S> sets = new ConcurrentHashMap<K, S>();
   private final ReadWriteLock removalLock = new ReentrantReadWriteLock();
   private final SetFactory<V, S> setFactory;
 
@@ -52,9 +50,9 @@ public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K,V,S> {
 
       if (set == null) {
         set = setFactory.create();
-  
+
         S existingSet = sets.putIfAbsent(key, set);
-  
+
         if (existingSet != null) {
           set = existingSet;
         }
@@ -85,7 +83,7 @@ public class SetMapImpl<K, V, S extends Set<V>> implements SetMap<K,V,S> {
 
     if (set.isEmpty()) {
       // conditional remove requires that no elements be added to the set
-      //during this time
+      // during this time
       removalLock.writeLock().lock();
       try {
         sets.remove(key, Collections.EMPTY_SET);

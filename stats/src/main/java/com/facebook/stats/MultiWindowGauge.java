@@ -32,30 +32,27 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
 
   private final Object rollLock = new Object();
 
-
   public MultiWindowGauge() {
     this(DefaultGaugeCounterFactory.INSTANCE);
   }
 
   public MultiWindowGauge(GaugeCounterFactory gaugeCounterFactory) {
     this(
-      gaugeCounterFactory,
-      newCompositeGaugeCounter(Integer.MAX_VALUE, gaugeCounterFactory),
-      newCompositeGaugeCounter(60, gaugeCounterFactory),
-      newCompositeGaugeCounter(10, gaugeCounterFactory),
-      newCompositeGaugeCounter(1, gaugeCounterFactory),
-      new DateTime()
-    );
+        gaugeCounterFactory,
+        newCompositeGaugeCounter(Integer.MAX_VALUE, gaugeCounterFactory),
+        newCompositeGaugeCounter(60, gaugeCounterFactory),
+        newCompositeGaugeCounter(10, gaugeCounterFactory),
+        newCompositeGaugeCounter(1, gaugeCounterFactory),
+        new DateTime());
   }
 
   MultiWindowGauge(
-    GaugeCounterFactory gaugeCounterFactory,
-    CompositeGaugeCounter allTimeCounter,
-    CompositeGaugeCounter hourCounter,
-    CompositeGaugeCounter tenMinuteCounter,
-    CompositeGaugeCounter minuteCounter,
-    ReadableDateTime start
-  ) {
+      GaugeCounterFactory gaugeCounterFactory,
+      CompositeGaugeCounter allTimeCounter,
+      CompositeGaugeCounter hourCounter,
+      CompositeGaugeCounter tenMinuteCounter,
+      CompositeGaugeCounter minuteCounter,
+      ReadableDateTime start) {
     this.gaugeCounterFactory = gaugeCounterFactory;
     this.allTimeCounter = allTimeCounter;
     this.hourCounter = hourCounter;
@@ -66,11 +63,8 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
   }
 
   private static CompositeGaugeCounter newCompositeGaugeCounter(
-    int minutes, GaugeCounterFactory gaugeCounterFactory
-  ) {
-    return new CompositeGaugeCounter(
-      Duration.standardMinutes(minutes), gaugeCounterFactory
-    );
+      int minutes, GaugeCounterFactory gaugeCounterFactory) {
+    return new CompositeGaugeCounter(Duration.standardMinutes(minutes), gaugeCounterFactory);
   }
 
   @Override
@@ -98,9 +92,11 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
     ReadableDateTime end = counter.getEnd();
     ReadableDateTime start = counter.getStart();
     ReadableDateTime now = new DateTime();
-    Duration duration = now.isBefore(end) ?
-      new Duration(start, now) :    // so far
-      new Duration(start, end);
+    Duration duration =
+        now.isBefore(end)
+            ? new Duration(start, now)
+            : // so far
+            new Duration(start, end);
     long secs = duration.getStandardSeconds();
     return secs > 0 ? value / secs : value;
   }
@@ -207,9 +203,7 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
    */
   private GaugeCounter nextCurrentCounter() {
     ReadableDateTime now = new DateTime();
-    GaugeCounter gaugeCounter = gaugeCounterFactory.create(
-      now, now.toDateTime().plusSeconds(6)
-    );
+    GaugeCounter gaugeCounter = gaugeCounterFactory.create(now, now.toDateTime().plusSeconds(6));
 
     allTimeCounter.addEventCounter(gaugeCounter);
     hourCounter.addEventCounter(gaugeCounter);
@@ -221,12 +215,11 @@ public class MultiWindowGauge implements ReadableMultiWindowGauge, WritableMulti
 
   public MultiWindowGauge merge(MultiWindowGauge rhs) {
     return new MultiWindowGauge(
-      gaugeCounterFactory,
-      (CompositeGaugeCounter)allTimeCounter.merge(rhs.allTimeCounter),
-      (CompositeGaugeCounter)hourCounter.merge(rhs.hourCounter),
-      (CompositeGaugeCounter)tenMinuteCounter.merge(rhs.tenMinuteCounter),
-      (CompositeGaugeCounter)minuteCounter.merge(rhs.minuteCounter),
-      start.isBefore(rhs.start) ? start : rhs.start
-    );
+        gaugeCounterFactory,
+        (CompositeGaugeCounter) allTimeCounter.merge(rhs.allTimeCounter),
+        (CompositeGaugeCounter) hourCounter.merge(rhs.hourCounter),
+        (CompositeGaugeCounter) tenMinuteCounter.merge(rhs.tenMinuteCounter),
+        (CompositeGaugeCounter) minuteCounter.merge(rhs.minuteCounter),
+        start.isBefore(rhs.start) ? start : rhs.start);
   }
 }

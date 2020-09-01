@@ -15,6 +15,14 @@
  */
 package com.facebook.stats.mx;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
+import com.facebook.stats.MultiWindowDistribution;
+import com.facebook.stats.MultiWindowRate;
+import com.facebook.stats.MultiWindowSpread;
+import com.facebook.stats.concurrent.RateStat;
+import com.facebook.stats.concurrent.SpreadStat;
+import com.facebook.stats.concurrent.Stat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -22,17 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
-import com.facebook.stats.concurrent.RateStat;
-import com.facebook.stats.concurrent.SpreadStat;
-import com.facebook.stats.concurrent.Stat;
-import com.facebook.stats.MultiWindowDistribution;
-import com.facebook.stats.MultiWindowRate;
-import com.facebook.stats.MultiWindowSpread;
-
 public class Stats implements StatsReader, StatsCollector {
-  private static final Logger LOG = LoggerImpl.getClassLogger(); 
+  private static final Logger LOG = LoggerImpl.getClassLogger();
   private static final String ERROR_FLAG = "--ERROR--";
   private static final long ERROR_VALUE = -1;
 
@@ -44,7 +43,7 @@ public class Stats implements StatsReader, StatsCollector {
   private final ConcurrentMap<String, LongCounter> counters = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, MultiWindowSpread> spreads = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, MultiWindowDistribution> distributions =
-    new ConcurrentHashMap<>();
+      new ConcurrentHashMap<>();
   private final ConcurrentMap<String, Stat> concurrent = new ConcurrentHashMap<>();
 
   public Stats(String prefix) {
@@ -56,8 +55,7 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   private MultiWindowRate getMultiWindowRate(
-    String key, ConcurrentMap<String, MultiWindowRate> map
-  ) {
+      String key, ConcurrentMap<String, MultiWindowRate> map) {
     MultiWindowRate rate = map.get(key);
 
     if (rate == null) {
@@ -75,38 +73,29 @@ public class Stats implements StatsReader, StatsCollector {
   @Override
   public void exportCounters(Map<String, Long> counterMap) {
     for (Map.Entry<String, MultiWindowRate> entry : rates.entrySet()) {
-      StatsUtil.addRateAndSumToCounters(
-        prefix + entry.getKey(), entry.getValue(), counterMap
-      );
+      StatsUtil.addRateAndSumToCounters(prefix + entry.getKey(), entry.getValue(), counterMap);
     }
 
     for (Map.Entry<String, MultiWindowRate> entry : sums.entrySet()) {
-      StatsUtil.addSumToCounters(
-        prefix + entry.getKey(), entry.getValue(), counterMap
-      );
+      StatsUtil.addSumToCounters(prefix + entry.getKey(), entry.getValue(), counterMap);
     }
 
     for (Map.Entry<String, MultiWindowSpread> entry : spreads.entrySet()) {
-      StatsUtil.addSpreadToCounters(
-        prefix + entry.getKey(), entry.getValue(), counterMap
-      );
+      StatsUtil.addSpreadToCounters(prefix + entry.getKey(), entry.getValue(), counterMap);
     }
 
     for (Map.Entry<String, MultiWindowDistribution> entry : distributions.entrySet()) {
-      StatsUtil.addQuantileToCounters(
-        prefix + entry.getKey(), entry.getValue(), counterMap
-      );
+      StatsUtil.addQuantileToCounters(prefix + entry.getKey(), entry.getValue(), counterMap);
     }
 
     for (Map.Entry<String, LongCounter> entry : counters.entrySet()) {
       Long duplicate = counterMap.put(prefix + entry.getKey(), entry.getValue().get());
       if (duplicate != null) {
-        LOG.warn("Duplicate counter(3) : %s, Ignoring old value %s", prefix + entry.getKey(), duplicate);
+        LOG.warn(
+            "Duplicate counter(3) : %s, Ignoring old value %s", prefix + entry.getKey(), duplicate);
       }
     }
   }
-
-
 
   @Override
   public MultiWindowRate getRate(StatType statType) {
@@ -117,7 +106,6 @@ public class Stats implements StatsReader, StatsCollector {
   public MultiWindowRate getRate(String key) {
     return getMultiWindowRate(key, rates);
   }
-
 
   @Override
   public void incrementRate(StatType type, long delta) {
@@ -202,7 +190,8 @@ public class Stats implements StatsReader, StatsCollector {
   }
 
   public void incrementSpread(StatType type, long value) {
-    getMultiWindowSpread(type.getKey()).add(value);  }
+    getMultiWindowSpread(type.getKey()).add(value);
+  }
 
   @Override
   public void incrementSpread(String key, long value) {
@@ -254,14 +243,12 @@ public class Stats implements StatsReader, StatsCollector {
    *
    * @param key the key for the dynamic counter
    * @param valueProducer the generator value for this counter
-   *
    * @return true if the counter was added. False, if a counter with the specified key exists
-   * already
+   *     already
    */
   public boolean addDynamicCounter(String key, Callable<Long> valueProducer) {
     return null == counters.putIfAbsent(key, new CallableLongCounter(key, valueProducer));
   }
-
 
   /**
    * Removes a counter with the specified key
@@ -359,86 +346,83 @@ public class Stats implements StatsReader, StatsCollector {
 
   public Stat concurrentRate(String key) {
     return concurrent.computeIfAbsent(
-      key,
-      k -> {
-        RateStat stat = new RateStat(key);
+        key,
+        k -> {
+          RateStat stat = new RateStat(key);
 
-        addDynamicCounter(key + ".rate", () -> stat.getRate().getAllTime());
-        addDynamicCounter(key + ".rate.3600", () -> stat.getRate().getHour());
-        addDynamicCounter(key + ".rate.600", () -> stat.getRate().getTenMinute());
-        addDynamicCounter(key + ".rate.60", () -> stat.getRate().getMinute());
-        addDynamicCounter(key + ".sum", () -> stat.getSum().getAllTime());
-        addDynamicCounter(key + ".sum.3600", () -> stat.getSum().getHour());
-        addDynamicCounter(key + ".sum.600", () -> stat.getSum().getTenMinute());
-        addDynamicCounter(key + ".sum.60", () -> stat.getSum().getMinute());
+          addDynamicCounter(key + ".rate", () -> stat.getRate().getAllTime());
+          addDynamicCounter(key + ".rate.3600", () -> stat.getRate().getHour());
+          addDynamicCounter(key + ".rate.600", () -> stat.getRate().getTenMinute());
+          addDynamicCounter(key + ".rate.60", () -> stat.getRate().getMinute());
+          addDynamicCounter(key + ".sum", () -> stat.getSum().getAllTime());
+          addDynamicCounter(key + ".sum.3600", () -> stat.getSum().getHour());
+          addDynamicCounter(key + ".sum.600", () -> stat.getSum().getTenMinute());
+          addDynamicCounter(key + ".sum.60", () -> stat.getSum().getMinute());
 
-        return stat;
-      }
-    );
+          return stat;
+        });
   }
 
   public Stat concurrentSpread(String key) {
     return concurrent.computeIfAbsent(
-      key,
-      k -> {
-        SpreadStat stat = new SpreadStat(key);
+        key,
+        k -> {
+          SpreadStat stat = new SpreadStat(key);
 
-        addDynamicCounter(key + ".min", () -> stat.getMin().getAllTime());
-        addDynamicCounter(key + ".min.3600", () -> stat.getMin().getHour());
-        addDynamicCounter(key + ".min.600", () -> stat.getMin().getTenMinute());
-        addDynamicCounter(key + ".min.60", () -> stat.getMin().getMinute());
-        addDynamicCounter(key + ".max", () -> stat.getMax().getAllTime());
-        addDynamicCounter(key + ".max.3600", () -> stat.getMax().getHour());
-        addDynamicCounter(key + ".max.600", () -> stat.getMax().getTenMinute());
-        addDynamicCounter(key + ".max.60", () -> stat.getMax().getMinute());
-        addDynamicCounter(key + ".avg", () -> stat.getAverage().getAllTime());
-        addDynamicCounter(key + ".avg.3600", () -> stat.getAverage().getHour());
-        addDynamicCounter(key + ".avg.600", () -> stat.getAverage().getTenMinute());
-        addDynamicCounter(key + ".avg.60", () -> stat.getAverage().getMinute());
-        addDynamicCounter(key + ".samples", () -> stat.getSamples().getAllTime());
-        addDynamicCounter(key + ".samples.3600", () -> stat.getSamples().getHour());
-        addDynamicCounter(key + ".samples.600", () -> stat.getSamples().getTenMinute());
-        addDynamicCounter(key + ".samples.60", () -> stat.getSamples().getMinute());
+          addDynamicCounter(key + ".min", () -> stat.getMin().getAllTime());
+          addDynamicCounter(key + ".min.3600", () -> stat.getMin().getHour());
+          addDynamicCounter(key + ".min.600", () -> stat.getMin().getTenMinute());
+          addDynamicCounter(key + ".min.60", () -> stat.getMin().getMinute());
+          addDynamicCounter(key + ".max", () -> stat.getMax().getAllTime());
+          addDynamicCounter(key + ".max.3600", () -> stat.getMax().getHour());
+          addDynamicCounter(key + ".max.600", () -> stat.getMax().getTenMinute());
+          addDynamicCounter(key + ".max.60", () -> stat.getMax().getMinute());
+          addDynamicCounter(key + ".avg", () -> stat.getAverage().getAllTime());
+          addDynamicCounter(key + ".avg.3600", () -> stat.getAverage().getHour());
+          addDynamicCounter(key + ".avg.600", () -> stat.getAverage().getTenMinute());
+          addDynamicCounter(key + ".avg.60", () -> stat.getAverage().getMinute());
+          addDynamicCounter(key + ".samples", () -> stat.getSamples().getAllTime());
+          addDynamicCounter(key + ".samples.3600", () -> stat.getSamples().getHour());
+          addDynamicCounter(key + ".samples.600", () -> stat.getSamples().getTenMinute());
+          addDynamicCounter(key + ".samples.60", () -> stat.getSamples().getMinute());
 
-        return stat;
-      }
-    );
+          return stat;
+        });
   }
 
   public Stat concurrentSpreadRate(String key) {
     return concurrent.computeIfAbsent(
-      key,
-      k -> {
-        SpreadStat stat = new SpreadStat(key);
+        key,
+        k -> {
+          SpreadStat stat = new SpreadStat(key);
 
-        addDynamicCounter(key + ".rate", () -> stat.getRate().getAllTime());
-        addDynamicCounter(key + ".rate.3600", () -> stat.getRate().getHour());
-        addDynamicCounter(key + ".rate.600", () -> stat.getRate().getTenMinute());
-        addDynamicCounter(key + ".rate.60", () -> stat.getRate().getMinute());
-        addDynamicCounter(key + ".sum", () -> stat.getSum().getAllTime());
-        addDynamicCounter(key + ".sum.3600", () -> stat.getSum().getHour());
-        addDynamicCounter(key + ".sum.600", () -> stat.getSum().getTenMinute());
-        addDynamicCounter(key + ".sum.60", () -> stat.getSum().getMinute());
-        addDynamicCounter(key + ".min", () -> stat.getMin().getAllTime());
-        addDynamicCounter(key + ".min.3600", () -> stat.getMin().getHour());
-        addDynamicCounter(key + ".min.600", () -> stat.getMin().getTenMinute());
-        addDynamicCounter(key + ".min.60", () -> stat.getMin().getMinute());
-        addDynamicCounter(key + ".max", () -> stat.getMax().getAllTime());
-        addDynamicCounter(key + ".max.3600", () -> stat.getMax().getHour());
-        addDynamicCounter(key + ".max.600", () -> stat.getMax().getTenMinute());
-        addDynamicCounter(key + ".max.60", () -> stat.getMax().getMinute());
-        addDynamicCounter(key + ".avg", () -> stat.getAverage().getAllTime());
-        addDynamicCounter(key + ".avg.3600", () -> stat.getAverage().getHour());
-        addDynamicCounter(key + ".avg.600", () -> stat.getAverage().getTenMinute());
-        addDynamicCounter(key + ".avg.60", () -> stat.getAverage().getMinute());
-        addDynamicCounter(key + ".samples", () -> stat.getSamples().getAllTime());
-        addDynamicCounter(key + ".samples.3600", () -> stat.getSamples().getHour());
-        addDynamicCounter(key + ".samples.600", () -> stat.getSamples().getTenMinute());
-        addDynamicCounter(key + ".samples.60", () -> stat.getSamples().getMinute());
+          addDynamicCounter(key + ".rate", () -> stat.getRate().getAllTime());
+          addDynamicCounter(key + ".rate.3600", () -> stat.getRate().getHour());
+          addDynamicCounter(key + ".rate.600", () -> stat.getRate().getTenMinute());
+          addDynamicCounter(key + ".rate.60", () -> stat.getRate().getMinute());
+          addDynamicCounter(key + ".sum", () -> stat.getSum().getAllTime());
+          addDynamicCounter(key + ".sum.3600", () -> stat.getSum().getHour());
+          addDynamicCounter(key + ".sum.600", () -> stat.getSum().getTenMinute());
+          addDynamicCounter(key + ".sum.60", () -> stat.getSum().getMinute());
+          addDynamicCounter(key + ".min", () -> stat.getMin().getAllTime());
+          addDynamicCounter(key + ".min.3600", () -> stat.getMin().getHour());
+          addDynamicCounter(key + ".min.600", () -> stat.getMin().getTenMinute());
+          addDynamicCounter(key + ".min.60", () -> stat.getMin().getMinute());
+          addDynamicCounter(key + ".max", () -> stat.getMax().getAllTime());
+          addDynamicCounter(key + ".max.3600", () -> stat.getMax().getHour());
+          addDynamicCounter(key + ".max.600", () -> stat.getMax().getTenMinute());
+          addDynamicCounter(key + ".max.60", () -> stat.getMax().getMinute());
+          addDynamicCounter(key + ".avg", () -> stat.getAverage().getAllTime());
+          addDynamicCounter(key + ".avg.3600", () -> stat.getAverage().getHour());
+          addDynamicCounter(key + ".avg.600", () -> stat.getAverage().getTenMinute());
+          addDynamicCounter(key + ".avg.60", () -> stat.getAverage().getMinute());
+          addDynamicCounter(key + ".samples", () -> stat.getSamples().getAllTime());
+          addDynamicCounter(key + ".samples.3600", () -> stat.getSamples().getHour());
+          addDynamicCounter(key + ".samples.600", () -> stat.getSamples().getTenMinute());
+          addDynamicCounter(key + ".samples.60", () -> stat.getSamples().getMinute());
 
-        return stat;
-      }
-    );
+          return stat;
+        });
   }
 
   private Map<String, String> materializeAttributes() {
@@ -455,8 +439,7 @@ public class Stats implements StatsReader, StatsCollector {
 
     for (Map.Entry<String, MultiWindowDistribution> entry : distributions.entrySet()) {
       StatsUtil.addHistogramToExportedValues(
-        entry.getKey(), entry.getValue(), materializedAttributes
-      );
+          entry.getKey(), entry.getValue(), materializedAttributes);
     }
 
     return materializedAttributes;
@@ -507,6 +490,7 @@ public class Stats implements StatsReader, StatsCollector {
 
   private interface LongCounter {
     void update(long delta);
+
     long get();
   }
 
@@ -535,7 +519,7 @@ public class Stats implements StatsReader, StatsCollector {
 
     @Override
     public void update(long delta) {
-      //no-op
+      // no-op
     }
 
     @Override

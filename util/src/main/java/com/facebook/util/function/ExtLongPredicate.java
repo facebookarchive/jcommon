@@ -20,21 +20,21 @@ import java.util.function.LongPredicate;
 
 public interface ExtLongPredicate<E extends Throwable> {
   boolean test(long value) throws E;
-  
+
   default ExtLongPredicate<E> and(ExtLongPredicate<E> other) {
     Objects.requireNonNull(other);
     return (value) -> test(value) && other.test(value);
   }
-  
+
   default ExtLongPredicate<E> negate() {
     return (value) -> !test(value);
   }
-  
+
   default ExtLongPredicate<E> or(ExtLongPredicate<E> other) {
     Objects.requireNonNull(other);
     return (value) -> test(value) || other.test(value);
   }
-  
+
   static LongPredicate quiet(ExtLongPredicate<?> longPredicate) {
     return (value) -> ExtBooleanSupplier.quiet(() -> longPredicate.test(value)).getAsBoolean();
   }

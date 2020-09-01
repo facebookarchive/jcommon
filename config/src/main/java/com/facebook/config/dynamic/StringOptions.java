@@ -15,12 +15,10 @@
  */
 package com.facebook.config.dynamic;
 
-import com.google.common.collect.Maps;
-
-import java.util.concurrent.ConcurrentMap;
-
 import com.facebook.logging.Logger;
 import com.facebook.logging.LoggerImpl;
+import com.google.common.collect.Maps;
+import java.util.concurrent.ConcurrentMap;
 
 public class StringOptions {
   private static final Logger LOG = LoggerImpl.getLogger(StringOptions.class);

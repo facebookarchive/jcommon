@@ -20,17 +20,17 @@ import java.util.function.IntUnaryOperator;
 
 public interface ExtIntUnaryOperator<E extends Throwable> {
   int applyAsInt(int operand) throws E;
-  
+
   default ExtIntUnaryOperator<E> compose(ExtIntUnaryOperator<E> before) {
     Objects.requireNonNull(before);
     return (operand) -> applyAsInt(before.applyAsInt(operand));
   }
-  
+
   default ExtIntUnaryOperator<E> andThen(ExtIntUnaryOperator<E> after) {
     Objects.requireNonNull(after);
     return (operand) -> after.applyAsInt(applyAsInt(operand));
   }
-  
+
   static IntUnaryOperator quiet(ExtIntUnaryOperator<?> intUnaryOperator) {
     return (operand) -> ExtIntSupplier.quiet(() -> intUnaryOperator.applyAsInt(operand)).getAsInt();
   }

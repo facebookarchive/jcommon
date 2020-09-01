@@ -15,15 +15,13 @@
  */
 package com.facebook.logging;
 
-import org.joda.time.DateTimeUtils;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.joda.time.DateTimeUtils;
 
 /**
- * decorates a FacebookLogger with  the ability to sample logging at a specified window size
- * (1 per time specified)
- *
+ * decorates a FacebookLogger with the ability to sample logging at a specified window size (1 per
+ * time specified)
  */
 public class TimeSamplingLogger implements Logger {
   private final Logger logger;
@@ -39,8 +37,7 @@ public class TimeSamplingLogger implements Logger {
 
   private boolean shouldLog() {
     if (DateTimeUtils.currentTimeMillis() - lastLoggedMillis >= windowSizeMillis
-      && logToggle.compareAndSet(false, true)
-      ) {
+        && logToggle.compareAndSet(false, true)) {
       try {
         lastLoggedMillis = DateTimeUtils.currentTimeMillis();
 

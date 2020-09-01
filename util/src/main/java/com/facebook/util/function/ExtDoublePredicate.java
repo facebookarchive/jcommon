@@ -20,21 +20,21 @@ import java.util.function.DoublePredicate;
 
 public interface ExtDoublePredicate<E extends Throwable> {
   boolean test(double value) throws E;
-  
+
   default ExtDoublePredicate<E> and(ExtDoublePredicate<E> other) {
     Objects.requireNonNull(other);
     return (value) -> test(value) && other.test(value);
   }
-  
+
   default ExtDoublePredicate<E> negate() {
     return (value) -> !test(value);
   }
-  
+
   default ExtDoublePredicate<E> or(ExtDoublePredicate<E> other) {
     Objects.requireNonNull(other);
     return (value) -> test(value) || other.test(value);
   }
-  
+
   static DoublePredicate quiet(ExtDoublePredicate<?> doublePredicate) {
     return (value) -> ExtBooleanSupplier.quiet(() -> doublePredicate.test(value)).getAsBoolean();
   }

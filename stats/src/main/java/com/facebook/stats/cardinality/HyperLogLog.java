@@ -15,16 +15,15 @@
  */
 package com.facebook.stats.cardinality;
 
-import com.google.common.base.Preconditions;
-
-import javax.annotation.concurrent.NotThreadSafe;
-
 import static com.facebook.stats.cardinality.HyperLogLogUtil.computeHash;
+
+import com.google.common.base.Preconditions;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * An implementation of the HyperLogLog algorithm:
- * <p/>
- * http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf
+ *
+ * <p>http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf
  */
 @NotThreadSafe
 public class HyperLogLog {
@@ -37,9 +36,7 @@ public class HyperLogLog {
 
   public HyperLogLog(int numberOfBuckets) {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(numberOfBuckets),
-      "numberOfBuckets must be a power of 2"
-    );
+        Numbers.isPowerOf2(numberOfBuckets), "numberOfBuckets must be a power of 2");
     Preconditions.checkArgument(numberOfBuckets > 0, "numberOfBuckets must be > 0");
 
     buckets = new byte[numberOfBuckets];
@@ -53,11 +50,10 @@ public class HyperLogLog {
     for (int i = 0; i < buckets.length; i++) {
       int value = buckets[i];
       Preconditions.checkArgument(
-        value >= 0 && value <= Byte.MAX_VALUE,
-        "values must be > 0 and <= %s, found %s",
-        Byte.MAX_VALUE,
-        value
-      );
+          value >= 0 && value <= Byte.MAX_VALUE,
+          "values must be > 0 and <= %s, found %s",
+          Byte.MAX_VALUE,
+          value);
       this.buckets[i] = (byte) value;
       currentSum += 1.0 / (1 << value);
       if (value != 0) {

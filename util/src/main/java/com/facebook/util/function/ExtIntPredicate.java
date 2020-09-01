@@ -20,21 +20,21 @@ import java.util.function.IntPredicate;
 
 public interface ExtIntPredicate<E extends Throwable> {
   boolean test(int value) throws E;
-  
+
   default ExtIntPredicate<E> and(ExtIntPredicate<E> other) {
     Objects.requireNonNull(other);
     return (value) -> test(value) && other.test(value);
   }
-  
+
   default ExtIntPredicate<E> negate() {
     return (value) -> !test(value);
   }
-  
+
   default ExtIntPredicate<E> or(ExtIntPredicate<E> other) {
     Objects.requireNonNull(other);
     return (value) -> test(value) || other.test(value);
   }
-  
+
   static IntPredicate quiet(ExtIntPredicate<?> intPredicate) {
     return (value) -> ExtBooleanSupplier.quiet(() -> intPredicate.test(value)).getAsBoolean();
   }

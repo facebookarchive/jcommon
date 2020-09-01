@@ -15,13 +15,10 @@
  */
 package com.facebook.testing;
 
+import static org.testng.Assert.assertEquals;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.testng.Assert;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,8 +30,9 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.testng.Assert.assertEquals;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.testng.Assert;
 
 public class TestUtils {
   private TestUtils() {
@@ -50,42 +48,37 @@ public class TestUtils {
     };
   }
 
-
   public static AtomicInteger countCompletedRunnables(
-    int numTasks, Function<Runnable> submissionCallback
-  ) {
+      int numTasks, Function<Runnable> submissionCallback) {
     final AtomicInteger completed = new AtomicInteger(0);
 
     for (int i = 0; i < numTasks; i++) {
       submissionCallback.execute(
-        new Runnable() {
-          @Override
-          public void run() {
-            completed.incrementAndGet();
-          }
-        }
-      );
+          new Runnable() {
+            @Override
+            public void run() {
+              completed.incrementAndGet();
+            }
+          });
     }
 
     return completed;
   }
 
   public static <V> AtomicInteger countCompletedCallables(
-    int numTasks, Function<Callable<V>> submissionCallback
-  ) {
+      int numTasks, Function<Callable<V>> submissionCallback) {
     final AtomicInteger completed = new AtomicInteger(0);
 
     for (int i = 0; i < numTasks; i++) {
       submissionCallback.execute(
-        new Callable<V>() {
-          @Override
-          public V call() throws Exception {
-            completed.incrementAndGet();
+          new Callable<V>() {
+            @Override
+            public V call() throws Exception {
+              completed.incrementAndGet();
 
-            return null;
-          }
-        }
-      );
+              return null;
+            }
+          });
     }
 
     return completed;
@@ -110,8 +103,8 @@ public class TestUtils {
   }
 
   /**
-   * a bit hackish, we wait until the thread is not runnable or new to indicate
-   * that is is blocked on a lock or monitor
+   * a bit hackish, we wait until the thread is not runnable or new to indicate that is is blocked
+   * on a lock or monitor
    *
    * @param t thread to wait for
    */
@@ -153,7 +146,7 @@ public class TestUtils {
    * generate count distinct moments in time, 1 second apart, then randomly order them
    *
    * @param baseDateTime start moment
-   * @param count        how many moments to generate
+   * @param count how many moments to generate
    * @return
    */
   public static List<DateTime> generateMoments(DateTime baseDateTime, int count) {
@@ -168,10 +161,9 @@ public class TestUtils {
   }
 
   /**
-   * Returns a set of timezones that are distinct form each other in the kind of offsets they
-   * have from UTC.
-   * Note: This method returns timezones having the same offsets but are different in that they
-   * have fixed or non-fixed offsets. However, it's possible that two timezones with non-fixed
+   * Returns a set of timezones that are distinct form each other in the kind of offsets they have
+   * from UTC. Note: This method returns timezones having the same offsets but are different in that
+   * they have fixed or non-fixed offsets. However, it's possible that two timezones with non-fixed
    * offsets have different transitions, only one of such timezones will be returned here.
    */
   public static Collection<DateTimeZone> getDistinctTimeZones() {
@@ -212,9 +204,8 @@ public class TestUtils {
 
   public static void assertContains(String haystack, Object needle) {
     Assert.assertTrue(
-      haystack != null && haystack.contains(String.valueOf(needle)),
-      String.format("Expected to find '%s' in: %s", needle, haystack)
-    );
+        haystack != null && haystack.contains(String.valueOf(needle)),
+        String.format("Expected to find '%s' in: %s", needle, haystack));
   }
 
   /**
@@ -236,9 +227,9 @@ public class TestUtils {
    * where seeing all the elements is more useful than just the one differing element or size
    * difference.
    *
-   * @param actual   actual value
+   * @param actual actual value
    * @param expected expected value
-   * @param message  custom message to prepend to default message
+   * @param message custom message to prepend to default message
    */
   public static void assertEqualsWithNiceMessage(Object actual, Object expected, String message) {
     message = message == null ? "" : (message + " ");
@@ -246,10 +237,6 @@ public class TestUtils {
     // using the same formatting as Assert.format() makes Idea do nice UI things (e.g., "Click to
     // see difference")
     assertEquals(
-      actual,
-      expected,
-      message + "expected:<" + expected + "> but was:<" + actual + ">"
-    );
+        actual, expected, message + "expected:<" + expected + "> but was:<" + actual + ">");
   }
 }
-

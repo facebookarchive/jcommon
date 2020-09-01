@@ -16,13 +16,12 @@
 package com.facebook.tools.io;
 
 import com.google.common.base.Joiner;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestInteractiveStatusPrintStream {
   private static final String WHITE_ON_RED = "\033[1;37;41m";
@@ -49,12 +48,11 @@ public class TestInteractiveStatusPrintStream {
     err.println("Another test...");
     out.println("Goodbye");
     assertOutput(
-      "Hello, world!",
-      "This is a test",
-      "\033[1;37;41m\033[KAnother test...",
-      "\033[0m\033[KGoodbye",
-      ""
-    );
+        "Hello, world!",
+        "This is a test",
+        "\033[1;37;41m\033[KAnother test...",
+        "\033[0m\033[KGoodbye",
+        "");
   }
 
   @Test(groups = "fast")
@@ -64,12 +62,11 @@ public class TestInteractiveStatusPrintStream {
     out.println("Another test...");
     err.println("Goodbye");
     assertOutput(
-      "\033[1;37;41m\033[KHello, world!",
-      "This is a test",
-      "\033[0m\033[KAnother test...",
-      "\033[1;37;41m\033[KGoodbye",
-      ""
-    );
+        "\033[1;37;41m\033[KHello, world!",
+        "This is a test",
+        "\033[0m\033[KAnother test...",
+        "\033[1;37;41m\033[KGoodbye",
+        "");
   }
 
   @Test(groups = "fast")
@@ -85,20 +82,19 @@ public class TestInteractiveStatusPrintStream {
     out.status("...");
     err.println("bye!");
     assertOutput(
-      "Hello, world!",
-      "\r\033[2KOverwrite",
-      "\r\033[2KAgain",
-      "\r\033[2Kand again...",
-      "\r\033[2Kand again!",
-      "\r\033[2K\033[1;37;41m\033[KAlso overwrite",
-      "",
-      "\r\033[0m\033[2KAlmost done",
-      "\r\033[2K\033[1;37;41m\033[KGood",
-      "",
-      "\r\033[0m\033[2K...",
-      "\r\033[2K\033[1;37;41m\033[Kbye!",
-      ""
-    );
+        "Hello, world!",
+        "\r\033[2KOverwrite",
+        "\r\033[2KAgain",
+        "\r\033[2Kand again...",
+        "\r\033[2Kand again!",
+        "\r\033[2K\033[1;37;41m\033[KAlso overwrite",
+        "",
+        "\r\033[0m\033[2KAlmost done",
+        "\r\033[2K\033[1;37;41m\033[KGood",
+        "",
+        "\r\033[0m\033[2K...",
+        "\r\033[2K\033[1;37;41m\033[Kbye!",
+        "");
   }
 
   private void assertOutput(String... lines) {

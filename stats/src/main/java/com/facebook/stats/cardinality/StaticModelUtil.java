@@ -16,7 +16,6 @@
 package com.facebook.stats.cardinality;
 
 import com.google.common.base.Preconditions;
-
 import java.util.Arrays;
 
 final class StaticModelUtil {
@@ -26,8 +25,7 @@ final class StaticModelUtil {
   // this is a little bigger than 1.0 / MAX_COUNT
   public static final double SMALLEST_PROBABILITY = 2.5e-4;
 
-  private StaticModelUtil() {
-  }
+  private StaticModelUtil() {}
 
   public static double[] weightsToProbabilities(double[] weights) {
     return weightsToProbabilities(weights, Integer.MAX_VALUE);
@@ -38,21 +36,18 @@ final class StaticModelUtil {
     Preconditions.checkArgument(weights.length > 0, "weights is empty");
 
     return weightsToProbabilities(
-      Arrays.copyOf(weights, weights.length), sum(weights), iterationLimit
-    );
+        Arrays.copyOf(weights, weights.length), sum(weights), iterationLimit);
   }
 
   private static strictfp double[] weightsToProbabilities(
-    double[] weights, double sum, int iterationLimit
-  ) {
+      double[] weights, double sum, int iterationLimit) {
     int iterationCount = 0;
 
     do {
       for (int i = 0; i < weights.length; i++) {
         Preconditions.checkArgument(
             weights[i] >= 0,
-            String.format("weight %s value %s is not greater than zero", i, weights[i])
-        );
+            String.format("weight %s value %s is not greater than zero", i, weights[i]));
         weights[i] /= sum;
 
         // adjust probability is too small or too large
@@ -60,7 +55,8 @@ final class StaticModelUtil {
         if (weights[i] < SMALLEST_PROBABILITY) {
           weights[i] = SMALLEST_PROBABILITY;
         } else if (weights[i] > 0.999) {
-          // this generally leaves enough room for ever symbol to get a whole number part of MAX_TOTAL
+          // this generally leaves enough room for ever symbol to get a whole number part of
+          // MAX_TOTAL
           weights[i] = 0.999;
         }
       }

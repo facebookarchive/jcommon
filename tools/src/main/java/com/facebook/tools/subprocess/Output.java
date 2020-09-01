@@ -44,7 +44,8 @@ class Output extends InputStream implements Runnable {
 
   @Override
   public void run() {
-    try (PipedOutputStream pipedOut = this.pipedOut; InputStream inputStream = this.inputStream) {
+    try (PipedOutputStream pipedOut = this.pipedOut;
+        InputStream inputStream = this.inputStream) {
       byte[] buffer = new byte[BUFFER_SIZE];
       int read;
 

@@ -30,9 +30,8 @@ public class TestCompositeMin {
   public void testSanity() throws Exception {
     TimeUtil.setNow(new DateTime("2012-01-01", DateTimeZone.UTC));
 
-    CompositeMin compositeMax = new CompositeMin(
-        Duration.standardSeconds(30), Duration.standardSeconds(10)
-      );
+    CompositeMin compositeMax =
+        new CompositeMin(Duration.standardSeconds(30), Duration.standardSeconds(10));
 
     compositeMax.add(2);
     compositeMax.add(3);

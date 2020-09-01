@@ -60,23 +60,28 @@ public class Snapshot {
     }
 
     return new Snapshot(
-      "rate",
-      total / elapsed,
-      elapsed < 3600 ? total / elapsed : getHour() / 3600,
-      elapsed < 600 ? total / elapsed : getTenMinute() / 600,
-      elapsed < 60 ? total / elapsed : getMinute() / 60
-    );
+        "rate",
+        total / elapsed,
+        elapsed < 3600 ? total / elapsed : getHour() / 3600,
+        elapsed < 600 ? total / elapsed : getTenMinute() / 600,
+        elapsed < 60 ? total / elapsed : getMinute() / 60);
   }
 
   @Override
   public String toString() {
-    return "Snapshot{" +
-      "type='" + type + '\'' +
-      ", allTime=" + allTime +
-      ", hour=" + hour +
-      ", tenMinute=" + tenMinute +
-      ", minute=" + minute +
-      '}';
+    return "Snapshot{"
+        + "type='"
+        + type
+        + '\''
+        + ", allTime="
+        + allTime
+        + ", hour="
+        + hour
+        + ", tenMinute="
+        + tenMinute
+        + ", minute="
+        + minute
+        + '}';
   }
 
   @Override
@@ -88,11 +93,11 @@ public class Snapshot {
       return false;
     }
     Snapshot snapshot = (Snapshot) o;
-    return allTime == snapshot.allTime &&
-      hour == snapshot.hour &&
-      tenMinute == snapshot.tenMinute &&
-      minute == snapshot.minute &&
-      Objects.equals(type, snapshot.type);
+    return allTime == snapshot.allTime
+        && hour == snapshot.hour
+        && tenMinute == snapshot.tenMinute
+        && minute == snapshot.minute
+        && Objects.equals(type, snapshot.type);
   }
 
   @Override

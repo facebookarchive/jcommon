@@ -15,10 +15,9 @@
  */
 package com.facebook.tools;
 
+import com.facebook.tools.io.IO;
 import com.facebook.tools.parser.CliCommand;
 import com.facebook.tools.parser.CliParser;
-import com.facebook.tools.io.IO;
-
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;

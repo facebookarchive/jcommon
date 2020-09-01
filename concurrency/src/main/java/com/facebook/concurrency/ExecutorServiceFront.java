@@ -15,10 +15,6 @@
  */
 package com.facebook.concurrency;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.joda.time.DateTimeUtils;
-
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -28,19 +24,19 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.joda.time.DateTimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * This class puts its own Queue in front of another ExecutorService.
- * It uses that service to submit tasks that drain its queue.  It ensures
- * a max # of drainer threads (default 1)
- * 
- * Typical use case : back this by a SynchronousQueue based thread pool, ie
- * Executors.newCachedThreadPool() 
- * 
- * This will allow more than one object to share the thread pool, but have
- * a maximum # of threads.  When there are no elements in the queue,
- * no threads are used.
- * 
+ * This class puts its own Queue in front of another ExecutorService. It uses that service to submit
+ * tasks that drain its queue. It ensures a max # of drainer threads (default 1)
+ *
+ * <p>Typical use case : back this by a SynchronousQueue based thread pool, ie
+ * Executors.newCachedThreadPool()
+ *
+ * <p>This will allow more than one object to share the thread pool, but have a maximum # of
+ * threads. When there are no elements in the queue, no threads are used.
  */
 public class ExecutorServiceFront extends AbstractExecutorService {
   private final Lock lock = new ReentrantLock();
@@ -53,7 +49,6 @@ public class ExecutorServiceFront extends AbstractExecutorService {
   private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceFront.class);
 
   /**
-   * 
    * @param workQueue
    * @param executor
    * @param maxDrainers
@@ -61,65 +56,56 @@ public class ExecutorServiceFront extends AbstractExecutorService {
    * @param maxTimeSliceUnit - the unit of the maxTimeSlice argument
    */
   public ExecutorServiceFront(
-    BlockingQueue<Runnable> workQueue, 
-    ExecutorService executor,
-    String poolName,
-    int maxDrainers,
-    long maxTimeSlice,
-    TimeUnit maxTimeSliceUnit
-  ) {
+      BlockingQueue<Runnable> workQueue,
+      ExecutorService executor,
+      String poolName,
+      int maxDrainers,
+      long maxTimeSlice,
+      TimeUnit maxTimeSliceUnit) {
     this.workQueue = workQueue;
     this.executor = executor;
     this.poolName = poolName;
     this.maxTimeSliceMillis = maxTimeSliceUnit.toMillis(maxTimeSlice);
     drainerList = new ArrayBlockingQueue<Drainer>(maxDrainers);
-    
+
     for (int i = 0; i < maxDrainers; i++) {
       drainerList.add(new Drainer(String.format("%s-%03d", poolName, i)));
     }
   }
 
   public ExecutorServiceFront(
-    BlockingQueue<Runnable> workQueue, 
-    ExecutorService executor,
-    int maxDrainers,
-    long maxTimeSlice,
-    TimeUnit maxTimeSliceUnit
-  ) {
+      BlockingQueue<Runnable> workQueue,
+      ExecutorService executor,
+      int maxDrainers,
+      long maxTimeSlice,
+      TimeUnit maxTimeSliceUnit) {
     this(workQueue, executor, "Drainer", maxDrainers, maxTimeSlice, maxTimeSliceUnit);
   }
 
   public ExecutorServiceFront(
-    BlockingQueue<Runnable> workQueue, 
-    ExecutorService executor,
-    String poolName,
-    int maxDrainers
-  ) {
+      BlockingQueue<Runnable> workQueue,
+      ExecutorService executor,
+      String poolName,
+      int maxDrainers) {
     this(workQueue, executor, poolName, maxDrainers, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
   }
 
   public ExecutorServiceFront(
-    BlockingQueue<Runnable> workQueue, 
-    ExecutorService executor, 
-    int maxDrainers
-  ) {
+      BlockingQueue<Runnable> workQueue, ExecutorService executor, int maxDrainers) {
     this(workQueue, executor, "Drainer", maxDrainers, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
   }
 
   public ExecutorServiceFront(
-    ExecutorService executor,
-    long maxTimeSlice,
-    TimeUnit maxTimeSliceUnit
-  ) {
+      ExecutorService executor, long maxTimeSlice, TimeUnit maxTimeSliceUnit) {
     this(
-      new LinkedBlockingQueue<Runnable>(), 
-      executor, 
-      "Drainer",
-      1, 
-      maxTimeSlice,
-      maxTimeSliceUnit);
+        new LinkedBlockingQueue<Runnable>(),
+        executor,
+        "Drainer",
+        1,
+        maxTimeSlice,
+        maxTimeSliceUnit);
   }
-  
+
   public ExecutorServiceFront(ExecutorService executor) {
     this(new LinkedBlockingQueue<Runnable>(), executor, 1);
   }
@@ -131,23 +117,22 @@ public class ExecutorServiceFront extends AbstractExecutorService {
 
   @Override
   public synchronized List<Runnable> shutdownNow() {
-    throw new UnsupportedOperationException();    
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public boolean isShutdown() {
-    throw new UnsupportedOperationException();    
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public boolean isTerminated() {
-    throw new UnsupportedOperationException();    
+    throw new UnsupportedOperationException();
   }
 
   @Override
-  public boolean awaitTermination(long timeout, TimeUnit unit)
-    throws InterruptedException {
-    throw new UnsupportedOperationException();    
+  public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -181,7 +166,6 @@ public class ExecutorServiceFront extends AbstractExecutorService {
       } finally {
         t.setName(oldName);
       }
-
     }
 
     private void internalRun() {
@@ -191,7 +175,7 @@ public class ExecutorServiceFront extends AbstractExecutorService {
         Runnable task = null;
 
         lock.lock();
-        
+
         try {
           task = workQueue.poll();
 

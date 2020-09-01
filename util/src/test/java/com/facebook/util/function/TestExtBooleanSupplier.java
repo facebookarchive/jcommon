@@ -21,6 +21,10 @@ import java.util.function.Supplier;
 public class TestExtBooleanSupplier extends TestQuietFunctionBase {
   @Override
   protected void throwFromQuiet(Supplier<? extends Throwable> toThrow) {
-    ExtBooleanSupplier.quiet(() -> { throw toThrow.get(); }).getAsBoolean();
+    ExtBooleanSupplier.quiet(
+            () -> {
+              throw toThrow.get();
+            })
+        .getAsBoolean();
   }
 }

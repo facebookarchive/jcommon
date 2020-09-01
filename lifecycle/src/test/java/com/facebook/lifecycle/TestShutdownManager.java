@@ -15,11 +15,10 @@
  */
 package com.facebook.lifecycle;
 
+import java.util.EnumMap;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.EnumMap;
 
 public class TestShutdownManager {
   private int position = 0;
@@ -30,15 +29,15 @@ public class TestShutdownManager {
   public void setUp() throws Exception {
     order = new EnumMap<TheStages, Integer>(TheStages.class);
     shutdownManager = new ShutdownManagerImpl<TheStages>(TheStages.class, TheStages.DEFAULT);
-    
+
     for (TheStages stage : TheStages.values()) {
       shutdownManager.addShutdownHook(new ShutdownHook(stage));
     }
   }
-  
+
   @Test(groups = "fast")
   public void testOrder() throws Exception {
-  	shutdownManager.shutdown();
+    shutdownManager.shutdown();
     Assert.assertEquals(order.get(TheStages.BEFORE).longValue(), 0L);
     Assert.assertEquals(order.get(TheStages.ONE).longValue(), 1L);
     Assert.assertEquals(order.get(TheStages.TWO).longValue(), 2L);
@@ -46,7 +45,7 @@ public class TestShutdownManager {
     Assert.assertEquals(order.get(TheStages.DEFAULT).longValue(), 4L);
     Assert.assertEquals(order.get(TheStages.AFTER).longValue(), 5L);
   }
-  
+
   private class ShutdownHook implements Runnable {
     private final TheStages stage;
 
@@ -59,7 +58,7 @@ public class TestShutdownManager {
       order.put(stage, position++);
     }
   }
-  
+
   private static enum TheStages {
     BEFORE,
     ONE,

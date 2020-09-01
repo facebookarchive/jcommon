@@ -18,8 +18,7 @@ package com.facebook.stats;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public final class ExponentialDecay {
-  private ExponentialDecay() {
-  }
+  private ExponentialDecay() {}
 
   /**
    * Compute the alpha decay factor such that the weight of an entry with age 'targetAgeInSeconds'
@@ -31,5 +30,4 @@ public final class ExponentialDecay {
 
     return -Math.log(targetWeight) / targetAgeInSeconds;
   }
-
 }

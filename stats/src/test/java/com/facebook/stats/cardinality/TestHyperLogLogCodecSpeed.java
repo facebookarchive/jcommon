@@ -15,22 +15,20 @@
  */
 package com.facebook.stats.cardinality;
 
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-
-import static org.testng.Assert.assertEquals;
+import org.testng.annotations.Test;
 
 public class TestHyperLogLogCodecSpeed {
   private static final int LOOPS = 10000;
   private static final int WARM_LOOPS = 1000;
 
   @Test(groups = "slow", enabled = false)
-  public void testHyperLogLog()
-      throws Exception {
+  public void testHyperLogLog() throws Exception {
     warm();
 
     testHyperLogLog(10);
@@ -38,20 +36,10 @@ public class TestHyperLogLogCodecSpeed {
     testHyperLogLog(12);
   }
 
-  public void testHyperLogLog(int log2m)
-      throws Exception {
+  public void testHyperLogLog(int log2m) throws Exception {
     System.out.printf(
         "%11s  %11s  %6s  %4s  %4s  %4s  %9s  %6s  %6s\n",
-        "actual",
-        "estimate",
-        "error",
-        "in",
-        "out",
-        "ent",
-        "bits/Byte",
-        "enc ms",
-        "dec ms"
-    );
+        "actual", "estimate", "error", "in", "out", "ent", "bits/Byte", "enc ms", "dec ms");
 
     HyperLogLog hyperLogLog = new HyperLogLog(1 << log2m);
 
@@ -72,13 +60,8 @@ public class TestHyperLogLogCodecSpeed {
   }
 
   public static void testBytes(
-      HyperLogLog hyperLogLog,
-      int log2m,
-      long size,
-      long estimate,
-      double err,
-      int entropy
-  ) throws IOException {
+      HyperLogLog hyperLogLog, int log2m, long size, long estimate, double err, int entropy)
+      throws IOException {
     int buckets = 1 << log2m;
     HyperLogLogCodec codec = new HyperLogLogCodec();
 
@@ -101,16 +84,7 @@ public class TestHyperLogLogCodecSpeed {
     double bitsPerByte = 1000.0 * compressed.length * 8.0 / (double) buckets / 1000.0;
     System.out.printf(
         "%11d  %11d  %5.4f  %4d  %4d  %4d     %5.4f  %5.4f  %5.4f\n",
-        size,
-        estimate,
-        err,
-        buckets,
-        compressed.length,
-        entropy,
-        bitsPerByte,
-        encodeMs,
-        decodeMs
-    );
+        size, estimate, err, buckets, compressed.length, entropy, bitsPerByte, encodeMs, decodeMs);
   }
 
   private static void warm() throws IOException {

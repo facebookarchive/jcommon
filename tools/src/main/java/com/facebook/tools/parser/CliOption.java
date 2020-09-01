@@ -33,15 +33,14 @@ public class CliOption {
   private final boolean flag;
 
   private CliOption(
-    Set<String> switchNames,
-    String metavar,
-    List<String> description,
-    List<String> examples,
-    String defaultValue,
-    boolean required,
-    boolean unique,
-    boolean flag
-  ) {
+      Set<String> switchNames,
+      String metavar,
+      List<String> description,
+      List<String> examples,
+      String defaultValue,
+      boolean required,
+      boolean unique,
+      boolean flag) {
     this.switchNames = new LinkedHashSet<>(switchNames);
     this.metavar = metavar;
     this.description = new ArrayList<>(description);
@@ -98,8 +97,7 @@ public class CliOption {
     private boolean required = true;
     private boolean unique = true;
 
-    public SwitchBuilder() {
-    }
+    public SwitchBuilder() {}
 
     public SwitchBuilder withSwitch(String... switchNames) {
       this.switchNames.addAll(Arrays.asList(switchNames));
@@ -144,8 +142,7 @@ public class CliOption {
 
     CliOption build() {
       return new CliOption(
-        switchNames, metavar, description, examples, defaultValue, required, unique, false
-      );
+          switchNames, metavar, description, examples, defaultValue, required, unique, false);
     }
   }
 
@@ -154,8 +151,7 @@ public class CliOption {
 
     private List<String> description = Collections.emptyList();
 
-    public FlagBuilder() {
-    }
+    public FlagBuilder() {}
 
     public FlagBuilder withSwitch(String... switchNames) {
       this.switchNames.addAll(Arrays.asList(switchNames));
@@ -173,15 +169,14 @@ public class CliOption {
 
     CliOption build() {
       return new CliOption(
-        switchNames,
-        null,
-        description,
-        Collections.<String>emptyList(),
-        "false",
-        false,
-        true,
-        true
-      );
+          switchNames,
+          null,
+          description,
+          Collections.<String>emptyList(),
+          "false",
+          false,
+          true,
+          true);
     }
   }
 }

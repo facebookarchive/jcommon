@@ -19,7 +19,7 @@ import java.util.function.ToIntFunction;
 
 public interface ExtToIntFunction<T, E extends Throwable> {
   int applyAsInt(T value) throws E;
-  
+
   static <T> ToIntFunction<T> quiet(ExtToIntFunction<T, ?> toIntFunction) {
     return (value) -> ExtIntSupplier.quiet(() -> toIntFunction.applyAsInt(value)).getAsInt();
   }

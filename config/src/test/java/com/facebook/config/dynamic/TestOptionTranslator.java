@@ -16,11 +16,10 @@
 package com.facebook.config.dynamic;
 
 import com.google.common.base.Function;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestOptionTranslator {
   private Option<String> stringOption;
@@ -28,12 +27,13 @@ public class TestOptionTranslator {
 
   @BeforeMethod(alwaysRun = true)
   protected void setUp() throws Exception {
-    Function<String, Integer> translator = new Function<String, Integer>() {
-      @Override
-      public Integer apply(String input) {
-        return input == null ? -1 : Integer.parseInt(input);
-      }
-    };
+    Function<String, Integer> translator =
+        new Function<String, Integer>() {
+          @Override
+          public Integer apply(String input) {
+            return input == null ? -1 : Integer.parseInt(input);
+          }
+        };
 
     stringOption = new OptionImpl<>();
     integerOption = new OptionTranslator<>(stringOption, translator);
@@ -54,13 +54,14 @@ public class TestOptionTranslator {
   public void testWatcher() throws Exception {
     final AtomicInteger integerValue = new AtomicInteger();
     final AtomicInteger updatedCount = new AtomicInteger();
-    OptionWatcher<Integer> watcher = new OptionWatcher<Integer>() {
-      @Override
-      public void propertyUpdated(Integer value) throws Exception {
-        integerValue.set(value);
-        updatedCount.incrementAndGet();
-      }
-    };
+    OptionWatcher<Integer> watcher =
+        new OptionWatcher<Integer>() {
+          @Override
+          public void propertyUpdated(Integer value) throws Exception {
+            integerValue.set(value);
+            updatedCount.incrementAndGet();
+          }
+        };
 
     integerOption.addWatcher(watcher);
     stringOption.setValue("123");

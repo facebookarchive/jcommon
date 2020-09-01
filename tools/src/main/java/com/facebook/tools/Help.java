@@ -15,11 +15,10 @@
  */
 package com.facebook.tools;
 
+import com.facebook.tools.io.IO;
 import com.facebook.tools.parser.CliCommand;
 import com.facebook.tools.parser.CliParameter;
 import com.facebook.tools.parser.CliParser;
-import com.facebook.tools.io.IO;
-
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,24 +34,27 @@ public class Help implements CommandBuilder {
   public Help(IO io, String group, List<CommandBuilder> commands) {
     this.io = io;
     this.group = group;
-    this.delegate = new CommandBuilder() {
-      @Override
-      public CliCommand defineCommand() {
-        CliCommand.Builder builder = new CliCommand.Builder("help", "Displays help for commands");
+    this.delegate =
+        new CommandBuilder() {
+          @Override
+          public CliCommand defineCommand() {
+            CliCommand.Builder builder =
+                new CliCommand.Builder("help", "Displays help for commands");
 
-        builder.addParameter("command_name")
-          .withDescription("Command to display help for")
-          .withDefault(null);
-        builder.allowTrailingParameters();
+            builder
+                .addParameter("command_name")
+                .withDescription("Command to display help for")
+                .withDefault(null);
+            builder.allowTrailingParameters();
 
-        return builder.build();
-      }
+            return builder.build();
+          }
 
-      @Override
-      public void runCommand(CliParser parser) {
-        help(parser.get("command_name"), parser.getTrailing());
-      }
-    };
+          @Override
+          public void runCommand(CliParser parser) {
+            help(parser.get("command_name"), parser.getTrailing());
+          }
+        };
     this.commands = new ArrayList<>(commands);
     this.commands.add(delegate);
   }

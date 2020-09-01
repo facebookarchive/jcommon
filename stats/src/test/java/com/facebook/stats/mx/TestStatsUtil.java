@@ -15,9 +15,9 @@
  */
 package com.facebook.stats.mx;
 
-import com.facebook.stats.MultiWindowDistribution;
-import com.facebook.stats.QuantileDigest;
 import com.facebook.util.TimeUtil;
+import java.util.HashMap;
+import java.util.Map;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Duration;
@@ -26,12 +26,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * Helper methods for converting stat objects into key/value pairs that conform to standing
- * naming conventions around <type>.<time_window>
+ * Helper methods for converting stat objects into key/value pairs that conform to standing naming
+ * conventions around <type>.<time_window>
  */
 public class TestStatsUtil {
   private Stats stats;

@@ -15,9 +15,6 @@
  */
 package com.facebook.concurrency;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -33,50 +30,46 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * same as UnstoppableExecutorService but for ScheduledExecutorService
- */
-public class UnstoppableScheduledExecutorService
-  implements ScheduledExecutorService {
-  private static final Logger LOG = LoggerFactory.getLogger(UnstoppableScheduledExecutorService.class);
+/** same as UnstoppableExecutorService but for ScheduledExecutorService */
+public class UnstoppableScheduledExecutorService implements ScheduledExecutorService {
+  private static final Logger LOG =
+      LoggerFactory.getLogger(UnstoppableScheduledExecutorService.class);
 
   private final UnstoppableExecutorServiceCore executorCore;
   private final ScheduledExecutorService executor;
   // guarded by: shutdownLock
-  private final Map<ScheduledFuture<?>, ScheduledFuture<?>> 
-    outstandingScheduledTasks = 
-    Collections.synchronizedMap(new IdentityHashMap());
+  private final Map<ScheduledFuture<?>, ScheduledFuture<?>> outstandingScheduledTasks =
+      Collections.synchronizedMap(new IdentityHashMap());
   // this lock is used to make sure that nothing can be put into
   // outstandingScheduledTasks after shutdown
   private final ReadWriteLock shutdownLock = new ReentrantReadWriteLock();
-  
-  public UnstoppableScheduledExecutorService(
-    ScheduledExecutorService executor
-  ) {
+
+  public UnstoppableScheduledExecutorService(ScheduledExecutorService executor) {
     this.executor = executor;
     executorCore = new UnstoppableExecutorServiceCore();
   }
 
-  // helper functions that takes a Runnable/Callable and manages the necessary 
+  // helper functions that takes a Runnable/Callable and manages the necessary
   // lifecycle so that scheduled tasks will
   //  1. be submitted
   //  2. have ScheduledFuture stored for canc ellation at shutdown
 
   private ScheduledFuture<?> internalScheduleRunnable(
-    Runnable runnable, RunnableCallback callback
-  ) {
+      Runnable runnable, RunnableCallback callback) {
     // task.openGate() below will add items to the outstandingScheduledTasks
     // array. Make sure nothing is added after shutdown
     shutdownLock.readLock().lock();
 
     try {
-      // this will track if the task completes 
+      // this will track if the task completes
       TrackedRunnable trackedTask = executorCore.registerTask(runnable);
       BookkeepingTask task = new BookkeepingTask<Void>(trackedTask);
       // this will track if the task is cancelled
-      ScheduledFuture<?> scheduledFuture = 
-        executorCore.trackScheduledFuture(callback.submit(task), trackedTask);
+      ScheduledFuture<?> scheduledFuture =
+          executorCore.trackScheduledFuture(callback.submit(task), trackedTask);
 
       task.openGate(scheduledFuture);
 
@@ -87,16 +80,15 @@ public class UnstoppableScheduledExecutorService
   }
 
   private <V> ScheduledFuture<V> internalScheduleCallable(
-    Callable<V> callable, CallableCallback<V> callback
-  ) {
+      Callable<V> callable, CallableCallback<V> callback) {
     shutdownLock.readLock().lock();
 
     try {
       // same logic as above
       TrackedCallable<V> trackedTask = executorCore.registerTask(callable);
       BookkeepingTask task = new BookkeepingTask<V>(trackedTask);
-      ScheduledFuture<V> scheduledFuture = 
-        executorCore.trackScheduledFuture(callback.submit(task), trackedTask);
+      ScheduledFuture<V> scheduledFuture =
+          executorCore.trackScheduledFuture(callback.submit(task), trackedTask);
 
       task.openGate(scheduledFuture);
 
@@ -109,65 +101,60 @@ public class UnstoppableScheduledExecutorService
   // cancel any scheduled tasks
   private void cancelPendingTasks() {
     for (IdentityHashMap.Entry<ScheduledFuture<?>, ScheduledFuture<?>> entry :
-      outstandingScheduledTasks.entrySet()
-      ) {
+        outstandingScheduledTasks.entrySet()) {
       entry.getValue().cancel(false);
     }
   }
 
   @Override
-  public ScheduledFuture<?> schedule(
-    Runnable command, final long delay, final TimeUnit unit
-  ) {
-    return internalScheduleRunnable(command, new RunnableCallback() {
-      @Override
-      public ScheduledFuture<?> submit(Runnable task) {
-        return executor.schedule(task, delay, unit);
-      }
-    });
+  public ScheduledFuture<?> schedule(Runnable command, final long delay, final TimeUnit unit) {
+    return internalScheduleRunnable(
+        command,
+        new RunnableCallback() {
+          @Override
+          public ScheduledFuture<?> submit(Runnable task) {
+            return executor.schedule(task, delay, unit);
+          }
+        });
   }
 
   @Override
   public <V> ScheduledFuture<V> schedule(
-    Callable<V> callable, final long delay, final TimeUnit unit
-  ) {
-    return internalScheduleCallable(callable, new CallableCallback<V>() {
-      @Override
-      public ScheduledFuture<V> submit(Callable<V> task) {
-        return executor.schedule(task, delay, unit);
-      }
-    });
+      Callable<V> callable, final long delay, final TimeUnit unit) {
+    return internalScheduleCallable(
+        callable,
+        new CallableCallback<V>() {
+          @Override
+          public ScheduledFuture<V> submit(Callable<V> task) {
+            return executor.schedule(task, delay, unit);
+          }
+        });
   }
 
   @Override
   public ScheduledFuture<?> scheduleAtFixedRate(
-    final Runnable command,
-    final long initialDelay,
-    final long period,
-    final TimeUnit unit
-  ) {
-    return internalScheduleRunnable(command, new RunnableCallback() {
-      @Override
-      public ScheduledFuture<?> submit(Runnable task) {
-        return executor.scheduleAtFixedRate(task, initialDelay, period, unit);
-      }
-    });
+      final Runnable command, final long initialDelay, final long period, final TimeUnit unit) {
+    return internalScheduleRunnable(
+        command,
+        new RunnableCallback() {
+          @Override
+          public ScheduledFuture<?> submit(Runnable task) {
+            return executor.scheduleAtFixedRate(task, initialDelay, period, unit);
+          }
+        });
   }
 
   @Override
   public ScheduledFuture<?> scheduleWithFixedDelay(
-    final Runnable command,
-    final long initialDelay,
-    final long delay,
-    final TimeUnit unit
-  ) {
-    return internalScheduleRunnable(command, new RunnableCallback() {
-      @Override
-      public ScheduledFuture<?> submit(Runnable task) {
-        return executor.scheduleWithFixedDelay(command, initialDelay, delay, unit);
-      }
-    }
-    );
+      final Runnable command, final long initialDelay, final long delay, final TimeUnit unit) {
+    return internalScheduleRunnable(
+        command,
+        new RunnableCallback() {
+          @Override
+          public ScheduledFuture<?> submit(Runnable task) {
+            return executor.scheduleWithFixedDelay(command, initialDelay, delay, unit);
+          }
+        });
   }
 
   @Override
@@ -181,9 +168,7 @@ public class UnstoppableScheduledExecutorService
   public <T> Future<T> submit(Runnable task, T result) {
     TrackedRunnable trackedTask = executorCore.registerTask(task);
 
-    return executorCore.trackFuture(
-      executor.submit(trackedTask, result), trackedTask
-    );
+    return executorCore.trackFuture(executor.submit(trackedTask, result), trackedTask);
   }
 
   @Override
@@ -195,43 +180,37 @@ public class UnstoppableScheduledExecutorService
 
   @Override
   public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
-    throws InterruptedException {
-    List<TrackedCallable<T>> trackedTaskList = 
-      executorCore.registerCallableList(tasks);
+      throws InterruptedException {
+    List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
-    return executorCore.trackFutureList(
-      executor.invokeAll(trackedTaskList), trackedTaskList
-    );
+    return executorCore.trackFutureList(executor.invokeAll(trackedTaskList), trackedTaskList);
   }
 
   @Override
-  public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-    throws InterruptedException {
-    List<TrackedCallable<T>> trackedTaskList = 
-      executorCore.registerCallableList(tasks);
+  public <T> List<Future<T>> invokeAll(
+      Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+      throws InterruptedException {
+    List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
     return executorCore.trackFutureList(
-      executor.invokeAll(trackedTaskList, timeout, unit), trackedTaskList
-    );
+        executor.invokeAll(trackedTaskList, timeout, unit), trackedTaskList);
   }
 
   @Override
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
-    throws InterruptedException, ExecutionException {
-    
-    List<TrackedCallable<T>> trackedTaskList = 
-      executorCore.registerCallableList(tasks);
+      throws InterruptedException, ExecutionException {
+
+    List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
     return executor.invokeAny(trackedTaskList);
   }
 
   @Override
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-    throws InterruptedException, ExecutionException, TimeoutException {
-    
-    List<TrackedCallable<T>> trackedTaskList = 
-      executorCore.registerCallableList(tasks);
-    
+      throws InterruptedException, ExecutionException, TimeoutException {
+
+    List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
+
     return executor.invokeAny(trackedTaskList, timeout, unit);
   }
 
@@ -251,19 +230,19 @@ public class UnstoppableScheduledExecutorService
   @Override
   public List<Runnable> shutdownNow() {
     // this blocks any internalSchedule*() calls until we shutdown the core.
-    // it also blocks remove on outstandingScheduledTasks to avoid a 
+    // it also blocks remove on outstandingScheduledTasks to avoid a
     // ConcurrentModificationException
     shutdownLock.writeLock().lock();
-    
+
     try {
-    List<Runnable> runnableList = executorCore.shutdownNow();
-    
-    cancelPendingTasks();
-    
-    return runnableList;
+      List<Runnable> runnableList = executorCore.shutdownNow();
+
+      cancelPendingTasks();
+
+      return runnableList;
     } finally {
       shutdownLock.writeLock().unlock();
-    } 
+    }
   }
 
   @Override
@@ -277,16 +256,14 @@ public class UnstoppableScheduledExecutorService
   }
 
   @Override
-  public boolean awaitTermination(long timeout, TimeUnit unit)
-    throws InterruptedException {
+  public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
     return executorCore.awaitTermination(timeout, unit);
   }
 
   /**
-   * class that wraps a Runnable/Callable and handles :
-   * 1. put()/remove() of the ScheduledFuture into a hash
-   * 2. gating so that the task cannot be run until the future is in the hash
-   * (avoid race condition that we remove() before we put())
+   * class that wraps a Runnable/Callable and handles : 1. put()/remove() of the ScheduledFuture
+   * into a hash 2. gating so that the task cannot be run until the future is in the hash (avoid
+   * race condition that we remove() before we put())
    *
    * @param <V> : return result of the Callable
    */
@@ -337,15 +314,15 @@ public class UnstoppableScheduledExecutorService
         cleanup();
       }
     }
-    
+
     private void cleanup() {
       // we can't modify outstandingScheduledTasks while we're shutting down
       shutdownLock.readLock().lock();
-      
+
       try {
-        outstandingScheduledTasks.remove(future);        
+        outstandingScheduledTasks.remove(future);
       } finally {
-        shutdownLock.readLock().unlock();        
+        shutdownLock.readLock().unlock();
       }
     }
 
@@ -357,7 +334,6 @@ public class UnstoppableScheduledExecutorService
         LOG.error("exception during execution", e);
       }
     }
-
 
     @Override
     public V call() throws Exception {

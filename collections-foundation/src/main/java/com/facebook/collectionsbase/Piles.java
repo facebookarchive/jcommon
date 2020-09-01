@@ -16,19 +16,16 @@
 package com.facebook.collectionsbase;
 
 import com.google.common.base.Function;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * utility methods for working with Piles (collections) of elements.
- */
+/** utility methods for working with Piles (collections) of elements. */
 public class Piles {
-    private Piles() {
-      throw new AssertionError();
-    }
+  private Piles() {
+    throw new AssertionError();
+  }
 
   /**
    * works with guava's Function interface
@@ -40,7 +37,8 @@ public class Piles {
    * @return
    */
   public static <X, Y> List<Y> transmogrify(Iterator<X> iterator, Function<X, Y> function) {
-    com.facebook.collectionsbase.Mapper<X, Y> mapper = new com.facebook.collectionsbase.FunctionToMapper<X, Y>(function);
+    com.facebook.collectionsbase.Mapper<X, Y> mapper =
+        new com.facebook.collectionsbase.FunctionToMapper<X, Y>(function);
 
     return transmogrify(iterator, mapper);
   }
@@ -78,8 +76,7 @@ public class Piles {
   }
 
   public static <X, Y> Collection<Y> transmogrify(
-    Iterator<X> iterator, Collection<Y> target, Function<X, Y> function
-  ) {
+      Iterator<X> iterator, Collection<Y> target, Function<X, Y> function) {
     FunctionToMapper<X, Y> mapper = new FunctionToMapper<>(function);
 
     transmogrify(iterator, target, mapper);
@@ -88,14 +85,14 @@ public class Piles {
   }
   /**
    * allows caller to provide a Collection to place the iterator into
+   *
    * @param iterator
    * @param target
    * @param <T>
    * @return
    */
   public static <X, Y> Collection<Y> transmogrify(
-    Iterator<X> iterator, Collection<Y> target, Mapper<X, Y> mapper
-  ) {
+      Iterator<X> iterator, Collection<Y> target, Mapper<X, Y> mapper) {
     while (iterator.hasNext()) {
       target.add(mapper.map(iterator.next()));
     }
@@ -103,14 +100,14 @@ public class Piles {
     return target;
   }
 
-/**
+  /**
    * allows caller to provide a Collection to place the iterator into
+   *
    * @param iterator
    * @param target
    * @param <T>
    * @return
    */
-
   public static <T> Collection<T> copyOf(Iterator<T> iterator, Collection<T> target) {
     while (iterator.hasNext()) {
       target.add(iterator.next());
@@ -120,7 +117,6 @@ public class Piles {
   }
 
   /**
-   *
    * @param source input collection
    * @param target collection containing filtered items
    * @param filter
@@ -130,8 +126,8 @@ public class Piles {
    * @return target
    * @throws E
    */
-  public static <T, C extends Collection<T>, E extends Throwable> C filter(Collection<T> source, C target, Filter<T,E> filter)
-    throws E {
+  public static <T, C extends Collection<T>, E extends Throwable> C filter(
+      Collection<T> source, C target, Filter<T, E> filter) throws E {
     for (T item : source) {
       if (filter.execute(item)) {
         target.add(item);

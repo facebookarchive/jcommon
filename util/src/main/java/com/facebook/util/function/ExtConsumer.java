@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 
 public interface ExtConsumer<T, E extends Throwable> {
   void accept(T t) throws E;
-  
+
   default ExtConsumer<T, E> andThen(ExtConsumer<? super T, E> after) {
     Objects.requireNonNull(after);
     return (t) -> {
@@ -29,7 +29,7 @@ public interface ExtConsumer<T, E extends Throwable> {
       after.accept(t);
     };
   }
-  
+
   static <T> Consumer<T> quiet(ExtConsumer<T, ?> consumer) {
     return (t) -> ExtRunnable.quiet(() -> consumer.accept(t)).run();
   }

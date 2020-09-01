@@ -73,12 +73,11 @@ public class RateStat implements Stat {
       int offset = currentOffset + WINDOW_COUNT;
 
       return new Snapshot(
-        "sum",
-        total,
-        total - rollingWindows[(offset - 3600) % WINDOW_COUNT],
-        total - rollingWindows[(offset - 600) % WINDOW_COUNT],
-        total - rollingWindows[(offset - 60) % WINDOW_COUNT]
-      );
+          "sum",
+          total,
+          total - rollingWindows[(offset - 3600) % WINDOW_COUNT],
+          total - rollingWindows[(offset - 600) % WINDOW_COUNT],
+          total - rollingWindows[(offset - 60) % WINDOW_COUNT]);
     }
   }
 

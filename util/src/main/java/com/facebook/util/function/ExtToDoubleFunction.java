@@ -19,8 +19,9 @@ import java.util.function.ToDoubleFunction;
 
 public interface ExtToDoubleFunction<T, E extends Throwable> {
   double applyAsDouble(T value) throws E;
-  
+
   static <T> ToDoubleFunction<T> quiet(ExtToDoubleFunction<T, ?> toDoubleFunction) {
-    return (value) -> ExtDoubleSupplier.quiet(() -> toDoubleFunction.applyAsDouble(value)).getAsDouble();
+    return (value) ->
+        ExtDoubleSupplier.quiet(() -> toDoubleFunction.applyAsDouble(value)).getAsDouble();
   }
 }

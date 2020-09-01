@@ -21,7 +21,6 @@ import com.facebook.util.digest.DigestFunction;
 import com.facebook.util.serialization.SerDe;
 import com.facebook.util.serialization.SerDeException;
 import com.google.common.collect.ImmutableSet;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -35,8 +34,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Thread-safe implementation of SampledSet
- * http://algo.inria.fr/flajolet/Publications/Slides/aofa07.pdf
- * section 2.1 Adaptive Sampling
+ * http://algo.inria.fr/flajolet/Publications/Slides/aofa07.pdf section 2.1 Adaptive Sampling
  *
  * @param <T> type of element in the set
  */
@@ -61,12 +59,11 @@ public class SampledSetImpl<T> implements SampledSet<T> {
   // SampledSetImpl<Long> to SampledSetImpl<Integer>
   @Deprecated
   public SampledSetImpl(
-    int maxSetSize,
-    DigestFunction<T> digestFunction,
-    SnapshotableSet<T> baseSet,
-    SetFactory<T, SnapshotableSet<T>> setFactory,
-    int currentSampleRate
-  ) {
+      int maxSetSize,
+      DigestFunction<T> digestFunction,
+      SnapshotableSet<T> baseSet,
+      SetFactory<T, SnapshotableSet<T>> setFactory,
+      int currentSampleRate) {
     this.maxSetSize = maxSetSize;
     this.digestFunction = digestFunction;
     this.setFactory = setFactory;
@@ -76,10 +73,9 @@ public class SampledSetImpl<T> implements SampledSet<T> {
   }
 
   public SampledSetImpl(
-    int maxSetSize,
-    DigestFunction<T> digestFunction,
-    SetFactory<T, SnapshotableSet<T>> setFactory
-  ) {
+      int maxSetSize,
+      DigestFunction<T> digestFunction,
+      SetFactory<T, SnapshotableSet<T>> setFactory) {
     this(maxSetSize, digestFunction, setFactory.create(), setFactory, 1);
   }
 
@@ -133,8 +129,8 @@ public class SampledSetImpl<T> implements SampledSet<T> {
         try {
           // we only need to check if this element is in the sample again if
           // currentSampleRate has changed
-          if (currentSampleRate == sampleRateSnapshot ||
-            inSample(elementDigest, currentSampleRate)) {
+          if (currentSampleRate == sampleRateSnapshot
+              || inSample(elementDigest, currentSampleRate)) {
             returnValue = baseSet.add(element);
           }
         } finally {
@@ -275,9 +271,9 @@ public class SampledSetImpl<T> implements SampledSet<T> {
     try {
       // shortcut for fast copy: we're empty, the snapshot's sample rate is
       // compatible with our sampleRate, and fits within our maxSize
-      if (currentSampleRate <= snapshot.getSampleRate() && baseSet.isEmpty() &&
-        maxSetSize >= snapshot.getElements().size()
-        ) {
+      if (currentSampleRate <= snapshot.getSampleRate()
+          && baseSet.isEmpty()
+          && maxSetSize >= snapshot.getElements().size()) {
         // copy the set, current sample size, and increment the version
         baseSet = snapshot.getElements();
         currentSampleRate = snapshot.getSampleRate();
@@ -285,9 +281,8 @@ public class SampledSetImpl<T> implements SampledSet<T> {
         dirty.set(true);
 
         return true;
-      } else if (!snapshot.getElements().isEmpty() &&
-        snapshot.getSampleRate() > currentSampleRate
-        ) {
+      } else if (!snapshot.getElements().isEmpty()
+          && snapshot.getSampleRate() > currentSampleRate) {
         // only downsample ourself if there are actually elements in the other
         // set to merge into ourself
         int removed = downSampleAtRate(snapshot.getSampleRate(), baseSet);
@@ -422,27 +417,21 @@ public class SampledSetImpl<T> implements SampledSet<T> {
   @Override
   public SampledSet<T> makeSnapshot() {
     return new SampledSetImpl<T>(
-      maxSetSize,
-      digestFunction,
-      baseSet.makeSnapshot(),
-      setFactory,
-      currentSampleRate
-    );
+        maxSetSize, digestFunction, baseSet.makeSnapshot(), setFactory, currentSampleRate);
   }
 
   @Override
   public SampledSet<T> makeTransientSnapshot() {
     SnapshotableSetImplFactory<T> cpuEfficientHashSetFactory =
-      new SnapshotableSetImplFactory<T>(new HashSetFactory<T>());
+        new SnapshotableSetImplFactory<T>(new HashSetFactory<T>());
     SnapshotableSet<T> cpuEfficientHashSet = baseSet.makeTransientSnapshot();
 
     return new SampledSetImpl<T>(
-      maxSetSize,
-      digestFunction,
-      cpuEfficientHashSet,
-      cpuEfficientHashSetFactory,
-      currentSampleRate
-    );
+        maxSetSize,
+        digestFunction,
+        cpuEfficientHashSet,
+        cpuEfficientHashSetFactory,
+        currentSampleRate);
   }
 
   @Override
@@ -497,10 +486,9 @@ public class SampledSetImpl<T> implements SampledSet<T> {
     private final SerDe<T> elementSerDe;
 
     public SerDeImpl(
-      SetFactory<T, SnapshotableSet<T>> setFactory,
-      DigestFunction<T> digestFunction,
-      SerDe<T> elementSerDe
-    ) {
+        SetFactory<T, SnapshotableSet<T>> setFactory,
+        DigestFunction<T> digestFunction,
+        SerDe<T> elementSerDe) {
       this.setFactory = setFactory;
       this.digestFunction = digestFunction;
       this.elementSerDe = elementSerDe;
@@ -519,9 +507,8 @@ public class SampledSetImpl<T> implements SampledSet<T> {
           baseSet.add(elementSerDe.deserialize(in));
         }
 
-        SampledSet<T> sampledSet = new SampledSetImpl<T>(
-          maxSize, digestFunction, baseSet, setFactory, sampleRate
-        );
+        SampledSet<T> sampledSet =
+            new SampledSetImpl<T>(maxSize, digestFunction, baseSet, setFactory, sampleRate);
 
         return sampledSet;
       } catch (IOException e) {
@@ -530,11 +517,10 @@ public class SampledSetImpl<T> implements SampledSet<T> {
     }
 
     @Override
-    public void serialize(SampledSet<T> value, DataOutput out)
-      throws SerDeException {
+    public void serialize(SampledSet<T> value, DataOutput out) throws SerDeException {
       try {
-        // sampling at 0 will make a copy at the existing sample rate (since the 
-        // rate is only used if it is larger than the existing rate) 
+        // sampling at 0 will make a copy at the existing sample rate (since the
+        // rate is only used if it is larger than the existing rate)
         SampledSetSnapshot<T> snapshot = value.sampleAt(0);
         Set<T> elements = snapshot.getElements();
 

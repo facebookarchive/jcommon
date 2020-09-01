@@ -16,7 +16,11 @@
 package com.facebook.stats.mx;
 
 import com.google.common.collect.ImmutableSet;
-
+import java.lang.management.ManagementFactory;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
 import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
@@ -27,72 +31,52 @@ import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.OpenMBeanAttributeInfo;
 import javax.management.openmbean.OpenType;
 import javax.management.openmbean.SimpleType;
-import java.lang.management.ManagementFactory;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.regex.Pattern;
 
-/**
- * Exports JVM stats so that they are available as counter values in fb303 stats.
- * 
- */
+/** Exports JVM stats so that they are available as counter values in fb303 stats. */
 public class JVMStatsExporter {
   private final Stats stats;
   private StatsNameBuilder statsNameBuilder;
   private static final String NAME_PREFIX = "jvm";
-  private static final Set<? extends OpenType> NUMERIC_TYPES = new ImmutableSet.Builder<SimpleType>()
-    .add(SimpleType.BYTE)
-    .add(SimpleType.SHORT)
-    .add(SimpleType.INTEGER)
-    .add(SimpleType.LONG)
-    .add(SimpleType.FLOAT)
-    .add(SimpleType.DOUBLE)
-    .build();
+  private static final Set<? extends OpenType> NUMERIC_TYPES =
+      new ImmutableSet.Builder<SimpleType>()
+          .add(SimpleType.BYTE)
+          .add(SimpleType.SHORT)
+          .add(SimpleType.INTEGER)
+          .add(SimpleType.LONG)
+          .add(SimpleType.FLOAT)
+          .add(SimpleType.DOUBLE)
+          .build();
 
   /**
-   * Creates an instance and exports the counters from the beans matching the supplied name
-   * pattern.
-   * 
+   * Creates an instance and exports the counters from the beans matching the supplied name pattern.
    *
    * @param stats The stats instance to which all the dynamic counters will be registered.
    * @param statNamePattern A regex {@link java.util.regex.Pattern} that is matched against all
-   * generated counter key names. Only the counters that match the supplied pattern are added to 
-   * Stats. Note that all stats have the prefix <code>"jvm."</code>.
+   *     generated counter key names. Only the counters that match the supplied pattern are added to
+   *     Stats. Note that all stats have the prefix <code>"jvm."</code>.
    * @param beanNamePatterns the object name patterns used to discover the Mbeans.
-   * 
    * @throws JMException if the beanNamePattern is not a valid bean name pattern.
    * @throws java.util.regex.PatternSyntaxException if the syntax of statNamePattern is invalid
-   * 
-   * @see ObjectName for details on the syntax of beanNamePattern 
+   * @see ObjectName for details on the syntax of beanNamePattern
    */
-  public JVMStatsExporter(
-    Stats stats,
-    String statNamePattern,
-    String... beanNamePatterns
-  ) throws JMException {
+  public JVMStatsExporter(Stats stats, String statNamePattern, String... beanNamePatterns)
+      throws JMException {
     this(stats, patternFilter(Pattern.compile(statNamePattern)), beanNamePatterns);
   }
 
   /**
-   * Creates an instance and exports the counters from the beans matching the supplied name
-   * pattern.
-   *
+   * Creates an instance and exports the counters from the beans matching the supplied name pattern.
    *
    * @param stats The stats instance to which all the dynamic counters will be registered.
    * @param statNameBuilder A name builder {@link StatsNameBuilder} that is applied to all
-   * discovered MBeans.
+   *     discovered MBeans.
    * @param beanNamePatterns the object name patterns used to discover the Mbeans.
-   *
    * @throws JMException if the beanNamePattern is not a valid bean name pattern.
-   *
    * @see ObjectName for details on the syntax of beanNamePattern
    */
   public JVMStatsExporter(
-    Stats stats,
-    StatsNameBuilder statsNameBuilder,
-    String... beanNamePatterns
-  ) throws JMException {
+      Stats stats, StatsNameBuilder statsNameBuilder, String... beanNamePatterns)
+      throws JMException {
     this.stats = stats;
     this.statsNameBuilder = statsNameBuilder;
     for (String beanNamePattern : beanNamePatterns) {
@@ -102,7 +86,7 @@ public class JVMStatsExporter {
 
   /**
    * Creates an instance and exports all the counters from all the platform beans.
-   * 
+   *
    * @param stats The stats instance to which all dynamic counters will be registered.
    * @throws JMException unexpected, indicates a coding/error bug.
    */
@@ -118,24 +102,23 @@ public class JVMStatsExporter {
   }
 
   /**
-   * Exports all the numeric attributes of beans matching the supplied MXBean name pattern.
-   * Also, discovers the numeric properties of the attributes of type CompositeData and registers
-   * them as well.
-   * 
+   * Exports all the numeric attributes of beans matching the supplied MXBean name pattern. Also,
+   * discovers the numeric properties of the attributes of type CompositeData and registers them as
+   * well.
+   *
    * @param beanNamePattern the bean name pattern used to discover the beans.
    * @see javax.management.ObjectName for bean name pattern syntax
    * @see java.lang.management for the list of java platform mbeans
-   * 
    * @throws JMException if there are errors querying MBeans or information on them
    */
   public void exportNumericAttributes(ObjectName beanNamePattern) throws JMException {
     MBeanServer beanServer = ManagementFactory.getPlatformMBeanServer();
     Set<ObjectName> beanNames = beanServer.queryNames(beanNamePattern, null);
-    
+
     // Iterate through all beans and register their numeric properties with Stats
     for (ObjectName beanName : beanNames) {
       MBeanInfo beanInfo = beanServer.getMBeanInfo(beanName);
-      
+
       // Iterate through all bean attributes
       for (MBeanAttributeInfo attributeInfo : beanInfo.getAttributes()) {
         if (attributeInfo.isReadable()) {
@@ -152,40 +135,36 @@ public class JVMStatsExporter {
           }
           // once the open type is found, figure out if it's a numeric or composite type
           if (openType != null) {
-            if (NUMERIC_TYPES.contains(openType)){
-              // numeric attribute types are registered with callbacks that simply 
-              // return their value 
-              Optional<String> name = statsNameBuilder.name(
-                beanName, attributeInfo.getName(), null
-              );
+            if (NUMERIC_TYPES.contains(openType)) {
+              // numeric attribute types are registered with callbacks that simply
+              // return their value
+              Optional<String> name =
+                  statsNameBuilder.name(beanName, attributeInfo.getName(), null);
               if (name.isPresent()) {
                 stats.addDynamicCounter(
-                  name.get(),
-                  new MBeanLongAttributeFetcher(beanServer, beanName, attributeInfo.getName()));
+                    name.get(),
+                    new MBeanLongAttributeFetcher(beanServer, beanName, attributeInfo.getName()));
               }
             } else if (openType instanceof CompositeType) {
-              // for composite types, we figure out which properties of the composite type 
+              // for composite types, we figure out which properties of the composite type
               // are numeric and register callbacks to fetch those composite type attributes
               CompositeType compositeType = (CompositeType) openType;
-              
+
               for (String key : compositeType.keySet()) {
                 if (NUMERIC_TYPES.contains(compositeType.getType(key))) {
-                  Optional<String> name = statsNameBuilder.name(
-                    beanName, attributeInfo.getName(), key
-                  );
+                  Optional<String> name =
+                      statsNameBuilder.name(beanName, attributeInfo.getName(), key);
                   if (name.isPresent()) {
                     stats.addDynamicCounter(
-                      name.get(),
-                      new MBeanLongCompositeValueFetcher(
-                        beanServer, beanName, attributeInfo.getName(), key
-                      )
-                    );
+                        name.get(),
+                        new MBeanLongCompositeValueFetcher(
+                            beanServer, beanName, attributeInfo.getName(), key));
                   }
                 }
               }
             }
           }
-        }  
+        }
       }
     }
   }
@@ -200,11 +179,10 @@ public class JVMStatsExporter {
 
   /**
    * Returns a stat name for the given set of parameters.
-   * 
+   *
    * @param beanName the MBean name to which the stat belongs
    * @param attributeNames the mbean attribute name followed by any nested attribute names for
-   * composite types
-   * 
+   *     composite types
    * @return the stat name
    */
   private static String getStatName(ObjectName beanName, String attributeName, String key) {
@@ -226,17 +204,14 @@ public class JVMStatsExporter {
     return builder.toString().replace(' ', '_');
   }
 
-  /**
-   * A base class that fetches an mbean attribute value.
-   */
+  /** A base class that fetches an mbean attribute value. */
   private static class MBeanAttributeFetcher {
     private final MBeanServer mBeanServer;
     private final ObjectName beanName;
     private final String attribute;
 
-    protected MBeanAttributeFetcher(MBeanServer mBeanServer, 
-                                    ObjectName beanName, 
-                                    String attribute) {
+    protected MBeanAttributeFetcher(
+        MBeanServer mBeanServer, ObjectName beanName, String attribute) {
       this.mBeanServer = mBeanServer;
       this.beanName = beanName;
       this.attribute = attribute;
@@ -247,12 +222,9 @@ public class JVMStatsExporter {
     }
   }
 
-  /**
-   * Fetches attribute value as long
-   */
-  private static class MBeanLongAttributeFetcher 
-    extends MBeanAttributeFetcher 
-    implements Callable<Long> {
+  /** Fetches attribute value as long */
+  private static class MBeanLongAttributeFetcher extends MBeanAttributeFetcher
+      implements Callable<Long> {
     private MBeanLongAttributeFetcher(
         MBeanServer mBeanServer, ObjectName beanName, String attribute) {
       super(mBeanServer, beanName, attribute);
@@ -261,18 +233,16 @@ public class JVMStatsExporter {
     @Override
     public Long call() throws Exception {
       Object obj = getAttributeValue();
-      if(obj instanceof Number) {
-        return ((Number)obj).longValue();
+      if (obj instanceof Number) {
+        return ((Number) obj).longValue();
       }
       return -1L;
     }
   }
 
-  /**
-   * Fetches an attribute of an mbean attribute that is of composite type.
-   */
-  private static class MBeanLongCompositeValueFetcher 
-      extends MBeanAttributeFetcher implements Callable<Long> {
+  /** Fetches an attribute of an mbean attribute that is of composite type. */
+  private static class MBeanLongCompositeValueFetcher extends MBeanAttributeFetcher
+      implements Callable<Long> {
     private final String itemName;
 
     private MBeanLongCompositeValueFetcher(
@@ -284,10 +254,10 @@ public class JVMStatsExporter {
     @Override
     public Long call() throws Exception {
       Object obj = getAttributeValue();
-      if(obj instanceof CompositeData) {
-        obj = ((CompositeData)obj).get(itemName);
+      if (obj instanceof CompositeData) {
+        obj = ((CompositeData) obj).get(itemName);
         if (obj instanceof Number) {
-          return ((Number)obj).longValue();
+          return ((Number) obj).longValue();
         }
       }
       return -1L;

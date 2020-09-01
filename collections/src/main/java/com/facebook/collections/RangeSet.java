@@ -29,10 +29,9 @@ import java.util.TreeMap;
  * This collection is NOT thread-safe.
  */
 public class RangeSet extends AbstractSet<Long> implements Set<Long> {
-  /**
-   * Map that indexes each LongSegment with the smallest value in its range
-   */
+  /** Map that indexes each LongSegment with the smallest value in its range */
   private final NavigableMap<Long, LongSegment> map = new TreeMap<Long, LongSegment>();
+
   private int size = 0;
 
   @Override
@@ -58,7 +57,7 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
       // Get Segments in ascending order
       private final Iterator<LongSegment> segmentIterator = map.values().iterator();
       private Iterator<Long> longIterator =
-        segmentIterator.hasNext() ? segmentIterator.next().iterator() : null;
+          segmentIterator.hasNext() ? segmentIterator.next().iterator() : null;
 
       @Override
       public boolean hasNext() {
@@ -105,9 +104,8 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
 
       // Overwrite the lower adjacent to encompass the whole range
       map.put(
-        lowerEntry.getValue().getMin(),
-        new LongSegment(lowerEntry.getValue().getMin(), upperSegment.getMax())
-      );
+          lowerEntry.getValue().getMin(),
+          new LongSegment(lowerEntry.getValue().getMin(), upperSegment.getMax()));
 
       // Remove the upper adjacent b/c now included in the merged LongSegment
       map.remove(upperSegment.getMin());
@@ -116,8 +114,7 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
 
       // Overwrite the lower adjacent max to include aLong
       map.put(
-        lowerEntry.getValue().getMin(), new LongSegment(lowerEntry.getValue().getMin(), aLong)
-      );
+          lowerEntry.getValue().getMin(), new LongSegment(lowerEntry.getValue().getMin(), aLong));
 
     } else if (upperAdjacent) {
 
@@ -130,7 +127,6 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
 
       // No adjacents, so just insert singular element
       map.put(aLong, new LongSegment(aLong));
-
     }
 
     size++;
@@ -183,9 +179,7 @@ public class RangeSet extends AbstractSet<Long> implements Set<Long> {
     size = 0;
   }
 
-  /**
-   * Represents a range of long values from min to max (inclusive)
-   */
+  /** Represents a range of long values from min to max (inclusive) */
   private static class LongSegment implements Iterable<Long> {
     private final long min;
     private final long max;

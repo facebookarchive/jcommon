@@ -15,33 +15,30 @@
  */
 package com.facebook.stats;
 
+import java.util.concurrent.atomic.AtomicLong;
 import org.joda.time.DateTimeUtils;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 public class ShardedConcurrentCounter {
-  // this seemed to help maybe 10-15% by 
+  // this seemed to help maybe 10-15% by
   private static int MEMORY_WORD_MULTIPLIER = 1;
-  
+
   private volatile long value = 0;
   private final long maxStaleMillis;
-  private volatile long globalLastDrainMillis = 
-    DateTimeUtils.currentTimeMillis();
+  private volatile long globalLastDrainMillis = DateTimeUtils.currentTimeMillis();
   private final CounterShard[] counterShards;
 
   public ShardedConcurrentCounter(int numShards, long maxStaleMillis) {
     this.maxStaleMillis = maxStaleMillis;
-    counterShards = new CounterShard[MEMORY_WORD_MULTIPLIER*numShards];
-    
+    counterShards = new CounterShard[MEMORY_WORD_MULTIPLIER * numShards];
+
     long now = DateTimeUtils.currentTimeMillis();
     long staggerMillis = maxStaleMillis / numShards;
-    
-    for (int i = 0; i < MEMORY_WORD_MULTIPLIER*numShards; i++) {
+
+    for (int i = 0; i < MEMORY_WORD_MULTIPLIER * numShards; i++) {
       long firstDrainMillis = now + (i * staggerMillis);
-      
+
       // TODO: figure out if 1.5 make sense here?
-      counterShards[i] = 
-        new CounterShard(firstDrainMillis, (long)(1.5 * maxStaleMillis));
+      counterShards[i] = new CounterShard(firstDrainMillis, (long) (1.5 * maxStaleMillis));
     }
   }
 
@@ -54,28 +51,24 @@ public class ShardedConcurrentCounter {
   }
 
   private int getShard() {
-    return MEMORY_WORD_MULTIPLIER*(int)Thread.currentThread().getId() % 
-      counterShards.length;
+    return MEMORY_WORD_MULTIPLIER * (int) Thread.currentThread().getId() % counterShards.length;
   }
-
 
   public long get() {
     drainThreadToShared();
-    
+
     return value;
   }
-  
+
   public long getStale() {
     return value;
   }
-  
+
   // TODO: possibly expose this publicly?
   private void updateIfStale() {
     if (DateTimeUtils.currentTimeMillis() - globalLastDrainMillis >= maxStaleMillis) {
       synchronized (counterShards) {
-        if (DateTimeUtils.currentTimeMillis() - globalLastDrainMillis >= 
-          maxStaleMillis
-          ) {
+        if (DateTimeUtils.currentTimeMillis() - globalLastDrainMillis >= maxStaleMillis) {
           drainThreadToShared();
           globalLastDrainMillis = DateTimeUtils.currentTimeMillis();
         }
@@ -90,7 +83,7 @@ public class ShardedConcurrentCounter {
       }
     }
   }
-  
+
   private class CounterShard {
     private final long frequencyMillis;
     private final AtomicLong counter = new AtomicLong(0);
@@ -106,7 +99,7 @@ public class ShardedConcurrentCounter {
         drainThreadToShared();
         lastDrainMillis = DateTimeUtils.currentTimeMillis();
       }
-      
+
       counter.addAndGet(delta);
     }
 

@@ -15,17 +15,16 @@
  */
 package com.facebook.stats;
 
+import static com.facebook.stats.MultiWindowDistribution.Quantile.*;
+import static com.google.common.collect.Lists.transform;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
-
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static com.facebook.stats.MultiWindowDistribution.Quantile.*;
-import static com.google.common.collect.Lists.transform;
 
 public class MultiWindowDistribution implements WritableMultiWindowStat {
   private final QuantileDigest oneMinute;
@@ -35,11 +34,10 @@ public class MultiWindowDistribution implements WritableMultiWindowStat {
 
   @VisibleForTesting
   MultiWindowDistribution(
-    QuantileDigest oneMinute,
-    QuantileDigest tenMinutes,
-    QuantileDigest oneHour,
-    QuantileDigest allTime
-  ) {
+      QuantileDigest oneMinute,
+      QuantileDigest tenMinutes,
+      QuantileDigest oneHour,
+      QuantileDigest allTime) {
     this.oneMinute = oneMinute;
     this.tenMinutes = tenMinutes;
     this.oneHour = oneHour;
@@ -48,11 +46,10 @@ public class MultiWindowDistribution implements WritableMultiWindowStat {
 
   public MultiWindowDistribution() {
     this(
-      new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 60)),
-      new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 600)),
-      new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 3600)),
-      new QuantileDigest(0.01)
-    );
+        new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 60)),
+        new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 600)),
+        new QuantileDigest(0.01, ExponentialDecay.computeAlpha(0.1, 3600)),
+        new QuantileDigest(0.01));
   }
 
   @Override

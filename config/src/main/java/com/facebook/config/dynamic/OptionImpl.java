@@ -18,7 +18,6 @@ package com.facebook.config.dynamic;
 import com.facebook.logging.Logger;
 import com.facebook.logging.LoggerImpl;
 import com.google.common.collect.Lists;
-
 import java.util.List;
 
 public class OptionImpl<V> implements Option<V> {
@@ -27,8 +26,7 @@ public class OptionImpl<V> implements Option<V> {
 
   private volatile V value;
 
-  public OptionImpl() {
-  }
+  public OptionImpl() {}
 
   public OptionImpl(V value) {
     this.value = value;

@@ -54,8 +54,7 @@ public class TestCompositeSum {
   public void testFallOff() throws Exception {
     EventCounter firstCounter = nextEventWindow(1);
     CompositeEventCounterIf<EventCounter> counter =
-      newCompositeEventCounter(Duration.standardMinutes(3))
-        .addEventCounter(firstCounter);
+        newCompositeEventCounter(Duration.standardMinutes(3)).addEventCounter(firstCounter);
 
     // single element set
     counter.add(100);
@@ -79,21 +78,18 @@ public class TestCompositeSum {
     counter.add(5);
     Assert.assertEquals(lastCounter.getValue(), 205);
     Assert.assertEquals(counter.getValue(), 1206);
-
   }
 
   @Test(groups = "fast")
   public void testNestedComposite1() throws Exception {
     CompositeEventCounterIf<EventCounter> counter1 =
-      newCompositeEventCounter(Duration.standardMinutes(3))
-        .addEventCounter(baseCounter2)
-        .addEventCounter(baseCounter3);
+        newCompositeEventCounter(Duration.standardMinutes(3))
+            .addEventCounter(baseCounter2)
+            .addEventCounter(baseCounter3);
     CompositeEventCounterIf<EventCounter> counter2 =
-      newCompositeEventCounter(Duration.standardMinutes(3))
-        .addEventCounter(baseCounter1)
-        .addEventCounter(
-          (EventCounter) counter1
-        );
+        newCompositeEventCounter(Duration.standardMinutes(3))
+            .addEventCounter(baseCounter1)
+            .addEventCounter((EventCounter) counter1);
 
     // all 3 counters are in counter1's range
     setNow(baseCounter3.getEnd());
@@ -113,30 +109,28 @@ public class TestCompositeSum {
   @Test(groups = "fast")
   public void testNestedComposite2() throws Exception {
     CompositeEventCounterIf<EventCounter> counter1 =
-      newCompositeEventCounter(Duration.standardMinutes(2))
-        .addEventCounter(baseCounter2)
-        .addEventCounter(baseCounter3);
+        newCompositeEventCounter(Duration.standardMinutes(2))
+            .addEventCounter(baseCounter2)
+            .addEventCounter(baseCounter3);
     CompositeEventCounterIf<EventCounter> counter2 =
-      newCompositeEventCounter(Duration.standardMinutes(3))
-        .addEventCounter(baseCounter1)
-        .addEventCounter(
-          (EventCounter) counter1
-        );
+        newCompositeEventCounter(Duration.standardMinutes(3))
+            .addEventCounter(baseCounter1)
+            .addEventCounter((EventCounter) counter1);
 
     // all 3 counters are in counter1's range
-    setNow(baseCounter3.getEnd());    
+    setNow(baseCounter3.getEnd());
     Assert.assertEquals(counter1.getValue(), 4 + 2);
     Assert.assertEquals(counter2.getValue(), 4 + 2 + 1);
 
     // we lose baseCounter2
     counter2.addEventCounter(baseCounter4);
-    setNow(baseCounter4.getEnd());    
+    setNow(baseCounter4.getEnd());
     Assert.assertEquals(counter1.getValue(), 4);
     Assert.assertEquals(counter2.getValue(), 8 + 4);
 
     // counter 1 is empty
     counter2.addEventCounter(baseCounter5);
-    setNow(baseCounter5.getEnd());    
+    setNow(baseCounter5.getEnd());
     Assert.assertEquals(counter1.getValue(), 0);
     Assert.assertEquals(counter2.getValue(), 16 + 8);
   }
@@ -146,8 +140,7 @@ public class TestCompositeSum {
     EventCounter baseCounter = nextEventWindow(1);
     baseCounter.add(100);
     CompositeEventCounterIf<EventCounter> counter =
-      newCompositeEventCounter(new Duration(3 * 60000))
-        .addEventCounter(baseCounter);
+        newCompositeEventCounter(new Duration(3 * 60000)).addEventCounter(baseCounter);
 
     Assert.assertEquals(baseCounter.getValue(), counter.getValue());
     baseCounter.add(200);
@@ -158,8 +151,7 @@ public class TestCompositeSum {
 
   @Test(groups = "fast")
   public void testCollapseSanity() throws Exception {
-    CompositeSum counter =
-      newCompositeEventCounter(Duration.standardMinutes(60));
+    CompositeSum counter = newCompositeEventCounter(Duration.standardMinutes(60));
 
     DateTime start = new DateTime(base.getMillis());
     for (int i = 0; i < 60; i++) {
@@ -179,10 +171,8 @@ public class TestCompositeSum {
     setNow(base);
     DateTime start = base;
 
-    CompositeSum counter1 =
-      newCompositeEventCounter(Duration.standardMinutes(60));
-    CompositeSum counter2 =
-      newCompositeEventCounter(Duration.standardMinutes(60));
+    CompositeSum counter1 = newCompositeEventCounter(Duration.standardMinutes(60));
+    CompositeSum counter2 = newCompositeEventCounter(Duration.standardMinutes(60));
 
     counter1.add(100);
     counter2.add(10);
@@ -198,9 +188,7 @@ public class TestCompositeSum {
     counter2.add(10);
     EventCounter counter3 = counter1.merge(counter2);
     Assert.assertEquals(counter3.getStart(), start);
-    Assert.assertEquals(
-      counter3.getEnd(), now.plusMinutes(6)
-    );
+    Assert.assertEquals(counter3.getEnd(), now.plusMinutes(6));
     Assert.assertEquals(counter3.getValue(), 330);
   }
 
@@ -208,10 +196,8 @@ public class TestCompositeSum {
   public void testInterleavedMerge() throws Exception {
     setNow(base);
 
-    CompositeSum counter1 =
-      newCompositeEventCounter(Duration.standardMinutes(60));
-    CompositeSum counter2 =
-      newCompositeEventCounter(Duration.standardMinutes(60));
+    CompositeSum counter1 = newCompositeEventCounter(Duration.standardMinutes(60));
+    CompositeSum counter2 = newCompositeEventCounter(Duration.standardMinutes(60));
 
     counter2.add(1);
     advanceNowMinutes(30);
@@ -224,17 +210,16 @@ public class TestCompositeSum {
     // but 10 drops off
     advanceNowMinutes(31);
     counter2.add(10000);
-    
+
     EventCounter counter3 = counter1.merge(counter2);
-    
+
     Assert.assertEquals(counter3.getValue(), 11100);
   }
 
   @Test(groups = "fast")
   public void testAutoCreateNewCounter() throws Exception {
-    CompositeSum counter =
-      newCompositeEventCounter(Duration.standardMinutes(10));
-    // this creates a single internal counter with a value of 1 
+    CompositeSum counter = newCompositeEventCounter(Duration.standardMinutes(10));
+    // this creates a single internal counter with a value of 1
     counter.add(1);
     Assert.assertEquals(counter.getValue(), 1);
     // advancing time and adding 1 creates a second internal counter
@@ -245,7 +230,7 @@ public class TestCompositeSum {
     advanceNowMinutes(9);
     Assert.assertEquals(counter.getValue(), 1);
   }
-  
+
   @Test(groups = "fast")
   public void testPartialExpiration() throws Exception {
     setNow(base);
@@ -260,24 +245,20 @@ public class TestCompositeSum {
     advanceNowSeconds(30);
     Assert.assertEquals(counter.getValue(), 95);
   }
-  
+
   private void advanceNowSeconds(int seconds) {
-    setNow(now.plusSeconds(seconds));    
+    setNow(now.plusSeconds(seconds));
   }
-  
+
   private void advanceNowMinutes(int minutes) {
     setNow(now.plusMinutes(minutes));
   }
 
   private EventCounter windowMinutes(int minutes) {
-    return new EventCounterImpl(
-      now, now.plusMinutes(minutes)
-    );
+    return new EventCounterImpl(now, now.plusMinutes(minutes));
   }
 
-  private CompositeSum newCompositeEventCounter(
-    ReadableDuration maxLength
-  ) {
+  private CompositeSum newCompositeEventCounter(ReadableDuration maxLength) {
     return new CompositeSum(maxLength);
   }
 

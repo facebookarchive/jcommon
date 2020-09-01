@@ -19,8 +19,9 @@ import java.util.function.LongBinaryOperator;
 
 public interface ExtLongBinaryOperator<E extends Throwable> {
   long applyAsLong(long left, long right) throws E;
-  
+
   static LongBinaryOperator quiet(ExtLongBinaryOperator<?> longBinaryOperator) {
-    return (left, right) -> ExtLongSupplier.quiet(() -> longBinaryOperator.applyAsLong(left, right)).getAsLong();
+    return (left, right) ->
+        ExtLongSupplier.quiet(() -> longBinaryOperator.applyAsLong(left, right)).getAsLong();
   }
 }

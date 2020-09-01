@@ -29,7 +29,7 @@ public interface ExtLongConsumer<E extends Throwable> {
       after.accept(value);
     };
   }
-  
+
   static LongConsumer quiet(ExtLongConsumer<?> longConsumer) {
     return (value) -> ExtRunnable.quiet(() -> longConsumer.accept(value)).run();
   }

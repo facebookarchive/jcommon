@@ -20,21 +20,21 @@ import java.util.function.BiPredicate;
 
 public interface ExtBiPredicate<T, U, E extends Throwable> {
   boolean test(T t, U u) throws E;
-  
+
   default ExtBiPredicate<T, U, E> and(ExtBiPredicate<? super T, ? super U, E> other) {
     Objects.requireNonNull(other);
     return (t, u) -> test(t, u) && other.test(t, u);
   }
-  
+
   default ExtBiPredicate<T, U, E> negate() {
     return (t, u) -> !test(t, u);
   }
-  
+
   default ExtBiPredicate<T, U, E> or(ExtBiPredicate<? super T, ? super U, E> other) {
     Objects.requireNonNull(other);
     return (t, u) -> test(t, u) || other.test(t, u);
   }
-  
+
   static <T, U> BiPredicate<T, U> quiet(ExtBiPredicate<T, U, ?> biPredicate) {
     return (t, u) -> ExtBooleanSupplier.quiet(() -> biPredicate.test(t, u)).getAsBoolean();
   }

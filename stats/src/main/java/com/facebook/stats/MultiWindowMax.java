@@ -22,8 +22,7 @@ import org.joda.time.ReadableDateTime;
 import org.joda.time.ReadableDuration;
 
 public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMultiWindowStat {
-  private static final ReadableDuration COUNTER_GRANULARITY =
-    Duration.standardSeconds(6);
+  private static final ReadableDuration COUNTER_GRANULARITY = Duration.standardSeconds(6);
 
   private final Object rollLock = new Object();
   private final CompositeMax allTimeCounter;
@@ -33,11 +32,10 @@ public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMulti
   private volatile EventCounterIf<EventCounter> currentCounter;
 
   MultiWindowMax(
-    CompositeMax allTimeCounter,
-    CompositeMax hourCounter,
-    CompositeMax tenMinuteCounter,
-    CompositeMax minuteCounter
-  ) {
+      CompositeMax allTimeCounter,
+      CompositeMax hourCounter,
+      CompositeMax tenMinuteCounter,
+      CompositeMax minuteCounter) {
     this.allTimeCounter = allTimeCounter;
     this.hourCounter = hourCounter;
     this.tenMinuteCounter = tenMinuteCounter;
@@ -47,11 +45,10 @@ public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMulti
 
   public MultiWindowMax() {
     this(
-      new CompositeMax(Duration.standardMinutes(Integer.MAX_VALUE)),
-      new CompositeMax(Duration.standardMinutes(60)),
-      new CompositeMax(Duration.standardMinutes(10)),
-      new CompositeMax(Duration.standardMinutes(1))
-    );
+        new CompositeMax(Duration.standardMinutes(Integer.MAX_VALUE)),
+        new CompositeMax(Duration.standardMinutes(60)),
+        new CompositeMax(Duration.standardMinutes(10)),
+        new CompositeMax(Duration.standardMinutes(1)));
   }
 
   @Override
@@ -85,7 +82,7 @@ public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMulti
   }
 
   private void rollCurrentIfNeeded() {
-    //do outside the synchronized block
+    // do outside the synchronized block
     long now = DateTimeUtils.currentTimeMillis();
     // this is false for the majority of calls, so skip lock acquisition
     if (currentCounter.getEnd().getMillis() < now) {
@@ -101,10 +98,8 @@ public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMulti
   private MaxEventCounter addNewCurrentCounter() {
     ReadableDateTime now = new DateTime();
 
-    MaxEventCounter maxEventCounter = new MaxEventCounter(
-      now,
-      now.toDateTime().plus(COUNTER_GRANULARITY)
-    );
+    MaxEventCounter maxEventCounter =
+        new MaxEventCounter(now, now.toDateTime().plus(COUNTER_GRANULARITY));
 
     allTimeCounter.addEventCounter(maxEventCounter);
     hourCounter.addEventCounter(maxEventCounter);
@@ -116,10 +111,9 @@ public class MultiWindowMax implements ReadableMultiWindowCounter, WritableMulti
 
   public MultiWindowMax merge(MultiWindowMax other) {
     return new MultiWindowMax(
-      (CompositeMax) allTimeCounter.merge(other.allTimeCounter),
-      (CompositeMax) hourCounter.merge(other.hourCounter),
-      (CompositeMax) tenMinuteCounter.merge(other.tenMinuteCounter),
-      (CompositeMax) minuteCounter.merge(other.minuteCounter)
-    );
+        (CompositeMax) allTimeCounter.merge(other.allTimeCounter),
+        (CompositeMax) hourCounter.merge(other.hourCounter),
+        (CompositeMax) tenMinuteCounter.merge(other.tenMinuteCounter),
+        (CompositeMax) minuteCounter.merge(other.minuteCounter));
   }
 }

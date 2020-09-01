@@ -19,17 +19,15 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 /**
- * Adds a {@link #printfln(String, Object...)} method to {@link java.io.PrintStream} and removes
- * the {@link java.io.IOException} from {@link #write(byte[])}.
+ * Adds a {@link #printfln(String, Object...)} method to {@link java.io.PrintStream} and removes the
+ * {@link java.io.IOException} from {@link #write(byte[])}.
  */
 public abstract class PrintStreamPlus extends PrintStream {
   protected PrintStreamPlus(OutputStream out) {
     super(out);
   }
 
-  /**
-   * Convenience method identical to {#code printf(format, args); println();}.
-   */
+  /** Convenience method identical to {#code printf(format, args); println();}. */
   public abstract void printfln(String format, Object... args);
 
   @Override

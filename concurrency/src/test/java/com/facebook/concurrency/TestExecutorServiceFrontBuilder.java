@@ -15,15 +15,14 @@
  */
 package com.facebook.concurrency;
 
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestExecutorServiceFrontBuilder {
   private ExecutorService coreExecutor;
@@ -42,26 +41,28 @@ public class TestExecutorServiceFrontBuilder {
     countLatch = new CountDownLatch(2);
     hangLatch = new CountDownLatch(1);
 
-    hangTask = new Runnable() {
-      @Override
-      public void run() {
-        try {
-          hangLatch.await();
-          count.incrementAndGet();
-          finishLatch.countDown();
-        } catch (InterruptedException e) {
-          throw new RuntimeException("interrupted waiting on latch!", e);
-        }
-      }
-    };
-    countTask = new Runnable() {
-      @Override
-      public void run() {
-        count.incrementAndGet();
-        countLatch.countDown();
-        finishLatch.countDown();
-      }
-    };
+    hangTask =
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              hangLatch.await();
+              count.incrementAndGet();
+              finishLatch.countDown();
+            } catch (InterruptedException e) {
+              throw new RuntimeException("interrupted waiting on latch!", e);
+            }
+          }
+        };
+    countTask =
+        new Runnable() {
+          @Override
+          public void run() {
+            count.incrementAndGet();
+            countLatch.countDown();
+            finishLatch.countDown();
+          }
+        };
 
     coreExecutor = Executors.newCachedThreadPool();
     executorFrontBuilder = new ExecutorServiceFrontBuilder(coreExecutor, 3);
@@ -73,22 +74,15 @@ public class TestExecutorServiceFrontBuilder {
   }
 
   /**
-   * This test will submit several tasks from two ExecutorServiceFront which
-   * share threads on a global ExecutorServiceFront. Two of these tasks will
-   * hang at a latch. Other tasks should completes on the third thread in
-   * the global ExecutorServiceFront.
+   * This test will submit several tasks from two ExecutorServiceFront which share threads on a
+   * global ExecutorServiceFront. Two of these tasks will hang at a latch. Other tasks should
+   * completes on the third thread in the global ExecutorServiceFront.
    */
   @Test(groups = "fast")
   public void testGlobalMax() throws Exception {
-    ExecutorServiceFront executorFront1 =
-      executorFrontBuilder
-        .setMaxInstanceThreads(2)
-        .build();
+    ExecutorServiceFront executorFront1 = executorFrontBuilder.setMaxInstanceThreads(2).build();
 
-    ExecutorServiceFront executorFront2 =
-      executorFrontBuilder
-        .setMaxInstanceThreads(2)
-        .build();
+    ExecutorServiceFront executorFront2 = executorFrontBuilder.setMaxInstanceThreads(2).build();
 
     /* submit 2 tasks that will hang */
     executorFront1.execute(hangTask);

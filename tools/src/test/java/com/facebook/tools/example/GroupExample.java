@@ -22,15 +22,9 @@ import com.facebook.tools.io.IO;
 public class GroupExample extends CommandDispatcher {
   public GroupExample(IO io) {
     super(
-      io,
-      new CreateReplayFile(io),
-      new CommandGroup(
         io,
-        "ops",
-        "Commands used by on-call",
-        new ExportCheckpoints(io)
-      )
-    );
+        new CreateReplayFile(io),
+        new CommandGroup(io, "ops", "Commands used by on-call", new ExportCheckpoints(io)));
   }
 
   public GroupExample() {

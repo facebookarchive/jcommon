@@ -15,22 +15,21 @@
  */
 package com.facebook.tools;
 
-import com.facebook.tools.parser.CliCommand;
-import com.facebook.tools.parser.CliParser;
 import com.facebook.tools.io.IO;
 import com.facebook.tools.io.MockIO;
+import com.facebook.tools.parser.CliCommand;
+import com.facebook.tools.parser.CliParser;
+import java.util.Arrays;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-
 public class TestCommandDispatcher {
   private static final String EXPECTED_FOO =
-    "foo\n  test\n\n  -b --bar <option>\n    [Required] Testing\n";
+      "foo\n  test\n\n  -b --bar <option>\n    [Required] Testing\n";
   private static final String EXPECTED_HELP = "help <command_name>\n  Displays help for commands\n";
   private static final String EXPECTED_ALL =
-    "foo\n  test\nhelp <command_name>\n  Displays help for commands\n";
+      "foo\n  test\nhelp <command_name>\n  Displays help for commands\n";
 
   private MockIO io;
   private FooCommand fooCommand;
@@ -110,8 +109,7 @@ public class TestCommandDispatcher {
   }
 
   private void assertResult(
-    int actualResult, int expectedResult, String expectedOut, String expectedErr
-  ) {
+      int actualResult, int expectedResult, String expectedOut, String expectedErr) {
     String out = io.getOut();
     String err = io.getErr();
 

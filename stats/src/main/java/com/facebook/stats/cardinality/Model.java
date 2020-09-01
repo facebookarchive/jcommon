@@ -22,10 +22,9 @@ interface Model {
 
   /**
    * The lg(MAX_COUNT) of the model.
-   * <p/>
-   * The arithmetic coding implementation uses shifting instead of
-   * multiplication and division, because shifting is significantly
-   * faster.  For this to work, the max count must be a power of 2,
+   *
+   * <p>The arithmetic coding implementation uses shifting instead of multiplication and division,
+   * because shifting is significantly faster. For this to work, the max count must be a power of 2,
    * and this method gives the coder shift size.
    */
   int log2MaxCount();

@@ -16,10 +16,8 @@
 package com.facebook.stats;
 
 /**
- * Stats container that tracks the following multi-window metrics:
- * 1) min
- * 2) gauge - average, rate, sample count
- * 3) max
+ * Stats container that tracks the following multi-window metrics: 1) min 2) gauge - average, rate,
+ * sample count 3) max
  */
 public class MultiWindowSpread implements WritableMultiWindowStat {
   private final MultiWindowMin min;

@@ -18,11 +18,10 @@ package com.facebook.collections;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.AbstractIterator;
-
-import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
+import javax.annotation.concurrent.GuardedBy;
 
 public class DynamicIterator<T> extends AbstractIterator<T> {
 
@@ -90,5 +89,4 @@ public class DynamicIterator<T> extends AbstractIterator<T> {
       throw Throwables.propagate(e);
     }
   }
-
 }

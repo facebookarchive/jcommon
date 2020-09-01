@@ -16,7 +16,6 @@
 package com.facebook.collections.specialized;
 
 import com.facebook.collections.SetFactory;
-
 import java.util.Set;
 
 public class SnapshotableSetImplFactory<T> implements SetFactory<T, SnapshotableSet<T>> {

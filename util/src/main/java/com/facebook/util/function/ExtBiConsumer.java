@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 
 public interface ExtBiConsumer<T, U, E extends Throwable> {
   void accept(T t, U u) throws E;
-  
+
   default ExtBiConsumer<T, U, E> andThen(ExtBiConsumer<? super T, ? super U, E> after) {
     Objects.requireNonNull(after);
     return (l, r) -> {
@@ -29,7 +29,7 @@ public interface ExtBiConsumer<T, U, E extends Throwable> {
       after.accept(l, r);
     };
   }
-  
+
   static <T, U> BiConsumer<T, U> quiet(ExtBiConsumer<T, U, ?> biConsumer) {
     return (t, u) -> ExtRunnable.quiet(() -> biConsumer.accept(t, u)).run();
   }

@@ -19,7 +19,7 @@ import java.util.function.ToLongBiFunction;
 
 public interface ExtToLongBiFunction<T, U, E extends Throwable> {
   long applyAsLong(T t, U u) throws E;
-  
+
   static <T, U> ToLongBiFunction<T, U> quiet(ExtToLongBiFunction<T, U, ?> toLongBiFunction) {
     return (t, u) -> ExtLongSupplier.quiet(() -> toLongBiFunction.applyAsLong(t, u)).getAsLong();
   }

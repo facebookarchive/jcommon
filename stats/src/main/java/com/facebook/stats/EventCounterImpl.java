@@ -15,13 +15,11 @@
  */
 package com.facebook.stats;
 
+import java.util.concurrent.atomic.AtomicLong;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
-import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * reference implementation of a simple counter for a bounded period of time
- */
+/** reference implementation of a simple counter for a bounded period of time */
 public class EventCounterImpl implements EventCounter {
   private final ReadableDateTime start;
   private final ReadableDateTime end;
@@ -60,7 +58,6 @@ public class EventCounterImpl implements EventCounter {
   }
 
   @Override
-
   public Duration getLength() {
     return new Duration(start, end);
   }

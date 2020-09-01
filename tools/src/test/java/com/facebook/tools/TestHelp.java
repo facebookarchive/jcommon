@@ -15,16 +15,15 @@
  */
 package com.facebook.tools;
 
+import com.facebook.tools.io.MockIO;
 import com.facebook.tools.parser.CliCommand;
 import com.facebook.tools.parser.CliParser;
-import com.facebook.tools.io.MockIO;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestHelp {
   private MockIO io;
@@ -35,9 +34,8 @@ public class TestHelp {
     io = new MockIO();
 
     CliCommand.Builder noOptions = new CliCommand.Builder("foo", "My awesome foo command");
-    CliCommand.Builder oneOption = new CliCommand.Builder(
-      "bar", "My awesome bar command", "(even more awesome than foo)"
-    );
+    CliCommand.Builder oneOption =
+        new CliCommand.Builder("bar", "My awesome bar command", "(even more awesome than foo)");
     CliCommand.Builder severalOptions = new CliCommand.Builder("baz", "Meh");
     CliCommand.Builder withParameter = new CliCommand.Builder("pram", "This has a param");
     CliCommand.Builder withNotes = new CliCommand.Builder("noted", "I have notes");
@@ -50,20 +48,19 @@ public class TestHelp {
     withNotes.addOption("-b", "--bar").withMetavar("bar").withExample("hello", "goodbye");
     withNotes.withNotes("Yes, that's the same option", "(it's a good option)");
 
-    List<CommandBuilder> commands = Arrays.asList(
-      new MockCommand(noOptions.build()),
-      new MockCommand(oneOption.build()),
-      new MockCommand(severalOptions.build()),
-      new MockCommand(withParameter.build()),
-      new MockCommand(withNotes.build()),
-      new CommandGroup(
-        io,
-        "cmds",
-        "Some commands",
-        new MockCommand(noOptions.build()),
-        new MockCommand(oneOption.build())
-      )
-    );
+    List<CommandBuilder> commands =
+        Arrays.asList(
+            new MockCommand(noOptions.build()),
+            new MockCommand(oneOption.build()),
+            new MockCommand(severalOptions.build()),
+            new MockCommand(withParameter.build()),
+            new MockCommand(withNotes.build()),
+            new CommandGroup(
+                io,
+                "cmds",
+                "Some commands",
+                new MockCommand(noOptions.build()),
+                new MockCommand(oneOption.build())));
 
     help = new Help(io, commands);
   }
@@ -84,22 +81,21 @@ public class TestHelp {
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "foo\n" +
-        "  My awesome foo command\n" +
-        "bar\n" +
-        "  My awesome bar command\n  (even more awesome than foo)\n" +
-        "baz\n" +
-        "  Meh\n" +
-        "pram <cool>\n" +
-        "  This has a param\n" +
-        "noted\n" +
-        "  I have notes\n" +
-        "cmds\n" +
-        "  Some commands\n" +
-        "help <command_name>\n" +
-        "  Displays help for commands\n"
-    );
+        io.getOut(),
+        "foo\n"
+            + "  My awesome foo command\n"
+            + "bar\n"
+            + "  My awesome bar command\n  (even more awesome than foo)\n"
+            + "baz\n"
+            + "  Meh\n"
+            + "pram <cool>\n"
+            + "  This has a param\n"
+            + "noted\n"
+            + "  I have notes\n"
+            + "cmds\n"
+            + "  Some commands\n"
+            + "help <command_name>\n"
+            + "  Displays help for commands\n");
     Assert.assertEquals(io.getErr(), "");
   }
 
@@ -108,11 +104,7 @@ public class TestHelp {
     CliParser parser = new CliParser(help.defineCommand(), Arrays.asList("foo"));
 
     help.runCommand(parser);
-    Assert.assertEquals(
-      io.getOut(),
-      "foo\n" +
-        "  My awesome foo command\n"
-    );
+    Assert.assertEquals(io.getOut(), "foo\n" + "  My awesome foo command\n");
     Assert.assertEquals(io.getErr(), "");
   }
 
@@ -122,13 +114,12 @@ public class TestHelp {
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "bar\n" +
-        "  My awesome bar command\n  (even more awesome than foo)\n" +
-        "\n" +
-        "  -b --bar <bar>\n" +
-        "    [Required]\n"
-    );
+        io.getOut(),
+        "bar\n"
+            + "  My awesome bar command\n  (even more awesome than foo)\n"
+            + "\n"
+            + "  -b --bar <bar>\n"
+            + "    [Required]\n");
     Assert.assertEquals(io.getErr(), "");
   }
 
@@ -138,19 +129,18 @@ public class TestHelp {
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "baz\n" +
-        "  Meh\n" +
-        "\n" +
-        "  -x <hello>\n" +
-        "    [Required] Make everything awesome\n" +
-        "  -f\n" +
-        "    [Optional] A flag of some sort\n" +
-        "               that enables something\n" +
-        "  -d --default <option>\n" +
-        "    [Optional] Default\n" +
-        "    default: testing\n"
-    );
+        io.getOut(),
+        "baz\n"
+            + "  Meh\n"
+            + "\n"
+            + "  -x <hello>\n"
+            + "    [Required] Make everything awesome\n"
+            + "  -f\n"
+            + "    [Optional] A flag of some sort\n"
+            + "               that enables something\n"
+            + "  -d --default <option>\n"
+            + "    [Optional] Default\n"
+            + "    default: testing\n");
     Assert.assertEquals(io.getErr(), "");
   }
 
@@ -159,11 +149,7 @@ public class TestHelp {
     CliParser parser = new CliParser(help.defineCommand(), Arrays.asList("pram"));
 
     help.runCommand(parser);
-    Assert.assertEquals(
-      io.getOut(),
-      "pram <cool>\n" +
-        "  This has a param\n"
-    );
+    Assert.assertEquals(io.getOut(), "pram <cool>\n" + "  This has a param\n");
     Assert.assertEquals(io.getErr(), "");
   }
 
@@ -173,18 +159,17 @@ public class TestHelp {
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "noted\n" +
-        "  I have notes\n" +
-        "\n" +
-        "  -b --bar <bar>\n" +
-        "    [Required]\n" +
-        "    e.g., hello\n" +
-        "    e.g., goodbye\n" +
-        "\n" +
-        "  Yes, that's the same option\n" +
-        "  (it's a good option)\n"
-    );
+        io.getOut(),
+        "noted\n"
+            + "  I have notes\n"
+            + "\n"
+            + "  -b --bar <bar>\n"
+            + "    [Required]\n"
+            + "    e.g., hello\n"
+            + "    e.g., goodbye\n"
+            + "\n"
+            + "  Yes, that's the same option\n"
+            + "  (it's a good option)\n");
     Assert.assertEquals(io.getErr(), "");
   }
 
@@ -194,14 +179,13 @@ public class TestHelp {
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "cmds foo\n" +
-        "  My awesome foo command\n" +
-        "cmds bar\n" +
-        "  My awesome bar command\n  (even more awesome than foo)\n" +
-        "cmds help <command_name>\n" +
-        "  Displays help for commands\n"
-    );
+        io.getOut(),
+        "cmds foo\n"
+            + "  My awesome foo command\n"
+            + "cmds bar\n"
+            + "  My awesome bar command\n  (even more awesome than foo)\n"
+            + "cmds help <command_name>\n"
+            + "  Displays help for commands\n");
     Assert.assertEquals(io.getErr(), "");
   }
 
@@ -211,13 +195,12 @@ public class TestHelp {
 
     help.runCommand(parser);
     Assert.assertEquals(
-      io.getOut(),
-      "bar\n" +
-        "  My awesome bar command\n  (even more awesome than foo)\n" +
-        "\n" +
-        "  -b --bar <bar>\n" +
-        "    [Required]\n"
-    );
+        io.getOut(),
+        "bar\n"
+            + "  My awesome bar command\n  (even more awesome than foo)\n"
+            + "\n"
+            + "  -b --bar <bar>\n"
+            + "    [Required]\n");
     Assert.assertEquals(io.getErr(), "");
   }
 
@@ -234,7 +217,6 @@ public class TestHelp {
     }
 
     @Override
-    public void runCommand(CliParser parser) {
-    }
+    public void runCommand(CliParser parser) {}
   }
 }

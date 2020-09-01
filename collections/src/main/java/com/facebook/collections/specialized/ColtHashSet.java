@@ -17,7 +17,6 @@ package com.facebook.collections.specialized;
 
 import cern.colt.list.LongArrayList;
 import cern.colt.map.OpenLongObjectHashMap;
-
 import java.util.AbstractSet;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -25,25 +24,20 @@ import java.util.NoSuchElementException;
 
 /**
  * uses
- * 
- * http://acs.lbl.gov/software/colt/
- * 
- * to implement a memory efficient hash set
+ *
+ * <p>http://acs.lbl.gov/software/colt/
+ *
+ * <p>to implement a memory efficient hash set
  */
-public class ColtHashSet extends AbstractSet<Long> 
-  implements SnapshotableSet<Long> {
+public class ColtHashSet extends AbstractSet<Long> implements SnapshotableSet<Long> {
   private static final Object TRUE = new Object();
 
   private final OpenLongObjectHashMap map;
 
   private volatile long version = Long.MIN_VALUE;
 
-  public ColtHashSet(
-    int initialCapacity, double minLoadFactor, double maxLoadFactor
-  ) {
-    map = new OpenLongObjectHashMap(
-      initialCapacity, minLoadFactor, maxLoadFactor
-    );
+  public ColtHashSet(int initialCapacity, double minLoadFactor, double maxLoadFactor) {
+    map = new OpenLongObjectHashMap(initialCapacity, minLoadFactor, maxLoadFactor);
   }
 
   public ColtHashSet(int initialCapacity) {
@@ -56,7 +50,6 @@ public class ColtHashSet extends AbstractSet<Long>
 
     return map.put(aLong, TRUE);
   }
-
 
   @Override
   public Iterator<Long> iterator() {
@@ -106,12 +99,10 @@ public class ColtHashSet extends AbstractSet<Long>
     public void remove() {
       synchronized (ColtHashSet.this) {
         if (!canRemove) {
-          throw new IllegalStateException(
-            "repeated remove() calls or next() not called"
-          );
+          throw new IllegalStateException("repeated remove() calls or next() not called");
         }
-        
-        map.removeKey(mapKeyList.get(index-1));
+
+        map.removeKey(mapKeyList.get(index - 1));
         canRemove = false;
         version++;
         versionSnapshot = version;

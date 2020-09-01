@@ -19,8 +19,8 @@ import org.joda.time.Duration;
 import org.joda.time.ReadableDateTime;
 
 /**
- * Default implementation of GaugeCounter. For a slightly faster, but less
- * accurate version, see FastGaugeCounter.
+ * Default implementation of GaugeCounter. For a slightly faster, but less accurate version, see
+ * FastGaugeCounter.
  */
 public class DefaultGaugeCounter implements GaugeCounter {
   private final ReadableDateTime start;
@@ -94,13 +94,9 @@ public class DefaultGaugeCounter implements GaugeCounter {
       mergedEnd = counter.getEnd();
     }
 
-    DefaultGaugeCounter mergedCounter =
-      new DefaultGaugeCounter(mergedStart, mergedEnd);
+    DefaultGaugeCounter mergedCounter = new DefaultGaugeCounter(mergedStart, mergedEnd);
 
-      mergedCounter.add(
-        value + counter.getValue(),
-        nsamples + ((GaugeCounter)counter).getSamples()
-      );
+    mergedCounter.add(value + counter.getValue(), nsamples + ((GaugeCounter) counter).getSamples());
 
     return mergedCounter;
   }

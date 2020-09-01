@@ -15,11 +15,10 @@
  */
 package com.facebook.stats.cardinality;
 
-import com.google.common.base.Preconditions;
-
-import java.util.Arrays;
-
 import static com.facebook.stats.cardinality.StaticModelUtil.weightsToProbabilities;
+
+import com.google.common.base.Preconditions;
+import java.util.Arrays;
 
 class StaticModel implements Model {
   private final int[] counts;
@@ -31,9 +30,7 @@ class StaticModel implements Model {
 
     Preconditions.checkArgument(weights.length > 1, "weights is empty");
     Preconditions.checkArgument(
-        weights.length <= 512,
-        "weights is can not have more than 512 entries"
-    );
+        weights.length <= 512, "weights is can not have more than 512 entries");
 
     counts = new int[weights.length + 1];
     totalIndex = weights.length;
@@ -57,15 +54,13 @@ class StaticModel implements Model {
             "Internal error: symbol %s high value %s is not greater than the low value %s",
             symbol,
             counts[symbol + 1],
-            counts[symbol]
-        );
+            counts[symbol]);
       }
     }
 
     Preconditions.checkState(
         counts[totalIndex - 1] < StaticModelUtil.MAX_COUNT,
-        "Internal error: model max value %s must be less than %s"
-    );
+        "Internal error: model max value %s must be less than %s");
     counts[totalIndex] = StaticModelUtil.MAX_COUNT;
 
     // verify model

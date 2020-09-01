@@ -28,12 +28,11 @@ public class CliParameter {
   private final boolean required;
 
   private CliParameter(
-    String name,
-    List<String> description,
-    List<String> examples,
-    String defaultValue,
-    boolean required
-  ) {
+      String name,
+      List<String> description,
+      List<String> examples,
+      String defaultValue,
+      boolean required) {
     this.name = name;
     this.description = new ArrayList<>(description);
     this.examples = new ArrayList<>(examples);

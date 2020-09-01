@@ -19,19 +19,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ConfigUtil {
-  private static final Pattern NUMBER_AND_UNIT =
-    Pattern.compile("(\\d+)([a-zA-Z]+)?");
+  private static final Pattern NUMBER_AND_UNIT = Pattern.compile("(\\d+)([a-zA-Z]+)?");
 
   /**
    * default unit is seconds
-   * <p/>
-   * 10 = 10,000
-   * 10ms = 10
-   * 11s = 11,000
-   * 3m = 180,000
-   * 1h = 3,600,000
-   * 1d = 86,400,000
-   * *
+   *
+   * <p>10 = 10,000 10ms = 10 11s = 11,000 3m = 180,000 1h = 3,600,000 1d = 86,400,000 *
    *
    * @param duration string to translate
    * @return returns duration in millis
@@ -62,7 +55,7 @@ public class ConfigUtil {
             return number * 60 * 60 * 24 * 1000;
           case 'y':
             // JodaTime should handle leap year issues will handle leap years
-            return number * 365 * 60 * 60 * 24 * 1000; 
+            return number * 365 * 60 * 60 * 24 * 1000;
           default:
             throw new ConfigException("unknown time unit :" + unit);
         }

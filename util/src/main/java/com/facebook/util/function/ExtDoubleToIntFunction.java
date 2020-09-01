@@ -19,7 +19,7 @@ import java.util.function.DoubleToIntFunction;
 
 public interface ExtDoubleToIntFunction<E extends Throwable> {
   int applyAsInt(double value) throws E;
-  
+
   static DoubleToIntFunction quiet(ExtDoubleToIntFunction<?> doubleToIntFunction) {
     return (value) -> ExtIntSupplier.quiet(() -> doubleToIntFunction.applyAsInt(value)).getAsInt();
   }

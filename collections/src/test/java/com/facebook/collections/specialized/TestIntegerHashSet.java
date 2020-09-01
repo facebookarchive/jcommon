@@ -17,12 +17,11 @@ package com.facebook.collections.specialized;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.util.HashSet;
+import java.util.Set;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class TestIntegerHashSet {
 
@@ -51,10 +50,9 @@ public class TestIntegerHashSet {
   }
 
   @Test(
-    groups = "fast",
-    expectedExceptions = IllegalStateException.class,
-    expectedExceptionsMessageRegExp = ".*23.*"
-  )
+      groups = "fast",
+      expectedExceptions = IllegalStateException.class,
+      expectedExceptionsMessageRegExp = ".*23.*")
   public void testMaxCapacity() throws Exception {
     int maxCapacity = 23;
     IntegerHashSet set = new IntegerHashSet(2, maxCapacity);
@@ -64,12 +62,10 @@ public class TestIntegerHashSet {
     }
   }
 
-
   @Test(
-    groups = "fast",
-    expectedExceptions = IllegalStateException.class,
-    expectedExceptionsMessageRegExp = ".*23.*"
-  )
+      groups = "fast",
+      expectedExceptions = IllegalStateException.class,
+      expectedExceptionsMessageRegExp = ".*23.*")
   public void testMaxCapacityWithAdAll() throws Exception {
     int maxCapacity = 23;
     IntegerHashSet set = new IntegerHashSet(2, maxCapacity);
@@ -83,10 +79,9 @@ public class TestIntegerHashSet {
   }
 
   @Test(
-    groups = "fast",
-    expectedExceptions = IllegalStateException.class,
-    expectedExceptionsMessageRegExp = ".*23.*"
-  )
+      groups = "fast",
+      expectedExceptions = IllegalStateException.class,
+      expectedExceptionsMessageRegExp = ".*23.*")
   public void testMaxCapacityHonoredWithAdd() throws Exception {
     int maxCapacity = 23;
     IntegerHashSet set = new IntegerHashSet(2, maxCapacity);
@@ -103,10 +98,9 @@ public class TestIntegerHashSet {
   }
 
   @Test(
-    groups = "fast",
-    expectedExceptions = IllegalStateException.class,
-    expectedExceptionsMessageRegExp = ".*23.*"
-  )
+      groups = "fast",
+      expectedExceptions = IllegalStateException.class,
+      expectedExceptionsMessageRegExp = ".*23.*")
   public void testMaxCapacityHonoredWithAddAll() throws Exception {
     int maxCapacity = 23;
     IntegerHashSet set = new IntegerHashSet(2, maxCapacity);

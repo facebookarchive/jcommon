@@ -15,9 +15,9 @@
  */
 package com.facebook.stats.cardinality;
 
-import com.google.common.io.Closeables;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
+import com.google.common.io.Closeables;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -25,8 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import static org.testng.Assert.assertEquals;
+import org.testng.annotations.Test;
 
 public class TestHyperLogLogCodec {
   @Test
@@ -85,7 +84,8 @@ public class TestHyperLogLogCodec {
     byte[] compressed = out.toByteArray();
 
     // decode
-    AdaptiveHyperLogLog actual = codec.decodeAdaptiveHyperLogLog(new ByteArrayInputStream(compressed));
+    AdaptiveHyperLogLog actual =
+        codec.decodeAdaptiveHyperLogLog(new ByteArrayInputStream(compressed));
 
     // verify results
     assertEquals(actual.buckets(), expected.buckets());
@@ -97,11 +97,8 @@ public class TestHyperLogLogCodec {
     HyperLogLogCodec codec = new HyperLogLogCodec();
     for (int cardinality = 10; cardinality <= 100000; cardinality *= 10) {
       for (int bucketCount = 1024; bucketCount <= 4096; bucketCount <<= 1) {
-        String fileBaseName = String.format(
-            "serialization/HyperLogLog-%d-%d",
-            bucketCount,
-            cardinality
-        );
+        String fileBaseName =
+            String.format("serialization/HyperLogLog-%d-%d", bucketCount, cardinality);
 
         // read the raw bucket values
         AdaptiveHyperLogLog expected;
@@ -132,9 +129,7 @@ public class TestHyperLogLogCodec {
     }
   }
 
-  /**
-   * Generate new serialized HyperLogLog files for backwards compatibility test.
-   */
+  /** Generate new serialized HyperLogLog files for backwards compatibility test. */
   public static void main(String[] args) throws Exception {
     File directory = new File("src/test/resources/serialization");
     directory.mkdirs();

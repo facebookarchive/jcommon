@@ -17,15 +17,12 @@ package com.facebook.util.digest;
 
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import java.util.Random;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.Random;
-
-/**
- * Murmur Hash 3 from http://sites.google.com/site/murmurhash/
- */
+/** Murmur Hash 3 from http://sites.google.com/site/murmurhash/ */
 public class TestMurmurHash {
   private MurmurHash repeatableHasher;
   private Random random;
@@ -76,6 +73,5 @@ public class TestMurmurHash {
 
       Assert.assertEquals(repeatableHasher.hash(input), function.hashLong(input).asLong());
     }
-
   }
 }

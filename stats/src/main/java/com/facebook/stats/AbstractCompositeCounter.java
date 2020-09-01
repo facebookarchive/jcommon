@@ -15,16 +15,13 @@
  */
 package com.facebook.stats;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import com.facebook.collections.PeekableIterator;
 import com.facebook.stats.mx.StatsUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.ReadableDateTime;
-import org.joda.time.ReadableDuration;
-
-import javax.annotation.concurrent.GuardedBy;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,29 +29,30 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
+import javax.annotation.concurrent.GuardedBy;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.ReadableDateTime;
+import org.joda.time.ReadableDuration;
 
 /**
- * Tracks stats over a rolling time period (time window) of maxLength
- * broken into parts (eventCounters list) of size maxChunkLength.
- * Meant to be subclassed.  Primary use is through repeatedly calling
- * add() and occasionally calling getValue().
- * <p/>
- * 1. Does trimming of event buckets (based on the window size)
- * 2. Allows for updates of this window's events based on updates to
- * component windows (useful for overlapping window stats)
- * <p/>
- * Optimized for write-heavy counters.
+ * Tracks stats over a rolling time period (time window) of maxLength broken into parts
+ * (eventCounters list) of size maxChunkLength. Meant to be subclassed. Primary use is through
+ * repeatedly calling add() and occasionally calling getValue().
+ *
+ * <p>1. Does trimming of event buckets (based on the window size) 2. Allows for updates of this
+ * window's events based on updates to component windows (useful for overlapping window stats)
+ *
+ * <p>Optimized for write-heavy counters.
  */
 public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
-  implements CompositeEventCounterIf<C> {
+    implements CompositeEventCounterIf<C> {
 
   // adds/removes to eventCounters happen only when synchronized on "this"
   @GuardedBy("this")
   private final Deque<C> eventCounters = new ArrayDeque<C>();
-  private final ReadableDuration maxLength;      // total window size
+
+  private final ReadableDuration maxLength; // total window size
   private final ReadableDuration maxChunkLength; // size per counter
 
   private ReadableDateTime start;
@@ -64,9 +62,7 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
    * Create a CompositeCounter of window size maxLength broken into
    * individual eventCounters of size maxChunkLength.
    */
-  public AbstractCompositeCounter(
-    ReadableDuration maxLength, ReadableDuration maxChunkLength
-  ) {
+  public AbstractCompositeCounter(ReadableDuration maxLength, ReadableDuration maxChunkLength) {
     this.maxLength = maxLength;
     this.maxChunkLength = maxChunkLength;
 
@@ -81,9 +77,9 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   }
 
   /**
-   * Create a new counter that is the result of merging this counter and the argument. No deep
-   * copy is performed, so the resulting copy could in theory be a counter that just lists
-   * this and counter in a list
+   * Create a new counter that is the result of merging this counter and the argument. No deep copy
+   * is performed, so the resulting copy could in theory be a counter that just lists this and
+   * counter in a list
    *
    * @param counter : other counter to use in merge
    * @return
@@ -101,8 +97,7 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   protected abstract C nextCounter(ReadableDateTime start, ReadableDateTime end);
 
   /**
-   * Adds the value to the counter, and may create a new eventCounter
-   * to store the value if needed.
+   * Adds the value to the counter, and may create a new eventCounter to store the value if needed.
    */
   @Override
   public void add(long delta) {
@@ -119,7 +114,6 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
 
     last.add(delta);
   }
-
 
   public ReadableDateTime getStart() {
     trimIfNeeded();
@@ -142,8 +136,7 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
 
   @Override
   public synchronized CompositeEventCounterIf<C> add(
-    long delta, ReadableDateTime start, ReadableDateTime end
-  ) {
+      long delta, ReadableDateTime start, ReadableDateTime end) {
     C counter = nextCounter(start, end);
 
     counter.add(delta);
@@ -161,11 +154,10 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
     // added counter should not be merged until it is not the most recent
     // counter
     Preconditions.checkArgument(
-      eventCounters.isEmpty() || !eventCounters.getLast().getEnd().isAfter(eventCounter.getEnd()),
-      "new counter end , %s, is not past the current end %s",
-      eventCounter.getEnd(),
-      eventCounters.isEmpty() ? "NaN" : eventCounters.getLast().getEnd()
-    );
+        eventCounters.isEmpty() || !eventCounters.getLast().getEnd().isAfter(eventCounter.getEnd()),
+        "new counter end , %s, is not past the current end %s",
+        eventCounter.getEnd(),
+        eventCounters.isEmpty() ? "NaN" : eventCounters.getLast().getEnd());
 
     eventCounters.add(eventCounter);
 
@@ -183,10 +175,9 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   }
 
   /**
-   * testing to see if we can merge counter1 and counter2 and not violate
-   * the maxChunkLength
-   * <p/>
-   * ...| counter2 | counter1 |
+   * testing to see if we can merge counter1 and counter2 and not violate the maxChunkLength
+   *
+   * <p>...| counter2 | counter1 |
    */
   private void mergeChunksIfNeeded() {
     C counter1 = eventCounters.removeLast();
@@ -201,21 +192,19 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   }
 
   /**
-   * This merges another sorted list of counters with our own and produces
-   * a new counter.
-   * <p/>
-   * our own counters are protected from mutation via synchronization. The behavior of this function
-   * is not defined if otherCounters changes while a merge is taking place;
+   * This merges another sorted list of counters with our own and produces a new counter.
    *
-   * @param otherCounters usually some other object's counters, or a single counter that's being added
-   *                      via addEventCounter()
+   * <p>our own counters are protected from mutation via synchronization. The behavior of this
+   * function is not defined if otherCounters changes while a merge is taking place;
+   *
+   * @param otherCounters usually some other object's counters, or a single counter that's being
+   *     added via addEventCounter()
    * @param mergedCounter
    * @param <C2>
    * @return
    */
   protected synchronized <C2 extends CompositeEventCounterIf<C>> C2 internalMerge(
-    Collection<? extends C> otherCounters, C2 mergedCounter
-  ) {
+      Collection<? extends C> otherCounters, C2 mergedCounter) {
     PeekableIterator<C> iter1 = new PeekableIterator<C>(eventCounters.iterator());
     PeekableIterator<C> iter2 = new PeekableIterator<C>(otherCounters.iterator());
 
@@ -238,15 +227,13 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   }
 
   /**
-   * Updates the current composite counter so that it is up to date with the
-   * current timestamp.
-   * <p/>
-   * This should be called by any method that needs to have the most updated
-   * view of the current set of counters.
+   * Updates the current composite counter so that it is up to date with the current timestamp.
+   *
+   * <p>This should be called by any method that needs to have the most updated view of the current
+   * set of counters.
    */
   protected synchronized void trimIfNeeded() {
-    Duration delta = new Duration(start, new DateTime())
-      .minus(maxLength);
+    Duration delta = new Duration(start, new DateTime()).minus(maxLength);
 
     if (delta.isLongerThan(Duration.ZERO)) {
       start = start.toDateTime().plus(delta);
@@ -272,12 +259,10 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   }
 
   /**
-   * Takes the oldest counter and returns the fraction [0, 1] of it that
-   * has extended outside the current time window of the composite counter.
-   * <p/>
-   * Assumes:
-   * counter.getEnd() >= window.getStart()
-   * counter.getStart() < window.getStart()
+   * Takes the oldest counter and returns the fraction [0, 1] of it that has extended outside the
+   * current time window of the composite counter.
+   *
+   * <p>Assumes: counter.getEnd() >= window.getStart() counter.getStart() < window.getStart()
    *
    * @param oldestCounter
    * @return fraction [0, 1]
@@ -285,37 +270,35 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   protected float getExpiredFraction(EventCounterIf<C> oldestCounter) {
     ReadableDateTime windowStart = getWindowStart();
 
-    //counter.getEnd() >= window.getStart()
+    // counter.getEnd() >= window.getStart()
     checkArgument(
-      !oldestCounter.getEnd().isBefore(windowStart),
-      "counter should have end %s >= window start %s", oldestCounter.getEnd(), windowStart
-    );
+        !oldestCounter.getEnd().isBefore(windowStart),
+        "counter should have end %s >= window start %s",
+        oldestCounter.getEnd(),
+        windowStart);
 
     ReadableDateTime counterStart = oldestCounter.getStart();
 
-    //counter.getstart() < window.getStart()
+    // counter.getstart() < window.getStart()
     checkArgument(
-      counterStart.isBefore(windowStart),
-      "counter should have start %s <= window start %s", counterStart, windowStart
-    );
+        counterStart.isBefore(windowStart),
+        "counter should have start %s <= window start %s",
+        counterStart,
+        windowStart);
 
     //
     long expiredPortionMillis = windowStart.getMillis() - counterStart.getMillis();
     long lengthMillis = oldestCounter.getEnd().getMillis() - counterStart.getMillis();
     float expiredFraction = expiredPortionMillis / (float) lengthMillis;
 
-    checkState(
-      expiredFraction >= 0 && expiredFraction <= 1.0,
-      "%s not in [0, 1]",
-      expiredFraction
-    );
+    checkState(expiredFraction >= 0 && expiredFraction <= 1.0, "%s not in [0, 1]", expiredFraction);
 
     return expiredFraction;
   }
 
   /**
-   * return a copy of current list of event counters; same properties as getEventCounters, but
-   * a copy
+   * return a copy of current list of event counters; same properties as getEventCounters, but a
+   * copy
    *
    * @deprecated see {@link #getEventCounters()} and make a copy externally if a snapshot is needed
    */
@@ -325,9 +308,8 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   }
 
   /**
-   * Get a the current set of event counters. The counters will be
-   * sorted in ascending order according to time, meaning the earliest counter will appear first
-   * in any iteration
+   * Get a the current set of event counters. The counters will be sorted in ascending order
+   * according to time, meaning the earliest counter will appear first in any iteration
    *
    * @return unmodifiable Collection of event counters
    */
@@ -345,8 +327,7 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
   }
 
   /**
-   * @return Unmodifiable iterator across windowed event counters in ascending
-   *         (oldest first) order
+   * @return Unmodifiable iterator across windowed event counters in ascending (oldest first) order
    */
   protected Iterator<C> eventCounterIterator() {
     return Iterators.unmodifiableIterator(eventCounters.iterator());

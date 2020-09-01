@@ -73,10 +73,7 @@ public class Pair<First, Second> {
   @Override
   public String toString() {
     if (toStringResult == null) {
-      toStringResult = "Pair{" +
-        "first=" + first +
-        ", second=" + second +
-        '}';
+      toStringResult = "Pair{" + "first=" + first + ", second=" + second + '}';
     }
 
     return toStringResult;

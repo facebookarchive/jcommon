@@ -29,10 +29,9 @@ public class BucketAndHash {
   /**
    * Extracts the bucket and truncated hash from the given 64-bit hash.
    *
-   * Only the 64-log2(numberOfBuckets) least significant bits of the resulting hash are usable
+   * <p>Only the 64-log2(numberOfBuckets) least significant bits of the resulting hash are usable
    */
-  public static BucketAndHash fromHash(long hash, int numberOfBuckets)
-  {
+  public static BucketAndHash fromHash(long hash, int numberOfBuckets) {
     checkArgument(Numbers.isPowerOf2(numberOfBuckets), "numberOfBuckets must be a power of 2");
 
     // bucket comes from the bottommost log2(numberOfBuckets) bits

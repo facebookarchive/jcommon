@@ -16,7 +16,6 @@
 package com.facebook.collections;
 
 import com.google.common.collect.Iterators;
-
 import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,8 +26,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * maps keys of type K to a long.  Thread-safe and cleans up keys when
- * the count reaches 0
+ * maps keys of type K to a long. Thread-safe and cleans up keys when the count reaches 0
  *
  * @param <K> key type for the map
  */
@@ -39,11 +37,10 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
   private final ReadWriteLock removalLock = new ReentrantReadWriteLock();
 
   /**
-   * adds a value to key; will create a counter if it doesn't exist already.
-   * conversely, since 0 is the value returned for keys not present, if the
-   * counter value reaches 0, it is removed
+   * adds a value to key; will create a counter if it doesn't exist already. conversely, since 0 is
+   * the value returned for keys not present, if the counter value reaches 0, it is removed
    *
-   * @param key   - key to add the delta to
+   * @param key - key to add the delta to
    * @param delta - positive/negative amount to increment a counter
    * @return the new value after updating
    */
@@ -70,11 +67,10 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
   }
 
   /**
-   * adds a value to key; will create a counter if it doesn't exist already.
-   * conversely, since 0 is the value returned for keys not present, if the
-   * counter value reaches 0, it is removed
+   * adds a value to key; will create a counter if it doesn't exist already. conversely, since 0 is
+   * the value returned for keys not present, if the counter value reaches 0, it is removed
    *
-   * @param key   - key to add the delta to
+   * @param key - key to add the delta to
    * @param delta - positive/negative amount to increment a counter
    * @return the old value before updating
    */
@@ -127,7 +123,7 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
 
   /**
    * @param key
-   * @return value of a counter.  Returns 0 if not present
+   * @return value of a counter. Returns 0 if not present
    */
   public long get(K key) {
     ValueComparableAtomicLong counter = counters.get(key);
@@ -187,11 +183,9 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
   @Override
   public Iterator<Map.Entry<K, Long>> iterator() {
     return Iterators.unmodifiableIterator(
-      new TranslatingIterator<>(
-        input -> new AbstractMap.SimpleImmutableEntry<>(input.getKey(), input.getValue().get()),
-        counters.entrySet().iterator()
-      )
-    );
+        new TranslatingIterator<>(
+            input -> new AbstractMap.SimpleImmutableEntry<>(input.getKey(), input.getValue().get()),
+            counters.entrySet().iterator()));
   }
 
   private static class ValueComparableAtomicLong {
@@ -227,8 +221,12 @@ public class CounterMap<K> implements Iterable<Map.Entry<K, Long>> {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       ValueComparableAtomicLong that = (ValueComparableAtomicLong) o;
       return value.get() == that.value.get();
     }

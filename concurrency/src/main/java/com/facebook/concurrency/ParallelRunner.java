@@ -15,8 +15,11 @@
  */
 package com.facebook.concurrency;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
+import com.facebook.util.ExtRunnable;
+import com.facebook.util.exceptions.ExceptionHandler;
 import com.google.common.collect.Iterators;
-
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,15 +27,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
-import com.facebook.util.ExtRunnable;
-import com.facebook.util.exceptions.ExceptionHandler;
-
 /**
- * Utility class in order to execute tasks in parallel on top of an executor, but bound the
- * number of concurrent tasks used in that executor.  Note, if the executor itself has a bound
- * lower than specified, that bound will of course be used.
+ * Utility class in order to execute tasks in parallel on top of an executor, but bound the number
+ * of concurrent tasks used in that executor. Note, if the executor itself has a bound lower than
+ * specified, that bound will of course be used.
  */
 public class ParallelRunner {
   private static final Logger LOG = LoggerImpl.getLogger(ParallelRunner.class);
@@ -73,10 +71,10 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterable<? extends ExtRunnable<E>> tasks,
-    int numThreads,
-    final ExceptionHandler<E> exceptionHandler
-  ) throws E {
+      Iterable<? extends ExtRunnable<E>> tasks,
+      int numThreads,
+      final ExceptionHandler<E> exceptionHandler)
+      throws E {
     parallelRunExt(tasks.iterator(), numThreads, exceptionHandler);
   }
 
@@ -90,16 +88,15 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterator<? extends ExtRunnable<E>> tasksIter,
-    int numThreads,
-    final ExceptionHandler<E> exceptionHandler
-  ) throws E {
+      Iterator<? extends ExtRunnable<E>> tasksIter,
+      int numThreads,
+      final ExceptionHandler<E> exceptionHandler)
+      throws E {
     parallelRunExt(
-      tasksIter,
-      numThreads,
-      exceptionHandler,
-      defaultNamePrefix + instanceNumber.getAndIncrement()
-    );
+        tasksIter,
+        numThreads,
+        exceptionHandler,
+        defaultNamePrefix + instanceNumber.getAndIncrement());
   }
 
   /**
@@ -113,21 +110,21 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterable<? extends ExtRunnable<E>> tasks,
-    int numThreads,
-    final ExceptionHandler<E> exceptionHandler,
-    String baseName
-  ) throws E {
+      Iterable<? extends ExtRunnable<E>> tasks,
+      int numThreads,
+      final ExceptionHandler<E> exceptionHandler,
+      String baseName)
+      throws E {
     parallelRunExt(tasks.iterator(), numThreads, exceptionHandler, baseName);
   }
 
   /**
    * Adapter methods for ExtRunnable<E> to convert to native Runnable format. An ExceptionHandler
-   * will be used to guarantee type E is thrown, and only one, the "first" exception will be
-   * thrown. The system is fail-fast in that once a task execution observes an exception has
-   * occurred, it does not run additional tasks.
+   * will be used to guarantee type E is thrown, and only one, the "first" exception will be thrown.
+   * The system is fail-fast in that once a task execution observes an exception has occurred, it
+   * does not run additional tasks.
    *
-   * It has the same contract as far as executing tasks as they are extracted from the Iterator
+   * <p>It has the same contract as far as executing tasks as they are extracted from the Iterator
    *
    * @param tasksIter
    * @param numThreads
@@ -137,14 +134,14 @@ public class ParallelRunner {
    * @throws E
    */
   public <E extends Exception> void parallelRunExt(
-    Iterator<? extends ExtRunnable<E>> tasksIter,
-    int numThreads,
-    final ExceptionHandler<E> exceptionHandler,
-    String baseName
-  ) throws E {
+      Iterator<? extends ExtRunnable<E>> tasksIter,
+      int numThreads,
+      final ExceptionHandler<E> exceptionHandler,
+      String baseName)
+      throws E {
     final AtomicReference<E> exception = new AtomicReference<E>();
     Iterator<Runnable> wrappedIterator =
-      Iterators.transform(tasksIter, new ShortCircuitRunnable<>(exception, exceptionHandler));
+        Iterators.transform(tasksIter, new ShortCircuitRunnable<>(exception, exceptionHandler));
 
     parallelRun(wrappedIterator, numThreads, baseName);
 
@@ -165,15 +162,12 @@ public class ParallelRunner {
 
   /**
    * helper method with default name prefix ParallelRunner.DEFAULT_NAME_PREFIX
+   *
    * @param tasksIter
    * @param numThreads
    */
   public void parallelRun(Iterator<? extends Runnable> tasksIter, int numThreads) {
-    parallelRun(
-      tasksIter,
-      numThreads,
-      defaultNamePrefix + instanceNumber.getAndIncrement()
-    );
+    parallelRun(tasksIter, numThreads, defaultNamePrefix + instanceNumber.getAndIncrement());
   }
 
   /**
@@ -183,46 +177,37 @@ public class ParallelRunner {
    * @param numThreads
    * @param baseName
    */
-  public void parallelRun(
-    Iterable<? extends Runnable> tasks, int numThreads, String baseName
-  ) {
+  public void parallelRun(Iterable<? extends Runnable> tasks, int numThreads, String baseName) {
     parallelRun(tasks.iterator(), numThreads, baseName);
   }
 
   /**
    * This is the core method of ParallelRunner , which takes an iterator of tasks. It is ideal as
-   * often it is desirable to begin execution of tasks before the entire set has been created.  In
+   * often it is desirable to begin execution of tasks before the entire set has been created. In
    * this way, task are started immediately as they are pulled off of the iterator than than
    * draining the iterator and then executing them.
    *
-   * Clients may use this fact and create Iterators that are more of a "queue" and take advantage
+   * <p>Clients may use this fact and create Iterators that are more of a "queue" and take advantage
    * of this fact. Another way to look at this is as this is a consumer of tasks that come from a
    * producer (iterator). The expectation is that eventually, most use cases will eventually quit
    * producing tasks, and hence taskIter.hasNext() return false.
    *
-   * There is nothing in the implementation that requires this, however, and if a client
+   * <p>There is nothing in the implementation that requires this, however, and if a client
    * constructs an unbounded Iterator, this will function correctly.
    *
    * @param tasksIter
    * @param numThreads
    * @param baseName
    */
-  public void parallelRun(
-    Iterator<? extends Runnable> tasksIter, int numThreads, String baseName
-  ) {
+  public void parallelRun(Iterator<? extends Runnable> tasksIter, int numThreads, String baseName) {
     ExecutorService executorForInvocation;
 
     // create a virtual executor that bounds the # of threads we can use
     // for this run
     executorForInvocation =
-      new UnstoppableExecutorService(
-        new ExecutorServiceFront(
-          new LinkedBlockingQueue<Runnable>(),
-          executor,
-          baseName,
-          numThreads
-        )
-      );
+        new UnstoppableExecutorService(
+            new ExecutorServiceFront(
+                new LinkedBlockingQueue<Runnable>(), executor, baseName, numThreads));
 
     int totalTasks = 0;
 
@@ -237,23 +222,15 @@ public class ParallelRunner {
     try {
       while (!executorForInvocation.awaitTermination(10, TimeUnit.SECONDS)) {
         LOG.info(
-          "(%d) %s waited 10s for %d tasks, waiting some more",
-          Thread.currentThread().getId(),
-          baseName,
-          totalTasks
-        );
+            "(%d) %s waited 10s for %d tasks, waiting some more",
+            Thread.currentThread().getId(), baseName, totalTasks);
       }
 
-      LOG.info(
-          "(%d) tasksIter for %s completed",
-          Thread.currentThread().getId(),
-          baseName
-      );
+      LOG.info("(%d) tasksIter for %s completed", Thread.currentThread().getId(), baseName);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
 
       LOG.warn("interrupted waiting for tasks to complete", e);
     }
   }
-
 }

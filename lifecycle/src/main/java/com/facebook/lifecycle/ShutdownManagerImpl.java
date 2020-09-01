@@ -15,17 +15,16 @@
  */
 package com.facebook.lifecycle;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
-
 /**
- * Runtime.addShutdownHook() has no guarantee of order.  This class
- * will run hooks by stage and in the order added within stages
+ * Runtime.addShutdownHook() has no guarantee of order. This class will run hooks by stage and in
+ * the order added within stages
  */
 public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
   private static final Logger LOG = LoggerImpl.getLogger(ShutdownManagerImpl.class);
@@ -46,10 +45,7 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
 
     if (!enumClazz.isEnum()) {
       throw new IllegalArgumentException(
-        String.format(
-          "%s is not an enum class", enumClazz.getName()
-        )
-      );
+          String.format("%s is not an enum class", enumClazz.getName()));
     }
 
     stages = enumClazz.getEnumConstants();
@@ -65,14 +61,14 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
     firstStage = stages[0];
     currentStage = firstStage;
     lastStage = stages[stages.length - 1];
-    thread = new Thread(
-      new Runnable() {
-        @Override
-        public void run() {
-          internalShutdown();
-        }
-      }
-    );
+    thread =
+        new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                internalShutdown();
+              }
+            });
   }
 
   @Override
@@ -83,19 +79,13 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
   @Override
   public boolean tryAddShutdownHook(T stage, Runnable hook) {
     if (stage == firstStage || stage == lastStage) {
-      throw new IllegalArgumentException(
-        String.format("stage %s is reserved", stage)
-      );
+      throw new IllegalArgumentException(String.format("stage %s is reserved", stage));
     }
 
     synchronized (shutdownLock) {
-      //if the stage being added is our stage or earlier, we can't accept this
+      // if the stage being added is our stage or earlier, we can't accept this
       if (stage.compareTo(currentStage) <= 0) {
-        LOG.warn(
-            "cannot add hook for stage %s when in stage %s",
-            stage,
-            currentStage
-        );
+        LOG.warn("cannot add hook for stage %s when in stage %s", stage, currentStage);
         return false;
       }
 
@@ -113,9 +103,7 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
   @Override
   public void addShutdownHook(T stage, Runnable hook) {
     if (!tryAddShutdownHook(stage, hook)) {
-      throw new IllegalStateException(
-        "trying to add a hook after shutdown started"
-      );
+      throw new IllegalStateException("trying to add a hook after shutdown started");
     }
   }
 
@@ -132,9 +120,7 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
     return thread;
   }
 
-  /**
-   * @return true if this executed the shutdown
-   */
+  /** @return true if this executed the shutdown */
   private boolean internalShutdown() {
     synchronized (shutdownLock) {
       if (isShutdown) {

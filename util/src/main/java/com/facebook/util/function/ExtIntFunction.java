@@ -20,7 +20,7 @@ import java.util.function.IntFunction;
 
 public interface ExtIntFunction<R, E extends Throwable> {
   R apply(int value) throws E;
-  
+
   static <R> IntFunction<R> quiet(ExtIntFunction<R, ?> intFunction) {
     return (value) -> ExtSupplier.quiet(() -> intFunction.apply(value)).get();
   }

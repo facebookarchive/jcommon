@@ -32,7 +32,7 @@ public class Validator<T extends Exception> {
     }
   }
 
-  public void checkState( boolean expression, String message) throws T {
+  public void checkState(boolean expression, String message) throws T {
     try {
       Preconditions.checkState(expression, message);
     } catch (Exception e) {
@@ -40,8 +40,7 @@ public class Validator<T extends Exception> {
     }
   }
 
-  public void checkState( boolean expression, String message, Object... errorMessageArgs)
-    throws T {
+  public void checkState(boolean expression, String message, Object... errorMessageArgs) throws T {
     try {
       Preconditions.checkState(expression, message, errorMessageArgs);
     } catch (Exception e) {

@@ -15,13 +15,10 @@
  */
 package com.facebook.config;
 
+import java.io.File;
 import org.json.JSONException;
 
-import java.io.File;
-
-/**
- * Provides a ConfigAccessor from a JSON data source
- */
+/** Provides a ConfigAccessor from a JSON data source */
 public class ConfigProviderImpl implements RefreshableConfigProvider {
   private final JSONProvider jsonProvider;
   private final Object lock = new Object();
@@ -32,11 +29,7 @@ public class ConfigProviderImpl implements RefreshableConfigProvider {
   }
 
   public ConfigProviderImpl(File file) {
-    this(
-      new SystemPropOverridingJSONProvider(
-        new ExpandedConfFileJSONProvider(file)
-      )
-    );
+    this(new SystemPropOverridingJSONProvider(new ExpandedConfFileJSONProvider(file)));
   }
 
   @Override

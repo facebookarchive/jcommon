@@ -17,5 +17,6 @@ package com.facebook.collectionsbase;
 
 public interface Courier<T> {
   public boolean isSet();
+
   public T get();
 }

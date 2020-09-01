@@ -20,7 +20,7 @@ import java.util.function.LongFunction;
 
 public interface ExtLongFunction<R, E extends Throwable> {
   R apply(long value) throws E;
-  
+
   static <R> LongFunction<R> quiet(ExtLongFunction<R, ?> longFunction) {
     return (value) -> ExtSupplier.quiet(() -> longFunction.apply(value)).get();
   }

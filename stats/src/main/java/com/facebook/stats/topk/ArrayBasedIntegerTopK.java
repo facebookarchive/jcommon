@@ -17,7 +17,6 @@ package com.facebook.stats.topk;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Longs;
-
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,11 +51,12 @@ public class ArrayBasedIntegerTopK implements TopK<Integer> {
 
   @Override
   public List<Integer> getTopK() {
-    Comparator<Integer> comparator = new Comparator<Integer>() {
-      public int compare(Integer i, Integer j) {
-        return Longs.compare(counts[i], counts[j]);
-      }
-    };
+    Comparator<Integer> comparator =
+        new Comparator<Integer>() {
+          public int compare(Integer i, Integer j) {
+            return Longs.compare(counts[i], counts[j]);
+          }
+        };
     PriorityQueue<Integer> topK = new PriorityQueue<Integer>(k, comparator);
 
     for (int key = 0; key < counts.length; ++key) {
@@ -76,6 +76,5 @@ public class ArrayBasedIntegerTopK implements TopK<Integer> {
       sortedTopK.addFirst(topK.poll());
     }
     return sortedTopK;
-
   }
 }

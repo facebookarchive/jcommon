@@ -19,8 +19,9 @@ import java.util.function.IntBinaryOperator;
 
 public interface ExtIntBinaryOperator<E extends Throwable> {
   int applyAsInt(int left, int right) throws E;
-  
+
   static IntBinaryOperator quiet(ExtIntBinaryOperator<?> intBinaryOperator) {
-    return (left, right) -> ExtIntSupplier.quiet(() -> intBinaryOperator.applyAsInt(left, right)).getAsInt();
+    return (left, right) ->
+        ExtIntSupplier.quiet(() -> intBinaryOperator.applyAsInt(left, right)).getAsInt();
   }
 }

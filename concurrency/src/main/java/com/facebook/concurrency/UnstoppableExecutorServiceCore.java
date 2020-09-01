@@ -17,8 +17,6 @@ package com.facebook.concurrency;
 
 import com.facebook.collections.ListMapper;
 import com.facebook.collectionsbase.Mapper;
-import org.joda.time.DateTimeUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,10 +28,11 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.joda.time.DateTimeUtils;
 
 /**
- * core class that Unstoppable[Scheduled]ExecutorService delegates termination
- * methods to in order to guard shutdown
+ * core class that Unstoppable[Scheduled]ExecutorService delegates termination methods to in order
+ * to guard shutdown
  */
 class UnstoppableExecutorServiceCore {
   private final AtomicInteger remaining = new AtomicInteger(0);
@@ -54,8 +53,7 @@ class UnstoppableExecutorServiceCore {
   }
 
   public <V> List<TrackedCallable<V>> registerCallableList(
-    Collection<? extends Callable<V>> taskList
-  ) {
+      Collection<? extends Callable<V>> taskList) {
     if (isShutdown()) {
       throw new RejectedExecutionException("executor shutdown already");
     }
@@ -144,8 +142,7 @@ class UnstoppableExecutorServiceCore {
   }
 
   public <V> List<Future<V>> trackFutureList(
-    List<Future<V>> futureList, List<? extends Completable> completableList
-  ) {
+      List<Future<V>> futureList, List<? extends Completable> completableList) {
     return ListMapper.map(futureList, new FutureMapper<V>(completableList));
   }
 
@@ -153,9 +150,7 @@ class UnstoppableExecutorServiceCore {
     return new TrackedFuture<V>(future, task);
   }
 
-  public <V> ScheduledFuture<V> trackScheduledFuture(
-    ScheduledFuture<V> future, Completable task
-  ) {
+  public <V> ScheduledFuture<V> trackScheduledFuture(ScheduledFuture<V> future, Completable task) {
     return new TrackedScheduledFuture<V>(future, task);
   }
 
@@ -229,9 +224,7 @@ class UnstoppableExecutorServiceCore {
   private class TrackedScheduledFuture<V> extends WrappedScheduledFuture<V> {
     private final Completable task;
 
-    private TrackedScheduledFuture(
-      ScheduledFuture<V> delegate, Completable task
-    ) {
+    private TrackedScheduledFuture(ScheduledFuture<V> delegate, Completable task) {
       super(delegate);
       this.task = task;
     }

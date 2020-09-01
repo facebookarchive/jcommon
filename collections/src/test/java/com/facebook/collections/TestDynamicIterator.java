@@ -15,11 +15,13 @@
  */
 package com.facebook.collections;
 
+import static java.util.Arrays.asList;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -30,11 +32,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import static java.util.Arrays.asList;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestDynamicIterator {
 
@@ -85,8 +84,10 @@ public class TestDynamicIterator {
     assertFalse(iterator.hasNext());
   }
 
-  @Test(groups= "fast", expectedExceptions = IllegalStateException.class,
-        expectedExceptionsMessageRegExp = ".*already finished.*")
+  @Test(
+      groups = "fast",
+      expectedExceptions = IllegalStateException.class,
+      expectedExceptionsMessageRegExp = ".*already finished.*")
   public void testDoesNotAllowAddsAfterFinish() throws InterruptedException {
     iterator.add(1);
     iterator.add(2);
@@ -95,30 +96,30 @@ public class TestDynamicIterator {
     iterator.add(3);
   }
 
-  @Test (groups = "fast")
+  @Test(groups = "fast")
   public void testMultipleWriters()
-    throws ExecutionException, InterruptedException, TimeoutException {
+      throws ExecutionException, InterruptedException, TimeoutException {
 
-    ExecutorService executor = Executors.newCachedThreadPool(
-      new ThreadFactoryBuilder().setDaemon(true).build());
+    ExecutorService executor =
+        Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
 
-    Future<Set<Integer>> consumer = executor.submit(
-      new Callable<Set<Integer>>() {
-        public Set<Integer> call() throws Exception {
-          return Sets.newHashSet(iterator);
-        }
-      }
-    );
+    Future<Set<Integer>> consumer =
+        executor.submit(
+            new Callable<Set<Integer>>() {
+              public Set<Integer> call() throws Exception {
+                return Sets.newHashSet(iterator);
+              }
+            });
 
     //noinspection unchecked
-    executor.invokeAll(asList(
-      producer(iterator, 0, 1, 2, 3, 4),
-      producer(iterator, 5, 6, 7, 8, 9)
-    ), 1, TimeUnit.SECONDS); // failsafe in case there's a deadlock
+    executor.invokeAll(
+        asList(producer(iterator, 0, 1, 2, 3, 4), producer(iterator, 5, 6, 7, 8, 9)),
+        1,
+        TimeUnit.SECONDS); // failsafe in case there's a deadlock
 
     iterator.finish();
 
-    Set<Integer> result = consumer.get(1, TimeUnit.SECONDS);// failsafe in case there's a deadlock
+    Set<Integer> result = consumer.get(1, TimeUnit.SECONDS); // failsafe in case there's a deadlock
     assertEquals(result, Sets.newHashSet(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
   }
 
@@ -130,8 +131,7 @@ public class TestDynamicIterator {
     iterator.next();
   }
 
-  private Callable<Void> producer(final DynamicIterator<Integer> iterator, final int... values)
-  {
+  private Callable<Void> producer(final DynamicIterator<Integer> iterator, final int... values) {
     return new Callable<Void>() {
       public Void call() throws InterruptedException {
         for (final int value : values) {

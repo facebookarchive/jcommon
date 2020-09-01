@@ -15,18 +15,16 @@
  */
 package com.facebook.concurrency;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
+import com.facebook.testing.ThreadHelper;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.facebook.testing.ThreadHelper;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestParallelRunner {
 
@@ -45,32 +43,29 @@ public class TestParallelRunner {
     final CountDownLatch latch = new CountDownLatch(1);
     final BlockingQueue<Runnable> taskQueue = new LinkedBlockingDeque<>();
     taskQueue.add(
-      new Runnable() {
-        @Override
-        public void run() {
-          String threadName = Thread.currentThread().getName();
-          if (!threadName.contains(threadNamePrefix)) {
-            errorMessage.set(
-              String.format(
-                "threadName mistmatch [%s] vs [%s]", threadNamePrefix, threadName
-              )
-            );
+        new Runnable() {
+          @Override
+          public void run() {
+            String threadName = Thread.currentThread().getName();
+            if (!threadName.contains(threadNamePrefix)) {
+              errorMessage.set(
+                  String.format("threadName mistmatch [%s] vs [%s]", threadNamePrefix, threadName));
+            }
+            latch.countDown();
           }
-          latch.countDown();
-        }
-      }
-    );
+        });
 
     ThreadHelper threadHelper = new ThreadHelper();
-    final Thread slothThread = threadHelper.doInThread(
-      new Runnable() {
-        @Override
-        public void run() {
+    final Thread slothThread =
+        threadHelper.doInThread(
+            new Runnable() {
+              @Override
+              public void run() {
 
-          parallelRunner.parallelRun(taskQueue, 2, threadNamePrefix);
-        }
-      }, "parallel-runner-sheppard"
-    );
+                parallelRunner.parallelRun(taskQueue, 2, threadNamePrefix);
+              }
+            },
+            "parallel-runner-sheppard");
 
     latch.await();
 

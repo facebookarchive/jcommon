@@ -15,15 +15,14 @@
  */
 package com.facebook.stats.cardinality;
 
-import com.google.common.base.Throwables;
+import static java.lang.String.format;
 
+import com.google.common.base.Throwables;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Random;
-
-import static java.lang.String.format;
 
 public class BenchmarkAdaptiveHyperLogLog {
   private static final int COMPRESSION_LOOPS = 10000;
@@ -47,19 +46,12 @@ public class BenchmarkAdaptiveHyperLogLog {
   private static void benchmark(int buckets, long count, boolean report) {
     if (report) {
       System.out.println(
-          format(
-              "-- %s buckets (%.2f%% error)", buckets, 100 * 1.04 / Math.sqrt(
-              buckets
-          )
-          )
-      );
+          format("-- %s buckets (%.2f%% error)", buckets, 100 * 1.04 / Math.sqrt(buckets)));
       System.out.println();
       System.out.println(
-          "                   |        adaptive      |         fixed        | delta fixed vs adapt.|       size (bytes)       |                    |     serialization    "
-      );
+          "                   |        adaptive      |         fixed        | delta fixed vs adapt.|       size (bytes)       |                    |     serialization    ");
       System.out.println(
-          "            actual |    estimate  error % |    estimate  error % |       count  error % | actual  entropy     mean | ns/add       add/s | bytes  enc ms  dec ms"
-      );
+          "            actual |    estimate  error % |    estimate  error % |       count  error % | actual  entropy     mean | ns/add       add/s | bytes  enc ms  dec ms");
     }
 
     HyperLogLog fixedEstimator = new HyperLogLog(buckets);
@@ -107,9 +99,7 @@ public class BenchmarkAdaptiveHyperLogLog {
                 i / (nanos / 1.0e9),
                 encodeSize,
                 encodeMs,
-                decodeMs
-            )
-        );
+                decodeMs));
 
         if (report && i % reportInterval == 0) {
           System.out.println();

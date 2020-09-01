@@ -15,11 +15,11 @@
  */
 package com.facebook.stats.cardinality;
 
-import org.testng.annotations.Test;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+
+import org.testng.annotations.Test;
 
 public class TestAdaptiveHyperLogLog {
   @Test
@@ -83,8 +83,7 @@ public class TestAdaptiveHyperLogLog {
   }
 
   @Test
-  public void testMergeWithOverlap()
-  {
+  public void testMergeWithOverlap() {
     int buckets = 1024;
     AdaptiveHyperLogLog first = new AdaptiveHyperLogLog(buckets);
     AdaptiveHyperLogLog second = new AdaptiveHyperLogLog(buckets);
@@ -123,8 +122,7 @@ public class TestAdaptiveHyperLogLog {
   }
 
   @Test
-  public void testAddSameElements()
-  {
+  public void testAddSameElements() {
     AdaptiveHyperLogLog estimator = new AdaptiveHyperLogLog(1024);
 
     for (int i = 0; i < 10000; i++) {
@@ -146,5 +144,4 @@ public class TestAdaptiveHyperLogLog {
     double expectedError = 1.04 / Math.sqrt(numberOfBuckets);
     assertTrue((actual - 2 * expected) / (2 * expected) < expectedError);
   }
-
 }

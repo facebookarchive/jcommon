@@ -21,17 +21,17 @@ import java.util.function.Function;
 
 public interface ExtFunction<T, R, E extends Throwable> {
   R apply(T t) throws E;
-  
+
   default <V> ExtFunction<V, R, E> compose(ExtFunction<? super V, ? extends T, E> before) {
     Objects.requireNonNull(before);
     return (v) -> apply(before.apply(v));
   }
-  
+
   default <V> ExtFunction<T, V, E> andThen(ExtFunction<? super R, ? extends V, E> after) {
     Objects.requireNonNull(after);
     return (t) -> after.apply(apply(t));
   }
-  
+
   static <T, R> Function<T, R> quiet(ExtFunction<T, R, ?> function) {
     return (t) -> ExtSupplier.quiet(() -> function.apply(t)).get();
   }

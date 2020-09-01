@@ -19,7 +19,7 @@ import java.util.function.ToLongFunction;
 
 public interface ExtToLongFunction<T, E extends Throwable> {
   long applyAsLong(T value) throws E;
-  
+
   static <T> ToLongFunction<T> quiet(ExtToLongFunction<T, ?> toLongFunction) {
     return (value) -> ExtLongSupplier.quiet(() -> toLongFunction.applyAsLong(value)).getAsLong();
   }

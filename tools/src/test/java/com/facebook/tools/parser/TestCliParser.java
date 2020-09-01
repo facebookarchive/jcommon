@@ -16,12 +16,11 @@
 package com.facebook.tools.parser;
 
 import com.facebook.tools.ErrorMessage;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 // TODO add more tests...
 public class TestCliParser {
@@ -38,8 +37,7 @@ public class TestCliParser {
   public void testDefault() {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
-    command.addOption("-d")
-      .withDefault("foo");
+    command.addOption("-d").withDefault("foo");
     assertGet(parser(command), "-d", "foo");
   }
 
@@ -47,8 +45,7 @@ public class TestCliParser {
   public void testNullDefault() {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
-    command.addOption("-d")
-      .withDefault(null);
+    command.addOption("-d").withDefault(null);
     assertGet(parser(command), "-d", null);
   }
 
@@ -108,8 +105,7 @@ public class TestCliParser {
   public void testMultiValues() {
     CliCommand.Builder command = new CliCommand.Builder("test", "A test");
 
-    command.addOption("-m")
-      .allowMultiple();
+    command.addOption("-m").allowMultiple();
 
     CliParser parser = parser(command, "-m", "val1", "-m", "val2");
 

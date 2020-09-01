@@ -20,7 +20,7 @@ import java.util.function.ObjDoubleConsumer;
 
 public interface ExtObjDoubleConsumer<T, E extends Throwable> {
   void accept(T t, double value) throws E;
-  
+
   static <T> ObjDoubleConsumer<T> quiet(ExtObjDoubleConsumer<T, ?> objDoubleConsumer) {
     return (t, value) -> ExtRunnable.quiet(() -> objDoubleConsumer.accept(t, value)).run();
   }

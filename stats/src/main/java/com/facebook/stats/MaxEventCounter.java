@@ -19,16 +19,14 @@ import org.joda.time.ReadableDateTime;
 
 public class MaxEventCounter extends AssociativeAggregationCounter {
   public static final AssociativeAggregation AGGREGATION =
-    new AssociativeAggregation() {
-      @Override
-      public long combine(long l1, long l2) {
-        return Math.max(l1, l2);
-      }
-    };
+      new AssociativeAggregation() {
+        @Override
+        public long combine(long l1, long l2) {
+          return Math.max(l1, l2);
+        }
+      };
 
-  public MaxEventCounter(
-    ReadableDateTime start, ReadableDateTime end, long initialValue
-  ) {
+  public MaxEventCounter(ReadableDateTime start, ReadableDateTime end, long initialValue) {
     super(start, end, AGGREGATION, initialValue);
   }
 

@@ -16,21 +16,17 @@
 package com.facebook.stats.cardinality;
 
 import com.google.common.base.Preconditions;
-
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Arrays;
+import javax.annotation.concurrent.NotThreadSafe;
 
-/**
- * A low (compact) cardinality estimator
- */
+/** A low (compact) cardinality estimator */
 @NotThreadSafe
-class SparseEstimator
-  implements Estimator {
-  private final static int BITS_PER_BUCKET = 4;
-  private final static int BUCKET_VALUE_MASK = (1 << BITS_PER_BUCKET) - 1;
-  public final static int MAX_BUCKET_VALUE = (1 << BITS_PER_BUCKET);
+class SparseEstimator implements Estimator {
+  private static final int BITS_PER_BUCKET = 4;
+  private static final int BUCKET_VALUE_MASK = (1 << BITS_PER_BUCKET) - 1;
+  public static final int MAX_BUCKET_VALUE = (1 << BITS_PER_BUCKET);
 
-  private final static int INSTANCE_SIZE = UnsafeUtil.sizeOf(SparseEstimator.class);
+  private static final int INSTANCE_SIZE = UnsafeUtil.sizeOf(SparseEstimator.class);
 
   // number of bits used for bucket index
   private final byte indexBits;
@@ -69,9 +65,7 @@ class SparseEstimator
 
   SparseEstimator(int numberOfBuckets, int initialCapacity) {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(numberOfBuckets),
-      "numberOfBuckets must be a power of 2"
-    );
+        Numbers.isPowerOf2(numberOfBuckets), "numberOfBuckets must be a power of 2");
 
     this.indexBits = (byte) Integer.numberOfTrailingZeros(numberOfBuckets); // log2(numberOfBuckets)
     slots = new long[(initialCapacity + getBucketsPerSlot()) / getBucketsPerSlot()];
@@ -79,11 +73,10 @@ class SparseEstimator
 
   public boolean setIfGreater(int bucket, int highestBitPosition) {
     Preconditions.checkArgument(
-      highestBitPosition < MAX_BUCKET_VALUE,
-      "highestBitPosition %s is bigger than allowed by BITS_PER_BUCKET (%s)",
-      highestBitPosition,
-      BITS_PER_BUCKET
-    );
+        highestBitPosition < MAX_BUCKET_VALUE,
+        "highestBitPosition %s is bigger than allowed by BITS_PER_BUCKET (%s)",
+        highestBitPosition,
+        BITS_PER_BUCKET);
 
     if (highestBitPosition == 0) {
       return false; // no need to set anything -- 0 is implied if bucket is not present
@@ -167,9 +160,7 @@ class SparseEstimator
 
   public static int estimateSizeInBytes(int nonZeroBuckets, int totalBuckets) {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(totalBuckets),
-      "totalBuckets must be a power of 2"
-    );
+        Numbers.isPowerOf2(totalBuckets), "totalBuckets must be a power of 2");
 
     int bits = Integer.numberOfTrailingZeros(totalBuckets); // log2(totalBuckets)
     int bucketsPerSlot = Long.SIZE / (bits + BITS_PER_BUCKET);
@@ -210,7 +201,6 @@ class SparseEstimator
     return -(low + 1); // not found... return insertion point
   }
 
-
   private void insertAt(int index, int bucket, int value) {
     int totalBitsPerBucket = getTotalBitsPerBucket();
     int bucketsPerSlot = getBucketsPerSlot();
@@ -231,8 +221,8 @@ class SparseEstimator
 
     // shift all buckets one position to the right
     for (int i = lastUsedSlot; i > insertAtSlot; --i) {
-      int overflow = (int) ((slots[i - 1] >>> ((bucketsPerSlot - 1) * totalBitsPerBucket)) &
-                              bucketMask);
+      int overflow =
+          (int) ((slots[i - 1] >>> ((bucketsPerSlot - 1) * totalBitsPerBucket)) & bucketMask);
       slots[i] = (slots[i] << totalBitsPerBucket) | overflow;
     }
 
@@ -244,11 +234,11 @@ class SparseEstimator
       // to get around the fact that X << 64 == X, not 0
       topMask = (0xFFFFFFFFFFFFFFFFL << ((insertOffset + 1) * totalBitsPerBucket));
     }
-    long bucketSetMask = ((((long) bucket) << BITS_PER_BUCKET) | value) << (insertOffset *
-      totalBitsPerBucket);
+    long bucketSetMask =
+        ((((long) bucket) << BITS_PER_BUCKET) | value) << (insertOffset * totalBitsPerBucket);
 
-    slots[insertAtSlot] = ((old << totalBitsPerBucket) & topMask) | bucketSetMask |
-      (old & bottomMask);
+    slots[insertAtSlot] =
+        ((old << totalBitsPerBucket) & topMask) | bucketSetMask | (old & bottomMask);
   }
 
   private static int countNonZeroBuckets(int[] buckets) {

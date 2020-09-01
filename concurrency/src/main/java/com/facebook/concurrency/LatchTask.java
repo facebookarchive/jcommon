@@ -78,9 +78,7 @@ public class LatchTask implements Runnable {
     return this;
   }
 
-  /**
-   * if paused, signals the task to proceed
-   */
+  /** if paused, signals the task to proceed */
   public LatchTask proceed() {
     canRunLatch.countDown();
 
@@ -99,9 +97,7 @@ public class LatchTask implements Runnable {
     hasRunLatch.await();
   }
 
-  /**
-   * @see CountDownLatch
-   */
+  /** @see CountDownLatch */
   public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
     return hasRunLatch.await(timeout, unit);
   }

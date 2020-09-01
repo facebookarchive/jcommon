@@ -20,18 +20,19 @@ import java.util.function.LongUnaryOperator;
 
 public interface ExtLongUnaryOperator<E extends Throwable> {
   long applyAsLong(long operand) throws E;
-  
+
   default ExtLongUnaryOperator<E> compose(ExtLongUnaryOperator<E> before) {
     Objects.requireNonNull(before);
     return (operand) -> applyAsLong(before.applyAsLong(operand));
   }
-  
+
   default ExtLongUnaryOperator<E> andThen(ExtLongUnaryOperator<E> after) {
     Objects.requireNonNull(after);
     return (operand) -> after.applyAsLong(applyAsLong(operand));
   }
-  
+
   static LongUnaryOperator quiet(ExtLongUnaryOperator<?> longUnaryOperator) {
-    return (operand) -> ExtLongSupplier.quiet(() -> longUnaryOperator.applyAsLong(operand)).getAsLong();
+    return (operand) ->
+        ExtLongSupplier.quiet(() -> longUnaryOperator.applyAsLong(operand)).getAsLong();
   }
 }

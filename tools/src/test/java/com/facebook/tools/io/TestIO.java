@@ -15,10 +15,9 @@
  */
 package com.facebook.tools.io;
 
+import java.util.Arrays;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
 
 public class TestIO {
   @Test(groups = "fast")
@@ -55,8 +54,7 @@ public class TestIO {
     YesNo response = io.ask(YesNo.NO, "Did the test pass");
 
     Assert.assertEquals(
-      io.getOut(), "Did the test pass [y/N]? Did the test pass [y/N]? Did the test pass [y/N]? "
-    );
+        io.getOut(), "Did the test pass [y/N]? Did the test pass [y/N]? Did the test pass [y/N]? ");
     Assert.assertEquals(io.getErr(), "");
     Assert.assertEquals(response, YesNo.YES);
   }
@@ -70,9 +68,8 @@ public class TestIO {
       Assert.fail("Expected exception");
     } catch (IllegalArgumentException e) {
       Assert.assertEquals(
-        e.getMessage(),
-        "No fields annotated with @PromptAnswer in class com.facebook.tools.io.TestIO$NotAnnotated"
-      );
+          e.getMessage(),
+          "No fields annotated with @PromptAnswer in class com.facebook.tools.io.TestIO$NotAnnotated");
     }
   }
 
@@ -85,10 +82,9 @@ public class TestIO {
       Assert.fail("Expected exception");
     } catch (IllegalArgumentException e) {
       Assert.assertEquals(
-        e.getMessage(),
-        "Values must be all lower-case, but got Test for " +
-          "com.facebook.tools.io.TestIO$UppercaseAnswer.FOO"
-      );
+          e.getMessage(),
+          "Values must be all lower-case, but got Test for "
+              + "com.facebook.tools.io.TestIO$UppercaseAnswer.FOO");
     }
   }
 

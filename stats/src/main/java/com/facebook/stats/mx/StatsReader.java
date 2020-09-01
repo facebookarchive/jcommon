@@ -15,36 +15,47 @@
  */
 package com.facebook.stats.mx;
 
+import com.facebook.stats.MultiWindowDistribution;
+import com.facebook.stats.MultiWindowRate;
+import com.facebook.stats.MultiWindowSpread;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import com.facebook.stats.MultiWindowDistribution;
-import com.facebook.stats.MultiWindowRate;
-import com.facebook.stats.MultiWindowSpread;
-
 interface StatsReader {
   void exportCounters(Map<String, Long> counters);
+
   MultiWindowRate getRate(String key);
+
   MultiWindowRate getRate(StatType statType);
+
   MultiWindowRate getSum(String key);
+
   MultiWindowRate getSum(StatType statType);
+
   long getCounter(StatType key);
+
   long getCounter(String key);
+
   MultiWindowSpread getSpread(StatType key);
+
   MultiWindowSpread getSpread(String key);
+
   MultiWindowDistribution getDistribution(StatType key);
+
   MultiWindowDistribution getDistribution(String key);
+
   String getAttribute(StatType key);
+
   String getAttribute(String key);
+
   @Deprecated
   Callable<Long> getDynamicCounter(StatType key);
+
   @Deprecated
   Callable<Long> getDynamicCounter(String key);
 
-  /**
-   * @return returns a snapshot copy of the attributes
-   */
+  /** @return returns a snapshot copy of the attributes */
   Map<String, String> getAttributes();
 
   default Map<String, Long> getCounters() {
@@ -53,6 +64,4 @@ interface StatsReader {
 
     return result;
   }
-
 }
-

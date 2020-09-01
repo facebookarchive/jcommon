@@ -15,21 +15,20 @@
  */
 package com.facebook.stats;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class TestMultiWindowRate {
   private static final Logger LOG = LoggerFactory.getLogger(TestMultiWindowRate.class);
-  
+
   private DateTime now;
 
   @BeforeMethod(alwaysRun = true)
@@ -39,8 +38,8 @@ public class TestMultiWindowRate {
   }
 
   /**
-   * This test always succeeds, but it will show you the rate at which a counter
-   * can be called on your machine when you build this 
+   * This test always succeeds, but it will show you the rate at which a counter can be called on
+   * your machine when you build this
    */
   @Test(groups = "fast")
   public void testPerformance() throws Exception {
@@ -48,26 +47,28 @@ public class TestMultiWindowRate {
     long i = 0;
     long start = System.nanoTime();
     long end;
-    
+
     while (i < 20000000) {
       i++;
     }
 
     end = System.nanoTime();
 
-    LOG.info("ceiling rate/s : " + format.format(1000000000 * i/ (end - start)));
-    
+    LOG.info("ceiling rate/s : " + format.format(1000000000 * i / (end - start)));
+
     final MultiWindowRate rate = new MultiWindowRate(500);
     final AtomicBoolean done = new AtomicBoolean(false);
-    Thread t = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        while (!done.get()) {
-          rate.add(1);
-        }
-      }
-    });
-    
+    Thread t =
+        new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                while (!done.get()) {
+                  rate.add(1);
+                }
+              }
+            });
+
     start = System.nanoTime();
     end = start;
     t.start();
@@ -82,16 +83,14 @@ public class TestMultiWindowRate {
 
     long elapsedNanos = end - start;
 
-    LOG.info(
-      "rate/s : " + format.format(1000000000 * rate.getAllTimeSum() / elapsedNanos)
-    );
+    LOG.info("rate/s : " + format.format(1000000000 * rate.getAllTimeSum() / elapsedNanos));
   }
-  
+
   @Test(groups = "fast")
   public void testRates() throws Exception {
-  	MultiWindowRate rate = new MultiWindowRate();
+    MultiWindowRate rate = new MultiWindowRate();
     long initialValue = 60000;
-    long rate30Seconds = initialValue/ 30;
+    long rate30Seconds = initialValue / 30;
     long rate60Seconds = initialValue / 60;
     long rate2Minutes = initialValue / 120;
     long rate11Minutes = initialValue / 660;
@@ -112,54 +111,48 @@ public class TestMultiWindowRate {
     advanceNowMinutes(60); // total= 120m
     assertRateValues(rate, 0, 0, 0, rate120Minutes);
     rate.add(initialValue);
-    
-    // we have sent 2 * initialValue 
+
+    // we have sent 2 * initialValue
     assertRateValues(
-      rate,
-      initialValue / 60,
-      initialValue / 600,
-      initialValue / 3600,
-      2 * initialValue / 7200
-    );
+        rate, initialValue / 60, initialValue / 600, initialValue / 3600, 2 * initialValue / 7200);
   }
-  
+
   @Test(groups = "fast")
   public void testMerge() throws Exception {
     MultiWindowRate rate1 = new MultiWindowRate();
     MultiWindowRate rate2 = new MultiWindowRate();
-  	
+
     rate1.add(1);
     rate2.add(2);
-    
+
     Assert.assertEquals(rate1.merge(rate2).getAllTimeSum(), 3);
     Assert.assertEquals(rate1.merge(rate2).getHourSum(), 3);
     Assert.assertEquals(rate1.merge(rate2).getTenMinuteSum(), 3);
     Assert.assertEquals(rate1.merge(rate2).getMinuteSum(), 3);
   }
-  
+
   @Test(groups = "fast")
   public void testMergeWithZero() throws Exception {
     MultiWindowRate rate1 = new MultiWindowRate();
     MultiWindowRate rate2 = new MultiWindowRate();
-  	
+
     rate2.add(2);
     Assert.assertEquals(rate1.merge(rate2).getAllTimeSum(), 2);
     Assert.assertEquals(rate1.merge(rate2).getHourSum(), 2);
     Assert.assertEquals(rate1.merge(rate2).getTenMinuteSum(), 2);
-    Assert.assertEquals(rate1.merge(rate2).getMinuteSum(), 2);  	
+    Assert.assertEquals(rate1.merge(rate2).getMinuteSum(), 2);
   }
 
   private void assertRateValues(
-    MultiWindowRate rate, long minute, long tenMinute, long hour, long allTime
-  ) {
+      MultiWindowRate rate, long minute, long tenMinute, long hour, long allTime) {
     Assert.assertEquals(rate.getMinuteRate(), minute);
     Assert.assertEquals(rate.getTenMinuteRate(), tenMinute);
     Assert.assertEquals(rate.getHourRate(), hour);
     Assert.assertEquals(rate.getAllTimeRate(), allTime);
   }
-  
+
   private void advanceNowMinutes(int minutes) {
-    advanceNowSeconds(minutes * 60);    
+    advanceNowSeconds(minutes * 60);
   }
 
   private void advanceNowSeconds(int seconds) {

@@ -15,11 +15,10 @@
  */
 package com.facebook.config.dynamic;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestOptionImpl {
   private Option<String> option;
@@ -71,13 +70,14 @@ public class TestOptionImpl {
     Watcher watcher1 = new Watcher();
     Watcher watcher2 = new Watcher();
     final AtomicInteger failureCount = new AtomicInteger();
-    OptionWatcher<String> failure = new OptionWatcher<String>() {
-      @Override
-      public void propertyUpdated(String value) throws Exception {
-        failureCount.incrementAndGet();
-        throw new Exception("fail!");
-      }
-    };
+    OptionWatcher<String> failure =
+        new OptionWatcher<String>() {
+          @Override
+          public void propertyUpdated(String value) throws Exception {
+            failureCount.incrementAndGet();
+            throw new Exception("fail!");
+          }
+        };
 
     option.addWatcher(watcher1);
     option.addWatcher(failure);

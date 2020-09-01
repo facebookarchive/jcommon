@@ -20,7 +20,7 @@ import java.util.function.ObjLongConsumer;
 
 public interface ExtObjLongConsumer<T, E extends Throwable> {
   void accept(T t, long value) throws E;
-  
+
   static <T> ObjLongConsumer<T> quiet(ExtObjLongConsumer<T, ?> objLongConsumer) {
     return (t, value) -> ExtRunnable.quiet(() -> objLongConsumer.accept(t, value)).run();
   }

@@ -17,7 +17,6 @@ package com.facebook.stats.cardinality;
 
 import com.facebook.stats.cardinality.Model.SymbolInfo;
 import com.google.common.base.Preconditions;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;

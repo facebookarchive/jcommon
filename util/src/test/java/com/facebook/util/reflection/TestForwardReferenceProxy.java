@@ -16,11 +16,10 @@
 package com.facebook.util.reflection;
 
 import com.google.common.base.Function;
+import javax.annotation.Nullable;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import javax.annotation.Nullable;
 
 public class TestForwardReferenceProxy {
 
@@ -33,15 +32,17 @@ public class TestForwardReferenceProxy {
 
   @Test
   public void testBasic() throws Exception {
-    TestFunction testFunction = proxy.setInstance(
-      new TestFunction() {
-        @Nullable
-        @Override
-        public Integer apply(String input) {
-          return Integer.parseInt(input);
-        }
-      }
-    ).get();
+    TestFunction testFunction =
+        proxy
+            .setInstance(
+                new TestFunction() {
+                  @Nullable
+                  @Override
+                  public Integer apply(String input) {
+                    return Integer.parseInt(input);
+                  }
+                })
+            .get();
 
     int result = testFunction.apply("123");
 

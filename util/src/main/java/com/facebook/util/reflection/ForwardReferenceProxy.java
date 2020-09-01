@@ -18,7 +18,6 @@ package com.facebook.util.reflection;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.atomic.AtomicReference;
@@ -29,14 +28,14 @@ public class ForwardReferenceProxy<T> {
 
   public ForwardReferenceProxy(final Class<T> clazz) {
     this.instanceRef = new AtomicReference<>();
-    proxySupplier = Suppliers.memoize(
-      new Supplier<T>() {
-        @Override
-        public T get() {
-          return wrap(clazz, instanceRef);
-        }
-      }
-    );
+    proxySupplier =
+        Suppliers.memoize(
+            new Supplier<T>() {
+              @Override
+              public T get() {
+                return wrap(clazz, instanceRef);
+              }
+            });
   }
 
   public ForwardReferenceProxy<T> setInstance(T instance) {
@@ -51,14 +50,12 @@ public class ForwardReferenceProxy<T> {
 
   private static <T> T wrap(Class<T> clazz, final AtomicReference<T> instance) {
     Preconditions.checkNotNull(instance, "must pass a non-null atomic reference");
-    InvocationHandler handler = (proxy, method, args) -> method.invoke(
-      Preconditions.checkNotNull(
-        instance.get(),
-        "instance has not been set"
-      ), args
-    );
+    InvocationHandler handler =
+        (proxy, method, args) ->
+            method.invoke(
+                Preconditions.checkNotNull(instance.get(), "instance has not been set"), args);
 
-    T wrapper = (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, handler);
+    T wrapper = (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, handler);
 
     return wrapper;
   }

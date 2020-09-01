@@ -15,14 +15,13 @@
  */
 package com.facebook.concurrency;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import static com.facebook.testing.TestUtils.waitUntilThreadBlocks;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.facebook.testing.TestUtils.waitUntilThreadBlocks;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public abstract class AbstractTestConcurrentCache {
   private static final String STD_KEY = "std";
@@ -36,31 +35,28 @@ public abstract class AbstractTestConcurrentCache {
   private ConcurrentCache<String, String, RuntimeException> cache;
 
   protected abstract ConcurrentCache<String, String, RuntimeException> createCache(
-    ValueFactory<String, String, RuntimeException> valueFactory
-  );
+      ValueFactory<String, String, RuntimeException> valueFactory);
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
     stdProducer = new BlockingValueProducer<>(VALUE);
     blockingProducer = new BlockingValueProducer<>(VALUE, true);
     exceptionThrowingProducer =
-      new BlockingValueProducer<>(
-        VALUE, true, new RuntimeException("I take exception to this")
-      );
-    cache = createCache(
-      input -> {
-        switch (input) {
-          case STD_KEY:
-            return stdProducer.call();
-          case BLOCKING_KEY:
-            return blockingProducer.call();
-          case EXCEPTION_KEY:
-            return exceptionThrowingProducer.call();
-          default:
-            return input;
-        }
-      }
-    );
+        new BlockingValueProducer<>(VALUE, true, new RuntimeException("I take exception to this"));
+    cache =
+        createCache(
+            input -> {
+              switch (input) {
+                case STD_KEY:
+                  return stdProducer.call();
+                case BLOCKING_KEY:
+                  return blockingProducer.call();
+                case EXCEPTION_KEY:
+                  return exceptionThrowingProducer.call();
+                default:
+                  return input;
+              }
+            });
     testHelper = new ConcurrentCacheTestHelper<>(cache);
   }
 
@@ -80,15 +76,13 @@ public abstract class AbstractTestConcurrentCache {
       Assert.fail("expected exception");
     } catch (RuntimeException e) {
       Assert.assertEquals(
-        testHelper.getExceptionList().size(), 2, "all threads did not see exceptions"
-      );
+          testHelper.getExceptionList().size(), 2, "all threads did not see exceptions");
       Assert.assertTrue(cache.getIfPresent(EXCEPTION_KEY) != null, "task not inserted");
     }
   }
 
   /**
-   * case that while a value is being produced for a key, a removal happens.
-   * Since remove blocks on
+   * case that while a value is being produced for a key, a removal happens. Since remove blocks on
    */
   @Test
   public void testConcurrentGetAndRemove() throws Exception {
@@ -125,7 +119,6 @@ public abstract class AbstractTestConcurrentCache {
 
     Assert.assertEquals(blockingProducer.getCalledCount(), 1);
     Assert.assertFalse(cache.getIfPresent(BLOCKING_KEY) != null, "key should not exist");
-
   }
 
   @Test
@@ -138,8 +131,7 @@ public abstract class AbstractTestConcurrentCache {
 
     int i = 0;
 
-    for (Map.Entry<String, CallableSnapshot<String, RuntimeException>> entry :
-      cache) {
+    for (Map.Entry<String, CallableSnapshot<String, RuntimeException>> entry : cache) {
       // the value producer used returns the key as the value
       Assert.assertEquals(entry.getKey(), entry.getValue().get());
       i++;
@@ -158,7 +150,7 @@ public abstract class AbstractTestConcurrentCache {
     Assert.assertEquals(stdProducer.getCalledCount(), 1);
     // now we have a cache hit
     Assert.assertEquals(cache.get(STD_KEY), VALUE);
-    // that does not invoke the factory again 
+    // that does not invoke the factory again
     Assert.assertEquals(stdProducer.getCalledCount(), 1);
     // now remove the cache entry
     Assert.assertEquals(cache.remove(STD_KEY), VALUE);
@@ -169,8 +161,8 @@ public abstract class AbstractTestConcurrentCache {
   }
 
   /**
-   * produces two threads doing get() at the same time.  Waits for both
-   * to block and then asserts we only saw one factory.call()
+   * produces two threads doing get() at the same time. Waits for both to block and then asserts we
+   * only saw one factory.call()
    */
   @Test
   public void testConcurrentCacheHit() throws Throwable {
@@ -185,7 +177,7 @@ public abstract class AbstractTestConcurrentCache {
     // signal the value factory to let one continue
     stdProducer.signal();
 
-    //wait for threads
+    // wait for threads
     t1.join();
     t2.join();
 
@@ -208,21 +200,22 @@ public abstract class AbstractTestConcurrentCache {
     } catch (RuntimeException e) {
       // expected
     }
-    // now call removeIfError() twice, with the first one   
+    // now call removeIfError() twice, with the first one
     final AtomicInteger removeCount = new AtomicInteger(0);
-    Runnable operation = () -> {
-      if (cache.removeIfError(EXCEPTION_KEY)) {
-        removeCount.incrementAndGet();
-      }
-    };
-    // this really tests that get(error), removeIfError(), get(success), 
+    Runnable operation =
+        () -> {
+          if (cache.removeIfError(EXCEPTION_KEY)) {
+            removeCount.incrementAndGet();
+          }
+        };
+    // this really tests that get(error), removeIfError(), get(success),
     // removeIfError() won't remove the successful get
     Thread t1 = testHelper.doInThread(operation);
     Thread t2 = testHelper.getInThread(BLOCKING_KEY, VALUE);
     waitUntilThreadBlocks(t1);
     waitUntilThreadBlocks(t2);
     blockingProducer.signal();
-    // now there is a valid value, and this should not remove it  
+    // now there is a valid value, and this should not remove it
     Thread t3 = testHelper.doInThread(operation);
     waitUntilThreadBlocks(t3);
     // should see only one remove

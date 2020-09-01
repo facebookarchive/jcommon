@@ -15,12 +15,11 @@
  */
 package com.facebook.logging.util;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
-
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TimeSamplingSLF4JLogger implements Logger {
 
@@ -37,8 +36,7 @@ public class TimeSamplingSLF4JLogger implements Logger {
 
   private boolean shouldLog() {
     if (DateTimeUtils.currentTimeMillis() - lastLoggedMillis >= windowSizeMillis
-      && logToggle.compareAndSet(false, true)
-      ) {
+        && logToggle.compareAndSet(false, true)) {
       try {
         lastLoggedMillis = DateTimeUtils.currentTimeMillis();
 
@@ -238,7 +236,7 @@ public class TimeSamplingSLF4JLogger implements Logger {
   @Override
   public void info(Marker marker, String format, Object arg1, Object arg2) {
     if (shouldLog()) {
-      logger.info(marker, format, arg1 ,arg2);
+      logger.info(marker, format, arg1, arg2);
     }
   }
 
@@ -252,7 +250,7 @@ public class TimeSamplingSLF4JLogger implements Logger {
   @Override
   public void info(Marker marker, String msg, Throwable t) {
     if (shouldLog()) {
-      logger.info(marker, msg ,t);
+      logger.info(marker, msg, t);
     }
   }
 

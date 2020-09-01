@@ -18,10 +18,6 @@ package com.facebook.concurrency;
 import com.facebook.testing.Function;
 import com.facebook.testing.MockExecutor;
 import com.facebook.testing.TestUtils;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.ConcurrentModificationException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
@@ -30,13 +26,16 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestUnstoppableScheduledExecutorService {
-  private static final Runnable NO_OP = new Runnable() {
-    @Override
-    public void run() {
-    }
-  };
+  private static final Runnable NO_OP =
+      new Runnable() {
+        @Override
+        public void run() {}
+      };
 
   private ScheduledExecutorService executor;
   private MockExecutor mockExecutor;
@@ -51,27 +50,16 @@ public class TestUnstoppableScheduledExecutorService {
   public void testShutdown() throws Exception {
     executor.shutdown();
 
-    Assert.assertFalse(
-      mockExecutor.isShutdown(), "mockExecutor should not be shutdown"
-    );
-    Assert.assertTrue(
-      executor.isShutdown(), "executor should be shut down"
-    );
+    Assert.assertFalse(mockExecutor.isShutdown(), "mockExecutor should not be shutdown");
+    Assert.assertTrue(executor.isShutdown(), "executor should be shut down");
   }
 
   @Test(groups = "fast")
   public void testShutdownNow() throws Exception {
-    Assert.assertTrue(
-      executor.shutdownNow().isEmpty(),
-      "shutdownNow should return empty list"
-    );
+    Assert.assertTrue(executor.shutdownNow().isEmpty(), "shutdownNow should return empty list");
 
-    Assert.assertFalse(
-      mockExecutor.isShutdown(), "mockExecutor should not be shutdown"
-    );
-    Assert.assertTrue(
-      executor.isShutdown(), "executor should be shut down"
-    );
+    Assert.assertFalse(mockExecutor.isShutdown(), "mockExecutor should not be shutdown");
+    Assert.assertTrue(executor.isShutdown(), "executor should be shut down");
   }
 
   @Test(groups = "fast")
@@ -79,77 +67,55 @@ public class TestUnstoppableScheduledExecutorService {
     ScheduledFuture<?> future = executor.schedule(NO_OP, 10, TimeUnit.SECONDS);
 
     Assert.assertFalse(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor is terminated"
-    );
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS), "executor is terminated");
 
     executor.shutdown();
 
     Assert.assertTrue(future.isCancelled(), "scheduled task should be cancelled");
   }
-  
+
   @Test(groups = "fast")
   public void testAwaitTermination2() throws Exception {
-  	Assert.assertFalse(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor is terminated"
-    );
+    Assert.assertFalse(
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS), "executor is terminated");
 
-    AtomicInteger completed = TestUtils.countCompletedRunnables(
-      10,
-      new Function<Runnable>() {
-        @Override
-        public void execute(Runnable argument) {
-          executor.execute(argument);
-        }
-      }
-    );
+    AtomicInteger completed =
+        TestUtils.countCompletedRunnables(
+            10,
+            new Function<Runnable>() {
+              @Override
+              public void execute(Runnable argument) {
+                executor.execute(argument);
+              }
+            });
 
     executor.shutdown();
     mockExecutor.drain();
-    
+
     Assert.assertTrue(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor should be terminated"      
-    );
-    
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS), "executor should be terminated");
+
     Assert.assertEquals(completed.get(), 10);
-    
-    Assert.assertTrue(
-      executor.isTerminated(),
-      "executor should be terminated"                  
-    );
+
+    Assert.assertTrue(executor.isTerminated(), "executor should be terminated");
   }
 
   @Test(groups = "fast")
   public void testScheduledTasksCancelledOnShutdown() throws Exception {
     ScheduledFuture<?> future1 = executor.schedule(NO_OP, 10, TimeUnit.SECONDS);
-    ScheduledFuture<?> future2 =
-      executor.schedule(Executors.callable(NO_OP), 10, TimeUnit.SECONDS);
-    ScheduledFuture<?> future3 =
-      executor.scheduleAtFixedRate(NO_OP, 10, 10, TimeUnit.SECONDS);
-    ScheduledFuture<?> future4 =
-      executor.scheduleWithFixedDelay(NO_OP, 10, 10, TimeUnit.SECONDS);
+    ScheduledFuture<?> future2 = executor.schedule(Executors.callable(NO_OP), 10, TimeUnit.SECONDS);
+    ScheduledFuture<?> future3 = executor.scheduleAtFixedRate(NO_OP, 10, 10, TimeUnit.SECONDS);
+    ScheduledFuture<?> future4 = executor.scheduleWithFixedDelay(NO_OP, 10, 10, TimeUnit.SECONDS);
 
     Assert.assertFalse(
-      executor.awaitTermination(1, TimeUnit.NANOSECONDS),
-      "executor is terminated"
-    );
+        executor.awaitTermination(1, TimeUnit.NANOSECONDS), "executor is terminated");
 
     executor.shutdown();
 
-    Assert.assertTrue(
-      future1.isCancelled(), "scheduled task1 should be cancelled"
-    );
-    Assert.assertTrue(
-      future2.isCancelled(), "scheduled task2 should be cancelled"
-    );
-    Assert.assertTrue(
-      future3.isCancelled(), "scheduled task3 should be cancelled"
-    );
-    Assert.assertTrue(
-      future4.isCancelled(), "scheduled task4 should be cancelled"
-    );
+    Assert.assertTrue(future1.isCancelled(), "scheduled task1 should be cancelled");
+    Assert.assertTrue(future2.isCancelled(), "scheduled task2 should be cancelled");
+    Assert.assertTrue(future3.isCancelled(), "scheduled task3 should be cancelled");
+    Assert.assertTrue(future4.isCancelled(), "scheduled task4 should be cancelled");
   }
 
   @Test(groups = "fast")
@@ -186,22 +152,23 @@ public class TestUnstoppableScheduledExecutorService {
     // to do locking anyway)
     final int numShutdownTasks = 1000;
     int numExecutionThreads = 10;
-    
+
     final AtomicInteger count = new AtomicInteger(0);
     final AtomicBoolean fail = new AtomicBoolean(false);
-    Runnable shutdownTask = new Runnable() {
-      @Override
-      public void run() {
-        try {
-          // 10 is totally arbitrary here, but it seems to work
-          if (count.incrementAndGet() == (int)((float)numShutdownTasks * .75)) {
-            executor.shutdown();
+    Runnable shutdownTask =
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              // 10 is totally arbitrary here, but it seems to work
+              if (count.incrementAndGet() == (int) ((float) numShutdownTasks * .75)) {
+                executor.shutdown();
+              }
+            } catch (ConcurrentModificationException e) {
+              fail.set(true);
+            }
           }
-        } catch (ConcurrentModificationException e) {
-          fail.set(true);
-        }
-      }
-    };
+        };
 
     // schedule a ton of tasks that all shutdown the executor (fills up
     // its underlying hash)
@@ -211,43 +178,42 @@ public class TestUnstoppableScheduledExecutorService {
 
     // task that just removes the head of the MockExecutor, runs it,
     // and schedules it again
-    Runnable executorTask = new Runnable() {
-      @Override
-      public void run() {
-        while (true) {
-          Runnable head;
+    Runnable executorTask =
+        new Runnable() {
+          @Override
+          public void run() {
+            while (true) {
+              Runnable head;
 
-          synchronized (this) {
-            if (mockExecutor.getNumPendingTasks() > 0) {
-              head = mockExecutor.removeHead();
-            } else {
-              return;
+              synchronized (this) {
+                if (mockExecutor.getNumPendingTasks() > 0) {
+                  head = mockExecutor.removeHead();
+                } else {
+                  return;
+                }
+              }
+
+              head.run();
+              try {
+                executor.schedule(head, 1, TimeUnit.MILLISECONDS);
+              } catch (RejectedExecutionException e) {
+                // expected
+              }
             }
           }
+        };
 
-          head.run();
-          try {
-            executor.schedule(head, 1, TimeUnit.MILLISECONDS);
-          } catch (RejectedExecutionException e) {
-            // expected
-          }
-        }
-      }
-    };
-    
     // number of execution threads to use for draining the executor
     Thread[] executorThreads = new Thread[10];
     for (int i = 0; i < numExecutionThreads; i++) {
       executorThreads[i] = new Thread(executorTask);
       executorThreads[i].start();
     }
-    
+
     for (int i = 0; i < numExecutionThreads; i++) {
-      executorThreads[i].join();      
+      executorThreads[i].join();
     }
-    
-    Assert.assertFalse(
-      fail.get(), "got concurrent modification exception during shutdown"
-    );
+
+    Assert.assertFalse(fail.get(), "got concurrent modification exception during shutdown");
   }
 }

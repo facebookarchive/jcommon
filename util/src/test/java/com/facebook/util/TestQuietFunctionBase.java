@@ -26,27 +26,28 @@ public abstract class TestQuietFunctionBase {
   public void testError() {
     testExceptionType(Error.class, Error.class);
   }
-  
+
   @Test(groups = "fast")
   public void testRuntimeException() {
     testExceptionType(RuntimeException.class, RuntimeException.class);
   }
-  
+
   @Test(groups = "fast")
   public void testCheckedException() {
     testExceptionType(IOException.class, UncheckedCheckedException.class);
   }
-  
+
   protected abstract void throwFromQuiet(Supplier<? extends Throwable> toThrow);
-  
-  private void testExceptionType(Class<? extends Throwable> toThrow, Class<? extends Throwable> expectedCaughtType) {
+
+  private void testExceptionType(
+      Class<? extends Throwable> toThrow, Class<? extends Throwable> expectedCaughtType) {
     try {
       throwFromQuiet(() -> quietNewInstance(toThrow));
     } catch (Throwable caught) {
       Assert.assertEquals(caught.getClass(), expectedCaughtType);
     }
   }
-  
+
   private <T> T quietNewInstance(Class<T> classToCreate) {
     try {
       return classToCreate.newInstance();

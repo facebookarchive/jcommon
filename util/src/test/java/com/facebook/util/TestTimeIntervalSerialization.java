@@ -36,7 +36,7 @@ public class TestTimeIntervalSerialization {
 
   @DataProvider(name = "timeintervals")
   public Object[][] intervals() {
-    return new Object[][]{
+    return new Object[][] {
       {TimeInterval.INFINITE},
       {TimeInterval.ZERO},
       {TimeInterval.withMillis(100)},

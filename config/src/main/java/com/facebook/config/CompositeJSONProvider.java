@@ -15,12 +15,11 @@
  */
 package com.facebook.config;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CompositeJSONProvider implements JSONProvider {
   private final List<JSONProvider> jsonProviderList;
@@ -46,21 +45,20 @@ public class CompositeJSONProvider implements JSONProvider {
     return mergedJsonObject;
   }
 
-  private JSONObject mergeInto(JSONObject destinationJsonObject, JSONObject sourceJsonObject) throws JSONException {
+  private JSONObject mergeInto(JSONObject destinationJsonObject, JSONObject sourceJsonObject)
+      throws JSONException {
     Iterator keys = sourceJsonObject.keys();
 
     while (keys.hasNext()) {
       String sourceKey = (String) keys.next();
       Object sourceValue = sourceJsonObject.get(sourceKey);
 
-      if (sourceValue instanceof JSONObject &&
-        destinationJsonObject.has(sourceKey) &&
-        destinationJsonObject.get(sourceKey) instanceof JSONObject
-        ) {
+      if (sourceValue instanceof JSONObject
+          && destinationJsonObject.has(sourceKey)
+          && destinationJsonObject.get(sourceKey) instanceof JSONObject) {
         destinationJsonObject.put(
-          sourceKey,
-          mergeInto((JSONObject) destinationJsonObject.get(sourceKey), (JSONObject) sourceValue)
-        );
+            sourceKey,
+            mergeInto((JSONObject) destinationJsonObject.get(sourceKey), (JSONObject) sourceValue));
       } else {
         destinationJsonObject.put(sourceKey, sourceValue);
       }

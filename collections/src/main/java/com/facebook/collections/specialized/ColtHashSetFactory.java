@@ -31,11 +31,7 @@ public class ColtHashSetFactory implements SetFactory<Long, SnapshotableSet<Long
   private final double maxLoadFactor;
 
   public ColtHashSetFactory(
-    NumberType numberType,
-    int initialValue,
-    double maxLoadFactor,
-    double minLoadFactor
-  ) {
+      NumberType numberType, int initialValue, double maxLoadFactor, double minLoadFactor) {
     this.numberType = numberType;
     this.initialValue = initialValue;
     this.maxLoadFactor = maxLoadFactor;
@@ -50,12 +46,10 @@ public class ColtHashSetFactory implements SetFactory<Long, SnapshotableSet<Long
   public SnapshotableSet<Long> create() {
     if (numberType == NumberType.INTEGER) {
       return new ColtIntegerHashSet(
-        new OpenIntObjectHashMap(initialValue, minLoadFactor, maxLoadFactor)
-      );
+          new OpenIntObjectHashMap(initialValue, minLoadFactor, maxLoadFactor));
     } else if (numberType == NumberType.LONG) {
       return new ColtLongHashSet(
-        new OpenLongObjectHashMap(initialValue, minLoadFactor, maxLoadFactor)
-      );
+          new OpenLongObjectHashMap(initialValue, minLoadFactor, maxLoadFactor));
     } else {
       throw new IllegalStateException(String.format("unknown type %s", numberType));
     }

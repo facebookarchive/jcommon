@@ -15,35 +15,30 @@
  */
 package com.facebook.collections.specialized;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.facebook.collections.SetFactory;
 import com.facebook.collections.SetMap;
 import com.facebook.collections.SetMapImpl;
 import com.facebook.collections.Trackable;
 import com.facebook.collections.WrappedIterator;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * decorates a SetMap so that a caller can tell if the data structure
- * has changed.
+ * decorates a SetMap so that a caller can tell if the data structure has changed.
  *
- * NOTE: if a caller modifies the set directly:
- *   Set<V> set = setMap.get(key);
- *   set.add(key);
+ * <p>NOTE: if a caller modifies the set directly: Set<V> set = setMap.get(key); set.add(key);
  *
- * This will not be reflected in the version
+ * <p>This will not be reflected in the version
  *
  * @param <K>
  * @param <V>
  * @param <S>
  */
-public class TrackableSetMap<K, V, S extends Set<V>>
-  implements SetMap<K,V,S>, Trackable {
+public class TrackableSetMap<K, V, S extends Set<V>> implements SetMap<K, V, S>, Trackable {
 
-  private final SetMap<K,V,S> delegate;
+  private final SetMap<K, V, S> delegate;
   private final AtomicBoolean dirty = new AtomicBoolean(false);
 
   public TrackableSetMap(SetMap<K, V, S> delegate) {

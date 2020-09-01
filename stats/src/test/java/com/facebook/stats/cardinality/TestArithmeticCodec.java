@@ -15,22 +15,21 @@
  */
 package com.facebook.stats.cardinality;
 
-import com.google.common.primitives.Ints;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import static com.facebook.stats.cardinality.StaticModelUtil.SMALLEST_PROBABILITY;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+
+import com.google.common.primitives.Ints;
+import java.io.ByteArrayOutputStream;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 @SuppressWarnings({"RedundantArrayCreation", "NonReproducibleMathCall", "ConstantMathCall"})
 public class TestArithmeticCodec {
@@ -41,15 +40,13 @@ public class TestArithmeticCodec {
     testRoundTrip(
         new SortedStaticModel(new ExponentiallyDecreasingHistogramFactory().create(32)),
         32,
-        Ints.asList(new int[]{25, 22, 1, 11, 5, 3, 6, 5, 25, 9, 2, 9, 3, 3, 17, 20}),
-        16
-    );
+        Ints.asList(new int[] {25, 22, 1, 11, 5, 3, 6, 5, 25, 9, 2, 9, 3, 3, 17, 20}),
+        16);
     testRoundTrip(
         new SortedStaticModel(new ExponentiallyDecreasingHistogramFactory().create(32)),
         32,
-        Ints.asList(new int[]{27, 28, 1, 25, 4, 5, 15, 7, 14, 3, 23, 15, 25, 12, 3, 15}),
-        16
-    );
+        Ints.asList(new int[] {27, 28, 1, 25, 4, 5, 15, 7, 14, 3, 23, 15, 25, 12, 3, 15}),
+        16);
   }
 
   @Test
@@ -57,15 +54,13 @@ public class TestArithmeticCodec {
     testRoundTrip(
         new SortedStaticModel(new ExponentiallyDecreasingHistogramFactory().create(8)),
         8,
-        Ints.asList(new int[]{3, 5, 4, 0, 2, 4, 7, 5, 7, 7, 3, 1, 1, 5, 0, 3}),
-        16
-    );
+        Ints.asList(new int[] {3, 5, 4, 0, 2, 4, 7, 5, 7, 7, 3, 1, 1, 5, 0, 3}),
+        16);
     testRoundTrip(
         new SortedStaticModel(new ExponentiallyDecreasingHistogramFactory().create(16)),
         16,
-        Ints.asList(new int[]{12, 12, 4, 4, 13, 2, 9, 8, 9, 1, 0, 8, 2, 11, 12, 1}),
-        16
-    );
+        Ints.asList(new int[] {12, 12, 4, 4, 13, 2, 9, 8, 9, 1, 0, 8, 2, 11, 12, 1}),
+        16);
   }
 
   @Test
@@ -85,8 +80,7 @@ public class TestArithmeticCodec {
         HyperLogLogCodec.createHyperLogLogSymbolModel(4, 2048, (byte) 1),
         2,
         Ints.asList(buckets),
-        2048
-    );
+        2048);
   }
 
   @Test
@@ -113,8 +107,7 @@ public class TestArithmeticCodec {
             modelFactory.create(numberOfSymbols),
             numberOfSymbols,
             dataFactory.create(size, numberOfSymbols),
-            size
-        );
+            size);
       }
     }
   }
@@ -136,22 +129,14 @@ public class TestArithmeticCodec {
 
         if (newData != symbol) {
           Assert.assertEquals(
-              newData, (int) symbol, String.format(
-              "size=%d, numberOfSymbols=%d",
-              size,
-              numberOfSymbols
-          )
-          );
+              newData,
+              (int) symbol,
+              String.format("size=%d, numberOfSymbols=%d", size, numberOfSymbols));
         }
       }
     } catch (Exception e) {
       throw new RuntimeException(
-          String.format(
-              "size=%d, numberOfSymbols=%d",
-              size,
-              numberOfSymbols
-          ), e
-      );
+          String.format("size=%d, numberOfSymbols=%d", size, numberOfSymbols), e);
     }
   }
 
@@ -210,12 +195,8 @@ public class TestArithmeticCodec {
       double[] probability = new double[numberOfSymbols];
       for (int i = 0; i < probability.length; i++) {
         // see wikipedia
-        double value = (1 / (std * sqrt(2.0 * PI))) * (pow(
-            E, -(pow(i - mean, 2) / (2 * pow(
-            std,
-            2
-        )))
-        ));
+        double value =
+            (1 / (std * sqrt(2.0 * PI))) * (pow(E, -(pow(i - mean, 2) / (2 * pow(std, 2)))));
         probability[i] = value;
       }
       return probability;

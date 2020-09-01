@@ -57,7 +57,7 @@ public interface StatsCollector {
   /**
    * deprecated, see
    *
-   * see {@link StatsUtil#setCounterValue(String, long, Stats)}
+   * <p>see {@link StatsUtil#setCounterValue(String, long, Stats)}
    */
   @Deprecated
   public long setCounter(String key, long value);
@@ -65,7 +65,7 @@ public interface StatsCollector {
   /**
    * deprecated, see
    *
-   * see {@link StatsUtil#setCounterValue(String, long, Stats)}
+   * <p>see {@link StatsUtil#setCounterValue(String, long, Stats)}
    */
   @Deprecated
   public long setCounter(StatType key, long value);
@@ -136,4 +136,3 @@ public interface StatsCollector {
    */
   public void setAttribute(String key, Callable<String> valueProducer);
 }
-

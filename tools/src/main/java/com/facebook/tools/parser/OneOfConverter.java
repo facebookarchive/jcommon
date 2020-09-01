@@ -16,7 +16,6 @@
 package com.facebook.tools.parser;
 
 import com.facebook.tools.ErrorMessage;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;

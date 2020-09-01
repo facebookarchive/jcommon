@@ -15,19 +15,17 @@
  */
 package com.facebook.collections;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkState;
 
-import javax.annotation.concurrent.ThreadSafe;
+import com.google.common.base.Preconditions;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import static com.google.common.base.Preconditions.checkState;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * Reference implementation of SimpleArray using longs. Attempts to limit memory growth
- * by allowing a small growth factor each resize
- *
+ * Reference implementation of SimpleArray using longs. Attempts to limit memory growth by allowing
+ * a small growth factor each resize
  */
 @ThreadSafe
 public class LongArray implements Array<Long> {
@@ -78,8 +76,8 @@ public class LongArray implements Array<Long> {
     synchronized (this) {
       if (i >= data.length) {
         throw new ArrayIndexOutOfBoundsException(
-          String.format("tried to set value at index %d, but  max index is %d", i, data.length - 1)
-        );
+            String.format(
+                "tried to set value at index %d, but  max index is %d", i, data.length - 1));
       }
 
       Long oldValue = data[i];
@@ -147,8 +145,8 @@ public class LongArray implements Array<Long> {
   }
 
   /**
-   * @param sizeHint effectively the new size (NOT the increase). May be changed for memory or
-   *                 cache alignments as implementations see fit
+   * @param sizeHint effectively the new size (NOT the increase). May be changed for memory or cache
+   *     alignments as implementations see fit
    * @return actual new size
    */
   private synchronized int internalResize(int sizeHint) {
@@ -169,17 +167,15 @@ public class LongArray implements Array<Long> {
     return newSize;
   }
 
-  /**
-   * @return
-   */
+  /** @return */
   @Override
   public Iterator<Long> iterator() {
     return new Iter();
   }
 
   /**
-   * since the contract to clients is that null => empty slot, we convert our empty indicators
-   * to null here
+   * since the contract to clients is that null => empty slot, we convert our empty indicators to
+   * null here
    *
    * @param value input from data
    * @return input if >= 0, else null
@@ -195,12 +191,12 @@ public class LongArray implements Array<Long> {
   /**
    * Thread safe iterator. Note: at the moment the iterator is created, sizeSnapshot elements exist
    * in the array. It will terminate upon seeing the first sizeSnapshot elements, or when position
-   * is >= capacitySnapshot. This means fewer elements or different elements may be seen, but
-   * so goes the life of concurrent data structure access
-   * <p/>
-   * It also supports remove, but again, note that this may not have the intended effect if the
-   * underlying array is resized. Prefer directly removing an element with
-   * {@link #LongSimpleArray.remove(int i)}
+   * is >= capacitySnapshot. This means fewer elements or different elements may be seen, but so
+   * goes the life of concurrent data structure access
+   *
+   * <p>It also supports remove, but again, note that this may not have the intended effect if the
+   * underlying array is resized. Prefer directly removing an element with {@link
+   * #LongSimpleArray.remove(int i)}
    */
   private class Iter implements Iterator<Long> {
     // index to iterate through the array.

@@ -16,10 +16,6 @@
 package com.facebook.tools.subprocess;
 
 import com.facebook.tools.io.MockIO;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +30,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestSubprocessBuilder {
   private Queue<CreateProcessParameters> parameters;
@@ -43,25 +42,22 @@ public class TestSubprocessBuilder {
   public void setUp() {
     parameters = new ArrayDeque<>();
 
-    SubprocessBuilder builder = new SubprocessBuilder(
-      new ProcessBuilderWrapper() {
-        @Override
-        public Process createProcess(
-          RedirectErrorsTo redirectErrorsTo,
-          Map<String, String> environmentOverrides,
-          File workingDirectory,
-          List<String> command
-        ) {
-          parameters.add(
-            new CreateProcessParameters(
-              redirectErrorsTo, environmentOverrides, workingDirectory, command
-            )
-          );
+    SubprocessBuilder builder =
+        new SubprocessBuilder(
+            new ProcessBuilderWrapper() {
+              @Override
+              public Process createProcess(
+                  RedirectErrorsTo redirectErrorsTo,
+                  Map<String, String> environmentOverrides,
+                  File workingDirectory,
+                  List<String> command) {
+                parameters.add(
+                    new CreateProcessParameters(
+                        redirectErrorsTo, environmentOverrides, workingDirectory, command));
 
-          return new DummyProcess();
-        }
-      }
-    );
+                return new DummyProcess();
+              }
+            });
 
     io = new MockIO(builder);
   }
@@ -80,12 +76,13 @@ public class TestSubprocessBuilder {
 
   @Test(groups = "fast")
   public void testArguments() {
-    io.subprocess.forCommand("foo")
-      .withArguments("bar")
-      .withArguments("this", "is", "a test")
-      .withArguments(123)
-      .withArguments(Arrays.asList(456, "abc"))
-      .start();
+    io.subprocess
+        .forCommand("foo")
+        .withArguments("bar")
+        .withArguments("this", "is", "a test")
+        .withArguments(123)
+        .withArguments(Arrays.asList(456, "abc"))
+        .start();
     assertCommand("foo", "bar", "this", "is", "a test", "123", "456", "abc");
   }
 
@@ -97,10 +94,11 @@ public class TestSubprocessBuilder {
 
   @Test(groups = "fast")
   public void testEnvironmentVariables() {
-    io.subprocess.forCommand("foo")
-      .withEnvironmentVariable("bar", "baz")
-      .withoutEnvironmentVariable("bad")
-      .start();
+    io.subprocess
+        .forCommand("foo")
+        .withEnvironmentVariable("bar", "baz")
+        .withoutEnvironmentVariable("bad")
+        .start();
 
     Map<String, String> expected = new LinkedHashMap<>();
 
@@ -111,22 +109,18 @@ public class TestSubprocessBuilder {
 
   @Test(groups = "fast")
   public void testWorkingDirectory() {
-    io.subprocess.forCommand("foo")
-      .withWorkingDirectory(new File("/tmp/test"))
-      .start();
+    io.subprocess.forCommand("foo").withWorkingDirectory(new File("/tmp/test")).start();
 
     assertCommand(
-      RedirectErrorsTo.STDERR, Collections.<String, String>emptyMap(), new File("/tmp/test"), "foo"
-    );
+        RedirectErrorsTo.STDERR,
+        Collections.<String, String>emptyMap(),
+        new File("/tmp/test"),
+        "foo");
   }
 
   @Test(groups = "fast")
   public void testEchoCommand() {
-    io.subprocess.forCommand("foo")
-      .withArguments("bar", "baz")
-      .echoCommand(io)
-      .start()
-      .waitFor();
+    io.subprocess.forCommand("foo").withArguments("bar", "baz").echoCommand(io).start().waitFor();
 
     assertCommand("foo", "bar", "baz");
     Assert.assertEquals(io.getOut(), "foo bar baz\n");
@@ -135,10 +129,7 @@ public class TestSubprocessBuilder {
 
   @Test(groups = "fast")
   public void testEchoOutput() {
-    io.subprocess.forCommand("foo")
-      .echoOutput(io)
-      .start()
-      .waitFor();
+    io.subprocess.forCommand("foo").echoOutput(io).start().waitFor();
 
     assertCommand("foo");
     Assert.assertEquals(io.getOut(), "out: this is a test of stdout\n");
@@ -147,10 +138,7 @@ public class TestSubprocessBuilder {
 
   @Test(groups = "fast")
   public void testOutputBytesLimit() {
-    Subprocess foo = io.subprocess.forCommand("foo")
-      .echoOutput(io)
-      .outputBytesLimit(19)
-      .start();
+    Subprocess foo = io.subprocess.forCommand("foo").echoOutput(io).outputBytesLimit(19).start();
 
     assertCommand("foo");
     Assert.assertEquals(foo.getOutput(), "out: this is a test");
@@ -162,11 +150,10 @@ public class TestSubprocessBuilder {
   }
 
   private void assertCommand(
-    RedirectErrorsTo redirectErrorsTo,
-    Map<String, String> environmentOverrides,
-    File workingDirectory,
-    String... command
-  ) {
+      RedirectErrorsTo redirectErrorsTo,
+      Map<String, String> environmentOverrides,
+      File workingDirectory,
+      String... command) {
     CreateProcessParameters actual = parameters.poll();
 
     actual.assertParameters(redirectErrorsTo, environmentOverrides, workingDirectory, command);
@@ -179,11 +166,10 @@ public class TestSubprocessBuilder {
     private final List<String> command;
 
     private CreateProcessParameters(
-      RedirectErrorsTo redirectErrorsTo,
-      Map<String, String> environmentOverrides,
-      File workingDirectory,
-      List<String> command
-    ) {
+        RedirectErrorsTo redirectErrorsTo,
+        Map<String, String> environmentOverrides,
+        File workingDirectory,
+        List<String> command) {
       this.redirectErrorsTo = redirectErrorsTo;
       this.environmentOverrides = environmentOverrides;
       this.workingDirectory = workingDirectory;
@@ -191,11 +177,10 @@ public class TestSubprocessBuilder {
     }
 
     public void assertParameters(
-      RedirectErrorsTo redirectErrorsTo,
-      Map<String, String> environmentOverrides,
-      File workingDirectory,
-      String... command
-    ) {
+        RedirectErrorsTo redirectErrorsTo,
+        Map<String, String> environmentOverrides,
+        File workingDirectory,
+        String... command) {
       Assert.assertEquals(this.command, Arrays.asList(command));
       Assert.assertEquals(this.redirectErrorsTo, redirectErrorsTo);
       Assert.assertEquals(this.workingDirectory, workingDirectory);
@@ -236,8 +221,7 @@ public class TestSubprocessBuilder {
     }
 
     @Override
-    public void destroy() {
-    }
+    public void destroy() {}
   }
 
   private static class LatchInputStream extends InputStream {

@@ -93,9 +93,8 @@ public class WrappedSet<T> implements Set<T> {
   public boolean equals(Object o) {
     if (o instanceof WrappedSet) {
       Set otherDelegate = ((WrappedSet) o).getDelegate();
-      
-      return delegate.equals(otherDelegate) ||
-        delegate.equals(o);
+
+      return delegate.equals(otherDelegate) || delegate.equals(o);
     }
     return delegate.equals(o);
   }

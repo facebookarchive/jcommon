@@ -16,7 +16,6 @@
 package com.facebook.util;
 
 import com.google.common.io.PatternFilenameFilter;
-
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -29,7 +28,7 @@ public class FileUtils {
     FilenameFilter filenameFilter = new PatternFilenameFilter(targetFile);
     File currentDir = new File(startDir).getAbsoluteFile();
 
-    while (currentDir.getParentFile() != null){
+    while (currentDir.getParentFile() != null) {
       String[] files = currentDir.list(filenameFilter);
       if (files.length == 1) {
         return currentDir.getAbsolutePath();

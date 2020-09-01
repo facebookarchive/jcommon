@@ -36,27 +36,21 @@ public class TestMultiWindowMax {
     Assert.assertEquals(multiWindowMax.getAllTimeValue(), 3);
 
     // Clear 1 minute window
-    DateTimeUtils.setCurrentMillisFixed(
-      Duration.standardMinutes(5).getMillis()
-    );
+    DateTimeUtils.setCurrentMillisFixed(Duration.standardMinutes(5).getMillis());
     Assert.assertEquals(multiWindowMax.getMinuteValue(), Long.MIN_VALUE);
     Assert.assertEquals(multiWindowMax.getTenMinuteValue(), 3);
     Assert.assertEquals(multiWindowMax.getHourValue(), 3);
     Assert.assertEquals(multiWindowMax.getAllTimeValue(), 3);
 
     // Clear 10 minute window
-    DateTimeUtils.setCurrentMillisFixed(
-      Duration.standardMinutes(15).getMillis()
-    );
+    DateTimeUtils.setCurrentMillisFixed(Duration.standardMinutes(15).getMillis());
     Assert.assertEquals(multiWindowMax.getMinuteValue(), Long.MIN_VALUE);
     Assert.assertEquals(multiWindowMax.getTenMinuteValue(), Long.MIN_VALUE);
     Assert.assertEquals(multiWindowMax.getHourValue(), 3);
     Assert.assertEquals(multiWindowMax.getAllTimeValue(), 3);
 
     // Clear hour window window
-    DateTimeUtils.setCurrentMillisFixed(
-      Duration.standardHours(2).getMillis()
-    );
+    DateTimeUtils.setCurrentMillisFixed(Duration.standardHours(2).getMillis());
     Assert.assertEquals(multiWindowMax.getMinuteValue(), Long.MIN_VALUE);
     Assert.assertEquals(multiWindowMax.getTenMinuteValue(), Long.MIN_VALUE);
     Assert.assertEquals(multiWindowMax.getHourValue(), Long.MIN_VALUE);

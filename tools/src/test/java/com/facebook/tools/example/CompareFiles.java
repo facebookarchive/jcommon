@@ -17,11 +17,10 @@ package com.facebook.tools.example;
 
 import com.facebook.tools.CommandBuilder;
 import com.facebook.tools.CommandRunner;
+import com.facebook.tools.io.IO;
 import com.facebook.tools.parser.CliCommand;
 import com.facebook.tools.parser.CliParser;
 import com.facebook.tools.subprocess.Subprocess;
-import com.facebook.tools.io.IO;
-
 import java.io.File;
 
 public class CompareFiles implements CommandBuilder {
@@ -33,20 +32,16 @@ public class CompareFiles implements CommandBuilder {
 
   @Override
   public CliCommand defineCommand() {
-    CliCommand.Builder builder = new CliCommand.Builder(
-      "compare-files",
-      "Stupid example that compares files side-by-side by calling diff -y."
-    );
-    builder.addParameter("file1")
-      .withDescription("Left-hand-side file")
-      .withExample("/tmp/a.txt");
-    builder.addParameter("file2")
-      .withDescription("Right-hand-side file")
-      .withExample("/tmp/b.txt");
-    builder.addOption("--width")
-      .withMetavar("columns")
-      .withDefault("80")
-      .withDescription("Number of columns to show");
+    CliCommand.Builder builder =
+        new CliCommand.Builder(
+            "compare-files", "Stupid example that compares files side-by-side by calling diff -y.");
+    builder.addParameter("file1").withDescription("Left-hand-side file").withExample("/tmp/a.txt");
+    builder.addParameter("file2").withDescription("Right-hand-side file").withExample("/tmp/b.txt");
+    builder
+        .addOption("--width")
+        .withMetavar("columns")
+        .withDefault("80")
+        .withDescription("Number of columns to show");
 
     return builder.build();
   }
@@ -54,18 +49,15 @@ public class CompareFiles implements CommandBuilder {
   @Override
   public void runCommand(CliParser parser) {
     compareFiles(
-      parser.get("file1", Converters.FILE),
-      parser.get("file2", Converters.FILE),
-      parser.get("--width", Converters.INT)
-    );
+        parser.get("file1", Converters.FILE),
+        parser.get("file2", Converters.FILE),
+        parser.get("--width", Converters.INT));
   }
 
   public void compareFiles(File leftHandSideFile, File rightHandSideFile, int width) {
-    Subprocess diff = io.subprocess.forCommand("diff")
-      .withArguments("-y")
-      .withArguments("--width", width)
-      .withArguments(leftHandSideFile, rightHandSideFile)
-      .stream();
+    Subprocess diff =
+        io.subprocess.forCommand("diff").withArguments("-y").withArguments("--width", width)
+            .withArguments(leftHandSideFile, rightHandSideFile).stream();
 
     for (String line : diff) {
       io.out.println(line);

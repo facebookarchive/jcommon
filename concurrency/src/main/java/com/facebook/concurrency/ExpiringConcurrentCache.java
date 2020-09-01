@@ -15,10 +15,9 @@
  */
 package com.facebook.concurrency;
 
-import org.joda.time.DateTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.facebook.collections.TranslatingIterator;
+import com.facebook.collectionsbase.Mapper;
+import com.facebook.util.exceptions.ExceptionHandler;
 import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,68 +27,59 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.facebook.collections.TranslatingIterator;
-import com.facebook.collectionsbase.Mapper;
-import com.facebook.util.exceptions.ExceptionHandler;
+import org.joda.time.DateTimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExpiringConcurrentCache<K, V, E extends Exception>
-  implements ConcurrentCache<K, V, E> {
+    implements ConcurrentCache<K, V, E> {
   private static final Logger LOG = LoggerFactory.getLogger(ExpiringConcurrentCache.class);
 
   private final ConcurrentCache<K, CacheEntry<V, E>, E> baseCache;
   private final long maxAgeMillis;
   private final ExecutorService executor;
 
-  // track the last time a prune operation was performed. Objects 
+  // track the last time a prune operation was performed. Objects
   // will only be pruned after maxAgeMillis has passed
-  private final AtomicLong lastPrune = new AtomicLong(
-    DateTimeUtils.currentTimeMillis()
-  );
+  private final AtomicLong lastPrune = new AtomicLong(DateTimeUtils.currentTimeMillis());
   private final AtomicBoolean pruning = new AtomicBoolean(false);
   // an EvictionListener provides a memory efficient way for clients of this
   // object to receive information about both the key and value evicted.
   private final EvictionListener<K, V> evictionListener;
 
   public ExpiringConcurrentCache(
-    ValueFactory<K, V, E> valueFactory,
-    long maxAge,
-    TimeUnit maxAgeUnit,
-    EvictionListener<K, V> evictionListener,
-    ExceptionHandler<E> exceptionHandler,
-    ExecutorService executor
-  ) {
+      ValueFactory<K, V, E> valueFactory,
+      long maxAge,
+      TimeUnit maxAgeUnit,
+      EvictionListener<K, V> evictionListener,
+      ExceptionHandler<E> exceptionHandler,
+      ExecutorService executor) {
     this.evictionListener = evictionListener;
     this.baseCache =
-      new CoreConcurrentCache<>(
-        new CacheEntryValueFactory(valueFactory),
-        exceptionHandler
-      );
+        new CoreConcurrentCache<>(new CacheEntryValueFactory(valueFactory), exceptionHandler);
     this.maxAgeMillis = maxAgeUnit.toMillis(maxAge);
     this.executor = executor;
   }
 
   public ExpiringConcurrentCache(
-    ValueFactory<K, V, E> valueFactory,
-    long maxAge,
-    TimeUnit maxAgeUnit,
-    EvictionListener<K, V> evictionListener,
-    ExceptionHandler<E> exceptionHandler
-  ) {
+      ValueFactory<K, V, E> valueFactory,
+      long maxAge,
+      TimeUnit maxAgeUnit,
+      EvictionListener<K, V> evictionListener,
+      ExceptionHandler<E> exceptionHandler) {
     this(
-      valueFactory,
-      maxAge,
-      maxAgeUnit,
-      evictionListener,
-      exceptionHandler,
-      Executors.newSingleThreadExecutor()
-    );
+        valueFactory,
+        maxAge,
+        maxAgeUnit,
+        evictionListener,
+        exceptionHandler,
+        Executors.newSingleThreadExecutor());
   }
 
   /**
-   * compatibility function for use with legacy implementations that use
-   * Reapable to be notified of evictions
-   * 
+   * compatibility function for use with legacy implementations that use Reapable to be notified of
+   * evictions
+   *
    * @param valueFactory
    * @param maxAge
    * @param maxAgeUnit
@@ -101,27 +91,25 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
    * @return
    */
   public static <K, V extends Reapable<? extends Exception>, E extends Exception>
-  ExpiringConcurrentCache<K, V, E> createWithReapableValue(
-    ValueFactory<K, V, E> valueFactory,
-    long maxAge,
-    TimeUnit maxAgeUnit,
-    ExceptionHandler<E> exceptionHandler,
-    ExecutorService executor
-  ) {
+      ExpiringConcurrentCache<K, V, E> createWithReapableValue(
+          ValueFactory<K, V, E> valueFactory,
+          long maxAge,
+          TimeUnit maxAgeUnit,
+          ExceptionHandler<E> exceptionHandler,
+          ExecutorService executor) {
     return new ExpiringConcurrentCache<>(
-      valueFactory,
-      maxAge,
-      maxAgeUnit,
-      (key, value) -> {
-        try {
-          value.shutdown();
-        } catch (Throwable t) {
-          LOG.error("error shutting down reapable", t);
-        }
-      },
-      exceptionHandler,
-      executor
-    );
+        valueFactory,
+        maxAge,
+        maxAgeUnit,
+        (key, value) -> {
+          try {
+            value.shutdown();
+          } catch (Throwable t) {
+            LOG.error("error shutting down reapable", t);
+          }
+        },
+        exceptionHandler,
+        executor);
   }
 
   @Override
@@ -139,7 +127,7 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
   @Override
   public V put(K key, V value) throws E {
     pruneIfNeeded();
-    
+
     CacheEntry<V, E> cacheEntry = new CacheEntry<>(value);
     CacheEntry<V, E> existingCacheEntry = baseCache.put(key, cacheEntry);
 
@@ -151,7 +139,7 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
     pruneIfNeeded();
 
     CacheEntry<V, E> cacheEntry = baseCache.remove(key);
-    
+
     return cacheEntry == null ? null : cacheEntry.getSnapshot().get();
   }
 
@@ -176,26 +164,25 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
   }
 
   /**
-   * non-blocking, thread-safe prune operation that only enters pruning block
-   * after enough time has elapsed
+   * non-blocking, thread-safe prune operation that only enters pruning block after enough time has
+   * elapsed
    *
    * @throws E
    */
   private void pruneIfNeeded() {
     // only prune if sufficient time has elapsed and another thread isn't
     // already pruning
-    if (DateTimeUtils.currentTimeMillis() - lastPrune.get() >= maxAgeMillis &&
-      pruning.compareAndSet(false, true)) {
+    if (DateTimeUtils.currentTimeMillis() - lastPrune.get() >= maxAgeMillis
+        && pruning.compareAndSet(false, true)) {
       try {
         Iterator<Map.Entry<K, CallableSnapshot<CacheEntry<V, E>, E>>> iterator =
-          baseCache.iterator();
+            baseCache.iterator();
 
         while (iterator.hasNext()) {
           final K key;
           final CacheEntry<V, E> cacheEntry;
           try {
-            Map.Entry<K, CallableSnapshot<CacheEntry<V, E>, E>> entry =
-              iterator.next();
+            Map.Entry<K, CallableSnapshot<CacheEntry<V, E>, E>> entry = iterator.next();
             key = entry.getKey();
             cacheEntry = entry.getValue().get();
           } catch (Exception e) {
@@ -210,29 +197,22 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
             // do any shutdown() tasks asynchronously so we don't block access
             // to the cache
             executor.execute(
-              () -> {
-                // now reap the entry
-                try {
-                  V value = cacheEntry.getSnapshot().get();
-
+                () -> {
+                  // now reap the entry
                   try {
-                    evictionListener.evicted(key, value);
-                  } catch (Throwable t) {
-                    LOG.error(
-                      "Error reaping cache element-- may not be properly closed",
-                      t
-                    );
-                  }
-                } catch (Exception e) {
-                  LOG.info(
-                    "Unable to get cache value for key " + key
-                  );
-                  // still notify that key is evicted
-                  evictionListener.evicted(key, null);
-                }
-              }
-            );
+                    V value = cacheEntry.getSnapshot().get();
 
+                    try {
+                      evictionListener.evicted(key, value);
+                    } catch (Throwable t) {
+                      LOG.error("Error reaping cache element-- may not be properly closed", t);
+                    }
+                  } catch (Exception e) {
+                    LOG.info("Unable to get cache value for key " + key);
+                    // still notify that key is evicted
+                    evictionListener.evicted(key, null);
+                  }
+                });
           }
         }
       } finally {
@@ -244,16 +224,13 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
 
   @Override
   public Iterator<Map.Entry<K, CallableSnapshot<V, E>>> iterator() {
-    return new TranslatingIterator<>(
-      new ValueMapper(), baseCache.iterator()
-    );
+    return new TranslatingIterator<>(new ValueMapper(), baseCache.iterator());
   }
 
   @Override
   public CallableSnapshot<V, E> getIfPresent(K key) {
     pruneIfNeeded();
-    CallableSnapshot<CacheEntry<V, E>, E> snapshot =
-      baseCache.getIfPresent(key);
+    CallableSnapshot<CacheEntry<V, E>, E> snapshot = baseCache.getIfPresent(key);
 
     if (snapshot == null) {
       return null;
@@ -266,15 +243,13 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
     }
   }
 
-  private class ValueMapper implements
-    Mapper<
-      Map.Entry<K, CallableSnapshot<CacheEntry<V, E>, E>>,
-      Map.Entry<K, CallableSnapshot<V, E>>
-      > {
+  private class ValueMapper
+      implements Mapper<
+          Map.Entry<K, CallableSnapshot<CacheEntry<V, E>, E>>,
+          Map.Entry<K, CallableSnapshot<V, E>>> {
     @Override
     public Map.Entry<K, CallableSnapshot<V, E>> map(
-      Map.Entry<K, CallableSnapshot<CacheEntry<V, E>, E>> input
-    ) {
+        Map.Entry<K, CallableSnapshot<CacheEntry<V, E>, E>> input) {
       CallableSnapshot<V, E> snapshot;
       try {
         snapshot = input.getValue().get().touch();
@@ -282,20 +257,15 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
         // We control the creation process, so we should not get an exception
         throw new RuntimeException("CacheEntry create should not fail");
       }
-      return new AbstractMap.SimpleImmutableEntry<>(
-        input.getKey(),
-        snapshot
-      );
+      return new AbstractMap.SimpleImmutableEntry<>(input.getKey(), snapshot);
     }
   }
 
-  private class CacheEntryValueFactory
-    implements ValueFactory<K, CacheEntry<V, E>, E> {
+  private class CacheEntryValueFactory implements ValueFactory<K, CacheEntry<V, E>, E> {
     CallableSnapshotFunction<K, V, E> snapshotFunction;
 
     private CacheEntryValueFactory(ValueFactory<K, V, E> valueFactory) {
-      snapshotFunction =
-        new PrivateCallableSnapshotFunction<>(valueFactory);
+      snapshotFunction = new PrivateCallableSnapshotFunction<>(valueFactory);
     }
 
     @Override
@@ -305,9 +275,8 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
   }
 
   /**
-   * a cache entry is a value and it's last accessed time (create, read).
-   * The last accessed is used for expiring entire older than a configured
-   * TTL by the cache
+   * a cache entry is a value and it's last accessed time (create, read). The last accessed is used
+   * for expiring entire older than a configured TTL by the cache
    *
    * @param <V> value type
    * @param <E> exception type
@@ -354,8 +323,8 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
     }
 
     /**
-     * we store either the result of the Callable if there is no 
-     * exception (saves memory). Otherewise, we keep the whole CallableSnapshot
+     * we store either the result of the Callable if there is no exception (saves memory).
+     * Otherewise, we keep the whole CallableSnapshot
      *
      * @return
      */
@@ -366,28 +335,24 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
         // we can use NullExceptionHandler since we know
         // this is a value
         return new PrivateCallableSnapshot<>(
-          new FixedValueCallable<>((V) snapshotOrValue),
-          new NullExceptionHandler<>()
-        );
+            new FixedValueCallable<>((V) snapshotOrValue), new NullExceptionHandler<>());
       }
     }
   }
 
   // this private class is using it's class type as a boolean flag (to save
   // memory). If the value stored is of this type in the CacheEntry,
-  // then it means we couldn't store the value and need to call 
+  // then it means we couldn't store the value and need to call
   // CallableSnapshot.get(). By making it private, we guarantee that O
   // cannot be this type
-  private static class PrivateCallableSnapshotFunction
-    <I, O, E extends Exception>
-    implements CallableSnapshotFunction<I, O, E> {
+  private static class PrivateCallableSnapshotFunction<I, O, E extends Exception>
+      implements CallableSnapshotFunction<I, O, E> {
 
     private final ValueFactory<I, O, E> valueFactory;
     private final ExceptionHandler<E> exceptionHandler;
 
     private PrivateCallableSnapshotFunction(
-      ValueFactory<I, O, E> valueFactory, ExceptionHandler<E> exceptionHandler
-    ) {
+        ValueFactory<I, O, E> valueFactory, ExceptionHandler<E> exceptionHandler) {
       this.valueFactory = valueFactory;
       this.exceptionHandler = exceptionHandler;
     }
@@ -400,20 +365,13 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
 
     @Override
     public CallableSnapshot<O, E> apply(final I input) {
-      return new PrivateCallableSnapshot<>(
-        () -> valueFactory.create(input),
-        exceptionHandler
-      );
+      return new PrivateCallableSnapshot<>(() -> valueFactory.create(input), exceptionHandler);
     }
-
   }
 
   private static class PrivateCallableSnapshot<V, E extends Exception>
-    extends CallableSnapshot<V, E> {
-    private PrivateCallableSnapshot(
-      Callable<V> callable,
-      ExceptionHandler<E> exceptionHandler
-    ) {
+      extends CallableSnapshot<V, E> {
+    private PrivateCallableSnapshot(Callable<V> callable, ExceptionHandler<E> exceptionHandler) {
       super(callable, exceptionHandler);
     }
   }

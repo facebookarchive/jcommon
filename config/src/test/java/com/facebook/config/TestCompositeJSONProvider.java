@@ -27,29 +27,27 @@ public class TestCompositeJSONProvider {
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
-    JSONProvider jsonProvider1 = () -> {
-      JSONObject jsonObject = new JSONObject()
-        .put("key1", "value1")
-        .put("key2", new JSONObject().put("key3", "value3"))
-        .put("key4", new JSONObject()
-          .put("key5", "value5")
-          .put("key7", "value7a")
-        );
+    JSONProvider jsonProvider1 =
+        () -> {
+          JSONObject jsonObject =
+              new JSONObject()
+                  .put("key1", "value1")
+                  .put("key2", new JSONObject().put("key3", "value3"))
+                  .put("key4", new JSONObject().put("key5", "value5").put("key7", "value7a"));
 
-      return jsonObject;
-    };
+          return jsonObject;
+        };
 
-    JSONProvider jsonProvider2 = () -> {
-      JSONObject jsonObject = new JSONObject()
-        .put("key3", "value3")
-        .put("key2", "value2")
-        .put("key4", new JSONObject()
-          .put("key6", "value6")
-          .put("key7", "value7b")
-        );
+    JSONProvider jsonProvider2 =
+        () -> {
+          JSONObject jsonObject =
+              new JSONObject()
+                  .put("key3", "value3")
+                  .put("key2", "value2")
+                  .put("key4", new JSONObject().put("key6", "value6").put("key7", "value7b"));
 
-      return jsonObject;
-    };
+          return jsonObject;
+        };
     compositeJSONProvider1 = new CompositeJSONProvider(jsonProvider1, jsonProvider2);
     compositeJSONProvider2 = new CompositeJSONProvider(jsonProvider2, jsonProvider1);
   }
@@ -64,7 +62,6 @@ public class TestCompositeJSONProvider {
     Assert.assertEquals(jsonObject.getJSONObject("key4").get("key5"), "value5");
     Assert.assertEquals(jsonObject.getJSONObject("key4").get("key6"), "value6");
     Assert.assertEquals(jsonObject.getJSONObject("key4").get("key7"), "value7b");
-
   }
 
   @Test

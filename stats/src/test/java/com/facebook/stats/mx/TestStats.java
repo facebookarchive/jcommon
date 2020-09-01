@@ -17,14 +17,13 @@ package com.facebook.stats.mx;
 
 import com.facebook.stats.concurrent.Stat;
 import com.google.common.collect.ImmutableMap;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestStats {
   private static final String NOT_INSERTED_KEY = "not Inserted";
@@ -35,11 +34,12 @@ public class TestStats {
   private static final String COUNTER_TO_SET = "count-to-set";
   private static final String COUNTER_NOT_SET = "counter-not-set";
 
-  private Map<String, String> attributeMap = new ImmutableMap.Builder<String, String>()
-    .put(KEY1, KEY2)
-    .put(KEY2, KEY3)
-    .put(KEY3, KEY1)
-    .build();
+  private Map<String, String> attributeMap =
+      new ImmutableMap.Builder<String, String>()
+          .put(KEY1, KEY2)
+          .put(KEY2, KEY3)
+          .put(KEY3, KEY1)
+          .build();
 
   private Stats stats;
 
@@ -63,9 +63,7 @@ public class TestStats {
     Assert.assertEquals(attributeMap, statsAttributes);
   }
 
-  /**
-   * Test the setAttribute(String, String) function
-   */
+  /** Test the setAttribute(String, String) function */
   @Test(groups = "fast")
   public void testAttributeString() {
     for (Map.Entry<String, String> attribute : attributeMap.entrySet()) {
@@ -74,24 +72,23 @@ public class TestStats {
     verifyStatAttributes();
   }
 
-  /**
-   * Test the setAttribute(String, Callable <String> ) function
-   */
+  /** Test the setAttribute(String, Callable <String> ) function */
   @Test(groups = "fast")
   public void testAttributeCallable() {
-    for (final String key: attributeMap.keySet()) {
-      stats.setAttribute(key, 
-        new Callable<String>() {
-          @Override
-          public String call() throws Exception {
-            return TestStats.this.attributeMap.get(key);
-          }
-        });
+    for (final String key : attributeMap.keySet()) {
+      stats.setAttribute(
+          key,
+          new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+              return TestStats.this.attributeMap.get(key);
+            }
+          });
     }
 
     verifyStatAttributes();
   }
-  
+
   @Test(groups = "fast")
   public void testGetEmptyCounter() throws Exception {
     Assert.assertEquals(stats.getCounter("fuu"), 0);
@@ -193,18 +190,17 @@ public class TestStats {
     stats.exportCounters(actual);
     Assert.assertNotNull(stat);
     Assert.assertEquals(
-      actual.toString(),
-      "{" +
-        "test-concurrent.rate=0, " +
-        "test-concurrent.rate.3600=0, " +
-        "test-concurrent.rate.60=0, " +
-        "test-concurrent.rate.600=0, " +
-        "test-concurrent.sum=0, " +
-        "test-concurrent.sum.3600=0, " +
-        "test-concurrent.sum.60=0, " +
-        "test-concurrent.sum.600=0" +
-        "}"
-    );
+        actual.toString(),
+        "{"
+            + "test-concurrent.rate=0, "
+            + "test-concurrent.rate.3600=0, "
+            + "test-concurrent.rate.60=0, "
+            + "test-concurrent.rate.600=0, "
+            + "test-concurrent.sum=0, "
+            + "test-concurrent.sum.3600=0, "
+            + "test-concurrent.sum.60=0, "
+            + "test-concurrent.sum.600=0"
+            + "}");
   }
 
   @Test(groups = "fast")
@@ -215,26 +211,25 @@ public class TestStats {
     stats.exportCounters(actual);
     Assert.assertNotNull(stat);
     Assert.assertEquals(
-      actual.toString(),
-      "{" +
-        "test-concurrent.avg=0, " +
-        "test-concurrent.avg.3600=0, " +
-        "test-concurrent.avg.60=0, " +
-        "test-concurrent.avg.600=0, " +
-        "test-concurrent.max=-9223372036854775808, " +
-        "test-concurrent.max.3600=-9223372036854775808, " +
-        "test-concurrent.max.60=-9223372036854775808, " +
-        "test-concurrent.max.600=-9223372036854775808, " +
-        "test-concurrent.min=9223372036854775807, " +
-        "test-concurrent.min.3600=9223372036854775807, " +
-        "test-concurrent.min.60=9223372036854775807, " +
-        "test-concurrent.min.600=9223372036854775807, " +
-        "test-concurrent.samples=0, " +
-        "test-concurrent.samples.3600=0, " +
-        "test-concurrent.samples.60=0, " +
-        "test-concurrent.samples.600=0" +
-        "}"
-    );
+        actual.toString(),
+        "{"
+            + "test-concurrent.avg=0, "
+            + "test-concurrent.avg.3600=0, "
+            + "test-concurrent.avg.60=0, "
+            + "test-concurrent.avg.600=0, "
+            + "test-concurrent.max=-9223372036854775808, "
+            + "test-concurrent.max.3600=-9223372036854775808, "
+            + "test-concurrent.max.60=-9223372036854775808, "
+            + "test-concurrent.max.600=-9223372036854775808, "
+            + "test-concurrent.min=9223372036854775807, "
+            + "test-concurrent.min.3600=9223372036854775807, "
+            + "test-concurrent.min.60=9223372036854775807, "
+            + "test-concurrent.min.600=9223372036854775807, "
+            + "test-concurrent.samples=0, "
+            + "test-concurrent.samples.3600=0, "
+            + "test-concurrent.samples.60=0, "
+            + "test-concurrent.samples.600=0"
+            + "}");
   }
 
   @Test(groups = "fast")
@@ -245,39 +240,36 @@ public class TestStats {
     stats.exportCounters(actual);
     Assert.assertNotNull(stat);
     Assert.assertEquals(
-      actual.toString(),
-      "{" +
-        "test-concurrent.avg=0, " +
-        "test-concurrent.avg.3600=0, " +
-        "test-concurrent.avg.60=0, " +
-        "test-concurrent.avg.600=0, " +
-        "test-concurrent.max=-9223372036854775808, " +
-        "test-concurrent.max.3600=-9223372036854775808, " +
-        "test-concurrent.max.60=-9223372036854775808, " +
-        "test-concurrent.max.600=-9223372036854775808, " +
-        "test-concurrent.min=9223372036854775807, " +
-        "test-concurrent.min.3600=9223372036854775807, " +
-        "test-concurrent.min.60=9223372036854775807, " +
-        "test-concurrent.min.600=9223372036854775807, " +
-        "test-concurrent.rate=0, " +
-        "test-concurrent.rate.3600=0, " +
-        "test-concurrent.rate.60=0, " +
-        "test-concurrent.rate.600=0, " +
-        "test-concurrent.samples=0, " +
-        "test-concurrent.samples.3600=0, " +
-        "test-concurrent.samples.60=0, " +
-        "test-concurrent.samples.600=0, " +
-        "test-concurrent.sum=0, " +
-        "test-concurrent.sum.3600=0, " +
-        "test-concurrent.sum.60=0, " +
-        "test-concurrent.sum.600=0" +
-        "}"
-    );
+        actual.toString(),
+        "{"
+            + "test-concurrent.avg=0, "
+            + "test-concurrent.avg.3600=0, "
+            + "test-concurrent.avg.60=0, "
+            + "test-concurrent.avg.600=0, "
+            + "test-concurrent.max=-9223372036854775808, "
+            + "test-concurrent.max.3600=-9223372036854775808, "
+            + "test-concurrent.max.60=-9223372036854775808, "
+            + "test-concurrent.max.600=-9223372036854775808, "
+            + "test-concurrent.min=9223372036854775807, "
+            + "test-concurrent.min.3600=9223372036854775807, "
+            + "test-concurrent.min.60=9223372036854775807, "
+            + "test-concurrent.min.600=9223372036854775807, "
+            + "test-concurrent.rate=0, "
+            + "test-concurrent.rate.3600=0, "
+            + "test-concurrent.rate.60=0, "
+            + "test-concurrent.rate.600=0, "
+            + "test-concurrent.samples=0, "
+            + "test-concurrent.samples.3600=0, "
+            + "test-concurrent.samples.60=0, "
+            + "test-concurrent.samples.600=0, "
+            + "test-concurrent.sum=0, "
+            + "test-concurrent.sum.3600=0, "
+            + "test-concurrent.sum.60=0, "
+            + "test-concurrent.sum.600=0"
+            + "}");
   }
 
-  /**
-   * Helper class for testing dynamic counters.
-   */
+  /** Helper class for testing dynamic counters. */
   private static class LongWrapper implements Callable<Long> {
     private long value;
 

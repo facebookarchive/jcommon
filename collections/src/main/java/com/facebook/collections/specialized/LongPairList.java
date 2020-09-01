@@ -15,14 +15,12 @@
  */
 package com.facebook.collections.specialized;
 
-
 import java.util.Arrays;
 
 /**
  * sorts tuples by their first element in ascending order. The first element may not be negative,
  * but subsequent ones may be
  */
-
 public class LongPairList extends AbstractLongTupleList implements LongTupleHeap {
 
   private LongPairList(long[] tuples, int size) {

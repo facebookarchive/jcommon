@@ -15,19 +15,17 @@
  */
 package com.facebook.stats.cardinality;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-
-import static org.testng.Assert.assertTrue;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.testng.annotations.Test;
 
 public class TestHyperLogLog {
   @Test(groups = "slow")
-  public void testError()
-    throws Exception {
+  public void testError() throws Exception {
     DescriptiveStatistics stats = new DescriptiveStatistics();
     int buckets = 2048;
     for (int i = 0; i < 10000; ++i) {

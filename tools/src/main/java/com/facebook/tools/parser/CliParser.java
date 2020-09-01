@@ -16,7 +16,6 @@
 package com.facebook.tools.parser;
 
 import com.facebook.tools.ErrorMessage;
-
 import java.io.PrintStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -100,9 +99,7 @@ public class CliParser {
       switches.add(parameter.getName());
 
       if (parameter.isRequired()) {
-        CliOption option = new CliOption.SwitchBuilder()
-          .withSwitch(parameter.getName())
-          .build();
+        CliOption option = new CliOption.SwitchBuilder().withSwitch(parameter.getName()).build();
 
         missing.add(option);
       }
@@ -177,8 +174,7 @@ public class CliParser {
   public <T> T get(String option, CliConverter<T> converter) {
     if (!switches.contains(option)) {
       throw new IllegalStateException(
-        String.format("Expected option name to be one of %s, but got %s", switches, option)
-      );
+          String.format("Expected option name to be one of %s, but got %s", switches, option));
     }
 
     String value = values.get(option);
@@ -236,8 +232,7 @@ public class CliParser {
   }
 
   private static List<Map.Entry<String, String>> getOption(
-    CliOption option, ArgumentList argumentList
-  ) {
+      CliOption option, ArgumentList argumentList) {
     List<Map.Entry<String, String>> result = new ArrayList<>();
     boolean flag = option.isFlag();
 
@@ -258,7 +253,7 @@ public class CliParser {
 
       if (defaultValue != null) {
         Map.Entry<String, String> defaultEntry =
-          new AbstractMap.SimpleImmutableEntry<>(last(option.getSwitchNames()), defaultValue);
+            new AbstractMap.SimpleImmutableEntry<>(last(option.getSwitchNames()), defaultValue);
 
         result.add(defaultEntry);
       }

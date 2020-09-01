@@ -50,4 +50,3 @@ public class StandardObjectMapper {
     throw new AssertionError();
   }
 }
-

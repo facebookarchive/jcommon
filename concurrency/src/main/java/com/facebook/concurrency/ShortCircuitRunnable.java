@@ -15,12 +15,10 @@
  */
 package com.facebook.concurrency;
 
-import com.google.common.base.Function;
-
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.facebook.util.ExtRunnable;
 import com.facebook.util.exceptions.ExceptionHandler;
+import com.google.common.base.Function;
+import java.util.concurrent.atomic.AtomicReference;
 
 class ShortCircuitRunnable<E extends Exception> implements Function<ExtRunnable<E>, Runnable> {
   private final AtomicReference<E> exception;

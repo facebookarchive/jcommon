@@ -16,10 +16,9 @@
 package com.facebook.stats.cardinality;
 
 import com.google.common.base.Throwables;
-import sun.misc.Unsafe;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import sun.misc.Unsafe;
 
 class UnsafeUtil {
   private static final Unsafe unsafe;

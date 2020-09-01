@@ -21,6 +21,10 @@ import java.util.function.Supplier;
 public class TestExtLongSupplier extends TestQuietFunctionBase {
   @Override
   protected void throwFromQuiet(Supplier<? extends Throwable> toThrow) {
-    ExtLongSupplier.quiet(() -> { throw toThrow.get(); }).getAsLong();
+    ExtLongSupplier.quiet(
+            () -> {
+              throw toThrow.get();
+            })
+        .getAsLong();
   }
 }

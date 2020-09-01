@@ -17,7 +17,6 @@ package com.facebook.stats.topk;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Longs;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -59,11 +58,12 @@ public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
 
   @Override
   public synchronized List<T> getTopK() {
-    Comparator<T> comparator = new Comparator<T>() {
-      public int compare(T key1, T key2) {
-        return Longs.compare(counts.get(key1), counts.get(key2));
-      }
-    };
+    Comparator<T> comparator =
+        new Comparator<T>() {
+          public int compare(T key1, T key2) {
+            return Longs.compare(counts.get(key1), counts.get(key2));
+          }
+        };
     PriorityQueue<T> topK = new PriorityQueue<T>(k, comparator);
 
     for (Map.Entry<T, Long> entry : counts.entrySet()) {

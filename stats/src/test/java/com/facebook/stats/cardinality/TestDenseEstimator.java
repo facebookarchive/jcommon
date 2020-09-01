@@ -15,12 +15,11 @@
  */
 package com.facebook.stats.cardinality;
 
-import org.testng.annotations.Test;
-
 import static org.testng.Assert.assertEquals;
 
-public class TestDenseEstimator
-  extends TestEstimator {
+import org.testng.annotations.Test;
+
+public class TestDenseEstimator extends TestEstimator {
   @Override
   protected Estimator getEstimator() {
     return new DenseEstimator(1024);

@@ -15,8 +15,8 @@
  */
 package com.facebook.stats.concurrent;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import static java.lang.Long.MAX_VALUE;
+import static java.lang.Long.MIN_VALUE;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -25,9 +25,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import static java.lang.Long.MAX_VALUE;
-import static java.lang.Long.MIN_VALUE;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class TestSpreadStat {
   @Test
@@ -344,10 +343,9 @@ public class TestSpreadStat {
 
     private void assertCounter(String name, Long actual, Long expected) {
       Assert.assertEquals(
-        actual,
-        expected,
-        name + " @ " + (clock.instant().getEpochSecond() - START.toInstant().getEpochSecond())
-      );
+          actual,
+          expected,
+          name + " @ " + (clock.instant().getEpochSecond() - START.toInstant().getEpochSecond()));
     }
   }
 

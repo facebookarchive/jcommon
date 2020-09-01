@@ -25,22 +25,21 @@ public class Lists {
   }
 
   public static <T extends Comparable<? super T>> int compareLists(
-    List<? extends T> list1,
-    List<? extends T> list2
-  ) {
-    Comparator<T> comparator = new Comparator<T>() {
-      @Override
-      public int compare(T o1, T o2) {
-        return o1.compareTo(o2);
-      }
-    };
+      List<? extends T> list1, List<? extends T> list2) {
+    Comparator<T> comparator =
+        new Comparator<T>() {
+          @Override
+          public int compare(T o1, T o2) {
+            return o1.compareTo(o2);
+          }
+        };
 
     return compareLists(list1, list2, comparator);
   }
 
   /**
-   * compares lists lexicographically as though elements are characters in
-   * an alphabet that are ordered by comparator
+   * compares lists lexicographically as though elements are characters in an alphabet that are
+   * ordered by comparator
    *
    * @param list1
    * @param list2
@@ -49,10 +48,7 @@ public class Lists {
    * @return -1, 0, 1 according to Comparator specs
    */
   public static <T> int compareLists(
-    List<? extends T> list1,
-    List<? extends T> list2,
-    Comparator<? super T> comparator
-  ) {
+      List<? extends T> list1, List<? extends T> list2, Comparator<? super T> comparator) {
     Iterator<? extends T> iter1 = list1.iterator();
     Iterator<? extends T> iter2 = list2.iterator();
 
@@ -94,22 +90,19 @@ public class Lists {
     }
   }
 
-  public static <T extends Comparable<? super T>> int compareArrays(
-    T[] array1, T[] array2
-  ) {
-    Comparator<T> comparator = new Comparator<T>() {
-      @Override
-      public int compare(T o1, T o2) {
-        return o1.compareTo(o2);
-      }
-    };
+  public static <T extends Comparable<? super T>> int compareArrays(T[] array1, T[] array2) {
+    Comparator<T> comparator =
+        new Comparator<T>() {
+          @Override
+          public int compare(T o1, T o2) {
+            return o1.compareTo(o2);
+          }
+        };
 
-    return compareArrays( array1, array2, comparator);
+    return compareArrays(array1, array2, comparator);
   }
 
-  public static <T> int compareArrays(
-    T[] array1, T[] array2, Comparator<? super T> comparator
-  ) {
+  public static <T> int compareArrays(T[] array1, T[] array2, Comparator<? super T> comparator) {
     for (int i = 0; i < array1.length && i < array2.length; i++) {
       int result = comparator.compare(array1[i], array2[i]);
 
@@ -126,5 +119,4 @@ public class Lists {
       return -1;
     }
   }
-
 }

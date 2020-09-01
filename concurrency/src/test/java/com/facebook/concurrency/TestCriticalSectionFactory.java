@@ -16,11 +16,10 @@
 package com.facebook.concurrency;
 
 import com.facebook.testing.TestUtils;
+import java.util.concurrent.CountDownLatch;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.concurrent.CountDownLatch;
 
 public class TestCriticalSectionFactory {
   private int count;
@@ -34,19 +33,20 @@ public class TestCriticalSectionFactory {
     count = 0;
     criticalSectionLatch = new CountDownLatch(1);
     entryLatch = new CountDownLatch(1);
-    runnable = new Runnable() {
-      @Override
-      public void run() {
-        try {
-          entryLatch.countDown();
-          criticalSectionLatch.await();
-        } catch (InterruptedException e) {
-          Assert.fail("test interrupted");
-        }
-        
-        count++;
-      }
-    };
+    runnable =
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              entryLatch.countDown();
+              criticalSectionLatch.await();
+            } catch (InterruptedException e) {
+              Assert.fail("test interrupted");
+            }
+
+            count++;
+          }
+        };
     factory = new CriticalSectionFactory();
   }
 
@@ -60,10 +60,10 @@ public class TestCriticalSectionFactory {
     // now start t2 and wait until it skips critical section
     Thread t2 = TestUtils.runInThread(criticalSection);
     t2.join();
-    // let t1 out of critical section 
+    // let t1 out of critical section
     criticalSectionLatch.countDown();
     t1.join();
-    
+
     // only t1 should make it through critical section
     Assert.assertEquals(count, 1, "too many critical section calls");
   }

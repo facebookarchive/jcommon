@@ -17,7 +17,6 @@ package com.facebook.tools.subprocess;
 
 import com.facebook.tools.ErrorMessage;
 import com.facebook.tools.io.IO;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -53,8 +52,7 @@ class SubprocessImpl implements Subprocess {
   private final Thread shutdownHook;
 
   SubprocessImpl(
-    List<String> command, Process process, IO echo, int outputBytesLimit, boolean streaming
-  ) {
+      List<String> command, Process process, IO echo, int outputBytesLimit, boolean streaming) {
     this.command = new ArrayList<>(command);
     this.process = process;
 
@@ -82,33 +80,30 @@ class SubprocessImpl implements Subprocess {
     stdout = new Output(processInputStream, outputBytesLimit, streaming);
     stderr = new Output(processErrorStream, outputBytesLimit, false);
     stdoutExecutorService =
-      Executors.newCachedThreadPool(new NamedDaemonThreadFactory(name + "-stdout"));
+        Executors.newCachedThreadPool(new NamedDaemonThreadFactory(name + "-stdout"));
     stderrExecutorService =
-      Executors.newCachedThreadPool(new NamedDaemonThreadFactory(name + "-stderr"));
+        Executors.newCachedThreadPool(new NamedDaemonThreadFactory(name + "-stderr"));
     stdoutFuture = stdoutExecutorService.submit(stdout);
     stderrFuture = stderrExecutorService.submit(stderr);
 
-    shutdownHook = new Thread(
-      new Runnable() {
-        @Override
-        public void run() {
-          //noinspection EmptyTryBlock,UnusedDeclaration
-          try (
-            InputStream inputStream = process.getInputStream();
-            OutputStream outputStream = process.getOutputStream();
-            InputStream errorStream = process.getErrorStream()
-          ) {
-          } catch (IOException | RuntimeException ignored) {
-          }
+    shutdownHook =
+        new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                //noinspection EmptyTryBlock,UnusedDeclaration
+                try (InputStream inputStream = process.getInputStream();
+                    OutputStream outputStream = process.getOutputStream();
+                    InputStream errorStream = process.getErrorStream()) {
+                } catch (IOException | RuntimeException ignored) {
+                }
 
-          process.destroy();
-        }
-      }
-    );
+                process.destroy();
+              }
+            });
 
     Runtime.getRuntime().addShutdownHook(shutdownHook);
   }
-
 
   @Override
   public List<String> command() {
@@ -170,13 +165,11 @@ class SubprocessImpl implements Subprocess {
   @Override
   public void kill() {
     //noinspection EmptyTryBlock,UnusedDeclaration
-    try (
-      Output stdout = this.stdout;
-      Output stderr = this.stderr;
-      InputStream inputStream = process.getInputStream();
-      OutputStream outputStream = process.getOutputStream();
-      InputStream errorStream = process.getErrorStream()
-    ) {
+    try (Output stdout = this.stdout;
+        Output stderr = this.stderr;
+        InputStream inputStream = process.getInputStream();
+        OutputStream outputStream = process.getOutputStream();
+        InputStream errorStream = process.getErrorStream()) {
     } catch (IOException | RuntimeException ignored) {
     }
 
@@ -296,10 +289,7 @@ class SubprocessImpl implements Subprocess {
 
   @Override
   public String toString() {
-    return "SubprocessImpl{" +
-      "name='" + name + '\'' +
-      ", consumedStdout=" + consumedStdout +
-      '}';
+    return "SubprocessImpl{" + "name='" + name + '\'' + ", consumedStdout=" + consumedStdout + '}';
   }
 
   private InputStream getStdOut() {

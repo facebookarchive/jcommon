@@ -15,6 +15,9 @@
  */
 package com.facebook.tools.example;
 
+import static org.apache.thrift.transport.TTransportException.TIMED_OUT;
+import static org.apache.thrift.transport.TTransportException.UNKNOWN;
+
 import com.facebook.nifty.client.FramedClientConnector;
 import com.facebook.nifty.client.NiftyClientChannel;
 import com.facebook.nifty.client.NiftyClientConnector;
@@ -28,12 +31,8 @@ import com.facebook.tools.parser.CliParser;
 import com.facebook.tools.parser.OneOfConverter;
 import com.google.common.base.Throwables;
 import com.google.common.net.HostAndPort;
-import org.apache.thrift.transport.TTransportException;
-
 import java.util.concurrent.ExecutionException;
-
-import static org.apache.thrift.transport.TTransportException.TIMED_OUT;
-import static org.apache.thrift.transport.TTransportException.UNKNOWN;
+import org.apache.thrift.transport.TTransportException;
 
 public class ThriftService<T> {
   private final Class<T> service;
@@ -49,13 +48,12 @@ public class ThriftService<T> {
 
   public ThriftService(Class<T> service, CliParser parser) {
     this(
-      service,
-      Transport.valueOf(
-        parser.get("--thrift-transport", OneOfConverter.oneOf("framed", "buffered")).toUpperCase()
-      ),
-      new ThriftClientConfig()
-        .setSocksProxy(parser.get("--socks", Converters.HOST_PORT))
-    );
+        service,
+        Transport.valueOf(
+            parser
+                .get("--thrift-transport", OneOfConverter.oneOf("framed", "buffered"))
+                .toUpperCase()),
+        new ThriftClientConfig().setSocksProxy(parser.get("--socks", Converters.HOST_PORT)));
   }
 
   public ThriftService(Class<T> service) {
@@ -77,15 +75,17 @@ public class ThriftService<T> {
   }
 
   public static void mixin(CliCommand.Builder builder) {
-    builder.addOption("--socks")
-      .withMetavar("proxy")
-      .withDescription("SOCKS proxy address")
-      .withExample("localhost:1080")
-      .withDefault(null);
-    builder.addOption("--thrift-transport")
-      .withMetavar("type")
-      .withDescription("Transport type, one of: framed, buffered")
-      .withDefault("framed");
+    builder
+        .addOption("--socks")
+        .withMetavar("proxy")
+        .withDescription("SOCKS proxy address")
+        .withExample("localhost:1080")
+        .withDefault(null);
+    builder
+        .addOption("--thrift-transport")
+        .withMetavar("type")
+        .withDescription("Transport type, one of: framed, buffered")
+        .withDefault("framed");
   }
 
   public static enum Transport {
@@ -94,7 +94,7 @@ public class ThriftService<T> {
   }
 
   private T openService(HostAndPort host, ThriftClient<T> client, Transport transport)
-    throws TTransportException {
+      throws TTransportException {
     try {
       NiftyClientConnector<? extends NiftyClientChannel> connector;
 
@@ -120,4 +120,3 @@ public class ThriftService<T> {
     }
   }
 }
-

@@ -15,14 +15,13 @@
  */
 package com.facebook.stats.concurrent;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestRateStat {
   private static final ZonedDateTime START = ZonedDateTime.parse("2014-08-22T01:02:03.123Z");
@@ -127,12 +126,11 @@ public class TestRateStat {
 
       values.addFirst(value);
       assertSum(
-        rateStat,
-        values.stream().limit(60).mapToLong(Integer::longValue).sum(),
-        values.stream().limit(600).mapToLong(Integer::longValue).sum(),
-        values.stream().limit(3600).mapToLong(Integer::longValue).sum(),
-        values.stream().mapToLong(Integer::valueOf).sum()
-      );
+          rateStat,
+          values.stream().limit(60).mapToLong(Integer::longValue).sum(),
+          values.stream().limit(600).mapToLong(Integer::longValue).sum(),
+          values.stream().limit(3600).mapToLong(Integer::longValue).sum(),
+          values.stream().mapToLong(Integer::valueOf).sum());
       clock.advanceMillis(1_000);
     }
   }
@@ -145,12 +143,7 @@ public class TestRateStat {
       clock.advanceMillis(1_000);
       rateStat.update(10);
       assertSum(
-        rateStat,
-        10 * Math.min(i, 60),
-        10 * Math.min(i, 600),
-        10 * Math.min(i, 3600),
-        10 * i
-      );
+          rateStat, 10 * Math.min(i, 60), 10 * Math.min(i, 600), 10 * Math.min(i, 3600), 10 * i);
       assertRate(rateStat, 10, 10, 10, 10);
     }
   }
@@ -176,8 +169,7 @@ public class TestRateStat {
     Snapshot expected = new Snapshot("sum", allTime, hour, tenMinute, minute);
 
     Assert.assertEquals(
-      actual, expected, "sum @ " + ((clock.millis() - START.toInstant().toEpochMilli()) / 1000)
-    );
+        actual, expected, "sum @ " + ((clock.millis() - START.toInstant().toEpochMilli()) / 1000));
   }
 
   private void assertRate(RateStat rateStat, long minute, long tenMinute, long hour, long allTime) {
@@ -185,7 +177,6 @@ public class TestRateStat {
     Snapshot expected = new Snapshot("rate", allTime, hour, tenMinute, minute);
 
     Assert.assertEquals(
-      actual, expected, "rate @ " + ((clock.millis() - START.toInstant().toEpochMilli()) / 1000)
-    );
+        actual, expected, "rate @ " + ((clock.millis() - START.toInstant().toEpochMilli()) / 1000));
   }
 }

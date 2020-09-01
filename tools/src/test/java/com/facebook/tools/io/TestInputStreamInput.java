@@ -15,13 +15,12 @@
  */
 package com.facebook.tools.io;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class TestInputStreamInput {
   @Test(groups = "fast")
@@ -47,9 +46,8 @@ public class TestInputStreamInput {
 
   @Test(groups = "fast")
   public void testIterator() throws Exception {
-    ByteArrayInputStream inputStream = new ByteArrayInputStream(
-      "This is\na test\nof iteration\n".getBytes()
-    );
+    ByteArrayInputStream inputStream =
+        new ByteArrayInputStream("This is\na test\nof iteration\n".getBytes());
     InputStreamInput input = new InputStreamInput(inputStream);
     List<String> lines = new ArrayList<>();
 

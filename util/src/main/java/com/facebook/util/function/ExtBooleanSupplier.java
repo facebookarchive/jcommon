@@ -20,7 +20,7 @@ import java.util.function.BooleanSupplier;
 
 public interface ExtBooleanSupplier<E extends Throwable> {
   boolean getAsBoolean() throws E;
-  
+
   static BooleanSupplier quiet(ExtBooleanSupplier<?> booleanSupplier) {
     return () -> {
       try {

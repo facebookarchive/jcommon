@@ -44,6 +44,6 @@ public class LongHashSetFactory implements SetFactory<Long, SnapshotableSet<Long
   @Override
   public SnapshotableSet<Long> create() {
     // we don't want more than 20% of maxSetSize allocated
-    return new LongHashSet(initialSize, (int)((1.2f)*maxSetSize));
+    return new LongHashSet(initialSize, (int) ((1.2f) * maxSetSize));
   }
 }

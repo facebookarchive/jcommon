@@ -22,17 +22,14 @@ import gnu.trove.impl.sync.TSynchronizedIntSet;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-
-import javax.annotation.concurrent.GuardedBy;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import javax.annotation.concurrent.GuardedBy;
 
-/**
- * making this take a Long for compatibility, but operates on integers
- */
+/** making this take a Long for compatibility, but operates on integers */
 public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
   private static final float MAX_LOAD_FACTOR = 2 / 3.0f;
 
@@ -45,11 +42,10 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
 
   public IntegerHashSet(int initialCapacity, int maxCapacity) {
     Preconditions.checkArgument(
-      initialCapacity <= maxCapacity,
-      "initial capacity of %s cannot be larger than max of %s",
-      initialCapacity,
-      maxCapacity
-    );
+        initialCapacity <= maxCapacity,
+        "initial capacity of %s cannot be larger than max of %s",
+        initialCapacity,
+        maxCapacity);
     set = new TSynchronizedIntSet(new TIntHashSet(initialCapacity, MAX_LOAD_FACTOR, -1), mutex);
     this.maxCapacity = maxCapacity;
   }
@@ -68,7 +64,6 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
     if (value instanceof Integer || value instanceof Long) {
       synchronized (mutex) {
         return set.contains(((Number) value).intValue());
-
       }
     }
 
@@ -86,10 +81,9 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
       // there must be room for at least one element, even adding duplicates; the point is, no
       // add() should be called once we're maxed out.
       Preconditions.checkState(
-        set.size() < maxCapacity,
-        "set is size %s which means we're full, but someone's calling add. Why?",
-        set.size()
-      );
+          set.size() < maxCapacity,
+          "set is size %s which means we're full, but someone's calling add. Why?",
+          set.size());
 
       if (set.add(value.intValue())) {
         hasChanged = true;
@@ -191,10 +185,9 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
 
     for (Long value : values) {
       Preconditions.checkState(
-        set.size() < maxCapacity,
-        "set is size %s which means we're full, but someone's calling add. Why?",
-        set.size()
-      );
+          set.size() < maxCapacity,
+          "set is size %s which means we're full, but someone's calling add. Why?",
+          set.size());
       retVal |= set.add(value.intValue());
     }
 

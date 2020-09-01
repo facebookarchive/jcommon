@@ -19,9 +19,10 @@ import java.util.function.DoubleBinaryOperator;
 
 public interface ExtDoubleBinaryOperator<E extends Throwable> {
   double applyAsDouble(double left, double right) throws E;
-  
+
   static DoubleBinaryOperator quiet(ExtDoubleBinaryOperator<?> doubleBinaryOperator) {
     return (left, right) ->
-        ExtDoubleSupplier.quiet(() -> doubleBinaryOperator.applyAsDouble(left, right)).getAsDouble();
+        ExtDoubleSupplier.quiet(() -> doubleBinaryOperator.applyAsDouble(left, right))
+            .getAsDouble();
   }
 }

@@ -22,22 +22,17 @@ class NullOutputStream extends OutputStream {
   public static final NullOutputStream INSTANCE = new NullOutputStream();
 
   @Override
-  public void write(int b) {
-  }
+  public void write(int b) {}
 
   @Override
-  public void write(byte[] b) {
-  }
+  public void write(byte[] b) {}
 
   @Override
-  public void write(byte[] b, int off, int len) {
-  }
+  public void write(byte[] b, int off, int len) {}
 
   @Override
-  public void flush() throws IOException {
-  }
+  public void flush() throws IOException {}
 
   @Override
-  public void close() throws IOException {
-  }
+  public void close() throws IOException {}
 }

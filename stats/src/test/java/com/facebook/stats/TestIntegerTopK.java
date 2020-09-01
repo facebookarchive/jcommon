@@ -15,17 +15,15 @@
  */
 package com.facebook.stats;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
+import static org.testng.Assert.assertEquals;
 
 import com.facebook.logging.Logger;
 import com.facebook.stats.topk.TopK;
-
-import static org.testng.Assert.assertEquals;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public abstract class TestIntegerTopK {
   // few hundred millis each test to keep tests short
@@ -65,17 +63,19 @@ public abstract class TestIntegerTopK {
     assertTopK(topK, 3, 2, 4);
   }
 
-  @Test(groups = "fast",
-        expectedExceptions = IllegalArgumentException.class,
-        expectedExceptionsMessageRegExp = "count to add must be non-negative, got -3")
+  @Test(
+      groups = "fast",
+      expectedExceptions = IllegalArgumentException.class,
+      expectedExceptionsMessageRegExp = "count to add must be non-negative, got -3")
   public void testAddNegative() {
     TopK<Integer> topK = getInstance(10, 3);
     topK.add(0, -3);
   }
 
-  @Test(groups = "fast",
-        expectedExceptions = NullPointerException.class,
-        expectedExceptionsMessageRegExp = "key can't be null")
+  @Test(
+      groups = "fast",
+      expectedExceptions = NullPointerException.class,
+      expectedExceptionsMessageRegExp = "key can't be null")
   public void testNullKey() {
     TopK<Integer> topK = getInstance(10, 3);
     topK.add(null, 1);
@@ -108,11 +108,10 @@ public abstract class TestIntegerTopK {
     }
 
     LOG.info(
-      "Processed %d entries in %d ms. Insertion rate = %f entries/s",
-      count,
-      TimeUnit.NANOSECONDS.toMillis(totalTime),
-      count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
-    );
+        "Processed %d entries in %d ms. Insertion rate = %f entries/s",
+        count,
+        TimeUnit.NANOSECONDS.toMillis(totalTime),
+        count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1)));
   }
 
   @Test(groups = "slow")
@@ -145,11 +144,10 @@ public abstract class TestIntegerTopK {
     }
 
     LOG.info(
-      "Processed %d entries in %d ms. Retrieval rate = %f retrievals/s",
-      count,
-      TimeUnit.NANOSECONDS.toMillis(totalTime),
-      count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1))
-    );
+        "Processed %d entries in %d ms. Retrieval rate = %f retrievals/s",
+        count,
+        TimeUnit.NANOSECONDS.toMillis(totalTime),
+        count / (totalTime * 1.0 / TimeUnit.SECONDS.toNanos(1)));
   }
 
   private static void assertTopK(TopK<Integer> topK, Integer... expected) {

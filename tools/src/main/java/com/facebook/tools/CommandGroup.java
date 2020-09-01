@@ -15,10 +15,9 @@
  */
 package com.facebook.tools;
 
+import com.facebook.tools.io.IO;
 import com.facebook.tools.parser.CliCommand;
 import com.facebook.tools.parser.CliParser;
-import com.facebook.tools.io.IO;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,8 +26,8 @@ public class CommandGroup implements CommandBuilder {
   private final CommandDispatcher commandDispatcher;
 
   public CommandGroup(IO io, String name, String description, List<CommandBuilder> commands) {
-    CliCommand.Builder builder = new CliCommand.Builder(name, description)
-      .allowTrailingParameters();
+    CliCommand.Builder builder =
+        new CliCommand.Builder(name, description).allowTrailingParameters();
 
     command = builder.build();
     commandDispatcher = new CommandDispatcher(io, name, commands);

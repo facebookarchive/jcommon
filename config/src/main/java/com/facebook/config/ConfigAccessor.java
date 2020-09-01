@@ -20,11 +20,6 @@ import com.facebook.collectionsbase.Mapper;
 import com.facebook.logging.Logger;
 import com.facebook.logging.LoggerImpl;
 import com.google.common.collect.Maps;
-import org.joda.time.Duration;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,11 +27,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.joda.time.Duration;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
- * 1. wraps a JSONObject that contains configuration information.
- * 2. converts JSONExceptions to a runtime ConfigException
- * 3. provides clean conversions to primitive types and annotated bean classes
+ * 1. wraps a JSONObject that contains configuration information. 2. converts JSONExceptions to a
+ * runtime ConfigException 3. provides clean conversions to primitive types and annotated bean
+ * classes
  */
 public class ConfigAccessor {
   private static final Logger LOG = LoggerImpl.getClassLogger();
@@ -51,10 +50,7 @@ public class ConfigAccessor {
     return new ConfigAccessor(new JSONObject());
   }
 
-  public <T> T getBean(
-    String key,
-    Class<? extends ExtractableBeanBuilder<T>> beanBuilderClass
-  ) {
+  public <T> T getBean(String key, Class<? extends ExtractableBeanBuilder<T>> beanBuilderClass) {
     try {
       JSONObject jsonBean = get(key, null, new JSONObjectExtractor());
       ConfigAccessor jsonBeanAccessor = new ConfigAccessor(jsonBean);
@@ -66,10 +62,8 @@ public class ConfigAccessor {
 
           if (extractor != null) {
             if (!Extractor.class.isAssignableFrom(extractor.extractorClass())) {
-              String message = String.format(
-                "extractor %s does not extend Extractor.class",
-                extractor
-              );
+              String message =
+                  String.format("extractor %s does not extend Extractor.class", extractor);
 
               LOG.error(message);
 
@@ -80,11 +74,9 @@ public class ConfigAccessor {
             // and it is present; ie, if it's not optional and not there, let
             // get() throw a ConfigException
             if (!extractor.optional() || jsonBeanAccessor.hasKey(extractor.key())) {
-              Object value = jsonBeanAccessor.get(
-                extractor.key(),
-                null,
-                (Extractor) extractor.extractorClass().newInstance()
-              );
+              Object value =
+                  jsonBeanAccessor.get(
+                      extractor.key(), null, (Extractor) extractor.extractorClass().newInstance());
 
               m.invoke(beanBuilder, value);
             }
@@ -125,16 +117,14 @@ public class ConfigAccessor {
   }
 
   public long getSizeBytes(String key, Long defaultValue) {
-    return hasKey(key) ?
-      ConfigUtil.getSizeBytes(getString(key)) : defaultValue;
+    return hasKey(key) ? ConfigUtil.getSizeBytes(getString(key)) : defaultValue;
   }
 
   public Boolean getBoolean(String key) throws ConfigException {
     return getBoolean(key, null);
   }
 
-  public Boolean getBoolean(String key, Boolean defaultValue)
-    throws ConfigException {
+  public Boolean getBoolean(String key, Boolean defaultValue) throws ConfigException {
     return get(key, defaultValue, new BooleanExtractor());
   }
 
@@ -172,25 +162,26 @@ public class ConfigAccessor {
 
   public Map<String, String> getStringMap(String key) {
     return get(
-      key, null, new Extractor<Map<String, String>>() {
-      @Override
-      public Map<String, String> extract(String key, JSONObject jsonObject)
-        throws JSONException {
-        Map<String, String> map = new HashMap<>();
-        JSONObject jsonMap = jsonObject.getJSONObject(key);
-        ConfigAccessor mapAccessor = new ConfigAccessor(jsonMap);
-        Iterator<String> keys = jsonMap.keys();
+        key,
+        null,
+        new Extractor<Map<String, String>>() {
+          @Override
+          public Map<String, String> extract(String key, JSONObject jsonObject)
+              throws JSONException {
+            Map<String, String> map = new HashMap<>();
+            JSONObject jsonMap = jsonObject.getJSONObject(key);
+            ConfigAccessor mapAccessor = new ConfigAccessor(jsonMap);
+            Iterator<String> keys = jsonMap.keys();
 
-        while (keys.hasNext()) {
-          String mapKey = keys.next();
+            while (keys.hasNext()) {
+              String mapKey = keys.next();
 
-          map.put(mapKey, mapAccessor.getString(mapKey));
-        }
+              map.put(mapKey, mapAccessor.getString(mapKey));
+            }
 
-        return map;
-      }
-    }
-    );
+            return map;
+          }
+        });
   }
 
   public <T> List<T> getList(String key, Mapper<String, T> converter) {
@@ -214,10 +205,7 @@ public class ConfigAccessor {
         result.add(items.getString(i));
       }
     } catch (JSONException e) {
-      throw new ConfigException(
-        "unable to parse string list for key " + key,
-        e
-      );
+      throw new ConfigException("unable to parse string list for key " + key, e);
     }
 
     return result;
@@ -243,9 +231,7 @@ public class ConfigAccessor {
     return keys;
   }
 
-  /**
-   * @return a copy of the entire configuration in String -> String form
-   */
+  /** @return a copy of the entire configuration in String -> String form */
   public Map<String, String> getConfigAsMap() {
     Map<String, String> configAsMap = Maps.newHashMap();
     Iterator<String> keysIterator = jsonObject.keys();
@@ -282,8 +268,7 @@ public class ConfigAccessor {
     return jsonObject.toString();
   }
 
-  public String toString(int indentFactor)
-    throws ConfigException {
+  public String toString(int indentFactor) throws ConfigException {
     try {
       return jsonObject.toString(indentFactor);
     } catch (JSONException e) {

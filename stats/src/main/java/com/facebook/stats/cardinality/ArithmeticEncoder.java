@@ -17,7 +17,6 @@ package com.facebook.stats.cardinality;
 
 import com.facebook.stats.cardinality.Model.SymbolInfo;
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -90,7 +89,6 @@ class ArithmeticEncoder {
 
   public void close() throws IOException {
     // Write out the shortest value between the high and low values
-
 
     // if there are no underflow bytes...
     if (underflowBytes == 0) {

@@ -25,12 +25,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * the idea here is that we want to shield an ExecutorService from any call
- * that might shut it down, while preserving the semantics that any user
- * of this object can still shut it down, await termination, etc 
- *  from its perspective
- * 
- * Think of it as a localized view of another executor
+ * the idea here is that we want to shield an ExecutorService from any call that might shut it down,
+ * while preserving the semantics that any user of this object can still shut it down, await
+ * termination, etc from its perspective
+ *
+ * <p>Think of it as a localized view of another executor
  */
 public class UnstoppableExecutorService implements ExecutorService {
   private final UnstoppableExecutorServiceCore executorCore;
@@ -56,14 +55,14 @@ public class UnstoppableExecutorService implements ExecutorService {
   @Override
   public Future<?> submit(Runnable task) {
     TrackedRunnable trackedTask = executorCore.registerTask(task);
-    
+
     return executorCore.trackFuture(executor.submit(trackedTask), trackedTask);
   }
 
   @Override
   public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
-    throws InterruptedException {
-    
+      throws InterruptedException {
+
     List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
     return executorCore.trackFutureList(executor.invokeAll(trackedTaskList), trackedTaskList);
@@ -71,31 +70,28 @@ public class UnstoppableExecutorService implements ExecutorService {
 
   @Override
   public <T> List<Future<T>> invokeAll(
-    Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit
-  ) throws InterruptedException {
-    
-    List<TrackedCallable<T>> trackedTaskList = 
-      executorCore.registerCallableList(tasks);
+      Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+      throws InterruptedException {
+
+    List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
     return executorCore.trackFutureList(
-      executor.invokeAll(trackedTaskList, timeout, unit), trackedTaskList
-    );
+        executor.invokeAll(trackedTaskList, timeout, unit), trackedTaskList);
   }
 
   @Override
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
-    throws InterruptedException, ExecutionException {
-    
+      throws InterruptedException, ExecutionException {
+
     List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
-    
 
     return executor.invokeAny(trackedTaskList);
   }
 
   @Override
   public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-    throws InterruptedException, ExecutionException, TimeoutException {
-    
+      throws InterruptedException, ExecutionException, TimeoutException {
+
     List<TrackedCallable<T>> trackedTaskList = executorCore.registerCallableList(tasks);
 
     return executor.invokeAny(trackedTaskList, timeout, unit);

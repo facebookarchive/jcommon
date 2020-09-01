@@ -15,10 +15,9 @@
  */
 package com.facebook.config;
 
+import java.io.File;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
 
 public class ExpandedConfFileJSONProvider extends AbstractExpandedConfJSONProvider {
   public ExpandedConfFileJSONProvider(File root) {

@@ -15,15 +15,13 @@
  */
 package com.facebook.collections;
 
-
 import com.facebook.collectionsbase.Piles;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.List;
 
 public class TestMixedTypeMap {
   private MixedTypeMap<String> stringMap1;
@@ -96,16 +94,14 @@ public class TestMixedTypeMap {
   }
 
   private void asssertSuperTestResults(
-    Key<String, Object> objectKey,
-    Key<String, Number> numberKey,
-    Key<String, Float> floatKey
-  ) {
+      Key<String, Object> objectKey, Key<String, Number> numberKey, Key<String, Float> floatKey) {
     stringMap1.put(objectKey, 37);
     stringMap1.put(numberKey, 4.16);
     // obvious
     Assert.assertEquals(stringMap1.get(objectKey), 37);
     Assert.assertEquals(stringMap1.get(numberKey), 4.16);
-    //should be obvious: readers/writers agree on what key for a given class to use if it implements
+    // should be obvious: readers/writers agree on what key for a given class to use if it
+    // implements
     // several interfaces, not just the inheritance case
     Assert.assertNull(stringMap1.get(floatKey));
   }
@@ -126,14 +122,9 @@ public class TestMixedTypeMap {
   @Test(groups = "fast")
   public void testGenerics() throws Exception {
     TypeToken<List<String>> stringTypeToken = new TypeToken<List<String>>() {};
-    List<String> stringList = Piles.<String>copyOf(
-      ImmutableList.<String>builder()
-        .add("x")
-        .add("y")
-        .add("z")
-        .add("1")
-        .build().iterator()
-    );
+    List<String> stringList =
+        Piles.<String>copyOf(
+            ImmutableList.<String>builder().add("x").add("y").add("z").add("1").build().iterator());
 
     stringMap1.put("fuu", stringTypeToken, stringList);
     Key myKey = Key.get("fuu", stringTypeToken);

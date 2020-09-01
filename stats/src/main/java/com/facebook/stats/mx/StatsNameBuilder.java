@@ -15,9 +15,9 @@
  */
 package com.facebook.stats.mx;
 
+import java.util.Optional;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
-import java.util.Optional;
 
 /**
  * Decides whether to include MBean attributes in the Stats object, and, if so, what to call them.
@@ -28,11 +28,9 @@ public interface StatsNameBuilder {
    *
    * @param bean the ObjectName of the bean where the attribute was found
    * @param attribute the name of the top-level attribute
-   * @param key if the bean's top-level attribute was {@link CompositeData},
-   *             the key used to get from there to the value being named.
-   *
-   * @return the name that should be used, or {@link Optional#none()} if it
-   *         should be elided
+   * @param key if the bean's top-level attribute was {@link CompositeData}, the key used to get
+   *     from there to the value being named.
+   * @return the name that should be used, or {@link Optional#none()} if it should be elided
    */
   Optional<String> name(ObjectName bean, String attribute, String key);
 }

@@ -15,9 +15,7 @@
  */
 package com.facebook.testing;
 
-
 import com.facebook.collections.Factory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -29,10 +27,7 @@ public class LoopInputStream extends InputStream {
   private final AtomicInteger loopCount = new AtomicInteger(0);
   private volatile InputStream inputStream;
 
-
-  public LoopInputStream(
-    Factory<InputStream> streamFactory
-  ) {
+  public LoopInputStream(Factory<InputStream> streamFactory) {
     this.streamFactory = streamFactory;
     nextLoop();
   }

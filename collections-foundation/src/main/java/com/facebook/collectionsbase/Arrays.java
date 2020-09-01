@@ -31,20 +31,19 @@ public class Arrays {
    * @return
    */
   public static <T extends Comparable<? super T>> int compareArrays(T[] array1, T[] array2) {
-    Comparator<T> comparator = new Comparator<T>() {
-      @Override
-      public int compare(T o1, T o2) {
-        return o1.compareTo(o2);
-      }
-    };
+    Comparator<T> comparator =
+        new Comparator<T>() {
+          @Override
+          public int compare(T o1, T o2) {
+            return o1.compareTo(o2);
+          }
+        };
 
     return compareArrays(array1, array2, comparator);
   }
 
-
   public static <T> int comparPrimitiveArrays(
-    T[] array1, T[] array2, Comparator<? super T[]> comparator
-  ) {
+      T[] array1, T[] array2, Comparator<? super T[]> comparator) {
 
     int compare = comparator.compare(array1, array2);
 
@@ -59,10 +58,8 @@ public class Arrays {
    * @param <T>
    * @return
    */
-  public static <T> int compareArrays(
-    T[] array1, T[] array2, Comparator<? super T> comparator
+  public static <T> int compareArrays(T[] array1, T[] array2, Comparator<? super T> comparator) {
 
-  ) {
     // null < all other values
     if (array1 == null) {
       if (array2 == null) {

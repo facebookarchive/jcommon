@@ -16,16 +16,16 @@
 package com.facebook.collections;
 
 public class Triple<First, Second, Third> {
-  private final First  first;
+  private final First first;
   private final Second second;
-  private final Third  third;
+  private final Third third;
 
   private volatile String toStringResult;
 
   public Triple(First first, Second second, Third third) {
-    this.first  = first;
+    this.first = first;
     this.second = second;
-    this.third  = third;
+    this.third = third;
   }
 
   public First getFirst() {
@@ -80,11 +80,8 @@ public class Triple<First, Second, Third> {
   @Override
   public String toString() {
     if (toStringResult == null) {
-      toStringResult = "Triple{" +
-        "first=" + first +
-        ", second=" + second +
-        ", third=" + third +
-        '}';
+      toStringResult =
+          "Triple{" + "first=" + first + ", second=" + second + ", third=" + third + '}';
     }
 
     return toStringResult;

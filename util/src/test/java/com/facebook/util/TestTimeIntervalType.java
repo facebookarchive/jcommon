@@ -15,11 +15,6 @@
  */
 package com.facebook.util;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import static com.facebook.util.TimeIntervalType.DAY;
 import static com.facebook.util.TimeIntervalType.HOUR;
 import static com.facebook.util.TimeIntervalType.MILLIS;
@@ -29,6 +24,11 @@ import static com.facebook.util.TimeIntervalType.SECOND;
 import static com.facebook.util.TimeIntervalType.WEEK;
 import static com.facebook.util.TimeIntervalType.YEAR;
 import static org.joda.time.DateTimeZone.UTC;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * Mostly conformance testing: these aren't testing how things <em>should</em> work but rather how
@@ -216,8 +216,7 @@ public class TestTimeIntervalType {
   }
 
   private static void assertStart(
-    String date, DateTimeZone timeZone, TimeIntervalType type, int length, String expected
-  ) {
+      String date, DateTimeZone timeZone, TimeIntervalType type, int length, String expected) {
     DateTime actual = type.getTimeIntervalStart(new DateTime(date, timeZone), length);
 
     Assert.assertEquals(actual, new DateTime(expected, timeZone), length + " " + type);

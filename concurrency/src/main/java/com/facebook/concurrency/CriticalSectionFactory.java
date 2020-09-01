@@ -27,8 +27,7 @@ public class CriticalSectionFactory {
         if (isRunning.compareAndSet(false, true)) {
           try {
             runnable.run();
-          }
-          finally {
+          } finally {
             isRunning.set(false);
           }
         }

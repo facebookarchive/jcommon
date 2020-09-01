@@ -15,16 +15,15 @@
  */
 package com.facebook.collections;
 
-public class ComparablePair
-  <T1 extends Comparable<? super T1>, T2 extends Comparable<? super T2>>
-  extends Pair<T1, T2> implements Comparable<ComparablePair<T1, T2>> {
+public class ComparablePair<T1 extends Comparable<? super T1>, T2 extends Comparable<? super T2>>
+    extends Pair<T1, T2> implements Comparable<ComparablePair<T1, T2>> {
 
   public ComparablePair(T1 t1, T2 t2) {
     super(t1, t2);
   }
 
   public static <T1 extends Comparable<? super T1>, T2 extends Comparable<? super T2>>
-  Pair<T1, T2> of(T1 first, T2 second) {
+      Pair<T1, T2> of(T1 first, T2 second) {
     return new ComparablePair<>(first, second);
   }
 
@@ -39,5 +38,5 @@ public class ComparablePair
     return firstCompareTo;
   }
 
-  // using Pair's equals()/hashCode() 
+  // using Pair's equals()/hashCode()
 }

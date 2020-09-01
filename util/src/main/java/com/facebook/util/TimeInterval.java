@@ -15,37 +15,35 @@
  */
 package com.facebook.util;
 
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
 import org.joda.time.field.FieldUtils;
 
 /**
- * Represents Time intervals either as durations or periods and abstracts out
- * operations on time intervals in the System.
- * <p/>
- * Durations represent a fixed period of time regardless of when
- * they start or end. ie. 1 day will always be 86400 seconds. Instances
- * that represent duration are constructed via {@link #withMillis(long)}.
- * <p/>
- * Periods represent a period of time but the actual time will depend
- * on when the period starts. For example 1 day will be 23 hours on the first
- * day of DST transition and will be 25 hours on the last day of DST transition.
- * Instances that represent periods are constructed via
- * {@link #withTypeAndLength(TimeIntervalType, int)}.
- * <p>
- *   The main operations abstracted out are the computation of start of
- *   an interval and addition / subtraction of the interval from a time instant.
- * </p>
+ * Represents Time intervals either as durations or periods and abstracts out operations on time
+ * intervals in the System.
+ *
+ * <p>Durations represent a fixed period of time regardless of when they start or end. ie. 1 day
+ * will always be 86400 seconds. Instances that represent duration are constructed via {@link
+ * #withMillis(long)}.
+ *
+ * <p>Periods represent a period of time but the actual time will depend on when the period starts.
+ * For example 1 day will be 23 hours on the first day of DST transition and will be 25 hours on the
+ * last day of DST transition. Instances that represent periods are constructed via {@link
+ * #withTypeAndLength(TimeIntervalType, int)}.
+ *
+ * <p>The main operations abstracted out are the computation of start of an interval and addition /
+ * subtraction of the interval from a time instant.
  */
 public class TimeInterval {
 
   /**
-   * An infinite time interval has a length of 0 and always returns the
-   * interval start as the start of unix time epoch.
+   * An infinite time interval has a length of 0 and always returns the interval start as the start
+   * of unix time epoch.
    */
   public static final TimeInterval INFINITE = new TimeInterval(null, 0);
+
   public static final TimeInterval ZERO = new TimeInterval(null, -1);
   private final long length;
   private final TimeIntervalType type;
@@ -54,7 +52,6 @@ public class TimeInterval {
     this.type = type;
     this.length = length;
   }
-
 
   /**
    * Creates a time interval having a fixed duration of time.
@@ -69,17 +66,15 @@ public class TimeInterval {
   }
 
   /**
-   * Creates a time interval period based on the supplied type. The actual duration
-   * of the period will vary depending on the time instant. The period
-   * will take into account DST, varying number of days in a month,
-   * leap years, etc.
-   * <p>
-   * Note that if the interval length doesn't divide the maximum value of the
-   * interval type equally, the last interval will be of a smaller length
-   * than the previous ones. For example if you specify the interval as
-   * 40 seconds, the first interval will have the first 40 seconds in a minute
-   * and the second interval will have the remaining 20 seconds in the minute.
-   * </p>
+   * Creates a time interval period based on the supplied type. The actual duration of the period
+   * will vary depending on the time instant. The period will take into account DST, varying number
+   * of days in a month, leap years, etc.
+   *
+   * <p>Note that if the interval length doesn't divide the maximum value of the interval type
+   * equally, the last interval will be of a smaller length than the previous ones. For example if
+   * you specify the interval as 40 seconds, the first interval will have the first 40 seconds in a
+   * minute and the second interval will have the remaining 20 seconds in the minute.
+   *
    * @param type the time interval type, cannot be null.
    * @param length the length of the interval
    * @return the time interval instance.
@@ -93,14 +88,10 @@ public class TimeInterval {
     return new TimeInterval(type, length);
   }
 
-  /**
-   * Used by jackson for serde
-   */
+  /** Used by jackson for serde */
   @JsonCreator
   private static TimeInterval fromJson(
-    @JsonProperty("type") TimeIntervalType type,
-    @JsonProperty("length") long length
-  ) {
+      @JsonProperty("type") TimeIntervalType type, @JsonProperty("length") long length) {
     if (type == null) {
       if (length == 0) {
         return INFINITE;
@@ -113,15 +104,14 @@ public class TimeInterval {
   }
 
   /**
-   * Gets the start instant of the time interval that will contain the
-   * supplied time instant. Note that the time zone of the supplied instant
-   * plays a significant role in computation of the interval.
+   * Gets the start instant of the time interval that will contain the supplied time instant. Note
+   * that the time zone of the supplied instant plays a significant role in computation of the
+   * interval.
    *
    * @param instant the time instant
-   *
-   * @return the start instant of the time interval that will contain the
-   * instant in the time zone of the supplied instant. If the TimeInterval is INFINITE
-   * unix epoch for the timezone is returned.
+   * @return the start instant of the time interval that will contain the instant in the time zone
+   *     of the supplied instant. If the TimeInterval is INFINITE unix epoch for the timezone is
+   *     returned.
    */
   public DateTime getIntervalStart(DateTime instant) {
     // special handling for ZERO and INFINITE
@@ -130,17 +120,14 @@ public class TimeInterval {
     } else if (this == INFINITE) {
       return new DateTime(1970, 1, 1, 0, 0, 0, 0, instant.getZone());
     }
-    
+
     if (type == null) {
       // unix epoch for the timezone.
       DateTime startOfTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, instant.getZone());
       long intervalStart = ((instant.getMillis() - startOfTime.getMillis()) / length) * length;
       return startOfTime.plus(intervalStart);
     } else {
-      return type.getTimeIntervalStart(
-        instant,
-        length
-      );
+      return type.getTimeIntervalStart(instant, length);
     }
   }
 
@@ -150,29 +137,22 @@ public class TimeInterval {
    * @param instant the instant that needs to be added to.
    * @param multiple the multiple value
    * @throws IllegalArgumentException if multiple is less than one.
-   * @throws UnsupportedOperationException if the function is invoked on an {@link #INFINITE}
-   * object
-   *
+   * @throws UnsupportedOperationException if the function is invoked on an {@link #INFINITE} object
    */
   public DateTime plus(DateTime instant, int multiple) {
     if (this == INFINITE) {
       throw new IllegalStateException(
-        "plus() function is not supported on an infinite TimeInterval"
-      );
+          "plus() function is not supported on an infinite TimeInterval");
     } else if (this == ZERO) {
       return instant;
     }
-    
+
     validateMultiple(multiple);
 
     if (type == null) {
       return instant.plus(multiple * getLength());
     } else {
-      return instant.plus(
-        type.toPeriod(
-          FieldUtils.safeMultiplyToInt(multiple, getLength())
-        )
-      );
+      return instant.plus(type.toPeriod(FieldUtils.safeMultiplyToInt(multiple, getLength())));
     }
   }
 
@@ -187,8 +167,7 @@ public class TimeInterval {
   public DateTime minus(DateTime instant, int multiple) {
     if (this == INFINITE) {
       throw new IllegalStateException(
-        "minus() function is not supported on an infinite TimeInterval"
-      );
+          "minus() function is not supported on an infinite TimeInterval");
     } else if (this == ZERO) {
       return instant;
     }
@@ -198,8 +177,7 @@ public class TimeInterval {
     if (type == null) {
       return instant.minus(multiple * getLength());
     } else {
-      return instant.minus(type.toPeriod(
-        FieldUtils.safeMultiplyToInt(multiple, getLength())));
+      return instant.minus(type.toPeriod(FieldUtils.safeMultiplyToInt(multiple, getLength())));
     }
   }
 
@@ -234,16 +212,15 @@ public class TimeInterval {
   /**
    * Returns the length of the interval in milliseconds.
    *
-   * Note that the length is approximate if the interval was constructed
-   * via {@link #withTypeAndLength(TimeIntervalType, int)}.
+   * <p>Note that the length is approximate if the interval was constructed via {@link
+   * #withTypeAndLength(TimeIntervalType, int)}.
    *
-   * Also note that this method returns zero if the TimeInterval is
-   * {@link #INFINITE}, -1 if the TimeInterval is {@link #ZERO}.
+   * <p>Also note that this method returns zero if the TimeInterval is {@link #INFINITE}, -1 if the
+   * TimeInterval is {@link #ZERO}.
    *
    * @return the length in millis
-   * @deprecated Usage of this method is not encouraged because this only
-   * works if the TimeInterval represents a duration. If the time interval
-   * is period, this might return unexpected values.
+   * @deprecated Usage of this method is not encouraged because this only works if the TimeInterval
+   *     represents a duration. If the time interval is period, this might return unexpected values.
    */
   @Deprecated
   public long toApproxMillis() {
@@ -269,7 +246,6 @@ public class TimeInterval {
       return false;
     }
     return type == that.type;
-
   }
 
   @Override
@@ -281,10 +257,7 @@ public class TimeInterval {
 
   @Override
   public String toString() {
-    return "TimeInterval{" +
-      "length=" + length +
-      ", type=" + type +
-      '}';
+    return "TimeInterval{" + "length=" + length + ", type=" + type + '}';
   }
 
   private static void validateMultiple(int multiple) {
@@ -298,5 +271,4 @@ public class TimeInterval {
       throw new IllegalArgumentException("length cannot be less than one: " + length);
     }
   }
-
 }

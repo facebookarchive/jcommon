@@ -43,7 +43,9 @@ public class TestReferenceCourier {
     Assert.assertFalse(empty1.isSet());
   }
 
-  @Test(groups = {"fast", "local"}, expectedExceptions = NullPointerException.class)
+  @Test(
+      groups = {"fast", "local"},
+      expectedExceptions = NullPointerException.class)
   public void testEmpty1Get() throws Exception {
     empty1.get();
   }
@@ -53,7 +55,9 @@ public class TestReferenceCourier {
     Assert.assertFalse(empty2.isSet());
   }
 
-  @Test(groups = {"fast", "local"}, expectedExceptions = NullPointerException.class)
+  @Test(
+      groups = {"fast", "local"},
+      expectedExceptions = NullPointerException.class)
   public void testempty2Get() throws Exception {
     empty2.get();
   }

@@ -20,6 +20,10 @@ import java.util.function.Supplier;
 public class TestExtRunnable extends TestQuietFunctionBase {
   @Override
   protected void throwFromQuiet(Supplier<? extends Throwable> toThrow) {
-    ExtRunnable.quiet(() -> { throw toThrow.get(); }).run();
+    ExtRunnable.quiet(
+            () -> {
+              throw toThrow.get();
+            })
+        .run();
   }
 }

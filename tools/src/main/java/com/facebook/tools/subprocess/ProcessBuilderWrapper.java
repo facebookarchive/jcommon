@@ -19,14 +19,11 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Wrapper interface so that unit tests can stub ProcessBuilder.
- */
+/** Wrapper interface so that unit tests can stub ProcessBuilder. */
 public interface ProcessBuilderWrapper {
   public Process createProcess(
-    RedirectErrorsTo redirectErrorsTo,
-    Map<String, String> environmentOverrides,
-    File workingDirectory,
-    List<String> command
-  );
+      RedirectErrorsTo redirectErrorsTo,
+      Map<String, String> environmentOverrides,
+      File workingDirectory,
+      List<String> command);
 }

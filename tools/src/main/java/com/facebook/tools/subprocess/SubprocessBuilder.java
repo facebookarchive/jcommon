@@ -16,7 +16,6 @@
 package com.facebook.tools.subprocess;
 
 import com.facebook.tools.io.IO;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,30 +25,29 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Builds and starts an operating system process.  There are two modes a process can be in:
+ * Builds and starts an operating system process. There are two modes a process can be in:
+ *
  * <dl>
- * <dt>streaming</dt>
- * <dd>
- * An unlimited amount of output is allowed, but the command may block if it is not consumed.
- * </dd>
- * <dt>non-streaming</dt>
- * <dd>
- * The command is guranteed to not block, but the amount of output is limited (e.g., first 10k).
- * </dd>
+ *   <dt>streaming
+ *   <dd>An unlimited amount of output is allowed, but the command may block if it is not consumed.
+ *   <dt>non-streaming
+ *   <dd>The command is guranteed to not block, but the amount of output is limited (e.g., first
+ *       10k).
  * </dl>
+ *
  * Which is to say, if you want to run a quick command that you expect to produce a fixed amount of
- * output (e.g., "fbpackage info foo:123"), then you want to use non-streaming mode.  If you want to
+ * output (e.g., "fbpackage info foo:123"), then you want to use non-streaming mode. If you want to
  * run a command that can produce a lot of data, (e.g., "ptail foo") then you want to use streaming
  * mode.
- * <p/>
- * Streaming commands are started by calling {@link SubprocessBuilder.Builder#stream()}.
- * Non-streaming commands are started by calling {@link SubprocessBuilder.Builder#start()}.
- * A streaming command can be turned into a non-streaming command by calling
- * {@link Subprocess#background()}.
- * <p/>
- * Stderr is always in non-streaming mode.  This ensures you never have to worry about your command
- * blocking because you haven't read error output.  If you expect (and need to process) a lot of
- * output to stderr, then you need to {@link SubprocessBuilder.Builder#redirectStderrToStdout}.
+ *
+ * <p>Streaming commands are started by calling {@link SubprocessBuilder.Builder#stream()}.
+ * Non-streaming commands are started by calling {@link SubprocessBuilder.Builder#start()}. A
+ * streaming command can be turned into a non-streaming command by calling {@link
+ * Subprocess#background()}.
+ *
+ * <p>Stderr is always in non-streaming mode. This ensures you never have to worry about your
+ * command blocking because you haven't read error output. If you expect (and need to process) a lot
+ * of output to stderr, then you need to {@link SubprocessBuilder.Builder#redirectStderrToStdout}.
  *
  * @see Subprocess
  */
@@ -160,13 +158,13 @@ public class SubprocessBuilder {
       final Process process;
 
       if (redirectStderrToStdout) {
-        process = builder.createProcess(
-          RedirectErrorsTo.STDOUT, environmentOverrides, workingDirectory, command
-        );
+        process =
+            builder.createProcess(
+                RedirectErrorsTo.STDOUT, environmentOverrides, workingDirectory, command);
       } else {
-        process = builder.createProcess(
-          RedirectErrorsTo.STDERR, environmentOverrides, workingDirectory, command
-        );
+        process =
+            builder.createProcess(
+                RedirectErrorsTo.STDERR, environmentOverrides, workingDirectory, command);
       }
 
       if (echoCommand != null) {

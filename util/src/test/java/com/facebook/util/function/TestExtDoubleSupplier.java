@@ -21,6 +21,10 @@ import java.util.function.Supplier;
 public class TestExtDoubleSupplier extends TestQuietFunctionBase {
   @Override
   protected void throwFromQuiet(Supplier<? extends Throwable> toThrow) {
-    ExtDoubleSupplier.quiet(() -> { throw toThrow.get(); }).getAsDouble();
+    ExtDoubleSupplier.quiet(
+            () -> {
+              throw toThrow.get();
+            })
+        .getAsDouble();
   }
 }

@@ -16,20 +16,19 @@
 package com.facebook.collections;
 
 import com.google.common.base.Preconditions;
-
 import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * helper class that wraps a byte[] in order to properly get
- * Arrays.hashcode()/equals() for use in a HashSet; also implements Comparable
+ * helper class that wraps a byte[] in order to properly get Arrays.hashcode()/equals() for use in a
+ * HashSet; also implements Comparable
  */
 public abstract class ByteArray implements Comparable<ByteArray> {
   public static final ByteArrayComparator BYTE_ARRAY_COMPARATOR = new ByteArrayComparator();
 
-  abstract public byte[] getArray();
+  public abstract byte[] getArray();
 
-  abstract public int getLength();
+  public abstract int getLength();
 
   public abstract byte getAdjusted(int pos);
 
@@ -119,9 +118,7 @@ public abstract class ByteArray implements Comparable<ByteArray> {
 
     @Override
     public String toString() {
-      return "PureByteArray{" +
-        "array=" + Arrays.toString(array) +
-        '}';
+      return "PureByteArray{" + "array=" + Arrays.toString(array) + '}';
     }
   }
 
@@ -174,11 +171,15 @@ public abstract class ByteArray implements Comparable<ByteArray> {
 
     @Override
     public String toString() {
-      return "ByteArrayView{" +
-        "array=" + Arrays.toString(array) +
-        ", start=" + offset +
-        ", length=" + length +
-        "} " + toString();
+      return "ByteArrayView{"
+          + "array="
+          + Arrays.toString(array)
+          + ", start="
+          + offset
+          + ", length="
+          + length
+          + "} "
+          + toString();
     }
   }
 

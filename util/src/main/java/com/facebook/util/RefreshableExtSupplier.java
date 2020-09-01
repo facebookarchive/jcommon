@@ -18,4 +18,3 @@ package com.facebook.util;
 public interface RefreshableExtSupplier<T, E extends Throwable> extends ExtSupplier<T, E> {
   void reset();
 }
-

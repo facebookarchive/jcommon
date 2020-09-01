@@ -17,7 +17,6 @@ package com.facebook.stats.topk;
 
 import com.facebook.collections.ComparablePair;
 import com.google.common.base.Preconditions;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;

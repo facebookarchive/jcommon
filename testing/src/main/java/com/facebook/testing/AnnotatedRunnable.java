@@ -25,9 +25,7 @@ public class AnnotatedRunnable implements Runnable {
   private final Runnable delegate;
   private ScheduledFuture<?> future;
 
-  public AnnotatedRunnable(
-    Runnable delegate, long initDelay, long delay, TimeUnit unit
-  ) {
+  public AnnotatedRunnable(Runnable delegate, long initDelay, long delay, TimeUnit unit) {
     this.delegate = delegate;
     this.initDelay = initDelay;
     this.delay = delay;

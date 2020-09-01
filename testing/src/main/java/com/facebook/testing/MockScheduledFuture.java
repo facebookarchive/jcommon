@@ -15,31 +15,30 @@
  */
 package com.facebook.testing;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MockScheduledFuture<V> implements ScheduledFuture<V>, Runnable {
   private static final Logger LOG = LoggerFactory.getLogger(MockScheduledFuture.class);
-  
+
   private final Callable<V> callable;
   private final Object lock = new Object();
 
   private volatile boolean hasRun = false;
-  private volatile boolean isCancelled  = false;
-  private Exception callableException = null; 
+  private volatile boolean isCancelled = false;
+  private Exception callableException = null;
   private V result = null;
-  
+
   public MockScheduledFuture(Callable<V> callable) {
     this.callable = callable;
   }
-  
+
   public void run() {
     try {
       result = callable.call();
@@ -84,24 +83,22 @@ public class MockScheduledFuture<V> implements ScheduledFuture<V>, Runnable {
       return get(0, TimeUnit.SECONDS);
     } catch (TimeoutException e) {
       LOG.error("should never see this");
-      
+
       throw new RuntimeException(e);
     }
   }
 
   @Override
   public V get(long timeout, TimeUnit unit)
-    throws InterruptedException, ExecutionException, TimeoutException {
+      throws InterruptedException, ExecutionException, TimeoutException {
     long timeoutMillis = unit.toMillis(timeout);
     long start = System.currentTimeMillis();
-    
+
     synchronized (lock) {
       while (!hasRun) {
         lock.wait(timeoutMillis);
-        
-        if (timeoutMillis > 0 && 
-            System.currentTimeMillis() - start >= timeoutMillis
-          ) {
+
+        if (timeoutMillis > 0 && System.currentTimeMillis() - start >= timeoutMillis) {
           throw new TimeoutException();
         }
       }
@@ -110,8 +107,7 @@ public class MockScheduledFuture<V> implements ScheduledFuture<V>, Runnable {
     if (callableException != null) {
       throw new ExecutionException(callableException);
     }
-    
-    return result;
 
+    return result;
   }
 }

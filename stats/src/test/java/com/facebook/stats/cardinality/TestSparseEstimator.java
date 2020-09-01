@@ -15,15 +15,13 @@
  */
 package com.facebook.stats.cardinality;
 
+import static org.testng.Assert.assertEquals;
+
+import java.util.Arrays;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-
-import static org.testng.Assert.assertEquals;
-
-public class TestSparseEstimator
-  extends TestEstimator {
+public class TestSparseEstimator extends TestEstimator {
   @Override
   protected Estimator getEstimator() {
     return new SparseEstimator(1024);

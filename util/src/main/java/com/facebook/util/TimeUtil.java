@@ -15,17 +15,15 @@
  */
 package com.facebook.util;
 
+import com.facebook.logging.Logger;
+import com.facebook.logging.LoggerImpl;
 import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.chrono.ISOChronology;
-
-import java.util.Map;
-
-import com.facebook.logging.Logger;
-import com.facebook.logging.LoggerImpl;
 
 public class TimeUtil {
   private static final Logger LOG = LoggerImpl.getLogger(TimeUtil.class);
@@ -37,9 +35,9 @@ public class TimeUtil {
 
   static {
     ImmutableMap.Builder<String, DateTimeZone> timeZoneBuilder =
-      new ImmutableMap.Builder<String, DateTimeZone>();
+        new ImmutableMap.Builder<String, DateTimeZone>();
     ImmutableMap.Builder<String, ISOChronology> chronologyBuilder =
-      new ImmutableMap.Builder<String, ISOChronology>();
+        new ImmutableMap.Builder<String, ISOChronology>();
 
     for (Object id : DateTimeZone.getAvailableIDs()) {
       String tz = (String) id;
@@ -52,9 +50,8 @@ public class TimeUtil {
   }
 
   // utility method to log how long a chunk of code takes to run
-  public static <E extends Throwable> void logElapsedTime(
-    String tag, ExtRunnable<E> task
-  ) throws E {
+  public static <E extends Throwable> void logElapsedTime(String tag, ExtRunnable<E> task)
+      throws E {
     long start = DateTimeUtils.currentTimeMillis();
     boolean success = false;
 
@@ -63,18 +60,13 @@ public class TimeUtil {
       success = true;
     } finally {
       LOG.info(
-        "%s (%s) elapsed time(ms): %d",
-        tag,
-        success,
-        DateTimeUtils.currentTimeMillis() - start
-      );
+          "%s (%s) elapsed time(ms): %d", tag, success, DateTimeUtils.currentTimeMillis() - start);
     }
   }
 
   // utility method to log how long a chunk of code takes to run
-  public static <V, E extends Throwable> V logElapsedTime(
-    String tag, ExtCallable<V, E> task
-  ) throws E {
+  public static <V, E extends Throwable> V logElapsedTime(String tag, ExtCallable<V, E> task)
+      throws E {
     long start = DateTimeUtils.currentTimeMillis();
     boolean success = false;
 
@@ -85,20 +77,16 @@ public class TimeUtil {
       return value;
     } finally {
       LOG.info(
-        "%s (%s) elapsed time(ms): %d",
-        tag,
-        success,
-        DateTimeUtils.currentTimeMillis() - start
-      );
+          "%s (%s) elapsed time(ms): %d", tag, success, DateTimeUtils.currentTimeMillis() - start);
     }
   }
 
   public static DateTimeZone getDateTimeZone(String dateTimeZoneStr) {
-      if ((dateTimeZoneStr == null) || dateTimeZoneStr.isEmpty()) {
-        return DateTimeZone.UTC;
-      }
-      return TIME_ZONE_MAP.get(dateTimeZoneStr);
+    if ((dateTimeZoneStr == null) || dateTimeZoneStr.isEmpty()) {
+      return DateTimeZone.UTC;
     }
+    return TIME_ZONE_MAP.get(dateTimeZoneStr);
+  }
 
   public static ISOChronology getChronology(String dateTimeZoneStr) {
     if ((dateTimeZoneStr == null) || dateTimeZoneStr.isEmpty()) {
@@ -110,8 +98,8 @@ public class TimeUtil {
   /**
    * these methods affect only code that relies on DateTimeUtils.currentTimeMillis()
    *
-   * NOTE: manipulation of {@link DateTimeUtils.currentTimeMillis()} is not thread safe
-   * to begin with, so neither is this
+   * <p>NOTE: manipulation of {@link DateTimeUtils.currentTimeMillis()} is not thread safe to begin
+   * with, so neither is this
    */
   public static void setNow(DateTime now) {
     DateTimeUtils.setCurrentMillisFixed(now.getMillis());

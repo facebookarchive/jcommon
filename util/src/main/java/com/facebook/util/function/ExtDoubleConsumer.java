@@ -21,7 +21,7 @@ import java.util.function.DoubleConsumer;
 
 public interface ExtDoubleConsumer<E extends Throwable> {
   void accept(double value);
-  
+
   default ExtDoubleConsumer<E> andThen(ExtDoubleConsumer<E> after) {
     Objects.requireNonNull(after);
     return (t) -> {
@@ -29,7 +29,7 @@ public interface ExtDoubleConsumer<E extends Throwable> {
       after.accept(t);
     };
   }
-  
+
   static DoubleConsumer quiet(ExtDoubleConsumer<?> doubleConsumer) {
     return (value) -> ExtRunnable.quiet(() -> doubleConsumer.accept(value)).run();
   }

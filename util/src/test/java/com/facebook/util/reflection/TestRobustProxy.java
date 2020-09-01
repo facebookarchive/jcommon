@@ -12,14 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */   
+ */
 package com.facebook.util.reflection;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestRobustProxy {
   private Fuu fuuProxy;
@@ -29,19 +28,20 @@ public class TestRobustProxy {
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
     called = new AtomicInteger(0);
-    fuuProxy = RobustProxy.wrap(
-      Fuu.class, new Fuu() {
-        @Override
-        public void bar() {
-          called.incrementAndGet();
-        }
+    fuuProxy =
+        RobustProxy.wrap(
+            Fuu.class,
+            new Fuu() {
+              @Override
+              public void bar() {
+                called.incrementAndGet();
+              }
 
-        @Override
-        public int getInt() {
-          return 1601;
-        }
-      }
-    );
+              @Override
+              public int getInt() {
+                return 1601;
+              }
+            });
     nullFuu = RobustProxy.wrap(Fuu.class, null);
   }
 
@@ -52,7 +52,9 @@ public class TestRobustProxy {
     Assert.assertEquals(fuuProxy.getInt(), 1601);
   }
 
-  @Test(groups = {"fast", "local"}, expectedExceptions = {UnsupportedOperationException.class})
+  @Test(
+      groups = {"fast", "local"},
+      expectedExceptions = {UnsupportedOperationException.class})
   public void testNullProxy() throws Exception {
     nullFuu.bar();
     Assert.assertEquals(called.get(), 1);
@@ -62,6 +64,7 @@ public class TestRobustProxy {
 
   private interface Fuu {
     void bar();
+
     int getInt();
   }
 }

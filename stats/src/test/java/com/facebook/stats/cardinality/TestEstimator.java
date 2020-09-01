@@ -15,13 +15,12 @@
  */
 package com.facebook.stats.cardinality;
 
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-
-import static org.testng.Assert.assertEquals;
+import org.testng.annotations.Test;
 
 public abstract class TestEstimator {
   @Test

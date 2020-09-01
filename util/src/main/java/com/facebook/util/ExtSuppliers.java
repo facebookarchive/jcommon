@@ -21,7 +21,8 @@ public class ExtSuppliers {
     return new MemoizingExtSupplier<>(supplier);
   }
 
-  public static <T, E extends Throwable> RefreshableExtSupplier<T, E> memoizeAllowRefresh(ExtSupplier<T, E> supplier) {
+  public static <T, E extends Throwable> RefreshableExtSupplier<T, E> memoizeAllowRefresh(
+      ExtSupplier<T, E> supplier) {
     return new MemoizingExtSupplier<>(supplier);
   }
 
@@ -29,7 +30,8 @@ public class ExtSuppliers {
     return new InstanceExtSupplier<>(instance);
   }
 
-  private static class MemoizingExtSupplier<T, E extends Throwable> implements RefreshableExtSupplier<T, E> {
+  private static class MemoizingExtSupplier<T, E extends Throwable>
+      implements RefreshableExtSupplier<T, E> {
     private final ExtSupplier<T, E> delegate;
     private volatile boolean shouldCalculateValue = true;
     private T value;
@@ -66,7 +68,9 @@ public class ExtSuppliers {
   private static class InstanceExtSupplier<T, E extends Throwable> implements ExtSupplier<T, E> {
     private final T instance;
 
-    private InstanceExtSupplier(T instance) {this.instance = instance;}
+    private InstanceExtSupplier(T instance) {
+      this.instance = instance;
+    }
 
     @Override
     public T get() throws E {

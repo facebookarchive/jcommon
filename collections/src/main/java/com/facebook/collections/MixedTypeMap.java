@@ -16,7 +16,6 @@
 package com.facebook.collections;
 
 import com.google.common.reflect.TypeToken;
-
 import java.util.HashMap;
 import java.util.Map;
 

@@ -20,7 +20,7 @@ import java.util.function.IntSupplier;
 
 public interface ExtIntSupplier<E extends Throwable> {
   int getAsInt() throws E;
-  
+
   static IntSupplier quiet(ExtIntSupplier<?> intSupplier) {
     return () -> {
       try {

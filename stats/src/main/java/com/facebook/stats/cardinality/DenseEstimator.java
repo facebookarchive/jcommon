@@ -16,24 +16,22 @@
 package com.facebook.stats.cardinality;
 
 import com.google.common.base.Preconditions;
-
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * A hyperloglog-based cardinality estimator that uses exactly 4 bits per bucket, regardless of the
  * cardinality being estimated.
- * <p/>
- * It is based on the observation that for any given cardinality, the majority of all values fall in
- * a range that is at most 4-bit wide. Moreover, the window only moves to the "right" because the
+ *
+ * <p>It is based on the observation that for any given cardinality, the majority of all values fall
+ * in a range that is at most 4-bit wide. Moreover, the window only moves to the "right" because the
  * values in a bucket never decrease.
- * <p/>
- * Whenever a value is seen that falls outside of the current window it is truncated to the window
- * upper bound. This introduces a minor error in the estimation that is smaller than 0.01% based on
- * experiments.
+ *
+ * <p>Whenever a value is seen that falls outside of the current window it is truncated to the
+ * window upper bound. This introduces a minor error in the estimation that is smaller than 0.01%
+ * based on experiments.
  */
 @NotThreadSafe
-class DenseEstimator
-  implements Estimator {
+class DenseEstimator implements Estimator {
   private static final int BITS_PER_BUCKET = 4;
   private static final int BUCKET_MAX_VALUE = (1 << BITS_PER_BUCKET) - 1;
   private static final int BUCKETS_PER_SLOT = Long.SIZE / BITS_PER_BUCKET;
@@ -50,9 +48,7 @@ class DenseEstimator
 
   public DenseEstimator(int numberOfBuckets) {
     Preconditions.checkArgument(
-      Numbers.isPowerOf2(numberOfBuckets),
-      "numberOfBuckets must be a power of 2"
-    );
+        Numbers.isPowerOf2(numberOfBuckets), "numberOfBuckets must be a power of 2");
 
     this.numberOfBuckets = numberOfBuckets;
     this.baseline = 0;
@@ -71,11 +67,10 @@ class DenseEstimator
     baselineCount = 0;
     for (int value : bucketValues) {
       Preconditions.checkArgument(
-        value >= 0 && value <= Byte.MAX_VALUE,
-        "values must be >= 0 and <= %s, found %s",
-        Byte.MAX_VALUE,
-        value
-      );
+          value >= 0 && value <= Byte.MAX_VALUE,
+          "values must be >= 0 and <= %s, found %s",
+          Byte.MAX_VALUE,
+          value);
       if (value < baseline) {
         baselineCount = 1;
         baseline = (byte) value;
@@ -145,9 +140,7 @@ class DenseEstimator
     slots[slot] |= bucketSetMask;
   }
 
-  /**
-   * gets the value in the specified bucket relative to the current base
-   */
+  /** gets the value in the specified bucket relative to the current base */
   private int get(int bucket) {
     int slot = bucket / BUCKETS_PER_SLOT;
     int offset = bucket % BUCKETS_PER_SLOT;
@@ -200,7 +193,7 @@ class DenseEstimator
 
   public static int estimateSizeInBytes(int numberOfBuckets) {
     return (numberOfBuckets + BUCKETS_PER_SLOT - 1) / BUCKETS_PER_SLOT * Long.SIZE / 8
-      + INSTANCE_SIZE;
+        + INSTANCE_SIZE;
   }
 
   public int[] buckets() {

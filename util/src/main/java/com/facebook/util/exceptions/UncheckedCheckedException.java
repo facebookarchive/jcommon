@@ -16,7 +16,8 @@
 package com.facebook.util.exceptions;
 
 /**
- * This exception represents a checked exception that was caught and re-thrown as a {@link RuntimeException}.
+ * This exception represents a checked exception that was caught and re-thrown as a {@link
+ * RuntimeException}.
  */
 public class UncheckedCheckedException extends RuntimeException {
   private static final long serialVersionUID = 1L;

@@ -15,15 +15,14 @@
  */
 package com.facebook.collections.specialized;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestLongPairList {
 
@@ -45,14 +44,14 @@ public class TestLongPairList {
     squares.add(toTuple(3, 9));
     squares.add(toTuple(5, 25));
     squares.add(toTuple(1, 1));
-    
+
     cubes = new LongPairList(2);
   }
-  
+
   @Test(groups = "fast")
   public void testShrinkBoundaryCase1() throws Exception {
-    cubes.add(toTuple(1,1));
-    cubes.shrink();  	
+    cubes.add(toTuple(1, 1));
+    cubes.shrink();
   }
 
   @Test(groups = "fast")
@@ -74,7 +73,7 @@ public class TestLongPairList {
 
   @Test(groups = "fast")
   public void testInsertAndDelete() throws Exception {
-    assertTuplesEqual(primes.poll(), toTuple(1, 7));    
+    assertTuplesEqual(primes.poll(), toTuple(1, 7));
     primes.add(toTuple(0, 0));
     assertTuplesEqual(primes.poll(), toTuple(0, 0));
     assertTuplesEqual(primes.poll(), toTuple(2, 5));
@@ -95,7 +94,7 @@ public class TestLongPairList {
   @Test(groups = "fast")
   public void testInterleavedPollAdd() throws Exception {
     LongPairList list = new LongPairList(2);
-    
+
     list.add(toTuple(10, 10));
     list.add(toTuple(1, 1));
     assertTuplesEqual(list.poll(), toTuple(1, 1));
@@ -112,7 +111,7 @@ public class TestLongPairList {
     Assert.assertEquals(list.size(), 0);
     list.shrink();
   }
-  
+
   @Test(groups = "fast")
   public void testFuu() throws Exception {
     LongPairList list = new LongPairList(2);
@@ -126,25 +125,19 @@ public class TestLongPairList {
 
   @Test(groups = "fast")
   public void testIterator() throws Exception {
-    assertContentsViaIterator(
-      primes, toTuple(1, 7), toTuple(2, 5), toTuple(3, 3), toTuple(4, 2)
-    );
+    assertContentsViaIterator(primes, toTuple(1, 7), toTuple(2, 5), toTuple(3, 3), toTuple(4, 2));
     primes.poll();
 
-    assertContentsViaIterator(
-      primes, toTuple(2, 5), toTuple(3, 3), toTuple(4, 2)
-    );
+    assertContentsViaIterator(primes, toTuple(2, 5), toTuple(3, 3), toTuple(4, 2));
 
     assertContentsViaIterator(
-      squares, toTuple(1, 1), toTuple(2, 4), toTuple(3, 9), toTuple(5, 25), toTuple(10, 100)
-    );
+        squares, toTuple(1, 1), toTuple(2, 4), toTuple(3, 9), toTuple(5, 25), toTuple(10, 100));
     squares.poll();
 
     assertContentsViaIterator(
-      squares, toTuple(2, 4), toTuple(3, 9), toTuple(5, 25), toTuple(10, 100)
-    );
+        squares, toTuple(2, 4), toTuple(3, 9), toTuple(5, 25), toTuple(10, 100));
   }
-  
+
   private void assertTuplesEqual(long[] actual, long[] exected) {
     Assert.assertTrue(Arrays.equals(actual, exected));
   }
@@ -155,16 +148,18 @@ public class TestLongPairList {
     for (long[] tuple : tupleList) {
       tmpList.add(tuple);
     }
-    
-    Collections.sort(tmpList, new Comparator<long[]>() {
-      @Override
-      public int compare(long[] o1, long[] o2) {
-        return Long.signum(o1[0] - o2[0]);
-      }
-    });
-    
+
+    Collections.sort(
+        tmpList,
+        new Comparator<long[]>() {
+          @Override
+          public int compare(long[] o1, long[] o2) {
+            return Long.signum(o1[0] - o2[0]);
+          }
+        });
+
     int i = 0;
-    
+
     for (long[] tuple : tmpList) {
       assertTuplesEqual(tuple, results[i]);
       i++;

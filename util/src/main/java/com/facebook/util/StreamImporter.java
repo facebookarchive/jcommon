@@ -27,7 +27,7 @@ public class StreamImporter {
     List<String> lines = new ArrayList<String>();
     BufferedReader buffered = new BufferedReader(new InputStreamReader(in));
     String line;
-    while ((line = buffered.readLine()) != null)   {
+    while ((line = buffered.readLine()) != null) {
       lines.add(line);
     }
     return lines;

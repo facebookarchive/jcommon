@@ -16,7 +16,6 @@
 package com.facebook.tools.io;
 
 import com.facebook.tools.subprocess.SubprocessBuilder;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -37,7 +36,6 @@ public class MockIO extends IO {
     this(input, null);
   }
 
-
   public MockIO() {
     this("", null);
   }
@@ -51,14 +49,15 @@ public class MockIO extends IO {
   }
 
   private MockIO(
-    ByteArrayOutputStream out, ByteArrayOutputStream err, String input, SubprocessBuilder subprocess
-  ) {
+      ByteArrayOutputStream out,
+      ByteArrayOutputStream err,
+      String input,
+      SubprocessBuilder subprocess) {
     super(
-      new PrintStream(out),
-      new PrintStream(err),
-      new InputStreamInput(new ByteArrayInputStream(input.getBytes())),
-      subprocess
-    );
+        new PrintStream(out),
+        new PrintStream(err),
+        new InputStreamInput(new ByteArrayInputStream(input.getBytes())),
+        subprocess);
     this.out = out;
     this.err = err;
   }

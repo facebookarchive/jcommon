@@ -29,9 +29,8 @@ public class TestCompositeMax {
   @Test(groups = "fast")
   public void testSanity() throws Exception {
     TimeUtil.setNow(new DateTime("2012-01-01", DateTimeZone.UTC));
-    CompositeMax compositeMax = new CompositeMax(
-        Duration.standardSeconds(30), Duration.standardSeconds(10)
-      );
+    CompositeMax compositeMax =
+        new CompositeMax(Duration.standardSeconds(30), Duration.standardSeconds(10));
 
     compositeMax.add(2);
     compositeMax.add(3);

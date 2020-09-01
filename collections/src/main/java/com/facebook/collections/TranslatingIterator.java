@@ -16,7 +16,6 @@
 package com.facebook.collections;
 
 import com.facebook.collectionsbase.Mapper;
-
 import java.util.Iterator;
 
 public class TranslatingIterator<X, Y> implements Iterator<Y> {
@@ -36,7 +35,7 @@ public class TranslatingIterator<X, Y> implements Iterator<Y> {
   @Override
   public Y next() {
     X input = iterator.next();
-    
+
     return mapper.map(input);
   }
 

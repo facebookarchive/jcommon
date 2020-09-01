@@ -18,16 +18,14 @@ package com.facebook.collections.specialized;
 import com.facebook.util.ExtRunnable;
 import com.facebook.util.TimeUtil;
 import com.facebook.util.digest.LongMurmur3Hash;
-
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class TestColtHashSet {
   private ColtLongHashSet set;
@@ -74,7 +72,6 @@ public class TestColtHashSet {
     Assert.assertFalse(set.remove(1L));
   }
 
-
   @Test(groups = "fast")
   public void testResize() throws Exception {
     fillSet();
@@ -95,7 +92,6 @@ public class TestColtHashSet {
     } catch (Exception e) {
       Assert.assertTrue(e instanceof ConcurrentModificationException);
     }
-
   }
 
   @Test(groups = "fast")
@@ -154,10 +150,7 @@ public class TestColtHashSet {
 
     Assert.assertTrue(iterator.hasNext());
     // check that whatever value we removed, the other one is still present
-    Assert.assertEquals(
-      iterator.next().longValue(),
-      answer.iterator().next().longValue()
-    );
+    Assert.assertEquals(iterator.next().longValue(), answer.iterator().next().longValue());
   }
 
   @Test(groups = "fast")
@@ -195,23 +188,24 @@ public class TestColtHashSet {
     // sanity test that exercises LongHashSet2 and LongLinkedList
     int inserts = 100000;
     int maxSize = 8000;
-    SampledSet<Long> set = new SampledSetImpl<>(
-      maxSize, new LongMurmur3Hash(), new LongHashSetFactory(maxSize)
-    );
+    SampledSet<Long> set =
+        new SampledSetImpl<>(maxSize, new LongMurmur3Hash(), new LongHashSetFactory(maxSize));
     timeAdds("custom-long-hash-set-2", set, inserts);
   }
 
   private static void timeAdds(String tag, final Set<Long> set, final int numAdds)
-    throws Exception {
-    TimeUtil.logElapsedTime(tag, new ExtRunnable<Exception>() {
-      @Override
-      public void run() throws Exception {
-        Random random = new Random();
-        for (int i = 0; i < numAdds; i++) {
-          set.add(Math.abs(random.nextLong()));
-        }
-      }
-    });
+      throws Exception {
+    TimeUtil.logElapsedTime(
+        tag,
+        new ExtRunnable<Exception>() {
+          @Override
+          public void run() throws Exception {
+            Random random = new Random();
+            for (int i = 0; i < numAdds; i++) {
+              set.add(Math.abs(random.nextLong()));
+            }
+          }
+        });
   }
 
   private void fillSet() {

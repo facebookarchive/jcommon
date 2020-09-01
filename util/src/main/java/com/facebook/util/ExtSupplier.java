@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 public interface ExtSupplier<T, E extends Throwable> {
   T get() throws E;
-  
+
   public static <T> Supplier<T> quiet(ExtSupplier<T, ?> supplier) {
     return () -> {
       try {

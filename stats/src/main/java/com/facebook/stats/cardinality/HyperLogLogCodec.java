@@ -16,7 +16,6 @@
 package com.facebook.stats.cardinality;
 
 import com.google.common.base.Preconditions;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -25,6 +24,7 @@ import java.io.OutputStream;
 
 /**
  * Output format is:
+ *
  * <pre>
  *     estimate - 4 byte float
  *     log2(buckets) - unsigned nibble
@@ -61,9 +61,7 @@ public class HyperLogLogCodec {
     int numberOfBuckets = buckets.length;
     Preconditions.checkArgument(numberOfBuckets > 0, "buckets is empty");
     Preconditions.checkArgument(
-        isPowerOf2(numberOfBuckets),
-        "numberOfBuckets must be a power of 2"
-    );
+        isPowerOf2(numberOfBuckets), "numberOfBuckets must be a power of 2");
 
     // find the max value
     int maxValue = buckets[0];
@@ -91,11 +89,8 @@ public class HyperLogLogCodec {
     out.write(bucketsAndMaxValue);
 
     // create the static symbol model based on the estimated cardinality
-    SortedStaticModel hyperLogLogModel = createHyperLogLogSymbolModel(
-        (long) estimate,
-        numberOfBuckets,
-        (byte) maxValue
-    );
+    SortedStaticModel hyperLogLogModel =
+        createHyperLogLogSymbolModel((long) estimate, numberOfBuckets, (byte) maxValue);
 
     // create the encoder with an estimated output size
     ArithmeticEncoder encoder = new ArithmeticEncoder(hyperLogLogModel, out);
@@ -109,30 +104,25 @@ public class HyperLogLogCodec {
     encoder.close();
   }
 
-  public HyperLogLog decodeHyperLogLog(InputStream in)
-      throws IOException {
+  public HyperLogLog decodeHyperLogLog(InputStream in) throws IOException {
     return decodeHyperLogLog(new DataInputStream(in));
   }
 
-  public HyperLogLog decodeHyperLogLog(DataInputStream in)
-      throws IOException {
+  public HyperLogLog decodeHyperLogLog(DataInputStream in) throws IOException {
     int[] buckets = decodeBuckets(in);
     return new HyperLogLog(buckets);
   }
 
-  public AdaptiveHyperLogLog decodeAdaptiveHyperLogLog(InputStream in)
-      throws IOException {
+  public AdaptiveHyperLogLog decodeAdaptiveHyperLogLog(InputStream in) throws IOException {
     return decodeAdaptiveHyperLogLog(new DataInputStream(in));
   }
 
-  public AdaptiveHyperLogLog decodeAdaptiveHyperLogLog(DataInputStream in)
-      throws IOException {
+  public AdaptiveHyperLogLog decodeAdaptiveHyperLogLog(DataInputStream in) throws IOException {
     int[] buckets = decodeBuckets(in);
     return new AdaptiveHyperLogLog(buckets);
   }
 
-  private int[] decodeBuckets(DataInputStream in)
-      throws IOException {
+  private int[] decodeBuckets(DataInputStream in) throws IOException {
     Preconditions.checkNotNull(in, "in is null");
 
     // read the estimate
@@ -147,11 +137,8 @@ public class HyperLogLogCodec {
     byte maxValue = (byte) (1 << log2MaxValue);
 
     // create the model
-    SortedStaticModel hyperLogLogModel = createHyperLogLogSymbolModel(
-        (long) estimate,
-        numberOfBuckets,
-        maxValue
-    );
+    SortedStaticModel hyperLogLogModel =
+        createHyperLogLogSymbolModel((long) estimate, numberOfBuckets, maxValue);
 
     // read the bucket values
     int[] buckets = new int[numberOfBuckets];
@@ -163,19 +150,13 @@ public class HyperLogLogCodec {
   }
 
   public static SortedStaticModel createHyperLogLogSymbolModel(
-      long estimate,
-      int bucketCount,
-      byte maxValue
-  ) {
+      long estimate, int bucketCount, byte maxValue) {
     double[] probability = hyperLogLogProbabilities(estimate, bucketCount, maxValue);
     return new SortedStaticModel(probability);
   }
 
   public static double[] hyperLogLogProbabilities(
-      long cardinality,
-      int bucketCount,
-      byte maxValue
-  ) {
+      long cardinality, int bucketCount, byte maxValue) {
     // the probability of each symbol
     double[] probabilities = new double[(int) maxValue + 1];
 

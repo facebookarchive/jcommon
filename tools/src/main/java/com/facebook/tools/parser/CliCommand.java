@@ -36,13 +36,12 @@ public class CliCommand {
   private final boolean allowsTrailingParameters;
 
   private CliCommand(
-    String name,
-    List<String> description,
-    List<String> notes,
-    List<CliOption> options,
-    List<CliParameter> parameters,
-    boolean allowsTrailingParameters
-  ) {
+      String name,
+      List<String> description,
+      List<String> notes,
+      List<CliOption> options,
+      List<CliParameter> parameters,
+      boolean allowsTrailingParameters) {
     this.name = name;
     this.description = new ArrayList<>(description);
     this.notes = new ArrayList<>(notes);
@@ -85,9 +84,7 @@ public class CliCommand {
 
   @Override
   public String toString() {
-    return "CliCommandDefinition{" +
-      "name='" + name + '\'' +
-      '}';
+    return "CliCommandDefinition{" + "name='" + name + '\'' + '}';
   }
 
   public static class Builder {
@@ -102,8 +99,8 @@ public class CliCommand {
     /**
      * Defines the command name and general description.
      *
-     * @param name            the name of the command
-     * @param description     the description displayed when printing usage help
+     * @param name the name of the command
+     * @param description the description displayed when printing usage help
      * @param additionalLines syntactic sugar for multi-line descriptions
      */
     public Builder(String name, String description, String... additionalLines) {
@@ -131,7 +128,7 @@ public class CliCommand {
     /**
      * Adds a named option that takes a parameter, e.g., {@code --input foo.txt}.
      *
-     * @param switchName           the name, including any dashes, e.g., {@code --input}
+     * @param switchName the name, including any dashes, e.g., {@code --input}
      * @param additionaSwitchNames synonyms for the name, e.g., {@code -i}
      * @return this builder
      */
@@ -148,7 +145,7 @@ public class CliCommand {
     /**
      * Adds a named option that doesn't take a parameter, e.g., {@code --debug}.
      *
-     * @param switchName           the name, including any dashes, e.g., {@code --debug}
+     * @param switchName the name, including any dashes, e.g., {@code --debug}
      * @param additionaSwitchNames synonyms for the name, e.g., {@code -d}
      * @return this builder
      */
@@ -163,8 +160,7 @@ public class CliCommand {
     }
 
     /**
-     * Adds a positional parameter. For example:
-     * <code>
+     * Adds a positional parameter. For example: <code>
      * CliCommand.Builder builder = new CliCommand.Builder("cat", "Prints the contents of a file");
      * builder.addParameter("file").withDescription("The file to print")
      * </code>
@@ -215,8 +211,7 @@ public class CliCommand {
       }
 
       return new CliCommand(
-        name, description, notes, options, parameters, allowsTrailingParameters
-      );
+          name, description, notes, options, parameters, allowsTrailingParameters);
     }
   }
 

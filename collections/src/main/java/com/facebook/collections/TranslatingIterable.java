@@ -16,7 +16,6 @@
 package com.facebook.collections;
 
 import com.facebook.collectionsbase.Mapper;
-
 import java.util.Iterator;
 
 public class TranslatingIterable<X, Y> implements Iterable<Y> {
@@ -30,6 +29,6 @@ public class TranslatingIterable<X, Y> implements Iterable<Y> {
 
   @Override
   public Iterator<Y> iterator() {
-    return new TranslatingIterator<X,Y>(mapper, iterable.iterator());
+    return new TranslatingIterator<X, Y>(mapper, iterable.iterator());
   }
 }

@@ -38,35 +38,30 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
 
   MultiWindowRate(int timeBucketSizeMillis) {
     this(
-      newCompositeEventCounter(Integer.MAX_VALUE),
-      newCompositeEventCounter(60),
-      newCompositeEventCounter(10),
-      newCompositeEventCounter(1),
-      new DateTime(),
-      timeBucketSizeMillis
-    );
+        newCompositeEventCounter(Integer.MAX_VALUE),
+        newCompositeEventCounter(60),
+        newCompositeEventCounter(10),
+        newCompositeEventCounter(1),
+        new DateTime(),
+        timeBucketSizeMillis);
   }
 
   MultiWindowRate(
-    CompositeSum allTimeCounter,
-    CompositeSum hourCounter,
-    CompositeSum tenMinuteCounter,
-    CompositeSum minuteCounter,
-    ReadableDateTime start,
-    int timeBucketSizeMillis
-  ) {
+      CompositeSum allTimeCounter,
+      CompositeSum hourCounter,
+      CompositeSum tenMinuteCounter,
+      CompositeSum minuteCounter,
+      ReadableDateTime start,
+      int timeBucketSizeMillis) {
     this.allTimeCounter = allTimeCounter;
     this.hourCounter = hourCounter;
     this.tenMinuteCounter = tenMinuteCounter;
     this.minuteCounter = minuteCounter;
     this.start = start;
     this.timeBucketSizeMillis = timeBucketSizeMillis;
-    hourRate =
-      newEventRate(hourCounter, Duration.standardMinutes(60), start);
-    tenMinuteRate =
-      newEventRate(tenMinuteCounter, Duration.standardMinutes(10), start);
-    minuteRate =
-      newEventRate(minuteCounter, Duration.standardMinutes(1), start);
+    hourRate = newEventRate(hourCounter, Duration.standardMinutes(60), start);
+    tenMinuteRate = newEventRate(tenMinuteCounter, Duration.standardMinutes(10), start);
+    minuteRate = newEventRate(minuteCounter, Duration.standardMinutes(1), start);
     currentCounter = nextCurrentCounter(start.toDateTime());
   }
 
@@ -79,8 +74,7 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
   }
 
   private EventRate newEventRate(
-    EventCounterIf<EventCounter> counter, Duration windowSize, ReadableDateTime start
-  ) {
+      EventCounterIf<EventCounter> counter, Duration windowSize, ReadableDateTime start) {
     return new EventRateImpl(counter, windowSize, start);
   }
 
@@ -91,7 +85,7 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
   }
 
   private void rollCurrentIfNeeded() {
-    //do outside the synchronized block
+    // do outside the synchronized block
     long now = DateTimeUtils.currentTimeMillis();
     // this is false for the majority of calls, so skip lock acquisition
     if (currentCounter.getEnd().getMillis() <= now) {
@@ -169,7 +163,7 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
   // current
   private EventCounterIf<EventCounter> nextCurrentCounter(ReadableDateTime now) {
     EventCounter eventCounter =
-      new EventCounterImpl(now, now.toDateTime().plusMillis(timeBucketSizeMillis));
+        new EventCounterImpl(now, now.toDateTime().plusMillis(timeBucketSizeMillis));
 
     allTimeCounter.addEventCounter(eventCounter);
     hourCounter.addEventCounter(eventCounter);
@@ -181,12 +175,11 @@ public class MultiWindowRate implements ReadableMultiWindowRate, WritableMultiWi
 
   public MultiWindowRate merge(MultiWindowRate rate) {
     return new MultiWindowRate(
-      (CompositeSum)allTimeCounter.merge(rate.allTimeCounter),
-      (CompositeSum)hourCounter.merge(rate.hourCounter),
-      (CompositeSum)tenMinuteCounter.merge(rate.tenMinuteCounter),
-      (CompositeSum)minuteCounter.merge(rate.minuteCounter),
-      start.isBefore(rate.start) ? start : rate.start,
-      timeBucketSizeMillis
-    );
+        (CompositeSum) allTimeCounter.merge(rate.allTimeCounter),
+        (CompositeSum) hourCounter.merge(rate.hourCounter),
+        (CompositeSum) tenMinuteCounter.merge(rate.tenMinuteCounter),
+        (CompositeSum) minuteCounter.merge(rate.minuteCounter),
+        start.isBefore(rate.start) ? start : rate.start,
+        timeBucketSizeMillis);
   }
 }

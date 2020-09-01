@@ -18,11 +18,10 @@ package com.facebook.tools.example;
 import com.facebook.tools.CommandBuilder;
 import com.facebook.tools.CommandRunner;
 import com.facebook.tools.ErrorMessage;
+import com.facebook.tools.io.IO;
 import com.facebook.tools.parser.CliCommand;
 import com.facebook.tools.parser.CliParser;
 import com.facebook.tools.subprocess.Subprocess;
-import com.facebook.tools.io.IO;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -38,25 +37,29 @@ public class CreateReplayFile implements CommandBuilder {
 
   @Override
   public CliCommand defineCommand() {
-    CliCommand.Builder command = new CliCommand.Builder(
-      "create-replay-file",
-      "Dumps output from ptail into a file, adding a fake checkpoint at the end."
-    );
+    CliCommand.Builder command =
+        new CliCommand.Builder(
+            "create-replay-file",
+            "Dumps output from ptail into a file, adding a fake checkpoint at the end.");
 
-    command.addOption("--ptail")
-      .withMetavar("path")
-      .withDescription("Path to ptail command")
-      .withDefault("/usr/local/bin/ptail");
-    command.addOption("-n", "--lines")
-      .withMetavar("lines")
-      .withDescription("Number of lines to tail before stopping")
-      .withExample("100000")
-      .withDefault("100000");
-    command.addParameter("input_category")
-      .withDescription("Scribe category to tail")
-      .withExample("page_requests");
-    command.addParameter("ouput_dir")
-      .withDescription("Path to save replay data to (will be overwritten)");
+    command
+        .addOption("--ptail")
+        .withMetavar("path")
+        .withDescription("Path to ptail command")
+        .withDefault("/usr/local/bin/ptail");
+    command
+        .addOption("-n", "--lines")
+        .withMetavar("lines")
+        .withDescription("Number of lines to tail before stopping")
+        .withExample("100000")
+        .withDefault("100000");
+    command
+        .addParameter("input_category")
+        .withDescription("Scribe category to tail")
+        .withExample("page_requests");
+    command
+        .addParameter("ouput_dir")
+        .withDescription("Path to save replay data to (will be overwritten)");
 
     return command.build();
   }
@@ -64,19 +67,16 @@ public class CreateReplayFile implements CommandBuilder {
   @Override
   public void runCommand(CliParser parser) {
     createReplayFile(
-      parser.get("--ptail"),
-      parser.get("input_category"),
-      parser.get("--lines", Converters.INT),
-      new File(parser.get("output_dir"))
-    );
+        parser.get("--ptail"),
+        parser.get("input_category"),
+        parser.get("--lines", Converters.INT),
+        new File(parser.get("output_dir")));
   }
 
   public File createReplayFile(String ptailCommand, String category, int lines, File outputFile) {
     io.out.printfln("Saving %,d ptail lines to %s", lines, outputFile);
 
-    Subprocess ptail = io.subprocess.forCommand(ptailCommand)
-      .withArguments(category)
-      .stream();
+    Subprocess ptail = io.subprocess.forCommand(ptailCommand).withArguments(category).stream();
     int count = 0;
 
     try (Writer out = new BufferedWriter(new FileWriter(outputFile))) {

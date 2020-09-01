@@ -19,8 +19,9 @@ import java.util.function.DoubleToLongFunction;
 
 public interface ExtDoubleToLongFunction<E extends Throwable> {
   long applyAsLong(double value) throws E;
-  
+
   static DoubleToLongFunction quiet(ExtDoubleToLongFunction<?> doubleToLongFunction) {
-    return (value) -> ExtLongSupplier.quiet(() -> doubleToLongFunction.applyAsLong(value)).getAsLong();
+    return (value) ->
+        ExtLongSupplier.quiet(() -> doubleToLongFunction.applyAsLong(value)).getAsLong();
   }
 }

@@ -36,8 +36,8 @@ public interface Subprocess extends Iterable<String>, AutoCloseable {
   public List<String> command();
 
   /**
-   * Blocks until the underlying command has terminated.  If the command is in streaming mode,
-   * this method puts it in non-streaming mode to ensure it will eventually exit.
+   * Blocks until the underlying command has terminated. If the command is in streaming mode, this
+   * method puts it in non-streaming mode to ensure it will eventually exit.
    *
    * @return the command's return code
    */
@@ -61,43 +61,41 @@ public interface Subprocess extends Iterable<String>, AutoCloseable {
    */
   public int waitFor(File outFile);
 
-  /**
-   * Immediately destroys the underlying system command.
-   */
+  /** Immediately destroys the underlying system command. */
   public void kill();
 
   /**
-   * Returns the command's return code.  Waits for the command to complete if it hasn't already.
+   * Returns the command's return code. Waits for the command to complete if it hasn't already.
    *
    * @return the comman's return code
    */
   public int returnCode();
 
   /**
-   * Whether the return code was zero.  Waits for the command to complete if it hasn't already.
+   * Whether the return code was zero. Waits for the command to complete if it hasn't already.
    *
    * @return true if the return code was zero, otherwise false
    */
   public boolean succeeded();
 
   /**
-   * Whether the return code was non-zero.  Waits for the command to complete if it hasn't already.
+   * Whether the return code was non-zero. Waits for the command to complete if it hasn't already.
    *
    * @return true if the return code was non-zero, otherwise false
    */
   public boolean failed();
 
   /**
-   * Returns the command's stderr output.  If the command writes a lot of data to stderr, this
-   * method may truncate some of the output (e.g., it may only return the first 500k).
+   * Returns the command's stderr output. If the command writes a lot of data to stderr, this method
+   * may truncate some of the output (e.g., it may only return the first 500k).
    *
    * @return the command's stderr output
    */
   public String getError();
 
   /**
-   * Returns the command's stdout output.  If the command writes a lot of data to stdout, this
-   * method may truncate some of the output (e.g., it may only return the first 500k).
+   * Returns the command's stdout output. If the command writes a lot of data to stdout, this method
+   * may truncate some of the output (e.g., it may only return the first 500k).
    *
    * @return the command's stdout output
    */
@@ -120,7 +118,7 @@ public interface Subprocess extends Iterable<String>, AutoCloseable {
   public BufferedReader getReader();
 
   /**
-   * Puts the underlying command in non-streaming mode.  If the command is already in non-streaming
+   * Puts the underlying command in non-streaming mode. If the command is already in non-streaming
    * mode, has no effect.
    */
   public void background();

@@ -19,7 +19,7 @@ import java.util.function.LongToIntFunction;
 
 public interface ExtLongToIntFunction<E extends Throwable> {
   int applyAsInt(long value) throws E;
-  
+
   static LongToIntFunction quiet(ExtLongToIntFunction<?> longToIntFunction) {
     return (value) -> ExtIntSupplier.quiet(() -> longToIntFunction.applyAsInt(value)).getAsInt();
   }

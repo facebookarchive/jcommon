@@ -17,7 +17,6 @@ package com.facebook.stats.topk;
 
 import com.facebook.collections.ComparablePair;
 import com.google.common.base.Preconditions;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -35,7 +34,7 @@ public class TreeBasedIntegerTopK implements TopK<Integer> {
   private final long[] counts;
   private final boolean[] isInTop;
   private final TreeSet<ComparablePair<Long, Integer>> topPairs =
-    new TreeSet<ComparablePair<Long, Integer>>();
+      new TreeSet<ComparablePair<Long, Integer>>();
   private long smallestTopCount = Long.MAX_VALUE;
 
   public TreeBasedIntegerTopK(int keySpaceSize, int k) {

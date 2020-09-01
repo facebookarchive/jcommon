@@ -19,8 +19,7 @@ public class TestCoreConcurrentCache extends AbstractTestConcurrentCache {
 
   @Override
   protected ConcurrentCache<String, String, RuntimeException> createCache(
-    ValueFactory<String, String, RuntimeException> valueFactory
-  ) {
+      ValueFactory<String, String, RuntimeException> valueFactory) {
     return new CoreConcurrentCache<>(valueFactory, RuntimeExceptionHandler.INSTANCE);
   }
 }

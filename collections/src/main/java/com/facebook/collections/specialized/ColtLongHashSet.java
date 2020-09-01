@@ -17,7 +17,6 @@ package com.facebook.collections.specialized;
 
 import cern.colt.list.LongArrayList;
 import cern.colt.map.OpenLongObjectHashMap;
-
 import java.util.AbstractSet;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -25,10 +24,10 @@ import java.util.NoSuchElementException;
 
 /**
  * uses
- * <p/>
- * http://acs.lbl.gov/software/colt/
- * <p/>
- * to implement a memory efficient hash set of longs
+ *
+ * <p>http://acs.lbl.gov/software/colt/
+ *
+ * <p>to implement a memory efficient hash set of longs
  */
 public class ColtLongHashSet extends AbstractSet<Long> implements SnapshotableSet<Long> {
   private static final Object TRUE = new Object();
@@ -100,9 +99,7 @@ public class ColtLongHashSet extends AbstractSet<Long> implements SnapshotableSe
     public void remove() {
       synchronized (ColtLongHashSet.this) {
         if (!canRemove) {
-          throw new IllegalStateException(
-            "repeated remove() calls or next() not called"
-          );
+          throw new IllegalStateException("repeated remove() calls or next() not called");
         }
 
         map.removeKey(mapKeyList.get(index - 1));

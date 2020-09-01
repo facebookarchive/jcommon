@@ -15,11 +15,10 @@
  */
 package com.facebook.collections;
 
+import java.util.Iterator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.Iterator;
 
 public class TestLongArray {
   private LongArray arraySize4;
@@ -131,13 +130,13 @@ public class TestLongArray {
   @Test(groups = "fast", expectedExceptions = IllegalStateException.class)
   public void testIteratorRemoveNoNext() throws Exception {
     Iterator<Long> iter = array.iterator();
-  	iter.remove();
+    iter.remove();
   }
 
   @Test(groups = "fast", expectedExceptions = IllegalStateException.class)
   public void testIteratorRepeatedRemove() throws Exception {
     Iterator<Long> iter = array.iterator();
-  	iter.next();
+    iter.next();
     iter.remove();
     Assert.assertEquals(iter.next().longValue(), 2L);
     iter.remove();

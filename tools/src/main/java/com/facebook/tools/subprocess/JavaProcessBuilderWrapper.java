@@ -16,7 +16,6 @@
 package com.facebook.tools.subprocess;
 
 import com.facebook.tools.ErrorMessage;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -25,11 +24,10 @@ import java.util.Map;
 class JavaProcessBuilderWrapper implements ProcessBuilderWrapper {
   @Override
   public Process createProcess(
-    RedirectErrorsTo redirectErrorsTo,
-    Map<String, String> environmentOverrides,
-    File workingDirectory,
-    List<String> command
-  ) {
+      RedirectErrorsTo redirectErrorsTo,
+      Map<String, String> environmentOverrides,
+      File workingDirectory,
+      List<String> command) {
     ProcessBuilder processBuilder = new ProcessBuilder(command);
 
     if (workingDirectory != null) {
