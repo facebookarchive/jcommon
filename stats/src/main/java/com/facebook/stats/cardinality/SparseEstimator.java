@@ -71,6 +71,7 @@ class SparseEstimator implements Estimator {
     slots = new long[(initialCapacity + getBucketsPerSlot()) / getBucketsPerSlot()];
   }
 
+  @Override
   public boolean setIfGreater(int bucket, int highestBitPosition) {
     Preconditions.checkArgument(
         highestBitPosition < MAX_BUCKET_VALUE,
@@ -97,6 +98,7 @@ class SparseEstimator implements Estimator {
     return false;
   }
 
+  @Override
   public int[] buckets() {
     int[] buckets = new int[getNumberOfBuckets()];
 
@@ -108,6 +110,7 @@ class SparseEstimator implements Estimator {
     return buckets;
   }
 
+  @Override
   public int getNumberOfBuckets() {
     return 1 << indexBits;
   }
@@ -154,6 +157,7 @@ class SparseEstimator implements Estimator {
     slots[slot] = (slots[slot] & ~bucketClearMask) | bucketSetMask;
   }
 
+  @Override
   public int estimateSizeInBytes() {
     return estimateSizeInBytes(bucketCount, getNumberOfBuckets());
   }
@@ -168,6 +172,7 @@ class SparseEstimator implements Estimator {
     return (nonZeroBuckets + bucketsPerSlot) / bucketsPerSlot * Long.SIZE / 8 + INSTANCE_SIZE;
   }
 
+  @Override
   public long estimate() {
     int totalBuckets = getNumberOfBuckets();
 

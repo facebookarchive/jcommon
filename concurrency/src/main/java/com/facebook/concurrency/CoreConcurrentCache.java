@@ -54,7 +54,7 @@ public class CoreConcurrentCache<K, V, E extends Exception> implements Concurren
   }
 
   @Override
-  public V get(final K key) throws E {
+  public V get(K key) throws E {
     Object value = cache.get(key);
 
     // if there isn't entry, do a thread-safe insert into the cache,

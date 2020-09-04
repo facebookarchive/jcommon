@@ -246,7 +246,7 @@ class SubprocessImpl implements Subprocess {
 
   @Override
   public Iterator<String> iterator() {
-    final BufferedReader reader = getReader();
+    BufferedReader reader = getReader();
 
     return new Iterator<String>() {
       private String line;

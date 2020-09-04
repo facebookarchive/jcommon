@@ -52,8 +52,8 @@ public class TestOptionTranslator {
 
   @Test(groups = "fast")
   public void testWatcher() throws Exception {
-    final AtomicInteger integerValue = new AtomicInteger();
-    final AtomicInteger updatedCount = new AtomicInteger();
+    AtomicInteger integerValue = new AtomicInteger();
+    AtomicInteger updatedCount = new AtomicInteger();
     OptionWatcher<Integer> watcher =
         new OptionWatcher<Integer>() {
           @Override

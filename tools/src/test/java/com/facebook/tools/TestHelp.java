@@ -67,8 +67,8 @@ public class TestHelp {
 
   @Test(groups = "fast")
   public void testNoCommands() {
-    Help onlyHelp = new Help(io, Collections.<CommandBuilder>emptyList());
-    CliParser parser = new CliParser(onlyHelp.defineCommand(), Collections.<String>emptyList());
+    Help onlyHelp = new Help(io, Collections.emptyList());
+    CliParser parser = new CliParser(onlyHelp.defineCommand(), Collections.emptyList());
 
     onlyHelp.runCommand(parser);
     Assert.assertEquals(io.getOut(), "help <command_name>\n  Displays help for commands\n");
@@ -77,7 +77,7 @@ public class TestHelp {
 
   @Test(groups = "fast")
   public void testCommandSummary() {
-    CliParser parser = new CliParser(help.defineCommand(), Collections.<String>emptyList());
+    CliParser parser = new CliParser(help.defineCommand(), Collections.emptyList());
 
     help.runCommand(parser);
     Assert.assertEquals(

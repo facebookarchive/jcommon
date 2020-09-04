@@ -75,7 +75,7 @@ public class TestStats {
   /** Test the setAttribute(String, Callable <String> ) function */
   @Test(groups = "fast")
   public void testAttributeCallable() {
-    for (final String key : attributeMap.keySet()) {
+    for (String key : attributeMap.keySet()) {
       stats.setAttribute(
           key,
           new Callable<String>() {
@@ -115,9 +115,9 @@ public class TestStats {
   @Test(groups = "fast")
   public void testDynamicCounters() throws Exception {
     LongWrapper longValue = new LongWrapper(1);
-    final String name = "testCounter";
+    String name = "testCounter";
     Assert.assertTrue(stats.addDynamicCounter(name, longValue));
-    final Map<String, Long> exported = new HashMap<>();
+    Map<String, Long> exported = new HashMap<>();
     stats.exportCounters(exported);
     Assert.assertEquals(exported.get(name), Long.valueOf(1));
 
@@ -150,7 +150,7 @@ public class TestStats {
   @Test(groups = "fast")
   public void testGetDynamicCounters() throws Exception {
     LongWrapper longValue = new LongWrapper(1);
-    final String name = "testCounter";
+    String name = "testCounter";
     Assert.assertTrue(stats.addDynamicCounter(name, longValue));
     Callable<Long> dynamicCounter = stats.getDynamicCounter(name);
     Assert.assertEquals(dynamicCounter.call().longValue(), 1);

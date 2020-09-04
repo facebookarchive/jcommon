@@ -150,11 +150,11 @@ public class TestUnstoppableScheduledExecutorService {
     // task completes while shutdown() is removing pending tasks futures,
     // we could get a ConcurrentModificationException (without the fix
     // to do locking anyway)
-    final int numShutdownTasks = 1000;
+    int numShutdownTasks = 1000;
     int numExecutionThreads = 10;
 
-    final AtomicInteger count = new AtomicInteger(0);
-    final AtomicBoolean fail = new AtomicBoolean(false);
+    AtomicInteger count = new AtomicInteger(0);
+    AtomicBoolean fail = new AtomicBoolean(false);
     Runnable shutdownTask =
         new Runnable() {
           @Override

@@ -23,7 +23,7 @@ public class NamedDaemonThreadFactory extends NamedThreadFactory {
 
   @Override
   public Thread newThread(Runnable r) {
-    final Thread thread = super.newThread(r);
+    Thread thread = super.newThread(r);
     thread.setDaemon(true);
     return thread;
   }

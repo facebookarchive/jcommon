@@ -52,12 +52,12 @@ public class ThreadHelper {
     return t;
   }
 
-  public LoopThread repeatInThread(final Runnable operation) {
+  public LoopThread repeatInThread(Runnable operation) {
     return repeatInThread(operation, null);
   }
 
-  public LoopThread repeatInThread(final Runnable operation, String threadName) {
-    final AtomicBoolean shouldRun = new AtomicBoolean(true);
+  public LoopThread repeatInThread(Runnable operation, String threadName) {
+    AtomicBoolean shouldRun = new AtomicBoolean(true);
     Runnable loopTask =
         new Runnable() {
           @Override

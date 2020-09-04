@@ -26,7 +26,7 @@ public class ForwardReferenceProxy<T> {
   private final AtomicReference<T> instanceRef;
   private final Supplier<T> proxySupplier;
 
-  public ForwardReferenceProxy(final Class<T> clazz) {
+  public ForwardReferenceProxy(Class<T> clazz) {
     this.instanceRef = new AtomicReference<>();
     proxySupplier =
         Suppliers.memoize(
@@ -48,7 +48,7 @@ public class ForwardReferenceProxy<T> {
     return proxySupplier.get();
   }
 
-  private static <T> T wrap(Class<T> clazz, final AtomicReference<T> instance) {
+  private static <T> T wrap(Class<T> clazz, AtomicReference<T> instance) {
     Preconditions.checkNotNull(instance, "must pass a non-null atomic reference");
     InvocationHandler handler =
         (proxy, method, args) ->

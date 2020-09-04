@@ -53,7 +53,7 @@ public class CaffeineConcurrentCache<K, V, E extends Exception>
   }
 
   @Override
-  public V get(final K key) throws E {
+  public V get(K key) throws E {
     return cache.get(key).get();
   }
 

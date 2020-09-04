@@ -70,7 +70,7 @@ public class DecayCounter implements EventCounter {
       long millis = elapsed.getMillis();
 
       // compute total decay for millis / 1000 seconds
-      double thisDecay = Math.pow(1.0 - decayRatePerSecond, (double) (millis / (double) 1000));
+      double thisDecay = Math.pow(1.0 - decayRatePerSecond, millis / (double) 1000);
 
       return (long) (count.get() * thisDecay);
     } else {

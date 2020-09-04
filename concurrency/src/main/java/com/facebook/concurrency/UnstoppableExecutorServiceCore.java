@@ -75,7 +75,7 @@ class UnstoppableExecutorServiceCore {
     return new TrackedRunnableImpl(task);
   }
 
-  public <V> TrackedCallable<V> registerTask(final Callable<V> task) {
+  public <V> TrackedCallable<V> registerTask(Callable<V> task) {
     if (isShutdown()) {
       throw new RejectedExecutionException("executor shutdown already");
     }
@@ -172,6 +172,7 @@ class UnstoppableExecutorServiceCore {
       }
     }
 
+    @Override
     public void complete() {
       if (hasCompleted.compareAndSet(false, true)) {
         decrementRemaining();
@@ -198,6 +199,7 @@ class UnstoppableExecutorServiceCore {
       }
     }
 
+    @Override
     public void complete() {
       if (hasCompleted.compareAndSet(false, true)) {
         decrementRemaining();

@@ -54,7 +54,7 @@ interface Model {
 
     @Override
     public String toString() {
-      final StringBuilder sb = new StringBuilder();
+      StringBuilder sb = new StringBuilder();
       sb.append("SymbolInfo");
       sb.append("{symbol=").append(symbol);
       sb.append(", lowCount=").append(lowCount);

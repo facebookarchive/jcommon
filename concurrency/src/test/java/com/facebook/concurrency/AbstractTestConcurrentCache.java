@@ -201,7 +201,7 @@ public abstract class AbstractTestConcurrentCache {
       // expected
     }
     // now call removeIfError() twice, with the first one
-    final AtomicInteger removeCount = new AtomicInteger(0);
+    AtomicInteger removeCount = new AtomicInteger(0);
     Runnable operation =
         () -> {
           if (cache.removeIfError(EXCEPTION_KEY)) {

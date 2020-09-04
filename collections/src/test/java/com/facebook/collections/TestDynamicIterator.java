@@ -106,6 +106,7 @@ public class TestDynamicIterator {
     Future<Set<Integer>> consumer =
         executor.submit(
             new Callable<Set<Integer>>() {
+              @Override
               public Set<Integer> call() throws Exception {
                 return Sets.newHashSet(iterator);
               }
@@ -131,10 +132,11 @@ public class TestDynamicIterator {
     iterator.next();
   }
 
-  private Callable<Void> producer(final DynamicIterator<Integer> iterator, final int... values) {
+  private Callable<Void> producer(DynamicIterator<Integer> iterator, int... values) {
     return new Callable<Void>() {
+      @Override
       public Void call() throws InterruptedException {
-        for (final int value : values) {
+        for (int value : values) {
           iterator.add(value);
         }
         return null;

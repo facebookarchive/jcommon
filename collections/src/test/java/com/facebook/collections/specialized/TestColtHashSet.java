@@ -193,8 +193,7 @@ public class TestColtHashSet {
     timeAdds("custom-long-hash-set-2", set, inserts);
   }
 
-  private static void timeAdds(String tag, final Set<Long> set, final int numAdds)
-      throws Exception {
+  private static void timeAdds(String tag, Set<Long> set, int numAdds) throws Exception {
     TimeUtil.logElapsedTime(
         tag,
         new ExtRunnable<Exception>() {

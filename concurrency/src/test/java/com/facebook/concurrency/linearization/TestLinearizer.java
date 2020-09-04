@@ -94,8 +94,8 @@ public class TestLinearizer {
   }
 
   private void nextConcurrentTask() {
-    final ConcurrentPoint concurrentPoint = linearizer.createConcurrentPoint();
-    final int taskId = nextTaskId.get();
+    ConcurrentPoint concurrentPoint = linearizer.createConcurrentPoint();
+    int taskId = nextTaskId.get();
     SerialStartTask task =
         new SerialStartTask(
             new Runnable() {
@@ -115,8 +115,8 @@ public class TestLinearizer {
   }
 
   private void nextLinearizationTask() {
-    final LinearizationPoint linearizationPoint = linearizer.createLinearizationPoint();
-    final int taskId = nextTaskId.incrementAndGet();
+    LinearizationPoint linearizationPoint = linearizer.createLinearizationPoint();
+    int taskId = nextTaskId.incrementAndGet();
 
     nextTaskId.incrementAndGet();
 

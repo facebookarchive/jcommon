@@ -115,12 +115,14 @@ public abstract class AbstractCompositeCounter<C extends EventCounterIf<C>>
     last.add(delta);
   }
 
+  @Override
   public ReadableDateTime getStart() {
     trimIfNeeded();
 
     return start;
   }
 
+  @Override
   public ReadableDateTime getEnd() {
     trimIfNeeded();
 

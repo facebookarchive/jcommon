@@ -146,7 +146,7 @@ public class TestUnstoppableExecutorService {
 
   @Test(groups = "fast")
   public void testTaskCompletesThenCancel() throws Exception {
-    final AtomicReference<Future> future = new AtomicReference<>();
+    AtomicReference<Future> future = new AtomicReference<>();
     AtomicInteger completed =
         TestUtils.<Void>countCompletedCallables(
             10, argument -> future.compareAndSet(null, executor.submit(argument)));
@@ -194,7 +194,7 @@ public class TestUnstoppableExecutorService {
     int numTasks = 1000000;
     // use enough threads to induce lock contention
     int numThreads = 6;
-    final AtomicInteger count = new AtomicInteger(0);
+    AtomicInteger count = new AtomicInteger(0);
     ExecutorService realExecutor = Executors.newFixedThreadPool(numThreads);
     executor = new UnstoppableExecutorService(realExecutor);
     LatchTask blockedNoOp = new LatchTask(count::incrementAndGet);

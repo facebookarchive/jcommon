@@ -28,6 +28,7 @@ public class TestingClock implements Clock {
     this(0);
   }
 
+  @Override
   public long getMillis() {
     return time;
   }

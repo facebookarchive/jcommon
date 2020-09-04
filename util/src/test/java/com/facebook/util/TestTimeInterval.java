@@ -45,11 +45,11 @@ public class TestTimeInterval {
   public Object[][] durationParams() throws Exception {
     // Use timezones with constant offsets for testing
 
-    final int day = 1000 * 60 * 60 * 24;
-    final int hour = 1000 * 60 * 60;
-    final int minute = 1000 * 60;
-    final int minute5 = 1000 * 60 * 5;
-    final DateTime time = new DateTime(2011, 11, 3, 20, 21, 10, 14, PST);
+    int day = 1000 * 60 * 60 * 24;
+    int hour = 1000 * 60 * 60;
+    int minute = 1000 * 60;
+    int minute5 = 1000 * 60 * 5;
+    DateTime time = new DateTime(2011, 11, 3, 20, 21, 10, 14, PST);
     return new Object[][] {
       // day intervals
       {time, day, PST, new DateTime(2011, 11, 3, 0, 0, 0, 0, PST)},
@@ -245,9 +245,9 @@ public class TestTimeInterval {
   public Object[][] intervalsValid() {
     List<Object[]> params = new ArrayList<>();
     // millis in a second
-    final long oneSec = 1000L;
-    final long oneDay = 24 * 60 * 60 * oneSec;
-    final long oneYear = 365 * oneDay + (5 * 3600 + 2952) * oneSec;
+    long oneSec = 1000L;
+    long oneDay = 24 * 60 * 60 * oneSec;
+    long oneYear = 365 * oneDay + (5 * 3600 + 2952) * oneSec;
     for (DateTimeZone timeZone : getTestTimeZones()) {
       params.addAll(
           Arrays.asList(
@@ -286,7 +286,7 @@ public class TestTimeInterval {
   @DataProvider(name = "plusMinus")
   public Object[][] plusMinus() {
     // 2011-3-13T00:03:00 is DST start
-    final DateTime testTime = new DateTime(2011, 3, 13, 0, 29, 10, 101, PDT);
+    DateTime testTime = new DateTime(2011, 3, 13, 0, 29, 10, 101, PDT);
     return new Object[][] {
       {
         testTime,

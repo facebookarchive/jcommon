@@ -46,6 +46,7 @@ public class MixedTypeMap<K> implements ReadOnlyMixedTypeMap<K> {
     map.put(key, instance);
   }
 
+  @Override
   public <V> V get(K id, Class<V> clazz) {
     Key<K, V> key = Key.get(id, clazz);
 
@@ -53,6 +54,7 @@ public class MixedTypeMap<K> implements ReadOnlyMixedTypeMap<K> {
     return (V) map.get(key);
   }
 
+  @Override
   public <V> V get(K id, TypeToken<V> type) {
     Key<K, V> key = Key.get(id, type);
 
@@ -60,6 +62,7 @@ public class MixedTypeMap<K> implements ReadOnlyMixedTypeMap<K> {
     return (V) map.get(key);
   }
 
+  @Override
   public <V> V get(Key<K, V> key) {
     //noinspection unchecked
     return (V) map.get(key);
@@ -71,6 +74,7 @@ public class MixedTypeMap<K> implements ReadOnlyMixedTypeMap<K> {
     return otherMap;
   }
 
+  @Override
   public int size() {
     return map.size();
   }

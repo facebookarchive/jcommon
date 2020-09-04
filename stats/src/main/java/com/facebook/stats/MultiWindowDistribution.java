@@ -131,6 +131,7 @@ public class MultiWindowDistribution implements WritableMultiWindowStat {
 
     public static Function<Quantile, Double> getQuantileFunction() {
       return new Function<Quantile, Double>() {
+        @Override
         public Double apply(Quantile input) {
           return input.getQuantile();
         }

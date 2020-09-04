@@ -56,6 +56,7 @@ public class WrappedSet<T> implements Set<T> {
     return delegate.toArray(a);
   }
 
+  @Override
   public boolean add(T t) {
     return delegate.add(t);
   }
@@ -70,6 +71,7 @@ public class WrappedSet<T> implements Set<T> {
     return delegate.containsAll(c);
   }
 
+  @Override
   public boolean addAll(Collection<? extends T> c) {
     return delegate.addAll(c);
   }

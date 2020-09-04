@@ -23,6 +23,7 @@ import com.facebook.stats.topk.TopK;
 public class TestArrayBasedIntegerTopK extends TestIntegerTopK {
   private static final Logger LOG = LoggerImpl.getLogger(TestArrayBasedIntegerTopK.class);
 
+  @Override
   protected TopK<Integer> getInstance(int keySpaceSize, int k) {
     return new ArrayBasedIntegerTopK(keySpaceSize, k);
   }

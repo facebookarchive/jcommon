@@ -41,18 +41,22 @@ public class EventCounterImpl implements EventCounter {
     this(start, end, 0L);
   }
 
+  @Override
   public void add(long delta) {
     value.addAndGet(delta);
   }
 
+  @Override
   public long getValue() {
     return value.get();
   }
 
+  @Override
   public ReadableDateTime getStart() {
     return start;
   }
 
+  @Override
   public ReadableDateTime getEnd() {
     return end;
   }

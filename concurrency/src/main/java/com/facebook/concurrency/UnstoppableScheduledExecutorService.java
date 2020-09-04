@@ -107,7 +107,7 @@ public class UnstoppableScheduledExecutorService implements ScheduledExecutorSer
   }
 
   @Override
-  public ScheduledFuture<?> schedule(Runnable command, final long delay, final TimeUnit unit) {
+  public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
     return internalScheduleRunnable(
         command,
         new RunnableCallback() {
@@ -119,8 +119,7 @@ public class UnstoppableScheduledExecutorService implements ScheduledExecutorSer
   }
 
   @Override
-  public <V> ScheduledFuture<V> schedule(
-      Callable<V> callable, final long delay, final TimeUnit unit) {
+  public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
     return internalScheduleCallable(
         callable,
         new CallableCallback<V>() {
@@ -133,7 +132,7 @@ public class UnstoppableScheduledExecutorService implements ScheduledExecutorSer
 
   @Override
   public ScheduledFuture<?> scheduleAtFixedRate(
-      final Runnable command, final long initialDelay, final long period, final TimeUnit unit) {
+      Runnable command, long initialDelay, long period, TimeUnit unit) {
     return internalScheduleRunnable(
         command,
         new RunnableCallback() {
@@ -146,7 +145,7 @@ public class UnstoppableScheduledExecutorService implements ScheduledExecutorSer
 
   @Override
   public ScheduledFuture<?> scheduleWithFixedDelay(
-      final Runnable command, final long initialDelay, final long delay, final TimeUnit unit) {
+      Runnable command, long initialDelay, long delay, TimeUnit unit) {
     return internalScheduleRunnable(
         command,
         new RunnableCallback() {

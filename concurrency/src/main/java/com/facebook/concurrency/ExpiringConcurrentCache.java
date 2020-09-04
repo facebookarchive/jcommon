@@ -179,8 +179,8 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
             baseCache.iterator();
 
         while (iterator.hasNext()) {
-          final K key;
-          final CacheEntry<V, E> cacheEntry;
+          K key;
+          CacheEntry<V, E> cacheEntry;
           try {
             Map.Entry<K, CallableSnapshot<CacheEntry<V, E>, E>> entry = iterator.next();
             key = entry.getKey();
@@ -364,7 +364,7 @@ public class ExpiringConcurrentCache<K, V, E extends Exception>
     }
 
     @Override
-    public CallableSnapshot<O, E> apply(final I input) {
+    public CallableSnapshot<O, E> apply(I input) {
       return new PrivateCallableSnapshot<>(() -> valueFactory.create(input), exceptionHandler);
     }
   }

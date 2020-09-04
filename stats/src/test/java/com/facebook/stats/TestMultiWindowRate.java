@@ -56,8 +56,8 @@ public class TestMultiWindowRate {
 
     LOG.info("ceiling rate/s : " + format.format(1000000000 * i / (end - start)));
 
-    final MultiWindowRate rate = new MultiWindowRate(500);
-    final AtomicBoolean done = new AtomicBoolean(false);
+    MultiWindowRate rate = new MultiWindowRate(500);
+    AtomicBoolean done = new AtomicBoolean(false);
     Thread t =
         new Thread(
             new Runnable() {

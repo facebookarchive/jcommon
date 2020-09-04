@@ -38,7 +38,7 @@ public class ConcurrentCacheTestHelper<K, V> {
         });
   }
 
-  Thread getInThread(final K key, final V expectedValue) {
+  Thread getInThread(K key, V expectedValue) {
     return doInThread(
         new Runnable() {
           @Override
@@ -49,7 +49,7 @@ public class ConcurrentCacheTestHelper<K, V> {
         });
   }
 
-  Thread removeInThread(final K key, final V expectedValue) {
+  Thread removeInThread(K key, V expectedValue) {
     return doInThread(
         new Runnable() {
           @Override

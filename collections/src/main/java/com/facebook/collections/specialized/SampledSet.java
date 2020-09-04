@@ -30,6 +30,7 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public interface SampledSet<T> extends Trackable, Set<T>, SnapshotProvider<SampledSet<T>> {
 
+  @Override
   public boolean add(T element);
 
   public int getMaxSetSize();

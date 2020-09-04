@@ -24,5 +24,6 @@ package com.facebook.collectionsbase;
  * @param <V>
  */
 public interface SafeFunction<K, V> extends Function<K, V, RuntimeException> {
+  @Override
   public V execute(K input);
 }

@@ -155,7 +155,7 @@ public class SubprocessBuilder {
     }
 
     private Subprocess start(boolean streaming) {
-      final Process process;
+      Process process;
 
       if (redirectStderrToStdout) {
         process =

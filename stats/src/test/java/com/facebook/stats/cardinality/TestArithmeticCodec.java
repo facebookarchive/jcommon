@@ -151,6 +151,7 @@ public class TestArithmeticCodec {
       this.histogramFactory = histogramFactory;
     }
 
+    @Override
     public StaticModel create(int numberOfSymbols) {
       double[] weights = histogramFactory.create(numberOfSymbols);
       return new StaticModel(weights);
@@ -164,6 +165,7 @@ public class TestArithmeticCodec {
       this.histogramFactory = histogramFactory;
     }
 
+    @Override
     public SortedStaticModel create(int numberOfSymbols) {
       double[] weights = histogramFactory.create(numberOfSymbols);
       return new SortedStaticModel(weights);
@@ -175,6 +177,7 @@ public class TestArithmeticCodec {
   }
 
   private static class ExponentiallyDecreasingHistogramFactory implements HistogramFactory {
+    @Override
     public double[] create(int numberOfSymbols) {
       double maxExponent = log(1 / SMALLEST_PROBABILITY);
 
@@ -188,6 +191,7 @@ public class TestArithmeticCodec {
   }
 
   private static class GaussianHistogramFactory implements HistogramFactory {
+    @Override
     public double[] create(int numberOfSymbols) {
       double mean = numberOfSymbols / 2.0;
       double std = sqrt(mean);
@@ -204,6 +208,7 @@ public class TestArithmeticCodec {
   }
 
   private static class RandomHistogramFactory implements HistogramFactory {
+    @Override
     public double[] create(int numberOfSymbols) {
       double[] probability = new double[numberOfSymbols];
       for (int i = 0; i < probability.length; i++) {

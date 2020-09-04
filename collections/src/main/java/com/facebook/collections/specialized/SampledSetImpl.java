@@ -447,7 +447,7 @@ public class SampledSetImpl<T> implements SampledSet<T> {
         return false;
       }
 
-      final SampledSetImpl<T> that = (SampledSetImpl<T>) o;
+      SampledSetImpl<T> that = (SampledSetImpl<T>) o;
 
       if (currentSampleRate != that.currentSampleRate) {
         return false;

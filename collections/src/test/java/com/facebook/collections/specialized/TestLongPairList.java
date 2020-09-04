@@ -17,7 +17,6 @@ package com.facebook.collections.specialized;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.testng.Assert;
@@ -149,8 +148,7 @@ public class TestLongPairList {
       tmpList.add(tuple);
     }
 
-    Collections.sort(
-        tmpList,
+    tmpList.sort(
         new Comparator<long[]>() {
           @Override
           public int compare(long[] o1, long[] o2) {

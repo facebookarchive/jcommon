@@ -123,7 +123,7 @@ public class TestMixedTypeMap {
   public void testGenerics() throws Exception {
     TypeToken<List<String>> stringTypeToken = new TypeToken<List<String>>() {};
     List<String> stringList =
-        Piles.<String>copyOf(
+        Piles.copyOf(
             ImmutableList.<String>builder().add("x").add("y").add("z").add("1").build().iterator());
 
     stringMap1.put("fuu", stringTypeToken, stringList);

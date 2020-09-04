@@ -174,6 +174,7 @@ public class Stats implements StatsReader, StatsCollector {
     return StatsUtil.setCounterValue(key, value, this);
   }
 
+  @Override
   public long resetCounter(StatType key) {
     return internalResetCounter(key.getKey());
   }
@@ -189,6 +190,7 @@ public class Stats implements StatsReader, StatsCollector {
     return counter == null ? 0 : counter.get();
   }
 
+  @Override
   public void incrementSpread(StatType type, long value) {
     getMultiWindowSpread(type.getKey()).add(value);
   }
@@ -317,14 +319,14 @@ public class Stats implements StatsReader, StatsCollector {
   @Deprecated
   @Override
   public Callable<Long> getDynamicCounter(StatType key) {
-    final LongCounter longCounter = counters.get(key.getKey());
+    LongCounter longCounter = counters.get(key.getKey());
     return longCounter::get;
   }
 
   @Deprecated
   @Override
   public Callable<Long> getDynamicCounter(String key) {
-    final LongCounter longCounter = counters.get(key);
+    LongCounter longCounter = counters.get(key);
     return longCounter::get;
   }
 

@@ -213,8 +213,8 @@ public class TestExecutorServiceFront {
    */
   @Test(groups = "fast", dataProvider = "getTestExecutors")
   public void testDyingThreads(Executor executor) throws Exception {
-    final int numTasks = NUM_THREADS * 2;
-    final CountDownLatch latch = new CountDownLatch(numTasks);
+    int numTasks = NUM_THREADS * 2;
+    CountDownLatch latch = new CountDownLatch(numTasks);
     // kill all the threads
     for (int i = 0; i < numTasks; i++) {
       executor.execute(
@@ -225,7 +225,7 @@ public class TestExecutorServiceFront {
     }
     Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
     // now add more tasks to run
-    final CountDownLatch latch2 = new CountDownLatch(NUM_THREADS);
+    CountDownLatch latch2 = new CountDownLatch(NUM_THREADS);
     // Run tasks to see if they can still run
     for (int i = 0; i < NUM_THREADS; i++) {
       executor.execute(latch2::countDown);
@@ -237,7 +237,7 @@ public class TestExecutorServiceFront {
   public void testTimeExpirationWithEmptyQueue() throws Exception {
     try {
       LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
-      final ExecutorServiceFront executorServiceFront =
+      ExecutorServiceFront executorServiceFront =
           new ExecutorServiceFront(workQueue, mockExecutor, "fuu", 1, 1, TimeUnit.SECONDS);
       DateTimeUtils.setCurrentMillisFixed(0);
       executorServiceFront.execute(latchTask);
@@ -272,7 +272,7 @@ public class TestExecutorServiceFront {
   @Test(groups = "fast")
   public void testRenameThread() throws Exception {
     LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
-    final ExecutorServiceFront executorServiceFront =
+    ExecutorServiceFront executorServiceFront =
         new ExecutorServiceFront(workQueue, mockExecutor, "custom-name", 1);
     executorServiceFront.execute(latchTask);
     Assert.assertEquals(mockExecutor.getNumPendingTasks(), 1);

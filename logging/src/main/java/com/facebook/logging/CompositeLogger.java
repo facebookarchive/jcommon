@@ -82,7 +82,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void trace(final String format, final Object... args) {
+  public void trace(String format, Object... args) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -95,7 +95,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void trace(final Throwable t, final String format, final Object... args) {
+  public void trace(Throwable t, String format, Object... args) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -108,7 +108,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void debug(final String format, final Object... args) {
+  public void debug(String format, Object... args) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -121,7 +121,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void debug(final Throwable t, final String format, final Object... args) {
+  public void debug(Throwable t, String format, Object... args) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -134,7 +134,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void debug(final String message, final Throwable throwable) {
+  public void debug(String message, Throwable throwable) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -147,7 +147,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void info(final String format, final Object... args) {
+  public void info(String format, Object... args) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -160,7 +160,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void info(final Throwable t, final String format, final Object... args) {
+  public void info(Throwable t, String format, Object... args) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -173,7 +173,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void info(final String message, final Throwable throwable) {
+  public void info(String message, Throwable throwable) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -186,7 +186,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void warn(final String format, final Object... args) {
+  public void warn(String format, Object... args) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -199,7 +199,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void warn(final Throwable t, final String format, final Object... args) {
+  public void warn(Throwable t, String format, Object... args) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -212,7 +212,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void warn(final String message, final Throwable throwable) {
+  public void warn(String message, Throwable throwable) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -225,7 +225,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void error(final String format, final Object... args) {
+  public void error(String format, Object... args) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -238,7 +238,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void error(final Throwable t, final String format, final Object... args) {
+  public void error(Throwable t, String format, Object... args) {
     logAll(
         new LoggerOperation() {
           @Override
@@ -251,7 +251,7 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
-  public void error(final String message, final Throwable throwable) {
+  public void error(String message, Throwable throwable) {
     logAll(
         new LoggerOperation() {
           @Override

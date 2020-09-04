@@ -89,7 +89,7 @@ public class TestSubprocessBuilder {
   @Test(groups = "fast")
   public void testRedirectStdOutToStdErr() {
     io.subprocess.forCommand("foo").redirectStderrToStdout().start();
-    assertCommand(RedirectErrorsTo.STDOUT, Collections.<String, String>emptyMap(), null, "foo");
+    assertCommand(RedirectErrorsTo.STDOUT, Collections.emptyMap(), null, "foo");
   }
 
   @Test(groups = "fast")
@@ -111,11 +111,7 @@ public class TestSubprocessBuilder {
   public void testWorkingDirectory() {
     io.subprocess.forCommand("foo").withWorkingDirectory(new File("/tmp/test")).start();
 
-    assertCommand(
-        RedirectErrorsTo.STDERR,
-        Collections.<String, String>emptyMap(),
-        new File("/tmp/test"),
-        "foo");
+    assertCommand(RedirectErrorsTo.STDERR, Collections.emptyMap(), new File("/tmp/test"), "foo");
   }
 
   @Test(groups = "fast")
@@ -146,7 +142,7 @@ public class TestSubprocessBuilder {
   }
 
   private void assertCommand(String... command) {
-    assertCommand(RedirectErrorsTo.STDERR, Collections.<String, String>emptyMap(), null, command);
+    assertCommand(RedirectErrorsTo.STDERR, Collections.emptyMap(), null, command);
   }
 
   private void assertCommand(

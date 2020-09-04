@@ -60,6 +60,7 @@ public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
   public synchronized List<T> getTopK() {
     Comparator<T> comparator =
         new Comparator<T>() {
+          @Override
           public int compare(T key1, T key2) {
             return Longs.compare(counts.get(key1), counts.get(key2));
           }

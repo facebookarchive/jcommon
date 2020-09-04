@@ -82,6 +82,7 @@ public class DefaultGaugeCounter implements GaugeCounter {
     return new Duration(start, end);
   }
 
+  @Override
   public GaugeCounter merge(GaugeCounter counter) {
     ReadableDateTime mergedStart = start;
     ReadableDateTime mergedEnd = end;
@@ -96,7 +97,7 @@ public class DefaultGaugeCounter implements GaugeCounter {
 
     DefaultGaugeCounter mergedCounter = new DefaultGaugeCounter(mergedStart, mergedEnd);
 
-    mergedCounter.add(value + counter.getValue(), nsamples + ((GaugeCounter) counter).getSamples());
+    mergedCounter.add(value + counter.getValue(), nsamples + counter.getSamples());
 
     return mergedCounter;
   }

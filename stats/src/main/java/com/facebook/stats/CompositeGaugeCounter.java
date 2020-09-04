@@ -95,6 +95,7 @@ public class CompositeGaugeCounter extends AbstractCompositeSum<GaugeCounter>
     return nsamples;
   }
 
+  @Override
   public synchronized long getAverage() {
     long nsamples = getSamples();
     if (nsamples == 0) {

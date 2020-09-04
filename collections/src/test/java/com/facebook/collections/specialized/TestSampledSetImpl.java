@@ -76,11 +76,11 @@ public class TestSampledSetImpl {
     Assert.assertEquals(integerSet.getScaledSize(), maxSetSize);
 
     SampledSet<Long> setCopy = integerSet.makeSnapshot();
-    System.err.println("");
+    System.err.println();
     // add those elements again, down sampling should not happen
     for (Integer i : elements) {
       if (integerSet.add((long) i)) {
-        System.err.println("");
+        System.err.println();
       }
     }
 

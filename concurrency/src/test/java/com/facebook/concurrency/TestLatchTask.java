@@ -34,7 +34,7 @@ public class TestLatchTask {
 
   @Test(groups = "fast")
   public void testSanity() throws Exception {
-    final AtomicBoolean completed = new AtomicBoolean(false);
+    AtomicBoolean completed = new AtomicBoolean(false);
     Thread thread =
         threadHelper.doInThread(
             new Runnable() {

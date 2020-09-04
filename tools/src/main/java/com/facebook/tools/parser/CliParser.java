@@ -197,7 +197,7 @@ public class CliParser {
       // value must have been specified less than twice
       T value = get(option, converter);
 
-      return value == null ? Collections.<T>emptyList() : Collections.singletonList(value);
+      return value == null ? Collections.emptyList() : Collections.singletonList(value);
     }
 
     List<T> result = new ArrayList<>();

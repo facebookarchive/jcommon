@@ -30,7 +30,7 @@ class ShortCircuitRunnable<E extends Exception> implements Function<ExtRunnable<
   }
 
   @Override
-  public Runnable apply(final ExtRunnable<E> task) {
+  public Runnable apply(ExtRunnable<E> task) {
     return () -> {
       try {
         // short-circuit if other tasksIter failed

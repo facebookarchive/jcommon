@@ -140,6 +140,7 @@ public class CliOption {
       return this;
     }
 
+    @Override
     CliOption build() {
       return new CliOption(
           switchNames, metavar, description, examples, defaultValue, required, unique, false);
@@ -167,16 +168,10 @@ public class CliOption {
       return this;
     }
 
+    @Override
     CliOption build() {
       return new CliOption(
-          switchNames,
-          null,
-          description,
-          Collections.<String>emptyList(),
-          "false",
-          false,
-          true,
-          true);
+          switchNames, null, description, Collections.emptyList(), "false", false, true, true);
     }
   }
 }

@@ -90,6 +90,7 @@ class DenseEstimator implements Estimator {
     }
   }
 
+  @Override
   public int getNumberOfBuckets() {
     return numberOfBuckets;
   }
@@ -196,6 +197,7 @@ class DenseEstimator implements Estimator {
         + INSTANCE_SIZE;
   }
 
+  @Override
   public int[] buckets() {
     int[] result = new int[numberOfBuckets];
 

@@ -79,7 +79,7 @@ public abstract class ByteArray implements Comparable<ByteArray> {
       return false;
     }
 
-    final ByteArray that = (ByteArray) o;
+    ByteArray that = (ByteArray) o;
 
     return ByteArray.equals(this, that);
   }

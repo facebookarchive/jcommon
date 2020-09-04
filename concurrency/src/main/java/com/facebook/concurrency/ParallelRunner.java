@@ -73,7 +73,7 @@ public class ParallelRunner {
   public <E extends Exception> void parallelRunExt(
       Iterable<? extends ExtRunnable<E>> tasks,
       int numThreads,
-      final ExceptionHandler<E> exceptionHandler)
+      ExceptionHandler<E> exceptionHandler)
       throws E {
     parallelRunExt(tasks.iterator(), numThreads, exceptionHandler);
   }
@@ -90,7 +90,7 @@ public class ParallelRunner {
   public <E extends Exception> void parallelRunExt(
       Iterator<? extends ExtRunnable<E>> tasksIter,
       int numThreads,
-      final ExceptionHandler<E> exceptionHandler)
+      ExceptionHandler<E> exceptionHandler)
       throws E {
     parallelRunExt(
         tasksIter,
@@ -112,7 +112,7 @@ public class ParallelRunner {
   public <E extends Exception> void parallelRunExt(
       Iterable<? extends ExtRunnable<E>> tasks,
       int numThreads,
-      final ExceptionHandler<E> exceptionHandler,
+      ExceptionHandler<E> exceptionHandler,
       String baseName)
       throws E {
     parallelRunExt(tasks.iterator(), numThreads, exceptionHandler, baseName);
@@ -136,10 +136,10 @@ public class ParallelRunner {
   public <E extends Exception> void parallelRunExt(
       Iterator<? extends ExtRunnable<E>> tasksIter,
       int numThreads,
-      final ExceptionHandler<E> exceptionHandler,
+      ExceptionHandler<E> exceptionHandler,
       String baseName)
       throws E {
-    final AtomicReference<E> exception = new AtomicReference<>();
+    AtomicReference<E> exception = new AtomicReference<>();
     Iterator<Runnable> wrappedIterator =
         Iterators.transform(tasksIter, new ShortCircuitRunnable<>(exception, exceptionHandler));
 

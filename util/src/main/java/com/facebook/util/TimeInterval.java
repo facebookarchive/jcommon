@@ -240,7 +240,7 @@ public class TimeInterval {
       return false;
     }
 
-    final TimeInterval that = (TimeInterval) o;
+    TimeInterval that = (TimeInterval) o;
 
     if (length != that.length) {
       return false;

@@ -203,8 +203,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
 
   @Override
   public Iterator<Long> iterator() {
-    final AtomicLong snapshotVersion = new AtomicLong(version.get());
-    final long sizeSnapshot = size.get();
+    AtomicLong snapshotVersion = new AtomicLong(version.get());
+    long sizeSnapshot = size.get();
 
     return new Iterator<Long>() {
       // invariant: location < values.length. This holds because we
@@ -524,7 +524,7 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   @Override
   public SnapshotableSet<Long> makeTransientSnapshot() {
     return new SnapshotableSetImpl<>(
-        Collections.<Long>synchronizedSet(new HashSet<>(this)),
+        Collections.synchronizedSet(new HashSet<>(this)),
         new SnapshotableSetImplFactory<>(new HashSetFactory<>()));
   }
 
@@ -576,7 +576,7 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder((int) (size.get() * 8));
+    StringBuilder sb = new StringBuilder(size.get() * 8);
     Set<Long> copy = makeSnapshot();
     boolean first = true;
 

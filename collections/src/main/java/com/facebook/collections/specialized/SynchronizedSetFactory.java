@@ -28,6 +28,6 @@ public class SynchronizedSetFactory<T> implements SetFactory<T, Set<T>> {
 
   @Override
   public Set<T> create() {
-    return Collections.<T>synchronizedSet(factory.create());
+    return Collections.synchronizedSet(factory.create());
   }
 }

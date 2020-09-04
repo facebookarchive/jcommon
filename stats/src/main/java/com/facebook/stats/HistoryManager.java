@@ -41,7 +41,7 @@ public interface HistoryManager {
     COUNT(2),
     AVG(4),
     RATE(8);
-    private int value;
+    private final int value;
 
     ExportType(int v) {
       this.value = v;
@@ -54,7 +54,7 @@ public interface HistoryManager {
     public int value() {
       return value;
     }
-  };
+  }
 
   /**
    * Declares the export type of the stat. The same name can be exported in multiple ways (e.g. avg

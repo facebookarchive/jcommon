@@ -69,7 +69,7 @@ public class TestOptionImpl {
   public void testWatcherException() throws Exception {
     Watcher watcher1 = new Watcher();
     Watcher watcher2 = new Watcher();
-    final AtomicInteger failureCount = new AtomicInteger();
+    AtomicInteger failureCount = new AtomicInteger();
     OptionWatcher<String> failure =
         new OptionWatcher<String>() {
           @Override

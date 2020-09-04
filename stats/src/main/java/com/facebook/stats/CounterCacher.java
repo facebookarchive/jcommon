@@ -43,6 +43,7 @@ public class CounterCacher {
   private static class ThreadFactory implements java.util.concurrent.ThreadFactory {
     long count = 0;
 
+    @Override
     public Thread newThread(Runnable r) {
       count++;
       return new Thread(threadGroup, r, threadGroup.getName() + "-" + count);
@@ -58,8 +59,9 @@ public class CounterCacher {
       this.maxWait = maxWait;
     }
 
+    @Override
     public void run() {
-      final Logger log = Logger.getLogger(CounterCacher.class.getCanonicalName());
+      Logger log = Logger.getLogger(CounterCacher.class.getCanonicalName());
       wantRunning = true;
       running = true;
 
@@ -109,7 +111,7 @@ public class CounterCacher {
    *     seconds then there will be an 8 second delay between calls. If it takes 15 seconds to make
    *     your counters, there will be a 1 second delay.
    */
-  public CounterCacher(final FacebookStatsReporter reporter, long minWait, long maxWait) {
+  public CounterCacher(FacebookStatsReporter reporter, long minWait, long maxWait) {
     runnable = new CounterCacherRunner(minWait, maxWait);
     this.reporter = reporter;
   }

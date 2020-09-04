@@ -158,14 +158,15 @@ public class QuantileDigest {
       checkArgument(quantile >= 0 && quantile <= 1, "quantile must be between [0,1]");
     }
 
-    final ImmutableList.Builder<Long> builder = ImmutableList.builder();
-    final PeekingIterator<Double> iterator = Iterators.peekingIterator(quantiles.iterator());
+    ImmutableList.Builder<Long> builder = ImmutableList.builder();
+    PeekingIterator<Double> iterator = Iterators.peekingIterator(quantiles.iterator());
 
     postOrderTraversal(
         root,
         new Callback() {
           private double sum = 0;
 
+          @Override
           public boolean process(Node node) {
             sum += node.weightedCount;
 
@@ -218,20 +219,21 @@ public class QuantileDigest {
         Ordering.natural().isOrdered(bucketUpperBounds),
         "buckets must be sorted in increasing order");
 
-    final ImmutableList.Builder<Bucket> builder = ImmutableList.builder();
-    final PeekingIterator<Long> iterator = Iterators.peekingIterator(bucketUpperBounds.iterator());
+    ImmutableList.Builder<Bucket> builder = ImmutableList.builder();
+    PeekingIterator<Long> iterator = Iterators.peekingIterator(bucketUpperBounds.iterator());
 
-    final AtomicDouble sum = new AtomicDouble();
-    final AtomicDouble lastSum = new AtomicDouble();
+    AtomicDouble sum = new AtomicDouble();
+    AtomicDouble lastSum = new AtomicDouble();
 
     // for computing weighed average of values in bucket
-    final AtomicDouble bucketWeightedSum = new AtomicDouble();
+    AtomicDouble bucketWeightedSum = new AtomicDouble();
 
-    final double normalizationFactor = weight(TimeUnit.MILLISECONDS.toSeconds(clock.getMillis()));
+    double normalizationFactor = weight(TimeUnit.MILLISECONDS.toSeconds(clock.getMillis()));
 
     postOrderTraversal(
         root,
         new Callback() {
+          @Override
           public boolean process(Node node) {
 
             while (iterator.hasNext() && iterator.peek() <= node.getUpperBound()) {
@@ -267,10 +269,11 @@ public class QuantileDigest {
   }
 
   public long getMin() {
-    final AtomicLong chosen = new AtomicLong(min);
+    AtomicLong chosen = new AtomicLong(min);
     postOrderTraversal(
         root,
         new Callback() {
+          @Override
           public boolean process(Node node) {
             if (node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
               chosen.set(node.getLowerBound());
@@ -285,10 +288,11 @@ public class QuantileDigest {
   }
 
   public long getMax() {
-    final AtomicLong chosen = new AtomicLong(max);
+    AtomicLong chosen = new AtomicLong(max);
     postOrderTraversal(
         root,
         new Callback() {
+          @Override
           public boolean process(Node node) {
             if (node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
               chosen.set(node.getUpperBound());
@@ -321,11 +325,12 @@ public class QuantileDigest {
   synchronized void compress() {
     ++compressions;
 
-    final int compressionFactor = calculateCompressionFactor();
+    int compressionFactor = calculateCompressionFactor();
 
     postOrderTraversal(
         root,
         new Callback() {
+          @Override
           public boolean process(Node node) {
             if (node.isLeaf()) {
               return true;
@@ -384,13 +389,14 @@ public class QuantileDigest {
   private void rescale(long newLandmarkInSeconds) {
     // rescale the weights based on a new landmark to avoid numerical overflow issues
 
-    final double factor = Math.exp(-alpha * (newLandmarkInSeconds - landmarkInSeconds));
+    double factor = Math.exp(-alpha * (newLandmarkInSeconds - landmarkInSeconds));
 
     weightedCount *= factor;
 
     postOrderTraversal(
         root,
         new Callback() {
+          @Override
           public boolean process(Node node) {
             double oldWeight = node.weightedCount;
 
@@ -578,9 +584,9 @@ public class QuantileDigest {
 
   @VisibleForTesting
   synchronized void validate() {
-    final AtomicDouble sumOfWeights = new AtomicDouble();
-    final AtomicInteger actualNodeCount = new AtomicInteger();
-    final AtomicInteger actualNonZeroNodeCount = new AtomicInteger();
+    AtomicDouble sumOfWeights = new AtomicDouble();
+    AtomicInteger actualNodeCount = new AtomicInteger();
+    AtomicInteger actualNonZeroNodeCount = new AtomicInteger();
 
     if (root != null) {
       validateStructure(root);
@@ -680,7 +686,7 @@ public class QuantileDigest {
         return false;
       }
 
-      final Bucket bucket = (Bucket) o;
+      Bucket bucket = (Bucket) o;
 
       if (Double.compare(bucket.count, count) != 0) {
         return false;

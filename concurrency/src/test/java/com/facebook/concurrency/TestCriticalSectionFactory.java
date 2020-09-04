@@ -52,7 +52,7 @@ public class TestCriticalSectionFactory {
 
   @Test(groups = "fast")
   public void testCriticalSectionFactory() throws InterruptedException {
-    final Runnable criticalSection = factory.wrap(runnable);
+    Runnable criticalSection = factory.wrap(runnable);
 
     // t1 will stop in the critical section
     Thread t1 = TestUtils.runInThread(criticalSection);

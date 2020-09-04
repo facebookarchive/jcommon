@@ -37,11 +37,11 @@ public class TestParallelRunner {
 
   @Test(groups = {"fast", "local"})
   public void testThreadName() throws Exception {
-    final String threadNamePrefix = "sloth";
-    final AtomicBoolean hasNextRef = new AtomicBoolean(true);
-    final AtomicReference<String> errorMessage = new AtomicReference<>();
-    final CountDownLatch latch = new CountDownLatch(1);
-    final BlockingQueue<Runnable> taskQueue = new LinkedBlockingDeque<>();
+    String threadNamePrefix = "sloth";
+    AtomicBoolean hasNextRef = new AtomicBoolean(true);
+    AtomicReference<String> errorMessage = new AtomicReference<>();
+    CountDownLatch latch = new CountDownLatch(1);
+    BlockingQueue<Runnable> taskQueue = new LinkedBlockingDeque<>();
     taskQueue.add(
         new Runnable() {
           @Override
@@ -56,7 +56,7 @@ public class TestParallelRunner {
         });
 
     ThreadHelper threadHelper = new ThreadHelper();
-    final Thread slothThread =
+    Thread slothThread =
         threadHelper.doInThread(
             new Runnable() {
               @Override

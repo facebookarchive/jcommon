@@ -19,7 +19,7 @@ import static org.testng.Assert.assertEquals;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +50,7 @@ public class TestUtils {
 
   public static AtomicInteger countCompletedRunnables(
       int numTasks, Function<Runnable> submissionCallback) {
-    final AtomicInteger completed = new AtomicInteger(0);
+    AtomicInteger completed = new AtomicInteger(0);
 
     for (int i = 0; i < numTasks; i++) {
       submissionCallback.execute(
@@ -67,7 +67,7 @@ public class TestUtils {
 
   public static <V> AtomicInteger countCompletedCallables(
       int numTasks, Function<Callable<V>> submissionCallback) {
-    final AtomicInteger completed = new AtomicInteger(0);
+    AtomicInteger completed = new AtomicInteger(0);
 
     for (int i = 0; i < numTasks; i++) {
       submissionCallback.execute(
@@ -85,11 +85,7 @@ public class TestUtils {
   }
 
   public static String generateString(int start, int length) {
-    try {
-      return new String(generateSequentialBytes(start, length), "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
+    return new String(generateSequentialBytes(start, length), StandardCharsets.UTF_8);
   }
 
   public static byte[] generateSequentialBytes(int start, int length) {

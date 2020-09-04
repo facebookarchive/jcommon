@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CriticalSectionFactory {
   private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
-  public Runnable wrap(final Runnable runnable) {
+  public Runnable wrap(Runnable runnable) {
     return new Runnable() {
       @Override
       public void run() {

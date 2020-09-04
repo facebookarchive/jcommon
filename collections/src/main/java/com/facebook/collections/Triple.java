@@ -52,7 +52,7 @@ public class Triple<First, Second, Third> {
       return false;
     }
 
-    final Triple triple = (Triple) o;
+    Triple triple = (Triple) o;
 
     if (!Objects.equals(first, triple.first)) {
       return false;

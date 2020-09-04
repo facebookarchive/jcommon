@@ -51,8 +51,8 @@ public class TaskGroup {
   }
 
   public synchronized FinishLatch execute() {
-    final CountDownLatch finishLatch = new CountDownLatch(taskPairs.size());
-    for (final Pair<ExecutorService, Runnable> taskPair : taskPairs) {
+    CountDownLatch finishLatch = new CountDownLatch(taskPairs.size());
+    for (Pair<ExecutorService, Runnable> taskPair : taskPairs) {
       taskPair
           .getFirst()
           .execute(

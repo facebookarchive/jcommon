@@ -71,7 +71,7 @@ public class ConcurrencyUtil {
                 }));
   }
 
-  public static Runnable shutdownExecutorTask(final ExecutorService executor) {
+  public static Runnable shutdownExecutorTask(ExecutorService executor) {
     return new Runnable() {
       @Override
       public void run() {
@@ -92,7 +92,7 @@ public class ConcurrencyUtil {
   public static <E extends Exception> void parallelRunExt(
       Iterable<? extends ExtRunnable<E>> tasks,
       int numThreads,
-      final ExceptionHandler<E> exceptionHandler)
+      ExceptionHandler<E> exceptionHandler)
       throws E {
     parallelRunExt(tasks.iterator(), numThreads, exceptionHandler);
   }
@@ -100,7 +100,7 @@ public class ConcurrencyUtil {
   public static <E extends Exception> void parallelRunExt(
       Iterator<? extends ExtRunnable<E>> tasksIter,
       int numThreads,
-      final ExceptionHandler<E> exceptionHandler)
+      ExceptionHandler<E> exceptionHandler)
       throws E {
     parallelRunExt(
         tasksIter,
@@ -112,7 +112,7 @@ public class ConcurrencyUtil {
   public static <E extends Exception> void parallelRunExt(
       Iterable<? extends ExtRunnable<E>> tasks,
       int numThreads,
-      final ExceptionHandler<E> exceptionHandler,
+      ExceptionHandler<E> exceptionHandler,
       String baseName)
       throws E {
     parallelRunExt(tasks.iterator(), numThreads, exceptionHandler, baseName);
@@ -121,10 +121,10 @@ public class ConcurrencyUtil {
   public static <E extends Exception> void parallelRunExt(
       Iterator<? extends ExtRunnable<E>> tasksIter,
       int numThreads,
-      final ExceptionHandler<E> exceptionHandler,
+      ExceptionHandler<E> exceptionHandler,
       String baseName)
       throws E {
-    final AtomicReference<E> exception = new AtomicReference<>();
+    AtomicReference<E> exception = new AtomicReference<>();
     Iterator<Runnable> wrappedIterator =
         Iterators.transform(tasksIter, new ShortCircuitRunnable<>(exception, exceptionHandler));
 

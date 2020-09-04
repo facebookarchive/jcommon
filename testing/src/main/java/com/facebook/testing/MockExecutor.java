@@ -71,7 +71,7 @@ public class MockExecutor implements ScheduledExecutorService {
   }
 
   @Override
-  public ScheduledFuture<?> schedule(final Runnable command, long delay, TimeUnit unit) {
+  public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
     if (rejectSubmission) {
       throw new RejectedExecutionException();
     }
@@ -81,7 +81,7 @@ public class MockExecutor implements ScheduledExecutorService {
     return new MockScheduledFuture<>(toCallable(command));
   }
 
-  private <T> Callable toCallable(final Runnable runnable, final T result) {
+  private <T> Callable toCallable(Runnable runnable, T result) {
     return new Callable<T>() {
       @Override
       public T call() throws Exception {
@@ -124,7 +124,7 @@ public class MockExecutor implements ScheduledExecutorService {
     runnableList.add(runnable);
 
     MockScheduledFuture<Void> future =
-        new MockScheduledFuture<>(Executors.<Void>callable(runnable, (Void) null));
+        new MockScheduledFuture<>(Executors.callable(runnable, (Void) null));
 
     runnable.setFuture(future);
     outstandingTasks.put(future, future);
@@ -143,7 +143,7 @@ public class MockExecutor implements ScheduledExecutorService {
     runnableList.add(runnable);
 
     MockScheduledFuture<Void> future =
-        new MockScheduledFuture<>(Executors.<Void>callable(runnable, (Void) null));
+        new MockScheduledFuture<>(Executors.callable(runnable, (Void) null));
 
     runnable.setFuture(future);
     outstandingTasks.put(future, future);
@@ -188,7 +188,7 @@ public class MockExecutor implements ScheduledExecutorService {
   }
 
   @Override
-  public <T> Future<T> submit(final Callable<T> task) {
+  public <T> Future<T> submit(Callable<T> task) {
     runnableList.add(
         new AnnotatedRunnable(
             new Runnable() {

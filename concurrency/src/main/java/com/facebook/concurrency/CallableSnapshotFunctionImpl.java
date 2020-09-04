@@ -36,7 +36,7 @@ public class CallableSnapshotFunctionImpl<I, O, E extends Exception>
   }
 
   @Override
-  public CallableSnapshot<O, E> apply(final I input) {
+  public CallableSnapshot<O, E> apply(I input) {
     return new CallableSnapshot<>(
         new Callable<O>() {
           @Override

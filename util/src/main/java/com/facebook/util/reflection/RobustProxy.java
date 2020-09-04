@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 public class RobustProxy {
-  public static <T> T wrap(Class<T> clazz, final T instance) {
+  public static <T> T wrap(Class<T> clazz, T instance) {
     InvocationHandler handler =
         new InvocationHandler() {
           @Override

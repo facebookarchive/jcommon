@@ -50,7 +50,7 @@ public class Pair<First, Second> {
       return false;
     }
 
-    final Pair pair = (Pair) o;
+    Pair pair = (Pair) o;
 
     if (!Objects.equals(first, pair.first)) {
       return false;

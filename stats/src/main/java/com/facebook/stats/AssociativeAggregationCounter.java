@@ -43,6 +43,7 @@ public class AssociativeAggregationCounter implements EventCounter {
     this.value = new AtomicLong(initialValue);
   }
 
+  @Override
   public void add(long delta) {
     long val = value.get();
     while (!value.compareAndSet(val, associativeAggregation.combine(val, delta))) {
@@ -50,14 +51,17 @@ public class AssociativeAggregationCounter implements EventCounter {
     }
   }
 
+  @Override
   public long getValue() {
     return value.get();
   }
 
+  @Override
   public ReadableDateTime getStart() {
     return start;
   }
 
+  @Override
   public ReadableDateTime getEnd() {
     return end;
   }

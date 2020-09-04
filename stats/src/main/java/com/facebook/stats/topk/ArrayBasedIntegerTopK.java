@@ -53,6 +53,7 @@ public class ArrayBasedIntegerTopK implements TopK<Integer> {
   public List<Integer> getTopK() {
     Comparator<Integer> comparator =
         new Comparator<Integer>() {
+          @Override
           public int compare(Integer i, Integer j) {
             return Longs.compare(counts[i], counts[j]);
           }

@@ -57,7 +57,7 @@ public class HostPort {
       return false;
     }
 
-    final HostPort hostPort = (HostPort) o;
+    HostPort hostPort = (HostPort) o;
 
     if (port != hostPort.port) {
       return false;

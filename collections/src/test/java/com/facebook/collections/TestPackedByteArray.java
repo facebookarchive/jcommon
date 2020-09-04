@@ -16,6 +16,7 @@
 package com.facebook.collections;
 
 import com.facebook.collectionsbase.Lists;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import org.testng.Assert;
@@ -35,7 +36,7 @@ public class TestPackedByteArray {
           new byte[] {2, 3, 2},
           new byte[] {3, 2},
           new byte[] {10, 100, 50},
-          "a marginally long string this is".getBytes("UTF-8"),
+          "a marginally long string this is".getBytes(StandardCharsets.UTF_8),
           new byte[] {2, 3},
           new byte[] {3}
         };

@@ -143,7 +143,7 @@ public class TestExpiringConcurrentCache {
         return false;
       }
 
-      final ReapableString that = (ReapableString) o;
+      ReapableString that = (ReapableString) o;
 
       if (!Objects.equals(value, that.value)) {
         return false;

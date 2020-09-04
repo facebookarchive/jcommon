@@ -162,7 +162,7 @@ class SortedStaticModel implements Model {
 
     @Override
     public String toString() {
-      final StringBuilder sb = new StringBuilder();
+      StringBuilder sb = new StringBuilder();
       sb.append("SymbolProbability");
       sb.append("{symbol=").append(symbol);
       sb.append(", probability=").append(probability);

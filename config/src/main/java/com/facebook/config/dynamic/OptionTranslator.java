@@ -18,7 +18,7 @@ package com.facebook.config.dynamic;
 import com.google.common.base.Function;
 
 public class OptionTranslator<From, To> extends OptionImpl<To> {
-  public OptionTranslator(final Option<From> option, final Function<From, To> translator) {
+  public OptionTranslator(Option<From> option, Function<From, To> translator) {
     setValue(translator.apply(option.getValue()));
     option.addWatcher(
         new OptionWatcher<From>() {
