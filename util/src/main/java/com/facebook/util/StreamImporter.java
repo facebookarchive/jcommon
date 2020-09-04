@@ -24,7 +24,7 @@ import java.util.List;
 
 public class StreamImporter {
   public static List<String> importLines(InputStream in) throws IOException {
-    List<String> lines = new ArrayList<String>();
+    List<String> lines = new ArrayList<>();
     BufferedReader buffered = new BufferedReader(new InputStreamReader(in));
     String line;
     while ((line = buffered.readLine()) != null) {

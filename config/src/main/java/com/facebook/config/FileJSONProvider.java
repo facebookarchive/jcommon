@@ -40,10 +40,8 @@ public class FileJSONProvider implements JSONProvider {
 
   private JSONObject fileToJSON() throws IOException, JSONException {
     StringBuilder sb = new StringBuilder(1024);
-    BufferedReader in = null;
 
-    try {
-      in = getReader();
+    try (BufferedReader in = getReader()) {
       String line;
 
       while ((line = in.readLine()) != null) {
@@ -51,11 +49,6 @@ public class FileJSONProvider implements JSONProvider {
         if (!COMMENT_LINE.matcher(line).find()) {
           sb.append(line);
         }
-      }
-
-    } finally {
-      if (in != null) {
-        in.close();
       }
     }
 

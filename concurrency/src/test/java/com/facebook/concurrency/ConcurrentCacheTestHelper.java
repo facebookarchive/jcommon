@@ -22,8 +22,7 @@ import org.testng.Assert;
 
 public class ConcurrentCacheTestHelper<K, V> {
   private final ConcurrentCache<K, V, RuntimeException> cache;
-  private final List<Throwable> exceptionList =
-      Collections.synchronizedList(new ArrayList<Throwable>());
+  private final List<Throwable> exceptionList = Collections.synchronizedList(new ArrayList<>());
 
   public ConcurrentCacheTestHelper(ConcurrentCache<K, V, RuntimeException> cache) {
     this.cache = cache;

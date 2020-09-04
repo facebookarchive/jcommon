@@ -42,7 +42,7 @@ public abstract class TestEstimator {
   public void testSetBuckets() {
     Estimator estimator = getEstimator();
 
-    Set<Integer> buckets = new HashSet<Integer>();
+    Set<Integer> buckets = new HashSet<>();
     Random random = new Random(0);
     for (int i = 0; i < estimator.getNumberOfBuckets() / 2; i++) {
       int value = random.nextInt(estimator.getNumberOfBuckets());

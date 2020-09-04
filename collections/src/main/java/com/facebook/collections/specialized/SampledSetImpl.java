@@ -26,6 +26,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -243,7 +244,7 @@ public class SampledSetImpl<T> implements SampledSet<T> {
       downSampleLock.readLock().unlock();
     }
 
-    return new SampledSetSnapshot<T>(setCopySampleRate, maxSetSize, setCopy);
+    return new SampledSetSnapshot<>(setCopySampleRate, maxSetSize, setCopy);
   }
 
   @Override
@@ -416,17 +417,17 @@ public class SampledSetImpl<T> implements SampledSet<T> {
 
   @Override
   public SampledSet<T> makeSnapshot() {
-    return new SampledSetImpl<T>(
+    return new SampledSetImpl<>(
         maxSetSize, digestFunction, baseSet.makeSnapshot(), setFactory, currentSampleRate);
   }
 
   @Override
   public SampledSet<T> makeTransientSnapshot() {
     SnapshotableSetImplFactory<T> cpuEfficientHashSetFactory =
-        new SnapshotableSetImplFactory<T>(new HashSetFactory<T>());
+        new SnapshotableSetImplFactory<>(new HashSetFactory<>());
     SnapshotableSet<T> cpuEfficientHashSet = baseSet.makeTransientSnapshot();
 
-    return new SampledSetImpl<T>(
+    return new SampledSetImpl<>(
         maxSetSize,
         digestFunction,
         cpuEfficientHashSet,
@@ -454,7 +455,7 @@ public class SampledSetImpl<T> implements SampledSet<T> {
       if (maxSetSize != that.maxSetSize) {
         return false;
       }
-      if (baseSet != null ? !baseSet.equals(that.baseSet) : that.baseSet != null) {
+      if (!Objects.equals(baseSet, that.baseSet)) {
         return false;
       }
 
@@ -508,7 +509,7 @@ public class SampledSetImpl<T> implements SampledSet<T> {
         }
 
         SampledSet<T> sampledSet =
-            new SampledSetImpl<T>(maxSize, digestFunction, baseSet, setFactory, sampleRate);
+            new SampledSetImpl<>(maxSize, digestFunction, baseSet, setFactory, sampleRate);
 
         return sampledSet;
       } catch (IOException e) {

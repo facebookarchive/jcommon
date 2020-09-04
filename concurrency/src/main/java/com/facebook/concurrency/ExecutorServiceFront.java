@@ -66,7 +66,7 @@ public class ExecutorServiceFront extends AbstractExecutorService {
     this.executor = executor;
     this.poolName = poolName;
     this.maxTimeSliceMillis = maxTimeSliceUnit.toMillis(maxTimeSlice);
-    drainerList = new ArrayBlockingQueue<Drainer>(maxDrainers);
+    drainerList = new ArrayBlockingQueue<>(maxDrainers);
 
     for (int i = 0; i < maxDrainers; i++) {
       drainerList.add(new Drainer(String.format("%s-%03d", poolName, i)));
@@ -97,17 +97,11 @@ public class ExecutorServiceFront extends AbstractExecutorService {
 
   public ExecutorServiceFront(
       ExecutorService executor, long maxTimeSlice, TimeUnit maxTimeSliceUnit) {
-    this(
-        new LinkedBlockingQueue<Runnable>(),
-        executor,
-        "Drainer",
-        1,
-        maxTimeSlice,
-        maxTimeSliceUnit);
+    this(new LinkedBlockingQueue<>(), executor, "Drainer", 1, maxTimeSlice, maxTimeSliceUnit);
   }
 
   public ExecutorServiceFront(ExecutorService executor) {
-    this(new LinkedBlockingQueue<Runnable>(), executor, 1);
+    this(new LinkedBlockingQueue<>(), executor, 1);
   }
 
   @Override

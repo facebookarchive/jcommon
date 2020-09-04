@@ -19,6 +19,7 @@ import com.facebook.collections.Pair;
 import com.facebook.testing.MockExecutor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.joda.time.DateTimeUtils;
@@ -42,7 +43,7 @@ public class TestExpiringConcurrentCache {
   public void setUp() throws Exception {
     value1 = "value1";
     reapableValue1 = new ReapableString(value1);
-    producer = new BlockingValueProducer<ReapableString, RuntimeException>(reapableValue1);
+    producer = new BlockingValueProducer<>(reapableValue1);
     mockExecutor = new MockExecutor();
     // arbitrary time for now
     DateTimeUtils.setCurrentMillisFixed(0);
@@ -58,9 +59,9 @@ public class TestExpiringConcurrentCache {
             TimeUnit.MILLISECONDS,
             RuntimeExceptionHandler.INSTANCE,
             mockExecutor);
-    evicted = new ArrayList<Pair<String, String>>();
+    evicted = new ArrayList<>();
     cache =
-        new ExpiringConcurrentCache<String, String, RuntimeException>(
+        new ExpiringConcurrentCache<>(
             new ValueFactory<String, String, RuntimeException>() {
               @Override
               public String create(String input) throws RuntimeException {
@@ -72,12 +73,12 @@ public class TestExpiringConcurrentCache {
             new EvictionListener<String, String>() {
               @Override
               public void evicted(String key, String value) {
-                evicted.add(new Pair<String, String>(key, value));
+                evicted.add(new Pair<>(key, value));
               }
             },
             RuntimeExceptionHandler.INSTANCE,
             mockExecutor);
-    testHelper = new ConcurrentCacheTestHelper<String, ReapableString>(legacyCache);
+    testHelper = new ConcurrentCacheTestHelper<>(legacyCache);
   }
 
   @Test(groups = "fast")
@@ -144,7 +145,7 @@ public class TestExpiringConcurrentCache {
 
       final ReapableString that = (ReapableString) o;
 
-      if (value != null ? !value.equals(that.value) : that.value != null) {
+      if (!Objects.equals(value, that.value)) {
         return false;
       }
 

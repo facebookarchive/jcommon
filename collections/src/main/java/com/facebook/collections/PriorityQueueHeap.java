@@ -67,7 +67,7 @@ public class PriorityQueueHeap<T> implements SimpleHeap<T> {
    */
   @Override
   public int shrink() {
-    PriorityQueue<T> newPriorityQueue = new PriorityQueue<T>(priorityQueue);
+    PriorityQueue<T> newPriorityQueue = new PriorityQueue<>(priorityQueue);
 
     priorityQueue = newPriorityQueue;
     // unfortunately, we don't know the # of slots saved, so we still return 0
@@ -78,7 +78,7 @@ public class PriorityQueueHeap<T> implements SimpleHeap<T> {
   @Override
   public SimpleHeap<T> makeCopy() {
     // deep copy
-    return new PriorityQueueHeap<T>(new PriorityQueue<T>(priorityQueue));
+    return new PriorityQueueHeap<>(new PriorityQueue<>(priorityQueue));
   }
 
   @Override

@@ -41,8 +41,8 @@ public class TestLinearizer {
   public void setUp() throws Exception {
     linearizer = new Linearizer();
     nextTaskId = new AtomicInteger(0);
-    taskList = new ArrayList<SerialStartTask>();
-    results = new ArrayList<Integer>();
+    taskList = new ArrayList<>();
+    results = new ArrayList<>();
   }
 
   @Test(groups = "fast")

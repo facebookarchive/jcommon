@@ -48,13 +48,10 @@ public class CastOrWrapExceptionHandler<T extends Exception> implements Exceptio
         Constructor<T> constructor = exceptionClass.getConstructor(Throwable.class);
         // get the exception constructor with one argument
         return constructor.newInstance(e);
-      } catch (InstantiationException e1) {
-        throw new RuntimeException(e1);
-      } catch (IllegalAccessException e1) {
-        throw new RuntimeException(e1);
-      } catch (InvocationTargetException e1) {
-        throw new RuntimeException(e1);
-      } catch (NoSuchMethodException e1) {
+      } catch (InstantiationException
+          | NoSuchMethodException
+          | InvocationTargetException
+          | IllegalAccessException e1) {
         throw new RuntimeException(e1);
       }
     }

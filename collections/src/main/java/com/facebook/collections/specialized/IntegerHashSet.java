@@ -26,6 +26,7 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import javax.annotation.concurrent.GuardedBy;
 
@@ -259,7 +260,7 @@ public class IntegerHashSet implements SnapshotableSet<Long>, Trackable {
     if (o instanceof IntegerHashSet) {
       IntegerHashSet integerHashSet = (IntegerHashSet) o;
 
-      return !(set != null ? !set.equals(integerHashSet.set) : integerHashSet.set != null);
+      return !(!Objects.equals(set, integerHashSet.set));
     } else if (o instanceof Set) {
       Set otherSet = (Set) o;
 

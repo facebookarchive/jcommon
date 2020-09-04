@@ -33,7 +33,7 @@ public class TestFileJSONProvider {
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
-    readerReference = new AtomicReference<BufferedReader>();
+    readerReference = new AtomicReference<>();
     jsonProvider =
         new FileJSONProvider(null) {
           @Override

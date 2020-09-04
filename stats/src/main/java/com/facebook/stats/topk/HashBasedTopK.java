@@ -39,7 +39,7 @@ public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
   public HashBasedTopK(int k) {
     this.k = k;
     // k is a decent guess to start with
-    counts = new HashMap<T, Long>(k);
+    counts = new HashMap<>(k);
   }
 
   @Override
@@ -64,7 +64,7 @@ public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
             return Longs.compare(counts.get(key1), counts.get(key2));
           }
         };
-    PriorityQueue<T> topK = new PriorityQueue<T>(k, comparator);
+    PriorityQueue<T> topK = new PriorityQueue<>(k, comparator);
 
     for (Map.Entry<T, Long> entry : counts.entrySet()) {
       if (topK.size() < k) {
@@ -75,7 +75,7 @@ public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
       }
     }
 
-    LinkedList<T> sortedTopK = new LinkedList<T>();
+    LinkedList<T> sortedTopK = new LinkedList<>();
 
     while (!topK.isEmpty()) {
       sortedTopK.addFirst(topK.poll());

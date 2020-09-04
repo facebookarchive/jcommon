@@ -35,14 +35,14 @@ import java.util.TreeSet;
  */
 public class TreeBasedTopK<T extends Comparable<T>> implements TopK<T> {
   private final int k;
-  private final Map<T, Long> counts = new HashMap<T, Long>();
+  private final Map<T, Long> counts = new HashMap<>();
   private final Set<T> topKeys;
-  private final TreeSet<ComparablePair<Long, T>> topPairs = new TreeSet<ComparablePair<Long, T>>();
+  private final TreeSet<ComparablePair<Long, T>> topPairs = new TreeSet<>();
   private long smallestTopCount = Long.MAX_VALUE;
 
   public TreeBasedTopK(int k) {
     this.k = k;
-    topKeys = new HashSet<T>(k);
+    topKeys = new HashSet<>(k);
   }
 
   /*
@@ -69,17 +69,17 @@ public class TreeBasedTopK<T extends Comparable<T>> implements TopK<T> {
     counts.put(key, updatedCount);
 
     if (topKeys.contains(key)) {
-      topPairs.remove(new ComparablePair<Long, T>(currentCount, key));
-      topPairs.add(new ComparablePair<Long, T>(updatedCount, key));
+      topPairs.remove(new ComparablePair<>(currentCount, key));
+      topPairs.add(new ComparablePair<>(updatedCount, key));
     } else if (topPairs.size() < k) {
-      topPairs.add(new ComparablePair<Long, T>(updatedCount, key));
+      topPairs.add(new ComparablePair<>(updatedCount, key));
       topKeys.add(key);
       smallestTopCount = Math.min(smallestTopCount, updatedCount);
     } else if (updatedCount > smallestTopCount) {
       ComparablePair<Long, T> smallestTopPair = topPairs.pollFirst();
 
       topKeys.remove(smallestTopPair.getSecond());
-      topPairs.add(new ComparablePair<Long, T>(updatedCount, key));
+      topPairs.add(new ComparablePair<>(updatedCount, key));
       topKeys.add(key);
       smallestTopCount = topPairs.first().getFirst();
     }
@@ -87,7 +87,7 @@ public class TreeBasedTopK<T extends Comparable<T>> implements TopK<T> {
 
   @Override
   public synchronized List<T> getTopK() {
-    LinkedList<T> topK = new LinkedList<T>();
+    LinkedList<T> topK = new LinkedList<>();
 
     for (ComparablePair<Long, T> pair : topPairs) {
       topK.addFirst(pair.getSecond());

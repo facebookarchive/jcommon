@@ -88,9 +88,9 @@ public class Linearizer {
   private static final long COMPLETE_WAIT_TIME_SECONDS = 300;
 
   private final AtomicReference<AtomicInteger> pointCountRef =
-      new AtomicReference<AtomicInteger>(new AtomicInteger(0));
+      new AtomicReference<>(new AtomicInteger(0));
   private final AtomicReference<LinearizationPoint> lastLinearizationPointRef =
-      new AtomicReference<LinearizationPoint>();
+      new AtomicReference<>();
 
   /**
    * creates an lock-object such that other objects of this type may interleave their start/complete

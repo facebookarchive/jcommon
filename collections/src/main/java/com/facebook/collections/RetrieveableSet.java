@@ -29,7 +29,7 @@ public class RetrieveableSet<T> implements Set<T> {
   }
 
   public RetrieveableSet() {
-    this(new HashMap<T, T>());
+    this(new HashMap<>());
   }
 
   public T get(T t) {

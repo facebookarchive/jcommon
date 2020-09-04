@@ -26,9 +26,7 @@ public class TestTrackableSetMap {
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
-    trackableSetMap =
-        new TrackableSetMap<Integer, Integer, Set<Integer>>(
-            new ConcurrentSetMap<Integer, Integer>());
+    trackableSetMap = new TrackableSetMap<>(new ConcurrentSetMap<>());
   }
 
   @Test(groups = "fast")

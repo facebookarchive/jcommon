@@ -221,7 +221,7 @@ public class TestArithmeticCodec {
   public static class SequentialDataFactory implements DataFactory {
     @Override
     public Iterable<Integer> create(int size, int numberOfSymbols) {
-      List<Integer> data = new ArrayList<Integer>(size);
+      List<Integer> data = new ArrayList<>(size);
       for (int i = 0; i < size; i++) {
         data.add(i % numberOfSymbols);
       }
@@ -232,7 +232,7 @@ public class TestArithmeticCodec {
   public static class RandomDataFactory implements DataFactory {
     @Override
     public Iterable<Integer> create(int size, int numberOfSymbols) {
-      List<Integer> data = new ArrayList<Integer>(size);
+      List<Integer> data = new ArrayList<>(size);
       for (int i = 0; i < size; i++) {
         data.add(random.nextInt(numberOfSymbols));
       }

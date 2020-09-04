@@ -139,7 +139,7 @@ public class ParallelRunner {
       final ExceptionHandler<E> exceptionHandler,
       String baseName)
       throws E {
-    final AtomicReference<E> exception = new AtomicReference<E>();
+    final AtomicReference<E> exception = new AtomicReference<>();
     Iterator<Runnable> wrappedIterator =
         Iterators.transform(tasksIter, new ShortCircuitRunnable<>(exception, exceptionHandler));
 
@@ -206,8 +206,7 @@ public class ParallelRunner {
     // for this run
     executorForInvocation =
         new UnstoppableExecutorService(
-            new ExecutorServiceFront(
-                new LinkedBlockingQueue<Runnable>(), executor, baseName, numThreads));
+            new ExecutorServiceFront(new LinkedBlockingQueue<>(), executor, baseName, numThreads));
 
     int totalTasks = 0;
 

@@ -48,7 +48,7 @@ public class ColtLongHashSet extends AbstractSet<Long> implements SnapshotableSe
   public synchronized boolean add(Long aLong) {
     version++;
 
-    return map.put(aLong.longValue(), TRUE);
+    return map.put(aLong, TRUE);
   }
 
   @Override

@@ -86,7 +86,7 @@ public class UnstoppableScheduledExecutorService implements ScheduledExecutorSer
     try {
       // same logic as above
       TrackedCallable<V> trackedTask = executorCore.registerTask(callable);
-      BookkeepingTask task = new BookkeepingTask<V>(trackedTask);
+      BookkeepingTask task = new BookkeepingTask<>(trackedTask);
       ScheduledFuture<V> scheduledFuture =
           executorCore.trackScheduledFuture(callback.submit(task), trackedTask);
 

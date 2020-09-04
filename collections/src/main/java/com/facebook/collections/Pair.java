@@ -15,6 +15,8 @@
  */
 package com.facebook.collections;
 
+import java.util.Objects;
+
 public class Pair<First, Second> {
   private final First first;
   private final Second second;
@@ -50,11 +52,11 @@ public class Pair<First, Second> {
 
     final Pair pair = (Pair) o;
 
-    if (first != null ? !first.equals(pair.first) : pair.first != null) {
+    if (!Objects.equals(first, pair.first)) {
       return false;
     }
 
-    if (second != null ? !second.equals(pair.second) : pair.second != null) {
+    if (!Objects.equals(second, pair.second)) {
       return false;
     }
 

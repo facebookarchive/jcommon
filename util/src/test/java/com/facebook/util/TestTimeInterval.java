@@ -97,7 +97,7 @@ public class TestTimeInterval {
 
   @DataProvider(name = "intervalParams")
   public Object[][] intervalparams() {
-    List<Object[]> params = new ArrayList<Object[]>();
+    List<Object[]> params = new ArrayList<>();
     for (DateTimeZone timeZone : getTestTimeZones()) {
       DateTime time = new DateTime(2011, 8, 9, 14, 35, 12, 17, timeZone);
       params.addAll(
@@ -206,7 +206,7 @@ public class TestTimeInterval {
 
   @DataProvider(name = "intervalLengthFail")
   public Object[][] intervalLengthFail() {
-    List<Object[]> params = new ArrayList<Object[]>();
+    List<Object[]> params = new ArrayList<>();
     for (DateTimeZone timeZone : getTestTimeZones()) {
       params.addAll(
           Arrays.asList(
@@ -243,7 +243,7 @@ public class TestTimeInterval {
 
   @DataProvider(name = "intervalsValid")
   public Object[][] intervalsValid() {
-    List<Object[]> params = new ArrayList<Object[]>();
+    List<Object[]> params = new ArrayList<>();
     // millis in a second
     final long oneSec = 1000L;
     final long oneDay = 24 * 60 * 60 * oneSec;

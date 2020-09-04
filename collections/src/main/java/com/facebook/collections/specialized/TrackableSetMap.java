@@ -46,7 +46,7 @@ public class TrackableSetMap<K, V, S extends Set<V>> implements SetMap<K, V, S>,
   }
 
   public TrackableSetMap(SetFactory<V, S> setFactory) {
-    delegate = new SetMapImpl<K, V, S>(setFactory);
+    delegate = new SetMapImpl<>(setFactory);
   }
 
   @Override

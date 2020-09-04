@@ -67,16 +67,10 @@ public class UnstoppableExecutorServiceFront extends UnstoppableExecutorService 
 
   public UnstoppableExecutorServiceFront(
       ExecutorService executor, long maxTimeSlice, TimeUnit maxTimeSliceUnit) {
-    this(
-        new LinkedBlockingQueue<Runnable>(),
-        executor,
-        "Drainer",
-        1,
-        maxTimeSlice,
-        maxTimeSliceUnit);
+    this(new LinkedBlockingQueue<>(), executor, "Drainer", 1, maxTimeSlice, maxTimeSliceUnit);
   }
 
   public UnstoppableExecutorServiceFront(ExecutorService executor) {
-    this(new LinkedBlockingQueue<Runnable>(), executor, 1);
+    this(new LinkedBlockingQueue<>(), executor, 1);
   }
 }

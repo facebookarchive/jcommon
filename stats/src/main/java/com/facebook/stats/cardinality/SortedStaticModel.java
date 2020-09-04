@@ -172,7 +172,7 @@ class SortedStaticModel implements Model {
   }
 
   private List<SymbolProbability> sortProbabilities(double[] probabilities) {
-    ArrayList<SymbolProbability> symbolProbabilities = new ArrayList<SymbolProbability>();
+    ArrayList<SymbolProbability> symbolProbabilities = new ArrayList<>();
     for (int symbol = 0; symbol < probabilities.length; symbol++) {
       symbolProbabilities.add(new SymbolProbability(symbol, probabilities[symbol]));
     }

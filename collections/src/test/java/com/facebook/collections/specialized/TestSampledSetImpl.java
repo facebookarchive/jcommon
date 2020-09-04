@@ -34,8 +34,7 @@ public class TestSampledSetImpl {
     maxSetSize = 8;
     DigestFunction<Long> longMurmur3Hash = new LongMurmur3Hash();
     integerSet =
-        new SampledSetImpl<Long>(
-            maxSetSize, longMurmur3Hash, new IntegerHashSetFactory(maxSetSize));
+        new SampledSetImpl<>(maxSetSize, longMurmur3Hash, new IntegerHashSetFactory(maxSetSize));
   }
 
   @Test(groups = "fast")
@@ -43,7 +42,7 @@ public class TestSampledSetImpl {
     int largeMaxSetSize = 4000;
     IntegerHashSetFactory intHashSetFactory = new IntegerHashSetFactory(largeMaxSetSize);
     SampledSet<Long> largeSet =
-        new SampledSetImpl<Long>(largeMaxSetSize, new LongMurmur3Hash(), intHashSetFactory);
+        new SampledSetImpl<>(largeMaxSetSize, new LongMurmur3Hash(), intHashSetFactory);
     int numElements = 2000 * largeMaxSetSize;
 
     for (int i = 0; i < numElements; i++) {
@@ -63,7 +62,7 @@ public class TestSampledSetImpl {
   @Test(groups = "fast")
   public void testAddDuplicateKeys() throws Exception {
     // add the set to full
-    Set<Integer> elements = new HashSet<Integer>(maxSetSize);
+    Set<Integer> elements = new HashSet<>(maxSetSize);
     for (int i = 0; i < 100000; i += 2) { // just find 8 elements
       if (integerSet.add((long) i)) {
         elements.add(i);
@@ -121,7 +120,7 @@ public class TestSampledSetImpl {
   public void testMerge() throws Exception {
     IntegerHashSetFactory longHashSetFactory = new IntegerHashSetFactory(maxSetSize);
     SampledSet<Long> otherSet =
-        new SampledSetImpl<Long>(maxSetSize / 4, new LongMurmur3Hash(), longHashSetFactory);
+        new SampledSetImpl<>(maxSetSize / 4, new LongMurmur3Hash(), longHashSetFactory);
     int firstSetSize = maxSetSize / 2;
 
     // populate the first set to its max size
@@ -159,8 +158,8 @@ public class TestSampledSetImpl {
     IntegerHashSetFactory longHashSetFactory = new IntegerHashSetFactory(4);
     DigestFunction<Long> digestFunction = new LongMurmur3Hash();
 
-    SampledSet<Long> set1 = new SampledSetImpl<Long>(4, digestFunction, longHashSetFactory);
-    SampledSet<Long> set2 = new SampledSetImpl<Long>(4, digestFunction, longHashSetFactory);
+    SampledSet<Long> set1 = new SampledSetImpl<>(4, digestFunction, longHashSetFactory);
+    SampledSet<Long> set2 = new SampledSetImpl<>(4, digestFunction, longHashSetFactory);
 
     set1.add(1L);
     set1.add(2L);
@@ -177,9 +176,9 @@ public class TestSampledSetImpl {
   public void testMergeWithDownSample() throws Exception {
     IntegerHashSetFactory intHashSetFactory = new IntegerHashSetFactory(4);
     SampledSet<Long> set1 =
-        new SampledSetImpl<Long>(2, LongMurmur3Hash.getInstance(), intHashSetFactory);
+        new SampledSetImpl<>(2, LongMurmur3Hash.getInstance(), intHashSetFactory);
     SampledSet<Long> set2 =
-        new SampledSetImpl<Long>(3, LongMurmur3Hash.getInstance(), intHashSetFactory);
+        new SampledSetImpl<>(3, LongMurmur3Hash.getInstance(), intHashSetFactory);
 
     // set 1 will have 1 element and sample rate of 1
     set1.add(1L);
@@ -213,11 +212,11 @@ public class TestSampledSetImpl {
   @Test(groups = "fast")
   public void testProposedSize() throws Exception {
     SampledSet<Long> set1 =
-        new SampledSetImpl<Long>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
+        new SampledSetImpl<>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
     SampledSet<Long> set2 =
-        new SampledSetImpl<Long>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
+        new SampledSetImpl<>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
     SampledSet<Long> set3 =
-        new SampledSetImpl<Long>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
+        new SampledSetImpl<>(8, new LongMurmur3Hash(), new IntegerHashSetFactory());
 
     // set 1 will have 4 elements and sample rate of 1
     set1.add(0L);

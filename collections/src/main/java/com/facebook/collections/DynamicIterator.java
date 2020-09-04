@@ -38,7 +38,7 @@ public class DynamicIterator<T> extends AbstractIterator<T> {
   public DynamicIterator(int initialSize) {
     Preconditions.checkArgument(initialSize >= 0, "initialSize must be >= 0");
 
-    this.queue = new ArrayDeque<T>(initialSize);
+    this.queue = new ArrayDeque<>(initialSize);
   }
 
   public DynamicIterator() {

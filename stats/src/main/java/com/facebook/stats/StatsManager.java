@@ -59,11 +59,8 @@ public class StatsManager implements HistoryManager {
    */
   public StatsManager(int initialNumKeys, float loadFactor, int concurrencyLevel) {
     logger.trace("StatsMgr Created");
-    this.typeMap =
-        new ConcurrentHashMap<String, Integer>(initialNumKeys, loadFactor, concurrencyLevel);
-    this.counterMap =
-        new ConcurrentHashMap<String, MultiWindowGauge>(
-            initialNumKeys, loadFactor, concurrencyLevel);
+    this.typeMap = new ConcurrentHashMap<>(initialNumKeys, loadFactor, concurrencyLevel);
+    this.counterMap = new ConcurrentHashMap<>(initialNumKeys, loadFactor, concurrencyLevel);
   }
 
   private void ensureStat(String shortName) {
@@ -240,7 +237,7 @@ public class StatsManager implements HistoryManager {
    * <p>fb303-support
    */
   public Map<String, Long> getSelectedCounters(List<String> keys) {
-    Map<String, Long> result = new HashMap<String, Long>();
+    Map<String, Long> result = new HashMap<>();
     for (String key : keys) {
       try {
         result.put(key, getCounter(key));
@@ -277,7 +274,7 @@ public class StatsManager implements HistoryManager {
 
   /** fb303-support */
   public Map<String, Long> getCounters() {
-    Map<String, Long> result = new HashMap<String, Long>();
+    Map<String, Long> result = new HashMap<>();
     String fullname;
     long value;
     Set<String> typeKeys = typeMap.keySet();

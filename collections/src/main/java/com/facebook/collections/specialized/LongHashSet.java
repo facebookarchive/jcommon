@@ -468,8 +468,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
 
     try {
       if (size() > c.size()) {
-        for (Iterator<?> i = c.iterator(); i.hasNext(); ) {
-          changed |= remove(i.next());
+        for (Object o : c) {
+          changed |= remove(o);
         }
       } else {
         for (Iterator<?> i = iterator(); i.hasNext(); ) {
@@ -523,9 +523,9 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
 
   @Override
   public SnapshotableSet<Long> makeTransientSnapshot() {
-    return new SnapshotableSetImpl<Long>(
-        Collections.<Long>synchronizedSet(new HashSet<Long>(this)),
-        new SnapshotableSetImplFactory<Long>(new HashSetFactory<Long>()));
+    return new SnapshotableSetImpl<>(
+        Collections.<Long>synchronizedSet(new HashSet<>(this)),
+        new SnapshotableSetImplFactory<>(new HashSetFactory<>()));
   }
 
   private void internalClear() {
@@ -556,9 +556,7 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
     }
     try {
       return containsAll(c);
-    } catch (ClassCastException unused) {
-      return false;
-    } catch (NullPointerException unused) {
+    } catch (ClassCastException | NullPointerException unused) {
       return false;
     }
   }
@@ -566,11 +564,8 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
   @Override
   public int hashCode() {
     int h = 0;
-    Iterator<Long> i = iterator();
 
-    while (i.hasNext()) {
-      Long value = i.next();
-
+    for (Long value : this) {
       if (value != null) {
         h += value.hashCode();
       }

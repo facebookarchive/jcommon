@@ -193,7 +193,7 @@ public class TestRangeSet {
 
   @Test(groups = "fast")
   public void testStandard() throws Exception {
-    Set<Long> standard = new HashSet<Long>();
+    Set<Long> standard = new HashSet<>();
     Random random = new Random(System.nanoTime());
 
     for (int idx = 0; idx < 1000000; idx++) {

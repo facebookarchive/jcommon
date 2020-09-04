@@ -27,7 +27,7 @@ public class MixedTypeMap<K> implements ReadOnlyMixedTypeMap<K> {
   }
 
   public MixedTypeMap() {
-    this(new HashMap<Key<K, ?>, Object>());
+    this(new HashMap<>());
   }
 
   public <V1, V2 extends V1> void put(K id, Class<V1> clazz, V2 instance) {

@@ -134,7 +134,7 @@ public class TestColtHashSet {
 
   @Test(groups = "fast")
   public void testIterateAndRemove() throws Exception {
-    Set<Long> answer = new HashSet<Long>();
+    Set<Long> answer = new HashSet<>();
     answer.add(1L);
     answer.add(2L);
     set.add(1L);

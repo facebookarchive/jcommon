@@ -50,7 +50,7 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
 
     stages = enumClazz.getEnumConstants();
     for (T stage : stages) {
-      shutdownHooksByStage.put(stage, new ArrayList<Runnable>());
+      shutdownHooksByStage.put(stage, new ArrayList<>());
     }
 
     // three values : being/end sentinel and at least one usable value

@@ -41,7 +41,7 @@ public class TestDynamicIterator {
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
-    iterator = new DynamicIterator<Integer>(100);
+    iterator = new DynamicIterator<>(100);
   }
 
   @Test(groups = "fast")

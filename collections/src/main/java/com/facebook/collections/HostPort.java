@@ -15,6 +15,8 @@
  */
 package com.facebook.collections;
 
+import java.util.Objects;
+
 /** utility class that holds a host:port. static factory method handles creating from a stirng */
 public class HostPort {
   private final String host;
@@ -29,7 +31,7 @@ public class HostPort {
       throw new IllegalArgumentException("invalid host:post string: " + str);
     }
 
-    return new HostPort(parts[0], Integer.valueOf(parts[1]));
+    return new HostPort(parts[0], Integer.parseInt(parts[1]));
   }
 
   public HostPort(String host, int port) {
@@ -61,7 +63,7 @@ public class HostPort {
       return false;
     }
 
-    if (host != null ? !host.equals(hostPort.host) : hostPort.host != null) {
+    if (!Objects.equals(host, hostPort.host)) {
       return false;
     }
 

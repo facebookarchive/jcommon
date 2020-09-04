@@ -150,7 +150,7 @@ public class TestUtils {
    * @return
    */
   public static List<DateTime> generateMoments(DateTime baseDateTime, int count) {
-    List<DateTime> result = new ArrayList<DateTime>(count);
+    List<DateTime> result = new ArrayList<>(count);
 
     for (int i = 0; i < count; i++) {
       result.add(baseDateTime.plusSeconds(i));
@@ -176,7 +176,7 @@ public class TestUtils {
       timeZones.put(timeZone.getRawOffset(), dateTimeZone);
       timeZones.put(timeZone.getRawOffset() + timeZone.getDSTSavings(), dateTimeZone);
     }
-    Set<DateTimeZone> distinctZones = new HashSet<DateTimeZone>();
+    Set<DateTimeZone> distinctZones = new HashSet<>();
     for (Map.Entry<Integer, Collection<DateTimeZone>> entry : timeZones.asMap().entrySet()) {
       DateTimeZone fixedZone = null;
       DateTimeZone unfixedZone = null;

@@ -15,6 +15,8 @@
  */
 package com.facebook.collections;
 
+import java.util.Objects;
+
 public class Triple<First, Second, Third> {
   private final First first;
   private final Second second;
@@ -52,15 +54,15 @@ public class Triple<First, Second, Third> {
 
     final Triple triple = (Triple) o;
 
-    if (first != null ? !first.equals(triple.first) : triple.first != null) {
+    if (!Objects.equals(first, triple.first)) {
       return false;
     }
 
-    if (second != null ? !second.equals(triple.second) : triple.second != null) {
+    if (!Objects.equals(second, triple.second)) {
       return false;
     }
 
-    if (third != null ? !third.equals(triple.third) : triple.third != null) {
+    if (!Objects.equals(third, triple.third)) {
       return false;
     }
 

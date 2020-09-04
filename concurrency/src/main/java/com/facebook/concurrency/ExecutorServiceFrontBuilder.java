@@ -43,7 +43,7 @@ public class ExecutorServiceFrontBuilder {
    */
   public ExecutorServiceFrontBuilder(ExecutorService coreExecutor, int maxCoreThreads) {
     this.coreExecutor =
-        new ExecutorServiceFront(new LinkedBlockingQueue<Runnable>(), coreExecutor, maxCoreThreads);
+        new ExecutorServiceFront(new LinkedBlockingQueue<>(), coreExecutor, maxCoreThreads);
   }
 
   /**
@@ -84,7 +84,7 @@ public class ExecutorServiceFrontBuilder {
 
   public ExecutorServiceFront build() {
     return new ExecutorServiceFront(
-        new LinkedBlockingQueue<Runnable>(),
+        new LinkedBlockingQueue<>(),
         coreExecutor,
         drainerBaseName,
         maxInstanceThreads,

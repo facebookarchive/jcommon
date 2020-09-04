@@ -29,8 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TaskGroup {
   private final ExecutorService defaultExecutor;
-  private final Collection<Pair<ExecutorService, Runnable>> taskPairs =
-      new ArrayList<Pair<ExecutorService, Runnable>>();
+  private final Collection<Pair<ExecutorService, Runnable>> taskPairs = new ArrayList<>();
 
   public TaskGroup(ExecutorService defaultExecutor) {
     this.defaultExecutor = defaultExecutor;
@@ -41,7 +40,7 @@ public class TaskGroup {
   }
 
   public synchronized void register(ExecutorService executorService, Runnable task) {
-    taskPairs.add(new Pair<ExecutorService, Runnable>(executorService, task));
+    taskPairs.add(new Pair<>(executorService, task));
   }
 
   public void register(Runnable task) {

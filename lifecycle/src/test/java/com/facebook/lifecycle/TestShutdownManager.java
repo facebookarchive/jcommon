@@ -27,8 +27,8 @@ public class TestShutdownManager {
 
   @BeforeMethod(alwaysRun = true)
   public void setUp() throws Exception {
-    order = new EnumMap<TheStages, Integer>(TheStages.class);
-    shutdownManager = new ShutdownManagerImpl<TheStages>(TheStages.class, TheStages.DEFAULT);
+    order = new EnumMap<>(TheStages.class);
+    shutdownManager = new ShutdownManagerImpl<>(TheStages.class, TheStages.DEFAULT);
 
     for (TheStages stage : TheStages.values()) {
       shutdownManager.addShutdownHook(new ShutdownHook(stage));

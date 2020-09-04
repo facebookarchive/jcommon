@@ -32,12 +32,12 @@ public class CallableSnapshotFunctionImpl<I, O, E extends Exception>
   public CallableSnapshotFunctionImpl(ValueFactory<I, O, E> valueFactory) {
     // We can cast exceptions because the value factory declares which type
     // of exceptions it can throw on creation
-    this(valueFactory, new CastingExceptionHandler<E>());
+    this(valueFactory, new CastingExceptionHandler<>());
   }
 
   @Override
   public CallableSnapshot<O, E> apply(final I input) {
-    return new CallableSnapshot<O, E>(
+    return new CallableSnapshot<>(
         new Callable<O>() {
           @Override
           public O call() throws E {

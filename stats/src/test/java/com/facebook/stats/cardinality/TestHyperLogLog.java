@@ -46,7 +46,7 @@ public class TestHyperLogLog {
   private Set<Long> makeRandomSet(int count) {
     Random random = new Random();
 
-    Set<Long> result = new HashSet<Long>();
+    Set<Long> result = new HashSet<>();
     while (result.size() < count) {
       result.add(random.nextLong());
     }

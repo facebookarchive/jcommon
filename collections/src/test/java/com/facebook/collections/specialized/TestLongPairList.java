@@ -143,7 +143,7 @@ public class TestLongPairList {
   }
 
   private void assertContentsViaIterator(LongPairList tupleList, long[]... results) {
-    List<long[]> tmpList = new ArrayList<long[]>(tupleList.size());
+    List<long[]> tmpList = new ArrayList<>(tupleList.size());
 
     for (long[] tuple : tupleList) {
       tmpList.add(tuple);
