@@ -35,13 +35,7 @@ public class ThreadHelper {
     Thread t = new Thread(operation);
 
     // need to make sure we propagate the exception
-    t.setUncaughtExceptionHandler(
-        new Thread.UncaughtExceptionHandler() {
-          @Override
-          public void uncaughtException(Thread t, Throwable e) {
-            exceptionList.add(e);
-          }
-        });
+    t.setUncaughtExceptionHandler((t1, e) -> exceptionList.add(e));
 
     if (threadName != null) {
       t.setName(threadName);
@@ -59,15 +53,12 @@ public class ThreadHelper {
   public LoopThread repeatInThread(Runnable operation, String threadName) {
     AtomicBoolean shouldRun = new AtomicBoolean(true);
     Runnable loopTask =
-        new Runnable() {
-          @Override
-          public void run() {
-            while (shouldRun.get()) {
-              try {
-                operation.run();
-              } catch (Throwable t) {
-                LOG.error("error running task", t);
-              }
+        () -> {
+          while (shouldRun.get()) {
+            try {
+              operation.run();
+            } catch (Throwable t) {
+              LOG.error("error running task", t);
             }
           }
         };

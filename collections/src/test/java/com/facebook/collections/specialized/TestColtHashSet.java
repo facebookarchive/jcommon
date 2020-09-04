@@ -196,15 +196,13 @@ public class TestColtHashSet {
   private static void timeAdds(String tag, Set<Long> set, int numAdds) throws Exception {
     TimeUtil.logElapsedTime(
         tag,
-        new ExtRunnable<Exception>() {
-          @Override
-          public void run() throws Exception {
-            Random random = new Random();
-            for (int i = 0; i < numAdds; i++) {
-              set.add(Math.abs(random.nextLong()));
-            }
-          }
-        });
+        (ExtRunnable<Exception>)
+            () -> {
+              Random random = new Random();
+              for (int i = 0; i < numAdds; i++) {
+                set.add(Math.abs(random.nextLong()));
+              }
+            });
   }
 
   private void fillSet() {

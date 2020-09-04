@@ -103,14 +103,7 @@ public class TestDynamicIterator {
     ExecutorService executor =
         Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
 
-    Future<Set<Integer>> consumer =
-        executor.submit(
-            new Callable<Set<Integer>>() {
-              @Override
-              public Set<Integer> call() throws Exception {
-                return Sets.newHashSet(iterator);
-              }
-            });
+    Future<Set<Integer>> consumer = executor.submit(() -> Sets.newHashSet(iterator));
 
     //noinspection unchecked
     executor.invokeAll(
@@ -133,14 +126,11 @@ public class TestDynamicIterator {
   }
 
   private Callable<Void> producer(DynamicIterator<Integer> iterator, int... values) {
-    return new Callable<Void>() {
-      @Override
-      public Void call() throws InterruptedException {
-        for (int value : values) {
-          iterator.add(value);
-        }
-        return null;
+    return () -> {
+      for (int value : values) {
+        iterator.add(value);
       }
+      return null;
     };
   }
 }

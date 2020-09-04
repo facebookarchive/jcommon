@@ -71,12 +71,9 @@ public class TestOptionImpl {
     Watcher watcher2 = new Watcher();
     AtomicInteger failureCount = new AtomicInteger();
     OptionWatcher<String> failure =
-        new OptionWatcher<String>() {
-          @Override
-          public void propertyUpdated(String value) throws Exception {
-            failureCount.incrementAndGet();
-            throw new Exception("fail!");
-          }
+        value -> {
+          failureCount.incrementAndGet();
+          throw new Exception("fail!");
         };
 
     option.addWatcher(watcher1);

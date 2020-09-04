@@ -29,34 +29,22 @@ public class ConcurrentCacheTestHelper<K, V> {
   }
 
   Thread clearInThread() {
-    return doInThread(
-        new Runnable() {
-          @Override
-          public void run() {
-            cache.clear();
-          }
-        });
+    return doInThread(() -> cache.clear());
   }
 
   Thread getInThread(K key, V expectedValue) {
     return doInThread(
-        new Runnable() {
-          @Override
-          public void run() {
-            // we should get the expected value on a cache-miss
-            Assert.assertEquals(cache.get(key), expectedValue);
-          }
+        () -> {
+          // we should get the expected value on a cache-miss
+          Assert.assertEquals(cache.get(key), expectedValue);
         });
   }
 
   Thread removeInThread(K key, V expectedValue) {
     return doInThread(
-        new Runnable() {
-          @Override
-          public void run() {
-            // we should get the expected value on a cache-miss
-            Assert.assertEquals(cache.remove(key), expectedValue);
-          }
+        () -> {
+          // we should get the expected value on a cache-miss
+          Assert.assertEquals(cache.remove(key), expectedValue);
         });
   }
 
@@ -64,13 +52,7 @@ public class ConcurrentCacheTestHelper<K, V> {
     Thread t = new Thread(operation);
 
     // need to make sure we propagate the exception
-    t.setUncaughtExceptionHandler(
-        new Thread.UncaughtExceptionHandler() {
-          @Override
-          public void uncaughtException(Thread t, Throwable e) {
-            exceptionList.add(e);
-          }
-        });
+    t.setUncaughtExceptionHandler((t1, e) -> exceptionList.add(e));
     t.start();
 
     return t;

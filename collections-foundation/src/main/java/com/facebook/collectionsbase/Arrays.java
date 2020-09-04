@@ -31,13 +31,7 @@ public class Arrays {
    * @return
    */
   public static <T extends Comparable<? super T>> int compareArrays(T[] array1, T[] array2) {
-    Comparator<T> comparator =
-        new Comparator<T>() {
-          @Override
-          public int compare(T o1, T o2) {
-            return o1.compareTo(o2);
-          }
-        };
+    Comparator<T> comparator = (o1, o2) -> o1.compareTo(o2);
 
     return compareArrays(array1, array2, comparator);
   }

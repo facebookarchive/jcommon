@@ -108,52 +108,26 @@ public class UnstoppableScheduledExecutorService implements ScheduledExecutorSer
 
   @Override
   public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-    return internalScheduleRunnable(
-        command,
-        new RunnableCallback() {
-          @Override
-          public ScheduledFuture<?> submit(Runnable task) {
-            return executor.schedule(task, delay, unit);
-          }
-        });
+    return internalScheduleRunnable(command, task -> executor.schedule(task, delay, unit));
   }
 
   @Override
   public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-    return internalScheduleCallable(
-        callable,
-        new CallableCallback<V>() {
-          @Override
-          public ScheduledFuture<V> submit(Callable<V> task) {
-            return executor.schedule(task, delay, unit);
-          }
-        });
+    return internalScheduleCallable(callable, task -> executor.schedule(task, delay, unit));
   }
 
   @Override
   public ScheduledFuture<?> scheduleAtFixedRate(
       Runnable command, long initialDelay, long period, TimeUnit unit) {
     return internalScheduleRunnable(
-        command,
-        new RunnableCallback() {
-          @Override
-          public ScheduledFuture<?> submit(Runnable task) {
-            return executor.scheduleAtFixedRate(task, initialDelay, period, unit);
-          }
-        });
+        command, task -> executor.scheduleAtFixedRate(task, initialDelay, period, unit));
   }
 
   @Override
   public ScheduledFuture<?> scheduleWithFixedDelay(
       Runnable command, long initialDelay, long delay, TimeUnit unit) {
     return internalScheduleRunnable(
-        command,
-        new RunnableCallback() {
-          @Override
-          public ScheduledFuture<?> submit(Runnable task) {
-            return executor.scheduleWithFixedDelay(command, initialDelay, delay, unit);
-          }
-        });
+        command, task -> executor.scheduleWithFixedDelay(command, initialDelay, delay, unit));
   }
 
   @Override

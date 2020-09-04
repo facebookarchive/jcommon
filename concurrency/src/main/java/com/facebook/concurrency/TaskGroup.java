@@ -56,14 +56,11 @@ public class TaskGroup {
       taskPair
           .getFirst()
           .execute(
-              new Runnable() {
-                @Override
-                public void run() {
-                  try {
-                    taskPair.getSecond().run();
-                  } finally {
-                    finishLatch.countDown();
-                  }
+              () -> {
+                try {
+                  taskPair.getSecond().run();
+                } finally {
+                  finishLatch.countDown();
                 }
               });
     }

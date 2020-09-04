@@ -28,14 +28,7 @@ public class ForwardReferenceProxy<T> {
 
   public ForwardReferenceProxy(Class<T> clazz) {
     this.instanceRef = new AtomicReference<>();
-    proxySupplier =
-        Suppliers.memoize(
-            new Supplier<T>() {
-              @Override
-              public T get() {
-                return wrap(clazz, instanceRef);
-              }
-            });
+    proxySupplier = Suppliers.memoize(() -> wrap(clazz, instanceRef));
   }
 
   public ForwardReferenceProxy<T> setInstance(T instance) {

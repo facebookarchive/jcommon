@@ -25,18 +25,7 @@ public class Converters {
   public static CliConverter<List<Integer>> INT_LIST = CliConverter.INT_LIST;
   public static CliConverter<List<String>> LIST = CliConverter.LIST;
   public static CliConverter<Boolean> BOOLEAN = CliConverter.BOOLEAN;
-  public static CliConverter<File> FILE =
-      new CliConverter<File>() {
-        @Override
-        public File convert(String value) throws Exception {
-          return value == null ? null : new File(value);
-        }
-      };
+  public static CliConverter<File> FILE = value -> value == null ? null : new File(value);
   public static CliConverter<HostAndPort> HOST_PORT =
-      new CliConverter<HostAndPort>() {
-        @Override
-        public HostAndPort convert(String value) throws Exception {
-          return value == null ? null : HostAndPort.fromString(value);
-        }
-      };
+      value -> value == null ? null : HostAndPort.fromString(value);
 }

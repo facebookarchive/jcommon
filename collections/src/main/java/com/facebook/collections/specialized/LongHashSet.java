@@ -84,15 +84,7 @@ public class LongHashSet implements SnapshotableSet<Long>, Trackable {
    * @param maxCapacity
    */
   public LongHashSet(int initialCapacity, int maxCapacity) {
-    this(
-        initialCapacity,
-        maxCapacity,
-        new Mapper<Long, Integer>() {
-          @Override
-          public Integer map(Long input) {
-            return (int) (input ^ (input >>> 32));
-          }
-        });
+    this(initialCapacity, maxCapacity, input -> (int) (input ^ (input >>> 32)));
   }
 
   private void resize() {

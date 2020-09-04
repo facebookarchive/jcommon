@@ -15,7 +15,6 @@
  */
 package com.facebook.concurrency;
 
-import com.facebook.testing.Function;
 import com.facebook.testing.MockExecutor;
 import com.facebook.testing.TestUtils;
 import java.util.ConcurrentModificationException;
@@ -31,11 +30,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class TestUnstoppableScheduledExecutorService {
-  private static final Runnable NO_OP =
-      new Runnable() {
-        @Override
-        public void run() {}
-      };
+  private static final Runnable NO_OP = () -> {};
 
   private ScheduledExecutorService executor;
   private MockExecutor mockExecutor;
@@ -80,14 +75,7 @@ public class TestUnstoppableScheduledExecutorService {
         executor.awaitTermination(1, TimeUnit.NANOSECONDS), "executor is terminated");
 
     AtomicInteger completed =
-        TestUtils.countCompletedRunnables(
-            10,
-            new Function<Runnable>() {
-              @Override
-              public void execute(Runnable argument) {
-                executor.execute(argument);
-              }
-            });
+        TestUtils.countCompletedRunnables(10, argument -> executor.execute(argument));
 
     executor.shutdown();
     mockExecutor.drain();
@@ -156,17 +144,14 @@ public class TestUnstoppableScheduledExecutorService {
     AtomicInteger count = new AtomicInteger(0);
     AtomicBoolean fail = new AtomicBoolean(false);
     Runnable shutdownTask =
-        new Runnable() {
-          @Override
-          public void run() {
-            try {
-              // 10 is totally arbitrary here, but it seems to work
-              if (count.incrementAndGet() == (int) ((float) numShutdownTasks * .75)) {
-                executor.shutdown();
-              }
-            } catch (ConcurrentModificationException e) {
-              fail.set(true);
+        () -> {
+          try {
+            // 10 is totally arbitrary here, but it seems to work
+            if (count.incrementAndGet() == (int) ((float) numShutdownTasks * .75)) {
+              executor.shutdown();
             }
+          } catch (ConcurrentModificationException e) {
+            fail.set(true);
           }
         };
 

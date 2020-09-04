@@ -164,23 +164,19 @@ public class ConfigAccessor {
     return get(
         key,
         null,
-        new Extractor<Map<String, String>>() {
-          @Override
-          public Map<String, String> extract(String key, JSONObject jsonObject)
-              throws JSONException {
-            Map<String, String> map = new HashMap<>();
-            JSONObject jsonMap = jsonObject.getJSONObject(key);
-            ConfigAccessor mapAccessor = new ConfigAccessor(jsonMap);
-            Iterator<String> keys = jsonMap.keys();
+        (key1, jsonObject) -> {
+          Map<String, String> map = new HashMap<>();
+          JSONObject jsonMap = jsonObject.getJSONObject(key1);
+          ConfigAccessor mapAccessor = new ConfigAccessor(jsonMap);
+          Iterator<String> keys = jsonMap.keys();
 
-            while (keys.hasNext()) {
-              String mapKey = keys.next();
+          while (keys.hasNext()) {
+            String mapKey = keys.next();
 
-              map.put(mapKey, mapAccessor.getString(mapKey));
-            }
-
-            return map;
+            map.put(mapKey, mapAccessor.getString(mapKey));
           }
+
+          return map;
         });
   }
 

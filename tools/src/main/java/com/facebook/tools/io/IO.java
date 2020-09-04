@@ -74,12 +74,9 @@ public class IO {
       Runtime.getRuntime()
           .addShutdownHook(
               new Thread(
-                  new Runnable() {
-                    @Override
-                    public void run() {
-                      // reset console color and erase final status line
-                      IO.this.out.print("");
-                    }
+                  () -> {
+                    // reset console color and erase final status line
+                    IO.this.out.print("");
                   }));
     }
 

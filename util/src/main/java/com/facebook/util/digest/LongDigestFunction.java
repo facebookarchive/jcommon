@@ -24,18 +24,16 @@ import java.security.NoSuchAlgorithmException;
 @Deprecated
 public class LongDigestFunction implements DigestFunction<Long> {
   private final ThreadLocal<MessageDigest> digest =
-      new ThreadLocal<MessageDigest>() {
-        @Override
-        protected MessageDigest initialValue() {
-          try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+      ThreadLocal.withInitial(
+          () -> {
+            try {
+              MessageDigest messageDigest = MessageDigest.getInstance("MD5");
 
-            return messageDigest;
-          } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-          }
-        }
-      };
+              return messageDigest;
+            } catch (NoSuchAlgorithmException e) {
+              throw new RuntimeException(e);
+            }
+          });
 
   @Override
   public long computeDigest(Long input) {

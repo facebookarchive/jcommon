@@ -82,14 +82,12 @@ public class MockExecutor implements ScheduledExecutorService {
   }
 
   private <T> Callable toCallable(Runnable runnable, T result) {
-    return new Callable<T>() {
-      @Override
-      public T call() throws Exception {
-        runnable.run();
+    return (Callable<T>)
+        () -> {
+          runnable.run();
 
-        return result;
-      }
-    };
+          return result;
+        };
   }
 
   private Callable<Void> toCallable(Runnable runnable) {
@@ -191,14 +189,11 @@ public class MockExecutor implements ScheduledExecutorService {
   public <T> Future<T> submit(Callable<T> task) {
     runnableList.add(
         new AnnotatedRunnable(
-            new Runnable() {
-              @Override
-              public void run() {
-                try {
-                  task.call();
-                } catch (Exception e) {
-                  throw new RuntimeException(e);
-                }
+            () -> {
+              try {
+                task.call();
+              } catch (Exception e) {
+                throw new RuntimeException(e);
               }
             }));
 

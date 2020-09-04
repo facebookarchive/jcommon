@@ -98,16 +98,13 @@ public class TestLinearizer {
     int taskId = nextTaskId.get();
     SerialStartTask task =
         new SerialStartTask(
-            new Runnable() {
-              @Override
-              public void run() {
-                concurrentPoint.start();
+            () -> {
+              concurrentPoint.start();
 
-                try {
-                  results.add(taskId);
-                } finally {
-                  concurrentPoint.complete();
-                }
+              try {
+                results.add(taskId);
+              } finally {
+                concurrentPoint.complete();
               }
             });
 
@@ -122,16 +119,13 @@ public class TestLinearizer {
 
     SerialStartTask task =
         new SerialStartTask(
-            new Runnable() {
-              @Override
-              public void run() {
-                linearizationPoint.start();
+            () -> {
+              linearizationPoint.start();
 
-                try {
-                  results.add(taskId);
-                } finally {
-                  linearizationPoint.complete();
-                }
+              try {
+                results.add(taskId);
+              } finally {
+                linearizationPoint.complete();
               }
             });
 

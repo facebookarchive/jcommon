@@ -61,14 +61,7 @@ public class ShutdownManagerImpl<T extends Enum> implements ShutdownManager<T> {
     firstStage = stages[0];
     currentStage = firstStage;
     lastStage = stages[stages.length - 1];
-    thread =
-        new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                internalShutdown();
-              }
-            });
+    thread = new Thread(() -> internalShutdown());
   }
 
   @Override

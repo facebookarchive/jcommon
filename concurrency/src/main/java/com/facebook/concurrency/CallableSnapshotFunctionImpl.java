@@ -16,7 +16,6 @@
 package com.facebook.concurrency;
 
 import com.facebook.util.exceptions.ExceptionHandler;
-import java.util.concurrent.Callable;
 
 public class CallableSnapshotFunctionImpl<I, O, E extends Exception>
     implements CallableSnapshotFunction<I, O, E> {
@@ -37,13 +36,6 @@ public class CallableSnapshotFunctionImpl<I, O, E extends Exception>
 
   @Override
   public CallableSnapshot<O, E> apply(I input) {
-    return new CallableSnapshot<>(
-        new Callable<O>() {
-          @Override
-          public O call() throws E {
-            return valueFactory.create(input);
-          }
-        },
-        exceptionHandler);
+    return new CallableSnapshot<>(() -> valueFactory.create(input), exceptionHandler);
   }
 }

@@ -88,18 +88,15 @@ class SubprocessImpl implements Subprocess {
 
     shutdownHook =
         new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                //noinspection EmptyTryBlock,UnusedDeclaration
-                try (InputStream inputStream = process.getInputStream();
-                    OutputStream outputStream = process.getOutputStream();
-                    InputStream errorStream = process.getErrorStream()) {
-                } catch (IOException | RuntimeException ignored) {
-                }
-
-                process.destroy();
+            () -> {
+              //noinspection EmptyTryBlock,UnusedDeclaration
+              try (InputStream inputStream = process.getInputStream();
+                  OutputStream outputStream = process.getOutputStream();
+                  InputStream errorStream = process.getErrorStream()) {
+              } catch (IOException | RuntimeException ignored) {
               }
+
+              process.destroy();
             });
 
     Runtime.getRuntime().addShutdownHook(shutdownHook);

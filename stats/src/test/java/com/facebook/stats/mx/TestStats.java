@@ -76,14 +76,7 @@ public class TestStats {
   @Test(groups = "fast")
   public void testAttributeCallable() {
     for (String key : attributeMap.keySet()) {
-      stats.setAttribute(
-          key,
-          new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-              return TestStats.this.attributeMap.get(key);
-            }
-          });
+      stats.setAttribute(key, () -> TestStats.this.attributeMap.get(key));
     }
 
     verifyStatAttributes();

@@ -27,13 +27,7 @@ public class TestOptionTranslator {
 
   @BeforeMethod(alwaysRun = true)
   protected void setUp() throws Exception {
-    Function<String, Integer> translator =
-        new Function<String, Integer>() {
-          @Override
-          public Integer apply(String input) {
-            return input == null ? -1 : Integer.parseInt(input);
-          }
-        };
+    Function<String, Integer> translator = input -> input == null ? -1 : Integer.parseInt(input);
 
     stringOption = new OptionImpl<>();
     integerOption = new OptionTranslator<>(stringOption, translator);
@@ -55,12 +49,9 @@ public class TestOptionTranslator {
     AtomicInteger integerValue = new AtomicInteger();
     AtomicInteger updatedCount = new AtomicInteger();
     OptionWatcher<Integer> watcher =
-        new OptionWatcher<Integer>() {
-          @Override
-          public void propertyUpdated(Integer value) throws Exception {
-            integerValue.set(value);
-            updatedCount.incrementAndGet();
-          }
+        value -> {
+          integerValue.set(value);
+          updatedCount.incrementAndGet();
         };
 
     integerOption.addWatcher(watcher);

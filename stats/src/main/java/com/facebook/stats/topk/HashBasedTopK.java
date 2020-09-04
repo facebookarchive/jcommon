@@ -58,13 +58,7 @@ public class HashBasedTopK<T extends Comparable<T>> implements TopK<T> {
 
   @Override
   public synchronized List<T> getTopK() {
-    Comparator<T> comparator =
-        new Comparator<T>() {
-          @Override
-          public int compare(T key1, T key2) {
-            return Longs.compare(counts.get(key1), counts.get(key2));
-          }
-        };
+    Comparator<T> comparator = (key1, key2) -> Longs.compare(counts.get(key1), counts.get(key2));
     PriorityQueue<T> topK = new PriorityQueue<>(k, comparator);
 
     for (Map.Entry<T, Long> entry : counts.entrySet()) {

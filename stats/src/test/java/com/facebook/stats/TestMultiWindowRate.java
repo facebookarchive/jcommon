@@ -60,12 +60,9 @@ public class TestMultiWindowRate {
     AtomicBoolean done = new AtomicBoolean(false);
     Thread t =
         new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                while (!done.get()) {
-                  rate.add(1);
-                }
+            () -> {
+              while (!done.get()) {
+                rate.add(1);
               }
             });
 

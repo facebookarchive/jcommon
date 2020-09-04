@@ -232,27 +232,23 @@ public class QuantileDigest {
 
     postOrderTraversal(
         root,
-        new Callback() {
-          @Override
-          public boolean process(Node node) {
+        node -> {
+          while (iterator.hasNext() && iterator.peek() <= node.getUpperBound()) {
+            double bucketCount = sum.get() - lastSum.get();
 
-            while (iterator.hasNext() && iterator.peek() <= node.getUpperBound()) {
-              double bucketCount = sum.get() - lastSum.get();
+            Bucket bucket =
+                new Bucket(
+                    bucketCount / normalizationFactor, bucketWeightedSum.get() / bucketCount);
 
-              Bucket bucket =
-                  new Bucket(
-                      bucketCount / normalizationFactor, bucketWeightedSum.get() / bucketCount);
-
-              builder.add(bucket);
-              lastSum.set(sum.get());
-              bucketWeightedSum.set(0);
-              iterator.next();
-            }
-
-            bucketWeightedSum.addAndGet(node.getMiddle() * node.weightedCount);
-            sum.addAndGet(node.weightedCount);
-            return iterator.hasNext();
+            builder.add(bucket);
+            lastSum.set(sum.get());
+            bucketWeightedSum.set(0);
+            iterator.next();
           }
+
+          bucketWeightedSum.addAndGet(node.getMiddle() * node.weightedCount);
+          sum.addAndGet(node.weightedCount);
+          return iterator.hasNext();
         });
 
     while (iterator.hasNext()) {
@@ -272,15 +268,12 @@ public class QuantileDigest {
     AtomicLong chosen = new AtomicLong(min);
     postOrderTraversal(
         root,
-        new Callback() {
-          @Override
-          public boolean process(Node node) {
-            if (node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
-              chosen.set(node.getLowerBound());
-              return false;
-            }
-            return true;
+        node -> {
+          if (node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
+            chosen.set(node.getLowerBound());
+            return false;
           }
+          return true;
         },
         TraversalOrder.FORWARD);
 
@@ -291,15 +284,12 @@ public class QuantileDigest {
     AtomicLong chosen = new AtomicLong(max);
     postOrderTraversal(
         root,
-        new Callback() {
-          @Override
-          public boolean process(Node node) {
-            if (node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
-              chosen.set(node.getUpperBound());
-              return false;
-            }
-            return true;
+        node -> {
+          if (node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
+            chosen.set(node.getUpperBound());
+            return false;
           }
+          return true;
         },
         TraversalOrder.REVERSE);
 
@@ -329,50 +319,47 @@ public class QuantileDigest {
 
     postOrderTraversal(
         root,
-        new Callback() {
-          @Override
-          public boolean process(Node node) {
-            if (node.isLeaf()) {
-              return true;
-            }
-
-            // if children's weights are ~0 remove them and shift the weight to their parent
-
-            double leftWeight = 0;
-            if (node.left != null) {
-              leftWeight = node.left.weightedCount;
-            }
-
-            double rightWeight = 0;
-            if (node.right != null) {
-              rightWeight = node.right.weightedCount;
-            }
-
-            boolean shouldCompress =
-                node.weightedCount + leftWeight + rightWeight < weightedCount / compressionFactor;
-
-            double oldNodeWeight = node.weightedCount;
-            if (shouldCompress || leftWeight < ZERO_WEIGHT_THRESHOLD) {
-              node.left = tryRemove(node.left);
-
-              weightedCount += leftWeight;
-              node.weightedCount += leftWeight;
-            }
-
-            if (shouldCompress || rightWeight < ZERO_WEIGHT_THRESHOLD) {
-              node.right = tryRemove(node.right);
-
-              weightedCount += rightWeight;
-              node.weightedCount += rightWeight;
-            }
-
-            if (oldNodeWeight < ZERO_WEIGHT_THRESHOLD
-                && node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
-              ++nonZeroNodeCount;
-            }
-
+        node -> {
+          if (node.isLeaf()) {
             return true;
           }
+
+          // if children's weights are ~0 remove them and shift the weight to their parent
+
+          double leftWeight = 0;
+          if (node.left != null) {
+            leftWeight = node.left.weightedCount;
+          }
+
+          double rightWeight = 0;
+          if (node.right != null) {
+            rightWeight = node.right.weightedCount;
+          }
+
+          boolean shouldCompress =
+              node.weightedCount + leftWeight + rightWeight < weightedCount / compressionFactor;
+
+          double oldNodeWeight = node.weightedCount;
+          if (shouldCompress || leftWeight < ZERO_WEIGHT_THRESHOLD) {
+            node.left = tryRemove(node.left);
+
+            weightedCount += leftWeight;
+            node.weightedCount += leftWeight;
+          }
+
+          if (shouldCompress || rightWeight < ZERO_WEIGHT_THRESHOLD) {
+            node.right = tryRemove(node.right);
+
+            weightedCount += rightWeight;
+            node.weightedCount += rightWeight;
+          }
+
+          if (oldNodeWeight < ZERO_WEIGHT_THRESHOLD
+              && node.weightedCount >= ZERO_WEIGHT_THRESHOLD) {
+            ++nonZeroNodeCount;
+          }
+
+          return true;
         });
 
     if (root != null && root.weightedCount < ZERO_WEIGHT_THRESHOLD) {
@@ -395,19 +382,16 @@ public class QuantileDigest {
 
     postOrderTraversal(
         root,
-        new Callback() {
-          @Override
-          public boolean process(Node node) {
-            double oldWeight = node.weightedCount;
+        node -> {
+          double oldWeight = node.weightedCount;
 
-            node.weightedCount *= factor;
+          node.weightedCount *= factor;
 
-            if (oldWeight >= ZERO_WEIGHT_THRESHOLD && node.weightedCount < ZERO_WEIGHT_THRESHOLD) {
-              --nonZeroNodeCount;
-            }
-
-            return true;
+          if (oldWeight >= ZERO_WEIGHT_THRESHOLD && node.weightedCount < ZERO_WEIGHT_THRESHOLD) {
+            --nonZeroNodeCount;
           }
+
+          return true;
         });
 
     landmarkInSeconds = newLandmarkInSeconds;
@@ -593,18 +577,15 @@ public class QuantileDigest {
 
       postOrderTraversal(
           root,
-          new Callback() {
-            @Override
-            public boolean process(Node node) {
-              sumOfWeights.addAndGet(node.weightedCount);
-              actualNodeCount.incrementAndGet();
+          node -> {
+            sumOfWeights.addAndGet(node.weightedCount);
+            actualNodeCount.incrementAndGet();
 
-              if (node.weightedCount > ZERO_WEIGHT_THRESHOLD) {
-                actualNonZeroNodeCount.incrementAndGet();
-              }
-
-              return true;
+            if (node.weightedCount > ZERO_WEIGHT_THRESHOLD) {
+              actualNonZeroNodeCount.incrementAndGet();
             }
+
+            return true;
           });
     }
 

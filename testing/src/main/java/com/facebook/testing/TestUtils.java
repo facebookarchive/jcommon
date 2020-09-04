@@ -40,11 +40,8 @@ public class TestUtils {
   }
 
   public static <T> Function<T> noOpFunction() {
-    return new Function<T>() {
-      @Override
-      public void execute(T argument) {
-        // noting
-      }
+    return argument -> {
+      // noting
     };
   }
 
@@ -53,13 +50,7 @@ public class TestUtils {
     AtomicInteger completed = new AtomicInteger(0);
 
     for (int i = 0; i < numTasks; i++) {
-      submissionCallback.execute(
-          new Runnable() {
-            @Override
-            public void run() {
-              completed.incrementAndGet();
-            }
-          });
+      submissionCallback.execute(() -> completed.incrementAndGet());
     }
 
     return completed;
@@ -71,13 +62,10 @@ public class TestUtils {
 
     for (int i = 0; i < numTasks; i++) {
       submissionCallback.execute(
-          new Callable<V>() {
-            @Override
-            public V call() throws Exception {
-              completed.incrementAndGet();
+          () -> {
+            completed.incrementAndGet();
 
-              return null;
-            }
+            return null;
           });
     }
 

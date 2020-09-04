@@ -42,26 +42,20 @@ public class TestExecutorServiceFrontBuilder {
     hangLatch = new CountDownLatch(1);
 
     hangTask =
-        new Runnable() {
-          @Override
-          public void run() {
-            try {
-              hangLatch.await();
-              count.incrementAndGet();
-              finishLatch.countDown();
-            } catch (InterruptedException e) {
-              throw new RuntimeException("interrupted waiting on latch!", e);
-            }
+        () -> {
+          try {
+            hangLatch.await();
+            count.incrementAndGet();
+            finishLatch.countDown();
+          } catch (InterruptedException e) {
+            throw new RuntimeException("interrupted waiting on latch!", e);
           }
         };
     countTask =
-        new Runnable() {
-          @Override
-          public void run() {
-            count.incrementAndGet();
-            countLatch.countDown();
-            finishLatch.countDown();
-          }
+        () -> {
+          count.incrementAndGet();
+          countLatch.countDown();
+          finishLatch.countDown();
         };
 
     coreExecutor = Executors.newCachedThreadPool();

@@ -51,13 +51,7 @@ public class ArrayBasedIntegerTopK implements TopK<Integer> {
 
   @Override
   public List<Integer> getTopK() {
-    Comparator<Integer> comparator =
-        new Comparator<Integer>() {
-          @Override
-          public int compare(Integer i, Integer j) {
-            return Longs.compare(counts[i], counts[j]);
-          }
-        };
+    Comparator<Integer> comparator = (i, j) -> Longs.compare(counts[i], counts[j]);
     PriorityQueue<Integer> topK = new PriorityQueue<>(k, comparator);
 
     for (int key = 0; key < counts.length; ++key) {

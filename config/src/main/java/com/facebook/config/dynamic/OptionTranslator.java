@@ -20,12 +20,6 @@ import com.google.common.base.Function;
 public class OptionTranslator<From, To> extends OptionImpl<To> {
   public OptionTranslator(Option<From> option, Function<From, To> translator) {
     setValue(translator.apply(option.getValue()));
-    option.addWatcher(
-        new OptionWatcher<From>() {
-          @Override
-          public void propertyUpdated(From value) throws Exception {
-            setValue(translator.apply(option.getValue()));
-          }
-        });
+    option.addWatcher(value -> setValue(translator.apply(option.getValue())));
   }
 }

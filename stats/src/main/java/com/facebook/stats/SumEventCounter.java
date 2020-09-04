@@ -26,13 +26,7 @@ import org.joda.time.ReadableDateTime;
  */
 @Deprecated
 public class SumEventCounter extends AssociativeAggregationCounter {
-  public static final AssociativeAggregation AGGREGATION =
-      new AssociativeAggregation() {
-        @Override
-        public long combine(long l1, long l2) {
-          return l1 + l2;
-        }
-      };
+  public static final AssociativeAggregation AGGREGATION = (l1, l2) -> l1 + l2;
 
   public SumEventCounter(ReadableDateTime start, ReadableDateTime end, long initialValue) {
     super(start, end, AGGREGATION, initialValue);

@@ -43,28 +43,19 @@ public class TestParallelRunner {
     CountDownLatch latch = new CountDownLatch(1);
     BlockingQueue<Runnable> taskQueue = new LinkedBlockingDeque<>();
     taskQueue.add(
-        new Runnable() {
-          @Override
-          public void run() {
-            String threadName = Thread.currentThread().getName();
-            if (!threadName.contains(threadNamePrefix)) {
-              errorMessage.set(
-                  String.format("threadName mistmatch [%s] vs [%s]", threadNamePrefix, threadName));
-            }
-            latch.countDown();
+        () -> {
+          String threadName = Thread.currentThread().getName();
+          if (!threadName.contains(threadNamePrefix)) {
+            errorMessage.set(
+                String.format("threadName mistmatch [%s] vs [%s]", threadNamePrefix, threadName));
           }
+          latch.countDown();
         });
 
     ThreadHelper threadHelper = new ThreadHelper();
     Thread slothThread =
         threadHelper.doInThread(
-            new Runnable() {
-              @Override
-              public void run() {
-
-                parallelRunner.parallelRun(taskQueue, 2, threadNamePrefix);
-              }
-            },
+            () -> parallelRunner.parallelRun(taskQueue, 2, threadNamePrefix),
             "parallel-runner-sheppard");
 
     latch.await();

@@ -57,34 +57,28 @@ public class ConcurrencyUtil {
     Runtime.getRuntime()
         .addShutdownHook(
             new Thread(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    SHUTDOWN_LOCK.writeLock().lock();
+                () -> {
+                  SHUTDOWN_LOCK.writeLock().lock();
 
-                    try {
-                      CACHED_EXECUTOR.shutdown();
-                    } finally {
-                      SHUTDOWN_LOCK.writeLock().unlock();
-                    }
+                  try {
+                    CACHED_EXECUTOR.shutdown();
+                  } finally {
+                    SHUTDOWN_LOCK.writeLock().unlock();
                   }
                 }));
   }
 
   public static Runnable shutdownExecutorTask(ExecutorService executor) {
-    return new Runnable() {
-      @Override
-      public void run() {
-        try {
-          executor.shutdown();
-          if (!executor.awaitTermination(AWAIT_TERMINATION_SECONDS, TimeUnit.SECONDS)) {
-            LOG.warn(
-                "executor didn't finish shutting down in %d seconds, moving on",
-                AWAIT_TERMINATION_SECONDS);
-          }
-        } catch (InterruptedException e) {
-          LOG.warn("interrupted shutting down executor");
+    return () -> {
+      try {
+        executor.shutdown();
+        if (!executor.awaitTermination(AWAIT_TERMINATION_SECONDS, TimeUnit.SECONDS)) {
+          LOG.warn(
+              "executor didn't finish shutting down in %d seconds, moving on",
+              AWAIT_TERMINATION_SECONDS);
         }
+      } catch (InterruptedException e) {
+        LOG.warn("interrupted shutting down executor");
       }
     };
   }

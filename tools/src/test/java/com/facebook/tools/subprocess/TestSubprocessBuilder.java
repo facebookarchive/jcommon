@@ -44,19 +44,12 @@ public class TestSubprocessBuilder {
 
     SubprocessBuilder builder =
         new SubprocessBuilder(
-            new ProcessBuilderWrapper() {
-              @Override
-              public Process createProcess(
-                  RedirectErrorsTo redirectErrorsTo,
-                  Map<String, String> environmentOverrides,
-                  File workingDirectory,
-                  List<String> command) {
-                parameters.add(
-                    new CreateProcessParameters(
-                        redirectErrorsTo, environmentOverrides, workingDirectory, command));
+            (redirectErrorsTo, environmentOverrides, workingDirectory, command) -> {
+              parameters.add(
+                  new CreateProcessParameters(
+                      redirectErrorsTo, environmentOverrides, workingDirectory, command));
 
-                return new DummyProcess();
-              }
+              return new DummyProcess();
             });
 
     io = new MockIO(builder);

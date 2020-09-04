@@ -49,12 +49,7 @@ public class TestExpiringConcurrentCache {
     DateTimeUtils.setCurrentMillisFixed(0);
     legacyCache =
         ExpiringConcurrentCache.createWithReapableValue(
-            new ValueFactory<String, ReapableString, RuntimeException>() {
-              @Override
-              public ReapableString create(String input) throws RuntimeException {
-                return producer.call();
-              }
-            },
+            input -> producer.call(),
             30,
             TimeUnit.MILLISECONDS,
             RuntimeExceptionHandler.INSTANCE,
@@ -62,20 +57,10 @@ public class TestExpiringConcurrentCache {
     evicted = new ArrayList<>();
     cache =
         new ExpiringConcurrentCache<>(
-            new ValueFactory<String, String, RuntimeException>() {
-              @Override
-              public String create(String input) throws RuntimeException {
-                return producer.call().toString();
-              }
-            },
+            input -> producer.call().toString(),
             30,
             TimeUnit.MILLISECONDS,
-            new EvictionListener<String, String>() {
-              @Override
-              public void evicted(String key, String value) {
-                evicted.add(new Pair<>(key, value));
-              }
-            },
+            (key, value) -> evicted.add(new Pair<>(key, value)),
             RuntimeExceptionHandler.INSTANCE,
             mockExecutor);
     testHelper = new ConcurrentCacheTestHelper<>(legacyCache);

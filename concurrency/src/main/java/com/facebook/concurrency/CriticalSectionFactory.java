@@ -21,15 +21,12 @@ public class CriticalSectionFactory {
   private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
   public Runnable wrap(Runnable runnable) {
-    return new Runnable() {
-      @Override
-      public void run() {
-        if (isRunning.compareAndSet(false, true)) {
-          try {
-            runnable.run();
-          } finally {
-            isRunning.set(false);
-          }
+    return () -> {
+      if (isRunning.compareAndSet(false, true)) {
+        try {
+          runnable.run();
+        } finally {
+          isRunning.set(false);
         }
       }
     };

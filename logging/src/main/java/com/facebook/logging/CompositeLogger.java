@@ -84,12 +84,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void trace(String format, Object... args) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isTraceEnabled()) {
-              log.trace(format, args);
-            }
+        log -> {
+          if (log.isTraceEnabled()) {
+            log.trace(format, args);
           }
         });
   }
@@ -97,12 +94,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void trace(Throwable t, String format, Object... args) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isTraceEnabled()) {
-              log.trace(t, format, args);
-            }
+        log -> {
+          if (log.isTraceEnabled()) {
+            log.trace(t, format, args);
           }
         });
   }
@@ -110,12 +104,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void debug(String format, Object... args) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isDebugEnabled()) {
-              log.debug(format, args);
-            }
+        log -> {
+          if (log.isDebugEnabled()) {
+            log.debug(format, args);
           }
         });
   }
@@ -123,12 +114,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void debug(Throwable t, String format, Object... args) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isDebugEnabled()) {
-              log.debug(t, format, args);
-            }
+        log -> {
+          if (log.isDebugEnabled()) {
+            log.debug(t, format, args);
           }
         });
   }
@@ -136,12 +124,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void debug(String message, Throwable throwable) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isDebugEnabled()) {
-              log.debug(throwable, message);
-            }
+        log -> {
+          if (log.isDebugEnabled()) {
+            log.debug(throwable, message);
           }
         });
   }
@@ -149,12 +134,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void info(String format, Object... args) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isInfoEnabled()) {
-              log.info(format, args);
-            }
+        log -> {
+          if (log.isInfoEnabled()) {
+            log.info(format, args);
           }
         });
   }
@@ -162,12 +144,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void info(Throwable t, String format, Object... args) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isInfoEnabled()) {
-              log.info(t, format, args);
-            }
+        log -> {
+          if (log.isInfoEnabled()) {
+            log.info(t, format, args);
           }
         });
   }
@@ -175,12 +154,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void info(String message, Throwable throwable) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isInfoEnabled()) {
-              log.info(throwable, message);
-            }
+        log -> {
+          if (log.isInfoEnabled()) {
+            log.info(throwable, message);
           }
         });
   }
@@ -188,12 +164,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void warn(String format, Object... args) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isWarnEnabled()) {
-              log.warn(format, args);
-            }
+        log -> {
+          if (log.isWarnEnabled()) {
+            log.warn(format, args);
           }
         });
   }
@@ -201,12 +174,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void warn(Throwable t, String format, Object... args) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isWarnEnabled()) {
-              log.warn(t, format, args);
-            }
+        log -> {
+          if (log.isWarnEnabled()) {
+            log.warn(t, format, args);
           }
         });
   }
@@ -214,12 +184,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void warn(String message, Throwable throwable) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isWarnEnabled()) {
-              log.warn(throwable, message);
-            }
+        log -> {
+          if (log.isWarnEnabled()) {
+            log.warn(throwable, message);
           }
         });
   }
@@ -227,12 +194,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void error(String format, Object... args) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isErrorEnabled()) {
-              log.error(format, args);
-            }
+        log -> {
+          if (log.isErrorEnabled()) {
+            log.error(format, args);
           }
         });
   }
@@ -240,12 +204,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void error(Throwable t, String format, Object... args) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isErrorEnabled()) {
-              log.error(t, format, args);
-            }
+        log -> {
+          if (log.isErrorEnabled()) {
+            log.error(t, format, args);
           }
         });
   }
@@ -253,12 +214,9 @@ public class CompositeLogger implements Logger {
   @Override
   public void error(String message, Throwable throwable) {
     logAll(
-        new LoggerOperation() {
-          @Override
-          public void execute(Logger log) {
-            if (log.isErrorEnabled()) {
-              log.error(throwable, message);
-            }
+        log -> {
+          if (log.isErrorEnabled()) {
+            log.error(throwable, message);
           }
         });
   }

@@ -34,18 +34,15 @@ public class TestCriticalSectionFactory {
     criticalSectionLatch = new CountDownLatch(1);
     entryLatch = new CountDownLatch(1);
     runnable =
-        new Runnable() {
-          @Override
-          public void run() {
-            try {
-              entryLatch.countDown();
-              criticalSectionLatch.await();
-            } catch (InterruptedException e) {
-              Assert.fail("test interrupted");
-            }
-
-            count++;
+        () -> {
+          try {
+            entryLatch.countDown();
+            criticalSectionLatch.await();
+          } catch (InterruptedException e) {
+            Assert.fail("test interrupted");
           }
+
+          count++;
         };
     factory = new CriticalSectionFactory();
   }

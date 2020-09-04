@@ -37,16 +37,13 @@ public class TestLatchTask {
     AtomicBoolean completed = new AtomicBoolean(false);
     Thread thread =
         threadHelper.doInThread(
-            new Runnable() {
-              @Override
-              public void run() {
-                try {
-                  task.await();
-                  completed.set(true);
-                } catch (InterruptedException e) {
-                  Assert.fail("exception", e);
-                  throw new RuntimeException(e);
-                }
+            () -> {
+              try {
+                task.await();
+                completed.set(true);
+              } catch (InterruptedException e) {
+                Assert.fail("exception", e);
+                throw new RuntimeException(e);
               }
             });
 
