@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-interface StatsReader {
+public interface StatsReader {
   void exportCounters(Map<String, Long> counters);
 
   MultiWindowRate getRate(String key);
