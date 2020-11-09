@@ -27,9 +27,21 @@ public interface Logger {
 
   public boolean isErrorEnabled();
 
+  public void trace(String message);
+
+  public void trace(String format, Object arg1);
+
+  public void trace(String format, Object arg1, Object arg2);
+
   public void trace(String format, Object... args);
 
   public void trace(Throwable t, String format, Object... args);
+
+  public void debug(String message);
+
+  public void debug(String format, Object arg1);
+
+  public void debug(String format, Object arg1, Object arg2);
 
   public void debug(String format, Object... args);
 
@@ -39,6 +51,12 @@ public interface Logger {
   @Deprecated
   public void debug(String message, Throwable throwable);
 
+  public void info(String message);
+
+  public void info(String format, Object arg1);
+
+  public void info(String format, Object arg1, Object arg2);
+
   public void info(String format, Object... args);
 
   public void info(Throwable t, String format, Object... args);
@@ -47,6 +65,12 @@ public interface Logger {
   @Deprecated
   public void info(String message, Throwable throwable);
 
+  public void warn(String message);
+
+  public void warn(String format, Object arg1);
+
+  public void warn(String format, Object arg1, Object arg2);
+
   public void warn(String format, Object... args);
 
   public void warn(Throwable t, String format, Object... args);
@@ -54,6 +78,12 @@ public interface Logger {
   /** @deprecated you might prefer {@link #warn(Throwable, String)} */
   @Deprecated
   public void warn(String message, Throwable throwable);
+
+  public void error(String message);
+
+  public void error(String format, Object arg1);
+
+  public void error(String format, Object arg1, Object arg2);
 
   public void error(String format, Object... args);
 

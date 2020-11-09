@@ -76,6 +76,27 @@ public class TimeSamplingLogger implements Logger {
   }
 
   @Override
+  public void trace(String message) {
+    if (shouldLog()) {
+      logger.trace(message);
+    }
+  }
+
+  @Override
+  public void trace(String format, Object arg1) {
+    if (shouldLog()) {
+      logger.trace(format, arg1);
+    }
+  }
+
+  @Override
+  public void trace(String format, Object arg1, Object arg2) {
+    if (shouldLog()) {
+      logger.trace(format, arg1, arg2);
+    }
+  }
+
+  @Override
   public void trace(String format, Object... args) {
     if (shouldLog()) {
       logger.trace(format, args);
@@ -86,6 +107,27 @@ public class TimeSamplingLogger implements Logger {
   public void trace(Throwable t, String format, Object... args) {
     if (shouldLog()) {
       logger.trace(t, format, args);
+    }
+  }
+
+  @Override
+  public void debug(String message) {
+    if (shouldLog()) {
+      logger.debug(message);
+    }
+  }
+
+  @Override
+  public void debug(String format, Object arg1) {
+    if (shouldLog()) {
+      logger.debug(format, arg1);
+    }
+  }
+
+  @Override
+  public void debug(String format, Object arg1, Object arg2) {
+    if (shouldLog()) {
+      logger.debug(format, arg1, arg2);
     }
   }
 
@@ -112,6 +154,27 @@ public class TimeSamplingLogger implements Logger {
   }
 
   @Override
+  public void info(String message) {
+    if (shouldLog()) {
+      logger.info(message);
+    }
+  }
+
+  @Override
+  public void info(String format, Object arg1) {
+    if (shouldLog()) {
+      logger.info(format, arg1);
+    }
+  }
+
+  @Override
+  public void info(String format, Object arg1, Object arg2) {
+    if (shouldLog()) {
+      logger.info(format, arg1, arg2);
+    }
+  }
+
+  @Override
   public void info(String format, Object... args) {
     if (shouldLog()) {
       logger.info(format, args);
@@ -134,6 +197,27 @@ public class TimeSamplingLogger implements Logger {
   }
 
   @Override
+  public void warn(String message) {
+    if (shouldLog()) {
+      logger.warn(message);
+    }
+  }
+
+  @Override
+  public void warn(String format, Object arg1) {
+    if (shouldLog()) {
+      logger.warn(format, arg1);
+    }
+  }
+
+  @Override
+  public void warn(String format, Object arg1, Object arg2) {
+    if (shouldLog()) {
+      logger.warn(format, arg1, arg2);
+    }
+  }
+
+  @Override
   public void warn(String format, Object... args) {
     if (shouldLog()) {
       logger.warn(format, args);
@@ -152,6 +236,27 @@ public class TimeSamplingLogger implements Logger {
   public void warn(String message, Throwable throwable) {
     if (shouldLog()) {
       logger.warn(message, throwable);
+    }
+  }
+
+  @Override
+  public void error(String message) {
+    if (shouldLog()) {
+      logger.error(message);
+    }
+  }
+
+  @Override
+  public void error(String format, Object arg1) {
+    if (shouldLog()) {
+      logger.error(format, arg1);
+    }
+  }
+
+  @Override
+  public void error(String format, Object arg1, Object arg2) {
+    if (shouldLog()) {
+      logger.error(format, arg1, arg2);
     }
   }
 

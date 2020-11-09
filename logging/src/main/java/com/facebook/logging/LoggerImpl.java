@@ -86,6 +86,27 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
+  public void trace(String message) {
+    if (logger.isTraceEnabled()) {
+      logger.trace(message);
+    }
+  }
+
+  @Override
+  public void trace(String format, Object arg1) {
+    if (logger.isTraceEnabled()) {
+      logger.trace(formatMessage(format, arg1));
+    }
+  }
+
+  @Override
+  public void trace(String format, Object arg1, Object arg2) {
+    if (logger.isTraceEnabled()) {
+      logger.trace(formatMessage(format, arg1, arg2));
+    }
+  }
+
+  @Override
   public void trace(String format, Object... args) {
     if (logger.isTraceEnabled()) {
       logger.trace(formatMessage(format, args));
@@ -96,6 +117,31 @@ public class LoggerImpl implements Logger {
   public void trace(Throwable t, String format, Object... args) {
     if (logger.isTraceEnabled()) {
       logger.trace(formatMessage(format, args), t);
+    }
+  }
+
+  @Override
+  public void debug(String message) {
+    if (logger.isDebugEnabled()) {
+      logger.debug(message);
+    }
+  }
+
+  @Override
+  public void debug(String format, Object arg1) {
+    if (logger.isDebugEnabled()) {
+      String message = formatMessage(format, arg1);
+
+      logger.debug(message);
+    }
+  }
+
+  @Override
+  public void debug(String format, Object arg1, Object arg2) {
+    if (logger.isDebugEnabled()) {
+      String message = formatMessage(format, arg1, arg2);
+
+      logger.debug(message);
     }
   }
 
@@ -126,6 +172,31 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
+  public void info(String message) {
+    if (logger.isInfoEnabled()) {
+      logger.info(message);
+    }
+  }
+
+  @Override
+  public void info(String format, Object arg1) {
+    if (logger.isInfoEnabled()) {
+      String message = formatMessage(format, arg1);
+
+      logger.info(message);
+    }
+  }
+
+  @Override
+  public void info(String format, Object arg1, Object arg2) {
+    if (logger.isInfoEnabled()) {
+      String message = formatMessage(format, arg1, arg2);
+
+      logger.info(message);
+    }
+  }
+
+  @Override
   public void info(String format, Object... args) {
     if (logger.isInfoEnabled()) {
       String message = formatMessage(format, args);
@@ -152,6 +223,31 @@ public class LoggerImpl implements Logger {
   }
 
   @Override
+  public void warn(String message) {
+    if (logger.isWarnEnabled()) {
+      logger.warn(message);
+    }
+  }
+
+  @Override
+  public void warn(String format, Object arg1) {
+    if (logger.isWarnEnabled()) {
+      String message = formatMessage(format, arg1);
+
+      logger.warn(message);
+    }
+  }
+
+  @Override
+  public void warn(String format, Object arg1, Object arg2) {
+    if (logger.isWarnEnabled()) {
+      String message = formatMessage(format, arg1, arg2);
+
+      logger.warn(message);
+    }
+  }
+
+  @Override
   public void warn(String format, Object... args) {
     if (logger.isWarnEnabled()) {
       String message = formatMessage(format, args);
@@ -174,6 +270,31 @@ public class LoggerImpl implements Logger {
   public void warn(String message, Throwable throwable) {
     if (logger.isWarnEnabled()) {
       logger.warn(message, throwable);
+    }
+  }
+
+  @Override
+  public void error(String message) {
+    if (logger.isErrorEnabled()) {
+      logger.error(message);
+    }
+  }
+
+  @Override
+  public void error(String format, Object arg1) {
+    if (logger.isErrorEnabled()) {
+      String message = formatMessage(format, arg1);
+
+      logger.error(message);
+    }
+  }
+
+  @Override
+  public void error(String format, Object arg1, Object arg2) {
+    if (logger.isErrorEnabled()) {
+      String message = formatMessage(format, arg1, arg2);
+
+      logger.error(message);
     }
   }
 
@@ -206,6 +327,14 @@ public class LoggerImpl implements Logger {
   @Override
   public String getName() {
     return logger.getName();
+  }
+
+  private String formatMessage(String format, Object arg1) {
+    return String.format(format, arg1);
+  }
+
+  private String formatMessage(String format, Object arg1, Object arg2) {
+    return String.format(format, arg1, arg2);
   }
 
   private String formatMessage(String format, Object[] args) {
