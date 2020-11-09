@@ -52,6 +52,21 @@ public class DynamicLogger implements Logger {
   }
 
   @Override
+  public void trace(String message) {
+    getLogger().trace(message);
+  }
+
+  @Override
+  public void trace(String format, Object arg1) {
+    getLogger().trace(format, arg1);
+  }
+
+  @Override
+  public void trace(String format, Object arg1, Object arg2) {
+    getLogger().trace(format, arg1, arg2);
+  }
+
+  @Override
   public void trace(String format, Object... args) {
     getLogger().trace(format, args);
   }
@@ -59,6 +74,21 @@ public class DynamicLogger implements Logger {
   @Override
   public void trace(Throwable t, String format, Object... args) {
     getLogger().trace(t, format, args);
+  }
+
+  @Override
+  public void debug(String message) {
+    getLogger().debug(message);
+  }
+
+  @Override
+  public void debug(String format, Object arg1) {
+    getLogger().debug(format, arg1);
+  }
+
+  @Override
+  public void debug(String format, Object arg1, Object arg2) {
+    getLogger().debug(format, arg1, arg2);
   }
 
   @Override
@@ -78,6 +108,21 @@ public class DynamicLogger implements Logger {
   }
 
   @Override
+  public void info(String message) {
+    getLogger().info(message);
+  }
+
+  @Override
+  public void info(String format, Object arg1) {
+    getLogger().info(format, arg1);
+  }
+
+  @Override
+  public void info(String format, Object arg1, Object arg2) {
+    getLogger().info(format, arg1, arg2);
+  }
+
+  @Override
   public void info(String format, Object... args) {
     getLogger().info(format, args);
   }
@@ -94,6 +139,21 @@ public class DynamicLogger implements Logger {
   }
 
   @Override
+  public void warn(String message) {
+    getLogger().warn(message);
+  }
+
+  @Override
+  public void warn(String format, Object arg1) {
+    getLogger().warn(format, arg1);
+  }
+
+  @Override
+  public void warn(String format, Object arg1, Object arg2) {
+    getLogger().warn(format, arg1, arg2);
+  }
+
+  @Override
   public void warn(String format, Object... args) {
     getLogger().warn(format, args);
   }
@@ -107,6 +167,21 @@ public class DynamicLogger implements Logger {
   @Deprecated
   public void warn(String message, Throwable throwable) {
     getLogger().warn(message, throwable);
+  }
+
+  @Override
+  public void error(String message) {
+    getLogger().error(message);
+  }
+
+  @Override
+  public void error(String format, Object arg1) {
+    getLogger().error(format, arg1);
+  }
+
+  @Override
+  public void error(String format, Object arg1, Object arg2) {
+    getLogger().error(format, arg1, arg2);
   }
 
   @Override

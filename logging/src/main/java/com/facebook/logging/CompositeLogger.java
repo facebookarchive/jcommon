@@ -82,6 +82,36 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
+  public void trace(String message) {
+    logAll(
+        log -> {
+          if (log.isTraceEnabled()) {
+            log.trace(message);
+          }
+        });
+  }
+
+  @Override
+  public void trace(String format, Object arg1) {
+    logAll(
+        log -> {
+          if (log.isTraceEnabled()) {
+            log.trace(format, arg1);
+          }
+        });
+  }
+
+  @Override
+  public void trace(String format, Object arg1, Object arg2) {
+    logAll(
+        log -> {
+          if (log.isTraceEnabled()) {
+            log.trace(format, arg1, arg2);
+          }
+        });
+  }
+
+  @Override
   public void trace(String format, Object... args) {
     logAll(
         log -> {
@@ -97,6 +127,36 @@ public class CompositeLogger implements Logger {
         log -> {
           if (log.isTraceEnabled()) {
             log.trace(t, format, args);
+          }
+        });
+  }
+
+  @Override
+  public void debug(String message) {
+    logAll(
+        log -> {
+          if (log.isTraceEnabled()) {
+            log.debug(message);
+          }
+        });
+  }
+
+  @Override
+  public void debug(String format, Object arg1) {
+    logAll(
+        log -> {
+          if (log.isDebugEnabled()) {
+            log.debug(format, arg1);
+          }
+        });
+  }
+
+  @Override
+  public void debug(String format, Object arg1, Object arg2) {
+    logAll(
+        log -> {
+          if (log.isDebugEnabled()) {
+            log.debug(format, arg1, arg2);
           }
         });
   }
@@ -132,6 +192,36 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
+  public void info(String message) {
+    logAll(
+        log -> {
+          if (log.isTraceEnabled()) {
+            log.info(message);
+          }
+        });
+  }
+
+  @Override
+  public void info(String format, Object arg1) {
+    logAll(
+        log -> {
+          if (log.isInfoEnabled()) {
+            log.info(format, arg1);
+          }
+        });
+  }
+
+  @Override
+  public void info(String format, Object arg1, Object arg2) {
+    logAll(
+        log -> {
+          if (log.isInfoEnabled()) {
+            log.info(format, arg1, arg2);
+          }
+        });
+  }
+
+  @Override
   public void info(String format, Object... args) {
     logAll(
         log -> {
@@ -162,6 +252,36 @@ public class CompositeLogger implements Logger {
   }
 
   @Override
+  public void warn(String message) {
+    logAll(
+        log -> {
+          if (log.isTraceEnabled()) {
+            log.warn(message);
+          }
+        });
+  }
+
+  @Override
+  public void warn(String format, Object arg1) {
+    logAll(
+        log -> {
+          if (log.isWarnEnabled()) {
+            log.warn(format, arg1);
+          }
+        });
+  }
+
+  @Override
+  public void warn(String format, Object arg1, Object arg2) {
+    logAll(
+        log -> {
+          if (log.isWarnEnabled()) {
+            log.warn(format, arg1, arg2);
+          }
+        });
+  }
+
+  @Override
   public void warn(String format, Object... args) {
     logAll(
         log -> {
@@ -187,6 +307,36 @@ public class CompositeLogger implements Logger {
         log -> {
           if (log.isWarnEnabled()) {
             log.warn(throwable, message);
+          }
+        });
+  }
+
+  @Override
+  public void error(String message) {
+    logAll(
+        log -> {
+          if (log.isTraceEnabled()) {
+            log.error(message);
+          }
+        });
+  }
+
+  @Override
+  public void error(String format, Object arg1) {
+    logAll(
+        log -> {
+          if (log.isErrorEnabled()) {
+            log.error(format, arg1);
+          }
+        });
+  }
+
+  @Override
+  public void error(String format, Object arg1, Object arg2) {
+    logAll(
+        log -> {
+          if (log.isErrorEnabled()) {
+            log.error(format, arg1, arg2);
           }
         });
   }

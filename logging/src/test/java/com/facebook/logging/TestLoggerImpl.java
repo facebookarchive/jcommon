@@ -38,6 +38,15 @@ public class TestLoggerImpl {
   }
 
   @Test(groups = "fast")
+  public void testLogWithTwoArgs() throws Exception {
+    Logger privateLogger = LoggerImpl.getClassLogger();
+
+    privateLogger.info("%s with %d args", "Test", 2);
+
+    Assert.assertEquals(privateLogger.getName(), getClass().getName());
+  }
+
+  @Test(groups = "fast")
   public void testMessageWithPercentChar() throws Exception {
     // A random message with % in it
     String message = "A: 50%, B: 80%";
