@@ -27,12 +27,12 @@ import javax.annotation.concurrent.NotThreadSafe;
  */
 @NotThreadSafe
 public class HyperLogLog {
-  private final byte[] buckets;
+  protected final byte[] buckets;
 
   // The current sum of 1 / (1L << buckets[i]). Updated as new items are added and used for
   // estimation
-  private double currentSum;
-  private int nonZeroBuckets = 0;
+  protected double currentSum;
+  protected int nonZeroBuckets = 0;
 
   public HyperLogLog(int numberOfBuckets) {
     Preconditions.checkArgument(
@@ -62,12 +62,13 @@ public class HyperLogLog {
     }
   }
 
-  public void add(long value) {
+  /**
+   * @return true if the buckets are updated
+   */
+  public boolean add(long value) {
     BucketAndHash bucketAndHash = BucketAndHash.fromHash(computeHash(value), buckets.length);
     int bucket = bucketAndHash.getBucket();
-
     int lowestBitPosition = Long.numberOfTrailingZeros(bucketAndHash.getHash()) + 1;
-
     int previous = buckets[bucket];
 
     if (previous == 0) {
@@ -79,7 +80,9 @@ public class HyperLogLog {
       currentSum += 1.0 / (1L << lowestBitPosition);
 
       buckets[bucket] = (byte) lowestBitPosition;
+      return true;
     }
+    return false;
   }
 
   public long estimate() {
